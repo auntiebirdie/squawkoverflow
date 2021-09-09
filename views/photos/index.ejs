@@ -1,0 +1,23 @@
+<%- include('../header.ejs') %>
+
+<h2>Recently Added</h2>
+<div class="gg-container">
+	<div class="gg-box" data-theme="dark" data-layout="square">
+      <% recentlyAdded.forEach(function(photo) { %>
+	      <img class="lazy" data-src="<%= photo.url %>">
+      <% }); %>
+	</div>
+</div>
+
+<h2>Flocks</h2>
+<% flocks.forEach(function(flock) { %>
+
+<div class="gg-container" style="width: 20%; display: inline-block; text-align: center; float: left;">
+  <h3><a href="/flocks/<%= flock.slug %>"><%= flock.name %></a></h3>
+  <div class="gg-box" data-theme="dark" data-layout="square">
+    <img class="lazy" data-src="<%- flock.image ? flock.image[0].url : '' %>">
+  </div>
+</div>
+<% }); %>
+
+<%- include('../footer.ejs') %>

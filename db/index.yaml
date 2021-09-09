@@ -1,0 +1,7 @@
+indexes:
+
+- kind: Photo
+  properties:
+  - name: flocks
+  - name: submittedAt
+    direction: desc
