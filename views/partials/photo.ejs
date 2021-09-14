@@ -1,0 +1,8 @@
+<% var image = locals.full ? photo.image.full : photo.image.thumbnail %>
+
+<img
+  class="<%= locals.classes ? classes : "" %>"
+  src="<%= image.replace(/^(http[s]?:)?\/\//, "https://storage.googleapis.com/squawkoverflow/") %>"
+  data-original="<%= image %>"
+  alt="<%= photo.species.commonName %> © <%= photo.attribution[0] %>"
+/>

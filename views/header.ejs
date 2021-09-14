@@ -1,6 +1,73 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-	<link rel="stylesheet" href="/css/style.css">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link href="/css/style.css" rel="stylesheet">
+
+    <title>SQUAWKoverflow</title>
+
+    <meta property="og:site_name" content="SQUAWKoverflow">
+    <% if (locals.photo) { %>
+    <meta property="og:title" content="<%= photo.species.commonName %>">
+    <meta property="og:description" content="© <%= photo.attribution[0] %>">
+    <meta property="og:image" content="<%= photo.url %>">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:image" content="<%= photo.image.thumbnail %>">
+    <% } else { %>
+    <meta property="og:title" content="SQUAWKoverflow">
+    <meta property="og:description" content="a bird lovers community">
+    <meta property="og:image" content="/img/SQUAWK.png">
+    <% } %>
 </head>
-<body>
+<body class="error-page">
+
+<header>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">
+	      <img src="/img/SQUAWK.png" style="height: 45px; margin-right: 5px;">
+	      <span class="chartreuse">SQUAWK</span>overflow
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+	  <% locals.siteMenu.forEach( function (item) { %>
+          <li class="nav-item">
+		  <a class="nav-link<% if (item.active) { %> active" aria-current="page<% } %>" href="<%= item.href %>"><%= item.label %></a>
+          </li>
+	  <% }); %>
+        </ul>
+	<div class="d-flex dropdown">
+		<% if (locals.loggedInUser) { %>
+		<a class="nav-link dropdown-toggle link-light" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+		    <img class="member-avatar" src="https://cdn.discordapp.com/avatars/<%= locals.loggedInUser.id %>/<%= locals.loggedInUser.avatar %>.webp?size=40">
+		    &nbsp;
+		    <%= locals.loggedInUser.username %>
+		</a>
+		<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+			<li><a class="dropdown-item" href="/members/<%= locals.loggedInUser.id %>">Profile</a></li>
+			<li><hr class="dropdown-divider"></li>
+			<li><a class="dropdown-item" href="/logout">Logout</a></li>
+		</ul>
+		<% } else { %>
+		<a href="https://discord.com/api/oauth2/authorize?client_id=885956624777351199&redirect_uri=https%3A%2F%2Fsquawkoverflow.com%2Flogin&response_type=code&scope=identify"
+		   class="btn btn-secondary"
+		   role="button"
+		   tabindex="-1">
+			Log In
+		</a>
+		<% } %>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <div class="container" style="padding-top: 100px;">

@@ -1,0 +1,55 @@
+<%- include('../header.ejs') %>
+
+    <div class="row">
+      <h2>Latest Photos</h2>
+    </div>
+    <% for (var i = 0, len = recentlyAdded.length; i < len; i++) { %>
+      <% if (i % 4 === 0) { %>
+        <% if (i > 0) { %>
+        </div>
+        <% } %>
+        <div class="row">
+      <% } %>
+      <div class="col-md-3">
+        <figure class="figure">
+          <a href="/photos/<%= recentlyAdded[i].id %>">
+            <% if (recentlyAdded[i].image) { %>
+              <%- include('../partials/photo', { photo : recentlyAdded[i] }) %>
+            <% } %>
+          </a>
+        </figure>
+      </div>
+      <% }; %>
+    </div>
+
+  <hr class="featurette-divider">
+
+    <div class="row">
+      <div class="col">
+        <h2>Our Flocks</h2>
+      </div>
+      <div class="col text-end">
+        <a href="/flocks">
+          <button type="button" class="btn btn-light btn-sm">view all</button>
+        </a>
+      </div>
+    </div>
+
+    <div class="row">
+    <% flocks.forEach( function (flock) { %>
+        <div class="col-md-3 text-center">
+          <figure class="figure">
+            <a href="/flocks/<%= flock.slug %>">
+              <% if (flock.image[0].image) { %>
+              <%- include('../partials/photo', { photo : flock.image[0] }) %>
+              <% } %>
+            </a>
+            <figcaption class="figure-caption">
+              <h4 class="text-center"><a href="/flocks/<%= flock.slug%>"> <%= flock.name %></a></h4>
+            </figcaption>
+          </figure>
+        </div>
+    <% }); %>
+    </div>
+
+<%- include('../footer.ejs') %>

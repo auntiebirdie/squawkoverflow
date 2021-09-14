@@ -1,23 +1,22 @@
 <%- include('../header.ejs') %>
 
-<h2>Recently Added</h2>
-<div class="gg-container">
-	<div class="gg-box" data-theme="dark" data-layout="square">
-      <% recentlyAdded.forEach(function(photo) { %>
-	      <img class="lazy" data-src="<%= photo.url %>">
-      <% }); %>
-	</div>
-</div>
+    <div class="row h-100">
+      <div class="col-md-9">
+              <%- include('../partials/photo', { full : true }) %>
+      </div>
+      <div class="col-md-3 h-100 border-start">
+        <p><em>Common Name</em><br><%= photo.species.commonName %></p>
 
-<h2>Flocks</h2>
-<% flocks.forEach(function(flock) { %>
+        <p><em>Scientific Name</em><br><%= photo.species.scientificName %></p>
 
-<div class="gg-container" style="width: 20%; display: inline-block; text-align: center; float: left;">
-  <h3><a href="/flocks/<%= flock.slug %>"><%= flock.name %></a></h3>
-  <div class="gg-box" data-theme="dark" data-layout="square">
-    <img class="lazy" data-src="<%- flock.image ? flock.image[0].url : '' %>">
-  </div>
-</div>
-<% }); %>
+        <p><em>Family</em><br><%= photo.species.family %></p>
+
+        <p><em>Order</em><br><%= photo.species.order %></p>
+
+        <p><em>Photographer</em><br><a href="<%= photo.attribution[1] %>" target="_blank">© <%= photo.attribution[0] %></a></p>
+ 
+        <p><em>Source</em><br><a href="<%= photo.source %>" target="_blank"><%= photo.source.replace(/^(http[s])?:\/\//, '').split('/').shift() %> </a></em></p>
+      </div>
+    </div>
 
 <%- include('../footer.ejs') %>

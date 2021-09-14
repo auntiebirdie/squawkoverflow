@@ -1,0 +1,41 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
+<script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
+
+<div class="image-gallery">
+<% photos.forEach( function (photo) { %>
+  <a class="glightbox"
+     href="<%= photo.image.full.replace(/^(http[s]?:)?\/\//, "https://storage.googleapis.com/squawkoverflow/") %>"
+     data-id="<%= photo.id %>"
+     data-title="<%= photo.species.commonName %> (<%= photo.species.scientificName %>)"
+     data-description="&copy; <a href='<%= photo.attribution[1] %>' target='_blank'><%= photo.attribution[0] %></a> / <a href='<%= photo.source %>' target='_blank'><%= photo.source.replace(/^(http[s])?:\/\//, '').split('/').shift() %></a>"
+     data-type="image">
+    <%- include('photo.ejs', { photo : photo, classes : "lazy" } ) %>
+  </a>
+<% }) %>
+</div>
+
+<script type="text/javascript">
+  const lightbox = GLightbox();
+
+  var baseUrl = window.location.href;
+
+  lightbox.on('open', function () {
+    var photoId = getPhotoID();
+
+    window.history.pushState(null, null, `/photos/${photoId}`);
+  });
+
+  lightbox.on('slide_before_change', function () {
+    var photoId = getPhotoID();
+
+    window.history.replaceState(null, null, `/photos/${photoId}`);
+  });
+
+  lightbox.on('close', function () {
+    window.history.go(-1);
+  });
+
+  function getPhotoID () {
+    return lightbox.elements[lightbox.index].node.getAttribute('data-id');
+  }
+</script>

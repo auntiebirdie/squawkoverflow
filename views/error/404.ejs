@@ -1,0 +1,44 @@
+<%- include('../header.ejs') %>
+
+    <p>&nbsp;</p>
+
+    <div class="not-found">
+      <h3>SQUAWK?!</h3>
+      <br>
+      <p>You stumbled on an error page.  Get the flock out of here!</p>
+    </div>
+
+    <a id="attribution" target="_blank"></a>
+
+<script>
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/data/errorImages.json', true);
+    xhr.responseType = 'json';
+    xhr.onload = function() {
+        var images = xhr.response;
+
+	var currentIndex = images.length;
+	var temporaryValue, randomIndex;
+
+	// While there remain elements to shuffle...
+	while (0 !== currentIndex) {
+		// Pick a remaining element...
+		randomIndex = Math.floor(Math.random() * currentIndex);
+		currentIndex -= 1;
+
+		// And swap it with the current element.
+		temporaryValue = images[currentIndex];
+		images[currentIndex] = images[randomIndex];
+		images[randomIndex] = temporaryValue;
+	}
+
+        var image = images.pop();
+
+        document.body.style.backgroundImage = "url('" + image.image + "')";
+
+        document.getElementById('attribution').href = image.source;
+        document.getElementById('attribution').innerHTML = "background &copy; " + image.attribution + " / Unsplash";
+    };
+    xhr.send();
+</script>
+<%- include('../footer.ejs') %>

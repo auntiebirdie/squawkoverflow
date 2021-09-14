@@ -1,0 +1,28 @@
+<%- include('../header.ejs') %>
+
+    <div class="row">
+      <h2>Our Flocks</h2>
+    </div>
+    <% for (var i = 0, len = flocks.length; i < len; i++) { %>
+      <% if (i % 4 === 0) { %>
+        <% if (i > 0) { %>
+        </div>
+        <% } %>
+        <div class="row">
+      <% } %>
+      <div class="col-md-3 text-center">
+        <figure class="figure">
+          <a href="/flocks/<%= flocks[i].slug %>">
+            <% if (flocks[i].image[0].image) { %>
+              <%- include('../partials/photo', { photo : flocks[i].image[0], classes : "lazy figure-img" }) %>
+            <% } %>
+          </a>
+            <figcaption class="figure-caption">
+              <h4><a href="/flocks/<%= flocks[i].slug%>"> <%= flocks[i].name %></a></h4>
+            </figcaption>
+        </figure>
+      </div>
+      <% }; %>
+    </div>
+
+<%- include('../footer.ejs') %>

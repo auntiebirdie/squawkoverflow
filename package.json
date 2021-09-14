@@ -9,8 +9,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/connect-datastore": "^5.0.3",
     "@google-cloud/datastore": "^6.5.0",
+    "axios": "^0.21.4",
+    "chance": "^1.1.8",
+    "discord-oauth2": "^2.7.1",
     "ejs": "^3.1.6",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "nsql-cache": "^1.1.5",
+    "nsql-cache-datastore": "^1.1.6"
   }
 }

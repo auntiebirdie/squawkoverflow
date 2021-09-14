@@ -1,11 +1,9 @@
 <%- include('../header.ejs') %>
 
-<div class="gg-container">
-        <div class="gg-box" data-theme="dark">
-      <% photos.forEach(function(photo) { %>
-              <img class="lazy" data-src="<%= photo.url %>">
-      <% }); %>
-        </div>
-</div>
+    <div class="row">
+      <h2><%= flock.name %></h2>
+    </div>
+
+    <%- include('../partials/gallery.ejs', { photos : photos }) %>
 
 <%- include('../footer.ejs') %>
