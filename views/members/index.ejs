@@ -1,7 +1,32 @@
 <%- include('../header.ejs') %>
 
-  <div class="row">
-    <h3><%= member.username %></h3>
-  </div>
+    <%- include('../partials/page-title.ejs', { title : "Members" }) %>
+
+    <% for (var i = 0, len = members.length; i < len; i++) { %>
+      <% if (i % 4 === 0) { %>
+        <% if (i > 0) { %>
+          </div>
+          <%- include('../partials/spacer.ejs') %>
+        <% } %>
+      <div class="row">
+      <% } %>
+        <div class="col-md-3">
+          <div class="row">
+          <div class="col-md-3 text-center">
+            <a href="/members/<%= members[i].id %>">
+              <img class="member-avatar" src="https://cdn.discordapp.com/avatars/<%= members[i].id %>/<%= members[i].avatar %>.webp?size=40">
+            </a>
+          </div>
+          <div class="col-md-8">
+            <h5 class="pt-2">
+              <a href="/members/<%= members[i].id %>">
+                <%= members[i].username %>
+              </a>
+            </h5>
+          </div>
+        </div>
+      </div>
+    <% }; %>
+    </div>
 
 <%- include('../footer.ejs') %>

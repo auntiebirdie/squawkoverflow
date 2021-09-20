@@ -1,8 +1,6 @@
 <%- include('../header.ejs') %>
 
-    <div class="row">
-      <h2><%= flock.name %></h2>
-    </div>
+    <%- include('../partials/page-title.ejs', { title : flock.name }) %>
 
     <%- include('../partials/gallery.ejs', { photos : photos }) %>
 

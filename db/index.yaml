@@ -5,3 +5,14 @@ indexes:
   - name: flocks
   - name: submittedAt
     direction: desc
+
+- kind: Illustration
+  properties:
+  - name: species
+  - name: full
+
+- kind: MemberPet
+  properties:
+  - name: member
+  - name: hatchedAt
+    direction: desc

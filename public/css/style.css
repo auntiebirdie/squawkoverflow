@@ -1,6 +1,12 @@
 html, body {
-	height: 100%;
-	min-height: 100%;
+  height: 100%;
+  min-height: 100%;
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: "Segoe UI";
+	font-weight: 300;
 }
 
 main {
@@ -11,12 +17,75 @@ main {
   color: #DDF600;
 }
 
+.chartreuse-underline {
+	border-bottom: 5px solid #DDF600;
+}
+
+a {
+	text-decoration: none;
+}
+
 img {
 	max-width: 100%;
 }
 
 .member-avatar { 
 	border-radius: 100%;
+}
+
+.member-badge::before {
+	display: inline-block;
+	font-size: 2.5em;
+}
+
+.member-badge[data-badge="founder"]::before {
+	content: "\1F996";
+}
+
+#home-banner {
+	position: relative;
+	height: 600px;
+}
+
+#home-banner h1 {
+	margin: 0 0 0 20%;
+	font-size: 4em;
+}
+
+#home-banner p:nth-child(1) {
+	margin: 10% 0 0 18%;
+	font-size: 1.25em;
+}
+
+#home-banner p:nth-child(5) {
+	margin: 0 0 0 33%;
+	font-size: 1.5em;
+	letter-spacing: 4px;
+}
+
+.carousel-item-inner {
+	display: flex;
+	justify-content: center;
+}
+
+.carousel-photo {
+	margin: 0;
+	padding: 0;
+}
+
+.carousel-photo img {
+	height: 150px;
+}
+
+@media (min-width: 768px) { 
+	.carousel-photo img {
+	height: 300px;
+}
+}
+
+.carousel-control-next, .carousel-control-prev {
+	background: rgba(0, 0, 0, .75);
+	width: 5%;
 }
 
 .image-gallery {
@@ -35,28 +104,42 @@ img {
   height: auto !important;
 }
 
-.error-page {
-	background-attachment: fixed;
+.birdypet {
+	height: 300px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+.birdypet-unhatched {
+	filter: saturate(0%) brightness(55%) contrast(1000%);
+}
+
+.full-image-background {
+	background-position: center center;
 	background-size: cover;
 }
 
-.not-found h3, .not-found p, #attribution {
+#home-banner h1, #home-banner p,
+.not-found h1, .not-found p, #attribution {
 	display: inline-block;
-	background: rgba(255, 255, 255, .75);
-	color: rgba(100, 100, 100);
+	background: rgba(255, 255, 255, .9);
 	padding: 10px;
 }
 
-.not-found h3 {
-	font-size: 3em;
+.not-found h1 {
+	font-size: 4em;
 }
 
 .not-found p {
 	font-size: 2em;
 }
 
-.error-page #attribution {
+#attribution {
 	position: absolute;
+	font-size: .8em;
 	bottom: 15px;
 	right: 15px;
+	opacity: .75;
+	color: rgb(100, 100, 100);
 }

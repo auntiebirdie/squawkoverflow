@@ -1,0 +1,60 @@
+<%- include('../header.ejs') %>
+
+    <%- include('../partials/page-title.ejs', { breadcrumb : "BirdyPets", title : "Trade" }) %>
+
+    <div class="row">
+      <div class="col-md-6">
+        <h4><%= tradeFor.member.username %>'s</h4>
+
+        <input class="form-control" value="<%= tradeFor.nickname? `"${tradeFor.nickname}" (${tradeFor.birdypet.species.commonName})` : `${tradeFor.birdypet.species.commonName}   ${tradeFor.birdypet.version} ${tradeFor.birdypet.label}` %>" disabled>
+
+        <div class="card mt-4 mb-4">
+          <div class="birdypet" style="background-image: url('https://storage.googleapis.com/birdypets/<%= tradeFor.birdypet.species.order %>/<%= tradeFor.birdypet.species.family %>/<%= tradeFor.birdypet.species.scientificName %>/<%= tradeFor.birdypet.id %>.jpg');"></div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <h4>What do you want to offer?</h4>
+
+        <input class="form-control" list="birdListOptions" id="birdList" placeholder="Pick a bird..." autocomplete="off">
+        <datalist id="birdListOptions">
+        <% for (var userpet of userpets) { %>
+          <option value="<%= userpet.id %>" data-birdypet="<%= userpet.birdypet.id %>" data-species="<%= JSON.stringify(userpet.birdypet.species) %>">
+            <%= userpet.nickname ? `"${userpet.nickname}" (${userpet.birdypet.species.commonName})` : `${userpet.birdypet.species.commonName}   ${userpet.birdypet.version} ${userpet.birdypet.label}` %>
+          </option>
+        <% } %>
+        </datalist>
+
+        <div class="card mt-4 mb-4">
+          <div id="myBirdyPet" class="birdypet"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col text-center">
+        <button id="tradeButton" class="btn btn-primary" disabled>Make Offer</button>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      var myBirdyPet = $('#myBirdyPet');
+      var tradeButton = $('#tradeButton');
+
+      $('#birdList').on('input', function () {
+        var value = this.value;
+        var option = $('#birdListOptions option[value="' + value + '"]')[0];
+
+        try {
+          var species = JSON.parse(option.getAttribute('data-species'));
+          myBirdyPet.css('background-image', `url("https://storage.googleapis.com/birdypets/${species.order}/${species.family}/${species.scientificName}/${option.getAttribute('data-birdypet')}.jpg")`);
+
+          tradeButton.attr('disabled', false);
+        }
+        catch (err) {
+          myBirdyPet.css('background-image', null);
+          tradeButton.attr('disabled', true);
+        }
+      });
+    </script>
+
+<%- include('../footer.ejs') %>

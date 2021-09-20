@@ -2,10 +2,13 @@ const {Datastore} = require('@google-cloud/datastore');
 const DB = new Datastore({
   namespace: 'squawkoverflow'
 });
-
+/*
 const nsql = require('nsql-cache');
 const adapter = require('nsql-cache-datastore');
 const cache = new nsql({ db: adapter(DB) });
+*/
+
+const birdypets = require('./public/data/birdypets.json');
 
 module.exports = {
   DB: {
@@ -41,19 +44,31 @@ module.exports = {
         });
       });
     },
-    get: function(key) {
+    get: function(key, cache = true) {
       return new Promise((resolve, reject) => {
-        DB.get(DB.key(key)).then((result) => {
-          resolve(result[0]);
+        DB.get(DB.key(key), { cache : cache }).then(([result]) => {
+	      resolve(result);
         });
       });
     },
+	 save: function (entity) {
+		 return new Promise( (resolve, reject) => {
+			 DB.save(entity).then( () => {
+				 resolve();
+			 });
+		 });
+	 },
     upsert: function (key, data) {
       return new Promise((resolve, reject) => {
 	      DB.upsert({ key: DB.key(key), data : data }).then( (result) => {
 		      resolve(result);
 	      });
       });
+    }
+  },
+  BirdyPets : {
+    fetch: function (id) {
+	    return birdypets.find( (birdypet) => birdypet.id == id );
     }
   }
 }

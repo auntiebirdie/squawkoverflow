@@ -1,0 +1,60 @@
+<%- include('../header.ejs') %>
+
+    <%- include('../partials/page-title.ejs', { title : userpet.nickname ? userpet.nickname : userpet.birdypet.species.commonName }) %>
+
+    <div class="row">
+      <div class="col-md-8 pt-3 text-center">
+        <img src="https://storage.googleapis.com/birdypets/<%= userpet.birdypet.species.order %>/<%= userpet.birdypet.species.family %>/<%= userpet.birdypet.species.scientificName %>/<%= userpet.birdypet.id %>.jpg">
+      </div>
+      <div class="col-md-4 pt-3 border-start">
+        <h6>Common Name</h6>
+        <p><%= userpet.birdypet.species.commonName %></p>
+
+        <h6>Scientific Name</h6>
+        <p><%= userpet.birdypet.species.scientificName %></p>
+
+        <h6>Family</h6>
+        <p><%= userpet.birdypet.species.family %></p>
+
+        <h6>Order</h6>
+        <p><%= userpet.birdypet.species.order %></p>
+
+        <h6>Rarity</h6>
+        <p>Unknown</p>
+
+        <h6>Hatch Date</h6>
+        <p><%= new Date(userpet.hatchedAt).toLocaleString('en-US', { dateStyle: "long" }) %></p>
+
+        <h6>Aviary</h6>
+        <p>
+        <% if (userpet.member.id) { %>
+          <a href="/members/<%= userpet.member.id %>">
+            <%= userpet.member.username %>'s Aviary
+          </a>
+        <% } else { %>
+          #<%= userpet.member %>'s Aviary
+        <% } %>
+        </p>
+
+        <% if (locals.loggedInUser && userpet.member.id == locals.loggedInUser.id) { %>
+          <%- include('../partials/spacer.ejs'); %>
+
+          <form id="manageBirdyPet" method="post" class="text-center">
+
+          <label>Nickname</label><br>
+          <input id="nickname" type="text" name="nickname" value="<%= userpet.nickname %>">
+
+          <p></p>
+
+          <button class="btn btn-outline btn-primary" type="submit">Save Changes</button>
+
+          </form>
+
+          <%- include('../partials/spacer.ejs'); %>
+
+          <a href="/birdypets/gift/<%= userpet.id %>" class="btn btn-outline btn-primary">Gift to Someone</a>
+        <% } %>
+      </div>
+    </div>
+
+<%- include('../footer.ejs') %>

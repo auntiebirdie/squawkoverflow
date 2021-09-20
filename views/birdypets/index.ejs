@@ -1,0 +1,77 @@
+<%- include('../header.ejs') %>
+
+    <%- include('../partials/page-title.ejs', { title : "Welcome to BirdyPets! (WIP)" }) %>
+
+    <p>There are thousands of birds just waiting to meet you.  Which one will you hatch next?</p>
+
+    <%- include('../partials/spacer.ejs') %>
+
+    <h2>Birdypedia</h2>
+
+    <%- include('../partials/birddatalist.ejs') %>
+
+    <p>&nbsp;</p>
+
+    <div id="birdDisplay">
+      <p><em>Pick a family from the above list to see the birds here.</em></p>
+    </div>
+
+
+<script type="text/javascript">
+  var cache = {};
+
+  $('#birdList').on('input', function () {
+    var value = this.value;
+    var option = $('#birdListOptions option[value="' + value + '"]')[0];
+
+    try {
+      var family = option.getAttribute('data-family');
+
+      $('#birdDisplay').html('<p><em>Loading...</em></p>');
+
+      if (cache[family]) {
+        displayBirdyPets(family);
+      }
+      else {
+        $.getJSON(`/api/birdypets/${family}`, function (data) {
+          cache[family] = data;
+
+          displayBirdyPets(family);
+        });
+      }
+    } catch (err) {
+      $('#birdDisplay').html("<p></em>Pick a family from the above list to see the birds here.</em></p>");
+    }
+  });
+
+  function displayBirdyPets (family) {
+    var birds = cache[family];
+    var output = "";
+
+    for (var bird in birds) {
+      output += `<h4>${bird}</h4><br>`;
+
+      output += `<div class="row">`;
+      for (var birdypet of birds[bird]) {
+        output += `<div class="col-md-3" data-id="${birdypet.id}" data-credit="${birdypet.credit}" data-original="${birdypet.illustration}">`;
+          output += `<div class="card">`;
+            output += `<div class="lazy birdypet birdypet-${birdypet.hatched ? "hatched" : "unhatched"}"`;
+              output += ` data-bg="https://storage.googleapis.com/birdypets/${birdypet.species.order}/${birdypet.species.family}/${birdypet.species.scientificName}/${birdypet.id}.jpg">`;
+            output += `</div>`;
+             output += `<h6 class="text-center">${birdypet.version}&nbsp;${birdypet.label}</h6>`;
+          output += `</div>`;
+        output += `</div>`;
+      }
+      output += `</div>`;
+
+      output += `<%- include('../partials/spacer.ejs') %>`;
+    }
+
+    output += '</div>';
+
+    $("#birdDisplay").html(output);
+    lazyLoadInstance.update();
+  }
+</script>
+
+<%- include('../footer.ejs') %>
