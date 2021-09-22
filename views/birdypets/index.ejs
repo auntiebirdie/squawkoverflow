@@ -53,7 +53,7 @@
 
       output += `<div class="row">`;
       for (var birdypet of birds[bird]) {
-        output += `<div class="col-md-3" data-id="${birdypet.id}" data-credit="${birdypet.credit}" data-original="${birdypet.illustration}">`;
+        output += `<div class="col-md-3 mb-4" data-id="${birdypet.id}" data-credit="${birdypet.credit}" data-original="${birdypet.illustration}">`;
           output += `<div class="card">`;
             output += `<div class="lazy birdypet birdypet-${birdypet.hatched ? "hatched" : "unhatched"}"`;
               output += ` data-bg="https://storage.googleapis.com/birdypets/${birdypet.species.order}/${birdypet.species.family}/${birdypet.species.scientificName}/${birdypet.id}.jpg">`;

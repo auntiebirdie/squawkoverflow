@@ -1,0 +1,10 @@
+service: default
+runtime: nodejs16
+env: standard
+instance_class: F1
+
+handlers:
+- url: /.*
+  secure: always
+  redirect_http_response_code: 301
+  script: auto

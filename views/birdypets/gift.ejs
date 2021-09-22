@@ -16,7 +16,7 @@
         <input class="form-control" list="memberListOptions" id="memberList" placeholder="Pick a member..." autocomplete="off">
         <datalist id="memberListOptions">
         <% for (var member of members) { %>
-          <option value="<%= member.id %>" data-avatar="<%= member.avatar %>">
+          <option value="<%= member._id %>" data-avatar="<%= member.avatar %>">
             <%= member.username %>
           </option>
         <% } %>
@@ -44,7 +44,7 @@
         try {
           $('#giftTo').val(value);
 
-          memberDisplay.html(`<h3><img src="https://cdn.discordapp.com/avatars/${option.value}/${option.getAttribute('data-avatar')}.webp?size=64" class="member-avatar"> ${option.innerText}</h3>`);
+          memberDisplay.html(`<h3><img src="https://cdn.discordapp.com/avatars/${option.value}/${option.getAttribute('data-avatar')}.webp?size=64" class="member-avatar" data-id="${option.value}" onerror="missingMemberAvatar(this)"> ${option.innerText}</h3>`);
 
           actionButton.attr('disabled', false);
         }

@@ -13,13 +13,13 @@
         <div class="col-md-3">
           <div class="row">
           <div class="col-md-3 text-center">
-            <a href="/members/<%= members[i].id %>">
-              <img class="member-avatar" src="https://cdn.discordapp.com/avatars/<%= members[i].id %>/<%= members[i].avatar %>.webp?size=40">
+            <a href="/members/<%= members[i]._id %>">
+              <img class="member-avatar" src="https://cdn.discordapp.com/avatars/<%= members[i]._id %>/<%= members[i].avatar %>.webp?size=40" data-id="<%= members[i]._id %>" onerror="missingMemberAvatar(this)">
             </a>
           </div>
           <div class="col-md-8">
             <h5 class="pt-2">
-              <a href="/members/<%= members[i].id %>">
+              <a href="/members/<%= members[i]._id %>">
                 <%= members[i].username %>
               </a>
             </h5>

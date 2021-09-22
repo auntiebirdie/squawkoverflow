@@ -27,8 +27,8 @@
 
         <h6>Aviary</h6>
         <p>
-        <% if (userpet.member.id) { %>
-          <a href="/members/<%= userpet.member.id %>">
+        <% if (userpet.member._id) { %>
+          <a href="/birdypets/aviary/<%= userpet.member._id %>">
             <%= userpet.member.username %>'s Aviary
           </a>
         <% } else { %>
@@ -36,7 +36,7 @@
         <% } %>
         </p>
 
-        <% if (locals.loggedInUser && userpet.member.id == locals.loggedInUser.id) { %>
+        <% if (locals.loggedInUser && userpet.member._id == locals.loggedInUser.id) { %>
           <%- include('../partials/spacer.ejs'); %>
 
           <form id="manageBirdyPet" method="post" class="text-center">
@@ -52,7 +52,7 @@
 
           <%- include('../partials/spacer.ejs'); %>
 
-          <a href="/birdypets/gift/<%= userpet.id %>" class="btn btn-outline btn-primary">Gift to Someone</a>
+          <a href="/birdypets/gift/<%= userpet._id %>" class="btn btn-outline btn-primary">Gift to Someone</a>
         <% } %>
       </div>
     </div>

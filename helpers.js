@@ -1,74 +1,39 @@
-const {Datastore} = require('@google-cloud/datastore');
-const DB = new Datastore({
-  namespace: 'squawkoverflow'
-});
-/*
-const nsql = require('nsql-cache');
-const adapter = require('nsql-cache-datastore');
-const cache = new nsql({ db: adapter(DB) });
-*/
-
 const birdypets = require('./public/data/birdypets.json');
+const secrets = require('./secrets.json');
+
+const {
+  MessageEmbed,
+  WebhookClient
+} = require('discord.js');
+
+const webhookClient = new WebhookClient({
+  id: secrets.DISCORD.WEBHOOK_ID,
+  token: secrets.DISCORD.WEBHOOK_TOKEN
+});
 
 module.exports = {
-  DB: {
-    fetch: function({
-      kind,
-      filters,
-      order,
-      limit
-    }) {
-      return new Promise((resolve, reject) => {
-        let query = DB.createQuery(kind);
+  DB: require('./helpers/database.js'),
+  Discord: {
+    Webhook: {
+      send: function(data) {
+        webhookClient.send({
+          content: data.content,
+          embeds: data.embeds.map((embedData) => {
+            let embed = new MessageEmbed();
 
-        if (filters) {
-          for (filter of filters) {
-            query.filter(...filter);
-          }
-        }
+            for (let key in embedData) {
+              embed[`set${key}`](embedData[key]);
+            }
 
-        if (order) {
-          query.order(...order);
-        }
-
-        if (limit) {
-          query.limit(limit);
-        }
-
-        DB.runQuery(query).then((results) => {
-          resolve(results[0].map((result) => {
-            result.id = result[Datastore.KEY].id;
-
-            return result;
-          }));
+		  return embed;
+          })
         });
-      });
-    },
-    get: function(key, cache = true) {
-      return new Promise((resolve, reject) => {
-        DB.get(DB.key(key), { cache : cache }).then(([result]) => {
-	      resolve(result);
-        });
-      });
-    },
-	 save: function (entity) {
-		 return new Promise( (resolve, reject) => {
-			 DB.save(entity).then( () => {
-				 resolve();
-			 });
-		 });
-	 },
-    upsert: function (key, data) {
-      return new Promise((resolve, reject) => {
-	      DB.upsert({ key: DB.key(key), data : data }).then( (result) => {
-		      resolve(result);
-	      });
-      });
+      }
     }
   },
-  BirdyPets : {
-    fetch: function (id) {
-	    return birdypets.find( (birdypet) => birdypet.id == id );
+  BirdyPets: {
+    fetch: function(id) {
+      return birdypets.find((birdypet) => birdypet.id == id);
     }
   }
 }
