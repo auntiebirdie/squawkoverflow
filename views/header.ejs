@@ -17,6 +17,7 @@
             <meta property="og:desscription" content="<%= group.description %>">
         <% } else if (locals.userpet && locals.member) { %>
             <meta property="og:title" content="<%= userpet.nickname ? userpet.nickname : birdypet.species.commonName %>">
+	    <meta property="og:description" content="<%= member.username %>'s <%= birdypet.species.commonName %>">
             <meta property="og:image" content="https://storage.googleapis.com/birdypets/<%= birdypet.species.order %>/<%= birdypet.species.family %>/<%= birdypet.species.scientificName %>/<%= birdypet.id %>.jpg">
             <meta property="article:author" content="<%= member.username %>'s">
             <meta property="twitter:card" content="summary_large_image">

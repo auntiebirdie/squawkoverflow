@@ -1,6 +1,7 @@
 const helpers = require('../helpers');
 const express = require('express');
 const router = express.Router();
+const Chance = require('chance').Chance();
 
 router.get('/', async (req, res) => {
   res.render('birdypets/index');
@@ -174,7 +175,7 @@ router.post('/release/:id', (req, res) => {
       var birdypet = helpers.BirdyPets.fetch(userpet.birdypet);
 
       helpers.Discord.Webhook.send('free-birds', {
-        content: "SQUAWK! A bird is running loose without supervision!",
+        content: Chance.pickone(require('../data/webhooks.json').release),
         embeds: [{
           "Title": birdypet.species.commonName,
           "Image": birdypet.illustration
