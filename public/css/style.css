@@ -29,7 +29,24 @@ img {
 	max-width: 100%;
 }
 
+nav .brand-logo {
+	font-size: inherit;
+}
+
+nav .brand-logo img {
+	height: 64px;
+	width: 64px;
+	vertical-align: middle;
+}
+
+nav .brand-logo h4 {
+	display: inline-block;
+	vertical-align: middle;
+	margin: 0 0 0 15px;
+}
+
 .member-avatar { 
+	vertical-align: middle;
 	border-radius: 100%;
 }
 
@@ -113,6 +130,10 @@ img {
 
 .birdypet-unhatched {
 	filter: saturate(0%) brightness(55%) contrast(1000%);
+}
+
+select {
+	width: 100%;
 }
 
 .full-image-background {

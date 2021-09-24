@@ -3,19 +3,28 @@ const secrets = require('./secrets.json');
 
 const {
   MessageEmbed,
+  MessageActionRow,
+  MessageButton,
   WebhookClient
 } = require('discord.js');
 
-const webhookClient = new WebhookClient({
-  id: secrets.DISCORD.WEBHOOK_ID,
-  token: secrets.DISCORD.WEBHOOK_TOKEN
-});
 
 module.exports = {
   DB: require('./helpers/database.js'),
   Discord: {
     Webhook: {
-      send: function(data) {
+      send: function(channel, data) {
+        const webhookClient = new WebhookClient({
+          id: secrets.DISCORD.WEBHOOK[channel].ID,
+          token: secrets.DISCORD.WEBHOOK[channel].TOKEN
+        });
+
+        if (data.components) {
+          var actionRow = new MessageActionRow().addComponents(data.components.map((componentData) => {
+            return new MessageButton(componentData);
+          }));
+        }
+
         webhookClient.send({
           content: data.content,
           embeds: data.embeds.map((embedData) => {
@@ -25,8 +34,9 @@ module.exports = {
               embed[`set${key}`](embedData[key]);
             }
 
-		  return embed;
-          })
+            return embed;
+          }),
+          components: actionRow ? [actionRow] : null
         });
       }
     }

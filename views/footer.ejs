@@ -1,3 +1,4 @@
+
   </div>
 </main>
 
@@ -14,8 +15,34 @@
 <% } %>
 
 <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.4.0/dist/lazyload.min.js" integrity="sha256-Uukz8+FlQ78tU43ix2oKDcK84sJpKYzuU8XweQ1DaU0=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/filterizr@2.2.4/dist/vanilla.filterizr.min.js" integrity="sha256-XI1PitIc0U3YitVOqoylH9iLhbPm+XHfk12Nlbon7Ho=" crossorigin="anonymous"></script>
+
 <script type="text/javascript">
   var lazyLoadInstance = new LazyLoad({ });
+
+  try {
+    var filterizr = new window.Filterizr('.filter-container', {
+      controlsSelector: '.filetr-controls',
+      gridItemsSelector: '.filter-item',
+      layout: 'sameWidth'
+    });
+
+    $('select.filter-controls').change(function() {
+      var filters = [];
+
+      $('select.filter-controls').each( function (key, select) {
+        var value = select.options[select.options.selectedIndex].value;
+
+        if (!filters.includes(value) && value != "all") {
+          filters.push(value);
+        }
+      });
+
+      filterizr.filter(filters.join(', '));
+    });
+  } catch (err) {
+    console.log(err);
+  }
 </script>
 
 </body>

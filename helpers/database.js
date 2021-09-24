@@ -32,6 +32,8 @@ Database.prototype.set = function(kind, id, data) {
         }
       }
 
+      delete entity._id;
+
       datastore.save({
         key: entity[Datastore.KEY],
         data: entity
@@ -74,12 +76,22 @@ Database.prototype.save = function(kind, id, data) {
   });
 }
 
+Database.prototype.delete = function(kind, id) {
+
+	return new Promise((resolve, reject) => {
+		datastore.delete(this.key(kind, id)).then(() => {
+			return resolve();
+		});
+	});
+}
+
 Database.prototype.fetch = function({
   kind,
   filters,
   order,
   limit,
-  cacheId
+  cacheId,
+  keysOnly
 }, force = true) {
   return new Promise((resolve, reject) => {
     let query = datastore.createQuery(kind);
@@ -96,6 +108,10 @@ Database.prototype.fetch = function({
 
     if (limit) {
       query.limit(limit);
+    }
+
+    if (keysOnly) {
+      query.select('__key__');
     }
 
     datastore.runQuery(query).then(([results]) => {

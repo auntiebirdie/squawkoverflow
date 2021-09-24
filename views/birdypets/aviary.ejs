@@ -1,24 +1,54 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { title : `${member.username}'s Aviary` }) %>
+    <%- include('../partials/page-title.ejs', { title : `${member.username}'s Aviary`, breadcrumb: 'BirdyPets' }) %>
 
     <div class="row">
-      <% for (var userpet of member.userpets) { %>
-      <div class="col-md-3">
-        <div class="card mb-4">
-          <% if (userpet.birdypet) { %>
-          <p></p>
-          <a href="/birdypets/<%= userpet.id %>">
-            <div class="lazy birdypet" data-bg="https://storage.googleapis.com/birdypets/<%= userpet.birdypet.species.order %>/<%= userpet.birdypet.species.family %>/<%= userpet.birdypet.species.scientificName %>/<%= userpet.birdypet.id %>.jpg"></div>
-          </a>
-          <h3 class="text-center"><a href="/birdypets/<%= userpet.id %>"><%= userpet.nickname ? userpet.nickname : userpet.birdypet.species.commonName %></a></h3>
-          <h6 class="text-center"><%= userpet.birdypet.version %> <%= userpet.birdypet.label %></h6>
-          <hr>
+      <div class="col-lg-3">
+        <div class="row">
+          <% if (flocks.length > 0) { %>
+          <div class="col-sm-6 col-lg-12 mb-4">
+            <h4>Flock</h4>
+            <select class="selectpicker filter-controls" data-filter>
+              <option value="all" selected></option>
+            <% for (var flock of flocks) { %>
+              <option value="<%= flock._id %>"><%= flock.name %></option>
+            <% } %>
+            </select>
+          </div>
           <% } %>
-          <p class="text-center"><small><em>Hatch Date:<br><%= new Date(userpet.hatchedAt).toLocaleString('en-US', { dateStyle: "long" }) %></em></small></p>
+          <div class="col-sm-6 col-lg-12 mb-4">
+          <h4>Family</h4>
+          <select class="selectpicker filter-controls" data-filter>
+            <option value="all">[ALL]</option>
+          <% for (var family of families) { %>
+            <option value="<%= family.toLowerCase() %>"><%= family %></option>
+          <% } %>
+          </select>
+          </div>
         </div>
       </div>
-      <% } %>
+
+
+      <div class="col-lg-9">
+        <div class="row filter-container">
+        <% for (var userpet of userpets) { %>
+        <div class="col-md-4 filter-item" data-category="<%= userpet.birdypet.species.family.toLowerCase() %>, <%= userpet.flocks.join(", ") %>">
+          <div class="pb-4">
+          <div class="card">
+            <% if (userpet.birdypet) { %>
+            <p></p>
+            <a href="/birdypets/<%= userpet.id %>">
+              <div class="lazy birdypet" data-bg="https://storage.googleapis.com/birdypets/<%= userpet.birdypet.species.order %>/<%= userpet.birdypet.species.family %>/<%= userpet.birdypet.species.scientificName %>/<%= userpet.birdypet.id %>.jpg"></div>
+            </a>
+            <h3 class="text-center"><a href="/birdypets/<%= userpet.id %>"><%= userpet.nickname ? userpet.nickname : userpet.birdypet.species.commonName %></a></h3>
+            <h6 class="text-center"><%= userpet.birdypet.version %> <%= userpet.birdypet.label %></h6>
+            <% } %>
+          </div>
+          </div>
+        </div>
+        <% } %>
+        </div>
+      </div>
     </div>
 
 <%- include('../footer.ejs') %>

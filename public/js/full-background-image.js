@@ -28,6 +28,7 @@
     }
 
     document.getElementById('attribution').href = image.source;
+    document.getElementById('attribution').target = '_blank';
     document.getElementById('attribution').innerHTML = "background &copy; " + image.attribution + " / Unsplash";
   };
 

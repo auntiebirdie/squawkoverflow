@@ -1,50 +1,67 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { title : userpet.nickname ? userpet.nickname : userpet.birdypet.species.commonName }) %>
+    <%- include('../partials/page-title.ejs', { title : userpet.nickname ? userpet.nickname : birdypet.species.commonName }) %>
 
     <div class="row">
       <div class="col-md-8 pt-3 text-center">
-        <img src="https://storage.googleapis.com/birdypets/<%= userpet.birdypet.species.order %>/<%= userpet.birdypet.species.family %>/<%= userpet.birdypet.species.scientificName %>/<%= userpet.birdypet.id %>.jpg">
+        <img id="birdy" src="https://storage.googleapis.com/birdypets/<%= birdypet.species.order %>/<%= birdypet.species.family %>/<%= birdypet.species.scientificName %>/<%= birdypet.id %>.jpg">
       </div>
       <div class="col-md-4 pt-3 border-start">
         <h6>Common Name</h6>
-        <p><%= userpet.birdypet.species.commonName %></p>
+        <p><%= birdypet.species.commonName %></p>
 
         <h6>Scientific Name</h6>
-        <p><%= userpet.birdypet.species.scientificName %></p>
+        <p><%= birdypet.species.scientificName %></p>
 
         <h6>Family</h6>
-        <p><%= userpet.birdypet.species.family %></p>
+        <p><%= birdypet.species.family %></p>
 
         <h6>Order</h6>
-        <p><%= userpet.birdypet.species.order %></p>
+        <p><%= birdypet.species.order %></p>
 
-        <h6>Rarity</h6>
-        <p>Unknown</p>
+        <% if (birdypet.version || birdypet.label) { %>
+        <h6>Variant</h6>
+        <p><%= birdypet.version + ' ' + birdypet.label %></p>
+        <% } %>
 
         <h6>Hatch Date</h6>
         <p><%= new Date(userpet.hatchedAt).toLocaleString('en-US', { dateStyle: "long" }) %></p>
 
         <h6>Aviary</h6>
         <p>
-        <% if (userpet.member._id) { %>
-          <a href="/birdypets/aviary/<%= userpet.member._id %>">
-            <%= userpet.member.username %>'s Aviary
+        <% if (member._id) { %>
+          <a href="/birdypets/aviary/<%= member._id %>">
+            <%= member.username %>'s Aviary
           </a>
         <% } else { %>
-          #<%= userpet.member %>'s Aviary
+          #<%= member %>'s Aviary
         <% } %>
         </p>
 
-        <% if (locals.loggedInUser && userpet.member._id == locals.loggedInUser.id) { %>
+        <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
           <%- include('../partials/spacer.ejs'); %>
 
           <form id="manageBirdyPet" method="post" class="text-center">
 
-          <label>Nickname</label><br>
-          <input id="nickname" type="text" name="nickname" value="<%= userpet.nickname %>">
+          <h5><label>Nickname</label></h5>
+          <input id="nickname" type="text" name="nickname" value="<%= userpet.nickname %>" style="width: 100%">
 
-          <p></p>
+          <p>&nbsp;</p>
+
+          <% if (otherVersions.length > 1) { %>
+          <h5><label>Variant</label></h5>
+          <select name="variant">
+            <% for (let otherVersion of otherVersions) { %>
+            <option value="<%= otherVersion.id %>" <%= otherVersion.id == birdypet.id ? "selected" : "" %>>
+              <%= otherVersion.version %>
+              <%= otherVersion.label %>
+              <%= otherVersion.id == birdypet.id ? "[current]" : "" %>
+            </option>
+            <% } %>
+          </select>
+
+          <p>&nbsp;</p>
+          <% } %>
 
           <button class="btn btn-outline btn-primary" type="submit">Save Changes</button>
 
@@ -52,9 +69,25 @@
 
           <%- include('../partials/spacer.ejs'); %>
 
-          <a href="/birdypets/gift/<%= userpet._id %>" class="btn btn-outline btn-primary">Gift to Someone</a>
+          <div class="text-center">
+            <% if (member.birdyBuddy != userpet._id) { %>
+            <p><a href="/birdypets/buddy/<%= userpet._id %>" class="btn btn-primary">💖 Make Birdy Buddy</a></p>
+            <% } else {  %>
+            <%- include('../partials/friendshipMeter.ejs', { friendship : userpet.friendship || 0 }) %>
+            <% } %>
+            <p><a href="/birdypets/gift/<%= userpet._id %>" class="btn btn-primary">🎁 Gift to Someone</a></p>
+            <p><a href="/birdypets/release/<%= userpet._id %>" class="btn btn-primary">👋 Release Bird</a></p>
+          </div>
         <% } %>
       </div>
     </div>
 
+    <script type="text/javascript">
+    $('select[name="variant"]').change(function() {
+        var value = this.options[this.options.selectedIndex].value;
+        var birdy = document.getElementById('birdy');
+
+        birdy.src = birdy.src.replace(/\/[^\/]+.jpg/, `\/${value}.jpg`);
+    });
+    </script>
 <%- include('../footer.ejs') %>
