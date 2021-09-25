@@ -35,7 +35,7 @@ router.get('/:id', async (req, res) => {
 
     if (member.birdyBuddy) {
       var birdybuddy = await helpers.DB.get('MemberPet', member.birdyBuddy * 1).then((userpet) => {
-        if (userpet) {
+        if (userpet && userpet.member == member._id) {
           return {
             id: userpet._id,
             nickname: userpet.nickname,
@@ -47,13 +47,37 @@ router.get('/:id', async (req, res) => {
           return {}
         }
       });
+
+      if (member.flock) {
+	      var flock = await helpers.DB.get('MemberFlock', member.flock * 1);
+
+		      if (flock && flock.member == member._id) {
+	      var flockpets = await helpers.DB.fetch({
+		      'kind' : 'MemberPet',
+		      'filters' : [
+			      ['member', '=', req.params.id],
+			      ['flocks', '=', member.flock]
+		      ]
+	      }).then( (userpets) => {
+		      return userpets.map( (userpet) => {
+			      return {
+			      id: userpet._id,
+				      nickname: userpet.nickname,
+				      birdypet: helpers.BirdyPets.fetch(userpet.birdypet)
+			      }
+		      });
+	      });
+		      }
+      }
     }
 
     res.render('members/member', {
       member: member,
       submissions: submissions.length || 0,
       birdypets: birdypets.length || 0,
-      birdybuddy: birdybuddy || {}
+      birdybuddy: birdybuddy || {},
+      flock: flock || null,
+      flockpets: flockpets || {}
     });
   } else {
     console.error(`ERROR - member ${req.params.id} not found`);

@@ -17,6 +17,11 @@ indexes:
   - name: hatchedAt
     direction: desc
 
+- kind: MemberPet
+  properties:
+  - name: member
+  - name: flocks
+
 - kind: MemberFlock
   properties:
   - name: member

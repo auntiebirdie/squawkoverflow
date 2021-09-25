@@ -3,8 +3,55 @@
     <%- include('../partials/page-title.ejs', { title : userpet.nickname ? userpet.nickname : birdypet.species.commonName }) %>
 
     <div class="row">
-      <div class="col-md-8 pt-3 text-center">
-        <img id="birdy" src="https://storage.googleapis.com/birdypets/<%= birdypet.species.order %>/<%= birdypet.species.family %>/<%= birdypet.species.scientificName %>/<%= birdypet.id %>.jpg">
+      <div class="col-md-8 pt-3">
+        <div class="text-center">
+          <img id="birdy" src="https://storage.googleapis.com/birdypets/<%= birdypet.species.order %>/<%= birdypet.species.family %>/<%= birdypet.species.scientificName %>/<%= birdypet.id %>.jpg">
+        </div>
+
+        <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
+          <%- include('../partials/spacer.ejs'); %>
+
+          <form id="manageBirdyPet" method="post">
+
+          <h5><label>Nickname</label></h5>
+          <input id="nickname" type="text" name="nickname" value="<%= userpet.nickname %>" style="width: 100%">
+
+          <p>&nbsp;</p>
+
+          <% if (otherVersions.length > 1) { %>
+          <h5><label>Variant</label></h5>
+          <select name="variant">
+            <% for (let otherVersion of otherVersions) { %>
+            <option value="<%= otherVersion.id %>" <%= otherVersion.id == birdypet.id ? "selected" : "" %>>
+              <%= otherVersion.version %>
+              <%= otherVersion.label %>
+              <%= otherVersion.id == birdypet.id ? "[current]" : "" %>
+            </option>
+            <% } %>
+          </select>
+
+          <p>&nbsp;</p>
+          <% } %>
+
+          <% if (locals.flocks) { %>
+          <h5 class="mb-4"><label>Flocks</label> <a href="/birdypets/flocks"><small>(manage)</small></a></h5>
+
+          <% for (var flock of flocks) { %>
+          <p>
+            <label>
+              <input type="checkbox" name="flocks[]" value="<%= flock._id%>" <%= userpet.flocks && userpet.flocks.includes(flock._id) ? "checked" : ""%>>
+              <%= flock.name %>
+            </label>
+          </p>
+          <% } %>
+
+          <p>&nbsp;</p>
+          <% } %>
+
+          <button class="btn btn-primary" type="submit">Save Changes</button>
+
+          </form>
+        <% } %>
       </div>
       <div class="col-md-4 pt-3 border-start">
         <h6>Common Name</h6>
@@ -39,34 +86,6 @@
         </p>
 
         <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
-          <%- include('../partials/spacer.ejs'); %>
-
-          <form id="manageBirdyPet" method="post" class="text-center">
-
-          <h5><label>Nickname</label></h5>
-          <input id="nickname" type="text" name="nickname" value="<%= userpet.nickname %>" style="width: 100%">
-
-          <p>&nbsp;</p>
-
-          <% if (otherVersions.length > 1) { %>
-          <h5><label>Variant</label></h5>
-          <select name="variant">
-            <% for (let otherVersion of otherVersions) { %>
-            <option value="<%= otherVersion.id %>" <%= otherVersion.id == birdypet.id ? "selected" : "" %>>
-              <%= otherVersion.version %>
-              <%= otherVersion.label %>
-              <%= otherVersion.id == birdypet.id ? "[current]" : "" %>
-            </option>
-            <% } %>
-          </select>
-
-          <p>&nbsp;</p>
-          <% } %>
-
-          <button class="btn btn-outline btn-primary" type="submit">Save Changes</button>
-
-          </form>
-
           <%- include('../partials/spacer.ejs'); %>
 
           <div class="text-center">

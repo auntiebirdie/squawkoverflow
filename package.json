@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "deploy": "gcloud app deploy --version squawkoverflow --no-promote"
+    "deploy": "gcloud app deploy --version squawkoverflow --no-promote",
+    "update-indexes" : "gcloud datastore indexes create db/index.yaml"
   },
   "author": "",
   "license": "ISC",

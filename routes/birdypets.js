@@ -7,6 +7,86 @@ router.get('/', async (req, res) => {
   res.render('birdypets/index');
 });
 
+router.get('/flocks', async (req, res) => {
+  if (req.session.user) {
+    res.render('birdypets/flocks', {
+      member: await helpers.DB.get('Member', req.session.user.id),
+      flocks: await helpers.DB.fetch({
+        "kind": "MemberFlock",
+        "filters": [
+          ["member", "=", req.session.user.id]
+        ],
+        "order": ["displayOrder"]
+      })
+    });
+  } else {
+    res.redirect('/');
+  }
+});
+
+router.post('/flocks', async (req, res) => {
+  if (req.session.user) {
+    var existingFlocks = req.body.existingFlocks;
+    var existingFlockKeys = await helpers.DB.fetch({
+      "kind": "MemberFlock",
+      "filters": [
+        ["member", "=", req.session.user.id]
+      ],
+      "keysOnly": true
+    }).then((flocks) => {
+      return flocks.map((flock) => {
+        return flock._id;
+      });
+    });
+
+    for (var key of existingFlockKeys) {
+      if (existingFlocks[key]) {
+        let name = helpers.sanitize(existingFlocks[key]).trim();
+
+        if (name != "") {
+          await helpers.DB.set('MemberFlock', key * 1, {
+            name: name
+          });
+
+          continue;
+        }
+      }
+
+      await helpers.DB.delete('MemberFlock', key * 1);
+    }
+
+    var newFlocks = req.body.newFlocks;
+
+    if (req.body.featuredFlock) {
+      try {
+        var featuredFlock = req.body.featuredFlock.match(/\[([0-9]+)\]/)[1];
+
+        if (req.body.featuredFlock.includes('existingFlocks')) {
+          await helpers.DB.set('Member', req.session.user.id, {
+            "flock": featuredFlock
+          });
+        }
+      } catch (err) {}
+    }
+
+    for (var i = 0, len = newFlocks.length; i < len; i++) {
+      let name = helpers.sanitize(newFlocks[i]).trim();
+
+      if (name != "") {
+        await helpers.DB.create('MemberFlock', {
+          member: req.session.user.id,
+          name: name,
+          displayOrder: 0
+        });
+      }
+    }
+
+    res.redirect('/birdypets/flocks');
+  } else {
+    res.redirect('/');
+  }
+});
+
 router.get('/mine', async (req, res) => {
   if (req.session.user) {
     res.redirect(`/birdypets/aviary/${req.session.user.id}`);
@@ -50,7 +130,7 @@ router.get('/aviary/:id', async (req, res) => {
       "filters": [
         ["member", "=", member._id]
       ],
-      "order": ["displayOrder", {}]
+      "order": ["displayOrder"]
     });
 
     res.render('birdypets/aviary', {
@@ -74,7 +154,6 @@ router.get('/buddy/:id', async (req, res) => {
       helpers.DB.set('Member', userpet.member, {
         'birdyBuddy': userpet._id
       }).then(() => {
-
         res.redirect(`/birdypets/${userpet._id}`);
       });
     });
@@ -247,63 +326,72 @@ router.get('/trade/:id', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-  var userpet = await helpers.DB.get('MemberPet', req.params.id * 1).then(async (userpet) => {
-    if (userpet) {
-      var birdypet = helpers.BirdyPets.fetch(userpet.birdypet);
+  try {
+    var userpet = await helpers.DB.get('MemberPet', req.params.id * 1).then(async (userpet) => {
+      if (userpet) {
+        var birdypet = helpers.BirdyPets.fetch(userpet.birdypet);
 
-      var member = await helpers.DB.get('Member', userpet.member);
+        var member = await helpers.DB.get('Member', userpet.member);
 
-      if (!member) {
-        member = {
-          _id: userpet.member,
-          username: "Unregistered"
+        if (!member) {
+          member = {
+            _id: userpet.member,
+            username: "Unregistered"
+          }
         }
-      }
 
-      res.render('birdypets/view', {
-        userpet: userpet,
-        birdypet: birdypet,
-        member: member,
-        otherVersions: require('../public/data/birdypets.json').filter((version) => version.species.speciesCode == birdypet.species.speciesCode)
-      });
-    } else {
-      res.redirect('/error');
-    }
-  });
+        res.render('birdypets/view', {
+          userpet: userpet,
+          birdypet: birdypet,
+          member: member,
+          flocks: await helpers.DB.fetch({
+            "kind": "MemberFlock",
+            "filters": [
+              ["member", "=", member._id]
+            ],
+            "order": ["displayOrder", {}]
+          }),
+          otherVersions: require('../public/data/birdypets.json').filter((version) => version.species.speciesCode == birdypet.species.speciesCode)
+        });
+      } else {
+        res.redirect('/error');
+      }
+    });
+  } catch (err) {
+    res.redirect('/error');
+  }
 });
 
 router.post('/:id', async (req, res) => {
-  var userpet = await helpers.DB.get('MemberPet', req.params.id * 1, true).then(async (userpet) => {
-    if (userpet) {
-      var nickname = req.body.nickname;
+  try {
+    var userpet = await helpers.DB.get('MemberPet', req.params.id * 1, true).then(async (userpet) => {
+      if (userpet) {
+        var nickname = req.body.nickname;
 
-      if (nickname.length > 32) {
-        nickname = nickname.slice(0, 32);
+        if (nickname.length > 32) {
+          nickname = nickname.slice(0, 32);
+        }
+
+        nickname = helpers.sanitize(nickname);
+
+        var variant = req.body.variant || userpet.birdypet;
+
+        await helpers.DB.set('MemberPet', req.params.id * 1, {
+          nickname: nickname,
+          birdypet: variant,
+          flocks: req.body.flocks
+        });
+
+        res.redirect('/birdypets/' + req.params.id);
+      } else {
+        res.json({
+          error: "BirdyPet not found."
+        });
       }
-
-      nickname = nickname.replace(/[&<>'"]/g,
-        tag => ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          "'": '&#39;',
-          '"': '&quot;'
-        } [tag]));
-
-      var variant = req.body.variant || userpet.birdypet;
-
-      await helpers.DB.set('MemberPet', req.params.id * 1, {
-        nickname: nickname,
-        birdypet: variant
-      });
-
-      res.redirect('/birdypets/' + req.params.id);
-    } else {
-      res.json({
-        error: "BirdyPet not found."
-      });
-    }
-  });
+    });
+  } catch (err) {
+    res.redirect('/error');
+  };
 });
 
 module.exports = router;

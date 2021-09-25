@@ -9,9 +9,12 @@
           <div class="col-sm-6 col-lg-12 mb-4">
             <h4>Flock</h4>
             <select class="selectpicker filter-controls" data-filter>
-              <option value="all" selected></option>
+              <option value="all">[ALL]</option>
             <% for (var flock of flocks) { %>
               <option value="<%= flock._id %>"><%= flock.name %></option>
+            <% } %>
+            <% if (locals.loggedInUser && member._id == loggedInUser.id) { %>
+              <option value="flockless">[FLOCKLESS]</option>
             <% } %>
             </select>
           </div>
@@ -32,7 +35,7 @@
       <div class="col-lg-9">
         <div class="row filter-container">
         <% for (var userpet of userpets) { %>
-        <div class="col-md-4 filter-item" data-category="<%= userpet.birdypet.species.family.toLowerCase() %>, <%= userpet.flocks.join(", ") %>">
+        <div class="col-md-4 filter-item" data-category="<%= [userpet.birdypet.species.family.toLowerCase(), ...(userpet.flocks.length > 0 ? userpet.flocks : ["flockless"])].join(", ") %>">
           <div class="pb-4">
           <div class="card">
             <% if (userpet.birdypet) { %>
@@ -41,7 +44,7 @@
               <div class="lazy birdypet" data-bg="https://storage.googleapis.com/birdypets/<%= userpet.birdypet.species.order %>/<%= userpet.birdypet.species.family %>/<%= userpet.birdypet.species.scientificName %>/<%= userpet.birdypet.id %>.jpg"></div>
             </a>
             <h3 class="text-center"><a href="/birdypets/<%= userpet.id %>"><%= userpet.nickname ? userpet.nickname : userpet.birdypet.species.commonName %></a></h3>
-            <h6 class="text-center"><%= userpet.birdypet.version %> <%= userpet.birdypet.label %></h6>
+            <h6 class="text-center"><%= userpet.nickname ? userpet.birdypet.species.commonName : (userpet.birdypet.label + " " + userpet.birdypet.version) %></h6>
             <% } %>
           </div>
           </div>

@@ -10,6 +10,16 @@ const {
 
 
 module.exports = {
+  sanitize: function (input) {
+    return input.replace(/[&<>'"]/g,
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        } [tag]));
+  },
   DB: require('./helpers/database.js'),
   Discord: {
     Webhook: {

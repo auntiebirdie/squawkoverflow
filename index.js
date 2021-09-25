@@ -122,7 +122,6 @@ app.get('/login', (req, res) => {
       res.redirect('/');
     });
   } else {
-	  console.log(secrets.DISCORD.CLIENT_ID, secrets.DISCORD.CLIENT_SECRET, req.query.code);
     oauth.tokenRequest({
       clientId: secrets.DISCORD.CLIENT_ID,
       clientSecret: secrets.DISCORD.CLIENT_SECRET,
@@ -131,7 +130,6 @@ app.get('/login', (req, res) => {
       scope: 'identify',
       grantType: 'authorization_code'
     }).then((response) => {
-	    console.log(response);
       if (response.access_token) {
         oauth.getUser(response.access_token).then((user) => {
           req.session.user = {
@@ -149,11 +147,15 @@ app.get('/login', (req, res) => {
 
             if (!member) {
               data.joinedAt = Date.now();
-            }
-
+		    helpers.DB.save('Member', user.id, data).then( () => {
+			    res.redirect('/');
+		    });
+	    }
+		  else {
             helpers.DB.set('Member', user.id, data).then(() => {
               res.redirect('/');
             });
+		  }
           });
         });
       } else {

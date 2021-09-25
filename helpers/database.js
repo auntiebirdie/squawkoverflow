@@ -60,16 +60,18 @@ Database.prototype.create = function(kind, data, uniqueField = false) {
         }
       });
     } else {
-      resolve(this.save(kind, datastore.key(kind).id, data));
+      resolve(this.save(kind, datastore.key([kind]).id, data));
     }
   });
 }
 
 Database.prototype.save = function(kind, id, data) {
   return new Promise((resolve, reject) => {
+    delete data._id;
+
     datastore.save({
       key: this.key(kind, data._id || id),
-      data: data.filter((datum, key) => key != "_id")
+      data: data
     }).then(() => {
       return resolve();
     });
