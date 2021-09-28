@@ -4,7 +4,13 @@
 
     <div class="row">
       <div class="col-md-6">
-        <h4><%= giftpet.nickname? `"${giftpet.nickname}" (${giftpet.birdypet.species.commonName})` : `${giftpet.birdypet.species.commonName}   ${giftpet.birdypet.version} ${giftpet.birdypet.label}` %></h4>
+        <% if (giftpet.userpet.nickname) { %>
+          <h4><%= giftpet.userpet.nickname %></h4>
+          <h6><%= giftpet.birdypet.species.commonName %></h6>
+        <% } else { %>
+          <h4><%= giftpet.birdypet.species.commonName %></h4>
+          <h6><%= giftpet.birdypet.version %> <%= giftpet.birdypet.label %></h6>
+        <% } %>
 
         <div class="card mt-4 mb-4">
           <div class="birdypet" style="background-image: url('https://storage.googleapis.com/birdypets/<%= giftpet.birdypet.species.order %>/<%= giftpet.birdypet.species.family %>/<%= giftpet.birdypet.species.scientificName %>/<%= giftpet.birdypet.id %>.jpg');"></div>
@@ -12,13 +18,12 @@
       </div>
       <div class="col-md-6">
         <h4>Who is the lucky person to receive this gift?</h4>
+        <h6>&nbsp;</h6>
 
-        <input class="form-control" list="memberListOptions" id="memberList" placeholder="Pick a member..." autocomplete="off">
+        <input class="form-control mt-4" list="memberListOptions" id="memberList" placeholder="Pick a member..." autocomplete="off">
         <datalist id="memberListOptions">
         <% for (var member of members) { %>
-          <option value="<%= member._id %>" data-avatar="<%= member.avatar %>">
-            <%= member.username %>
-          </option>
+          <option data-id="<%= member._id %>" data-avatar="<%= member.avatar %>" value="<%= member.username %>"></option>
         <% } %>
         </datalist>
 
@@ -33,23 +38,24 @@
       </form>
     </div>
 
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@2.3.7/dist/latest/bootstrap-autocomplete.min.js"></script>
     <script type="text/javascript">
       var actionButton = $('#actionButton');
       var memberDisplay = $('#memberDisplay');
 
       $('#memberList').on('input', function () {
-        var value = this.value;
-        var option = $('#memberListOptions option[value="' + value + '"]')[0];
+        var option = $('#memberListOptions option[value="' + this.value + '"]')[0];
+        var memberId = option.getAttribute('data-id');
 
         try {
-          $('#giftTo').val(value);
+          $('#giftTo').val(memberId);
 
-          memberDisplay.html(`<h3><img src="https://cdn.discordapp.com/avatars/${option.value}/${option.getAttribute('data-avatar')}.webp?size=64" class="member-avatar" data-id="${option.value}" onerror="missingMemberAvatar(this)"> ${option.innerText}</h3>`);
+          memberDisplay.html(`<h3><img src="https://cdn.discordapp.com/avatars/${memberId}/${option.getAttribute('data-avatar')}.webp?size=64" class="member-avatar" data-id="${memberId}" onerror="missingMemberAvatar(this)"> ${option.value}</h3>`);
 
           actionButton.attr('disabled', false);
         }
         catch (err) {
-$('#giftTo').val("");
+          $('#giftTo').val("");
           memberDisplay.html("");
           actionButton.attr('disabled', true);
         }

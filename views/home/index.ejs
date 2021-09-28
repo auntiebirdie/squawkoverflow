@@ -10,50 +10,53 @@
 
     <div></div>
 
-    <p><em>a bird lovers community</em></p>
+    <p><em>a (virtual) bird collecting game</em></p>
 
-    <a id="attribution"></a>
+    <a class="attribution"></a>
   </div>
 
-  <div class="container">
-    <div class="row">
-      <%- include('../partials/page-title.ejs', { title : "Latest Photos" }) %>
-    </div>
-    <div id="recently-added" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
-      <% for (var i = 0, len = recentlyAdded.length; i < len; i++) { %>
-        <% if (i % 4 == 0) { %>
-          <% if (i > 0) { %>
-            </div>
-          </div>
-          <% } %>
-          <div class="carousel-item<%= i == 0 ? " active" : "" %>">
-            <div class="carousel-item-inner row">
-        <% } %>
-            <div class="carousel-photo col-6 col-md-3 text-center">
-              <a href="/photos/<%= recentlyAdded[i].id  %>">
-                <% if (recentlyAdded[i].image) { %>
-                  <%- include('../partials/photo', { photo : recentlyAdded[i], classes : "w-100" }) %>
-                <% } %>
-              </a>
-            </div>
-      <% }; %>
-          </div>
-        </div>
+  <div class="row mt-5 mb-5 text-center">
+    <h1><strong class="chartreuse-underline">What is SQUAWKoverflow?</strong></h1>
+  </div>
+
+  <div class="row mb-5 text-center">
+    <div class="col-md-4">
+      <h1>🥚</h1>
+      <h3>hatch</h3>
+
+      <p></p>
+
+      <div class="col-md-6 mx-auto">
+        <p>Blue eggs, green eggs, tiny eggs, massive eggs—we have them all!</p>
+        <p>With over 23,000 birds that you can hatch, every egg is an opportunity to discover a new species.</p>
       </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#recently-added" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#recently-added" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
     </div>
 
+    <div class="col-md-4">
+      <h1>❤️</h1>
+      <h3>collect</h3>
+
+      <p></p>
+
+      <div class="col-md-6 mx-auto">
+        <p>Organize birds into flocks by color, theme, meme, or however you like!</p>
+        <p>Whether you want to have every single bird or just your favorites, make your aviary your own.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <h1>🤝</h1>
+      <h3>connect</h3>
+
+      <p></p>
+
+      <div class="col-md-6 mx-auto">
+        <p>Join our Discord server to meet bird lovers from all over the world!</p>
+        <p>We have a friendly community that enjoys sharing bird pics, talking about birds... anything and everything bird.</p>
+      </div>
+    </div>
+  </div>
+
 <script type="text/javascript" src="/js/full-background-image.js" image="banner"></script>
-<script type="text/javascript">
-  var carousel = new bootstrap.Carousel(document.querySelector('recently-added'))
-</script>
 
 <%- include('../footer.ejs') %>

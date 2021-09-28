@@ -1,0 +1,22 @@
+<%- include('../header.ejs') %>
+
+  <%- include('../partials/page-title.ejs', { title : "Hatch Eggs" }) %>
+
+  <div class="row text-center mt-5 mb-5">
+    <h3>These eggs are almost ready to hatch!  Which one will you pick?</h3>
+  </div>
+
+  <div class="row text-center">
+    <% for (var adjective of adjectives) { %>
+    <div class="col">
+      <form method="POST">
+        <button class="btn btn-lg btn-secondary mb-2" name="egg" value="<%= adjective %>" type="submit">
+          <h3>🥚</h3>
+        </button>
+        <h5><%= adjective %> egg</h5>
+      </form>
+    </div>
+    <% } %>
+  </div>
+
+<%- include('../footer.ejs') %>

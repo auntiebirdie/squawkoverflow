@@ -1,59 +1,41 @@
+const Chance = require('chance').Chance();
 const birdypets = require('./public/data/birdypets.json');
-const secrets = require('./secrets.json');
-
-const {
-  MessageEmbed,
-  MessageActionRow,
-  MessageButton,
-  WebhookClient
-} = require('discord.js');
-
 
 module.exports = {
-  sanitize: function (input) {
+  sanitize: function(input) {
     return input.replace(/[&<>'"]/g,
-        tag => ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          "'": '&#39;',
-          '"': '&quot;'
-        } [tag]));
+      tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      } [tag]));
   },
+  data: function(file) {
+    return require(`./public/data/${file}.json`);
+  },
+  Chance: Chance,
   DB: require('./helpers/database.js'),
   Discord: {
-    Webhook: {
-      send: function(channel, data) {
-        const webhookClient = new WebhookClient({
-          id: secrets.DISCORD.WEBHOOK[channel].ID,
-          token: secrets.DISCORD.WEBHOOK[channel].TOKEN
-        });
-
-        if (data.components) {
-          var actionRow = new MessageActionRow().addComponents(data.components.map((componentData) => {
-            return new MessageButton(componentData);
-          }));
-        }
-
-        webhookClient.send({
-          content: data.content,
-          embeds: data.embeds.map((embedData) => {
-            let embed = new MessageEmbed();
-
-            for (let key in embedData) {
-              embed[`set${key}`](embedData[key]);
-            }
-
-            return embed;
-          }),
-          components: actionRow ? [actionRow] : null
-        });
-      }
-    }
+    Webhook: require('./helpers/webhook.js')
   },
   BirdyPets: {
+    random: function(num = 1) {
+      return Chance.pickset(birdypets, num);
+    },
     fetch: function(id) {
       return birdypets.find((birdypet) => birdypet.id == id);
+    },
+    findBy: function(key, value) {
+      var keys = key.split('.');
+
+      return birdypets.filter((birdypet) => {
+        let tmp = keys.length > 1 ? birdypet[keys[0]][keys[1]] : birdypet[key];
+
+        return Array.isArray(tmp) ? tmp.includes(value) : tmp == value;
+      });
     }
-  }
+  },
+  Middleware: require('./helpers/middleware.js')
 }

@@ -1,0 +1,23 @@
+<%- include('../header.ejs') %>
+
+    <%- include('../partials/page-title.ejs', { title : `You hatch the ${adjective} egg to discover...`}) %>
+
+    <div class="row">
+      <div class="col-md-8 text-center">
+          <img src="https://storage.googleapis.com/birdypets/<%= birdypet.species.order %>/<%= birdypet.species.family %>/<%= birdypet.species.scientificName %>/<%= birdypet.id %>.jpg">
+      </div>
+      <div class="col-md-4">
+        <h3><%= birdypet.species.commonName %></h3>
+        <h6><%= birdypet.version %> <%= birdypet.label %></h6>
+
+        <%- include('../partials/spacer.ejs') %>
+
+        <form method="POST" class="text-center">
+          <button name="action" value="keep" type="submit" class="btn btn-lg btn-primary">❤️&nbsp;Keep</button>
+          &nbsp;
+          <button name="action" value="release" type ="submit" class="btn btn-lg btn-primary">👋&nbsp;Release</button>
+        </form>
+      </div>
+    </div>
+
+<%- include('../footer.ejs') %>

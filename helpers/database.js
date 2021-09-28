@@ -9,11 +9,13 @@ const datastore = new Datastore({
 
 function Database() {}
 
-Database.prototype.key = function(kind, id) {
-  return datastore.key([kind, id]);
+Database.prototype.KEY = datastore.KEY;
+
+Database.prototype.key = function(kind, id = null) {
+  return id ? datastore.key([kind, id]) : datastore.key([kind]);
 }
 
-Database.prototype.get = function(kind, id, force = true) {
+Database.prototype.get = function(kind, id) {
   return new Promise((resolve, reject) => {
     datastore.get(this.key(kind, id)).then(([result]) => {
       return resolve(addResultID(result));
@@ -23,7 +25,8 @@ Database.prototype.get = function(kind, id, force = true) {
 
 Database.prototype.set = function(kind, id, data) {
   return new Promise((resolve, reject) => {
-    this.get(kind, id, true).then((entity) => {
+    this.get(kind, id).then((entity) => {
+
       for (var datum in data) {
         if (data[datum]) {
           entity[datum] = data[datum];
@@ -60,31 +63,32 @@ Database.prototype.create = function(kind, data, uniqueField = false) {
         }
       });
     } else {
-      resolve(this.save(kind, datastore.key([kind]).id, data));
+      resolve(this.save(kind, null, data));
     }
   });
 }
 
 Database.prototype.save = function(kind, id, data) {
   return new Promise((resolve, reject) => {
+    var key = this.key(kind, id);
     delete data._id;
 
     datastore.save({
-      key: this.key(kind, data._id || id),
+      key: key,
       data: data
     }).then(() => {
-      return resolve();
+      return resolve(key.id);
     });
   });
 }
 
 Database.prototype.delete = function(kind, id) {
 
-	return new Promise((resolve, reject) => {
-		datastore.delete(this.key(kind, id)).then(() => {
-			return resolve();
-		});
-	});
+  return new Promise((resolve, reject) => {
+    datastore.delete(this.key(kind, id)).then(() => {
+      return resolve();
+    });
+  });
 }
 
 Database.prototype.fetch = function({
@@ -92,9 +96,8 @@ Database.prototype.fetch = function({
   filters,
   order,
   limit,
-  cacheId,
   keysOnly
-}, force = true) {
+}) {
   return new Promise((resolve, reject) => {
     let query = datastore.createQuery(kind);
 
@@ -122,12 +125,12 @@ Database.prototype.fetch = function({
   });
 }
 
-Database.prototype.fetchOne = function(args, force = true) {
+Database.prototype.fetchOne = function(args) {
   return new Promise((resolve, reject) => {
     this.fetch({
       ...args,
       "limit": 1
-    }, force).then((results) => {
+    }).then((results) => {
       resolve(results[0]);
     });
 
@@ -136,7 +139,7 @@ Database.prototype.fetchOne = function(args, force = true) {
 
 function addResultID(result) {
   if (result) {
-    result._id = result[Datastore.KEY].id || result[Datastore.KEY].name;
+    result._id = result[Datastore.KEY].id * 1 || result[Datastore.KEY].name;
   }
 
   return result;
