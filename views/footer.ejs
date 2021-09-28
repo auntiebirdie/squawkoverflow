@@ -7,7 +7,6 @@
   <hr>
 
   <div class="text-center">
-    <p><script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support SQUAWKoverflow on Ko-fi', '#29abe0', 'C1C1G89B');kofiwidget2.draw();</script></p>
     <p><small>All images &copy; their respective owners.  For takedown requests, <a href="mailto:seppukawaii+takedown@gmail.com">email us</a> with the URL of the photo you would like removed.</small></p>
     <p>&nbsp;</p>
   </div>
@@ -21,25 +20,38 @@
   var lazyLoadInstance = new LazyLoad({ });
 
   try {
-    var filterizr = new window.Filterizr('.filter-container', {
-      controlsSelector: '.filetr-controls',
-      gridItemsSelector: '.filter-item',
-      layout: 'sameWidth'
-    });
-
-    $('select.filter-controls').change(function() {
-      var filters = [];
-
-      $('select.filter-controls').each( function (key, select) {
-        var value = select.options[select.options.selectedIndex].value;
-
-        if (!filters.includes(value) && value != "all") {
-          filters.push(value);
-        }
+    $(document).ready(function() { 
+      var filterizr = new window.Filterizr('.filter-container', {
+        controlsSelector: '.filter-control',
+        gridItemsSelector: '.filter-item',
+        multifilterLogicalOperator: 'and',
+        layout: 'sameWidth'
       });
 
-      filterizr.filter(filters.join(', '));
+      $('select.filter-controls').change(function() {
+        var filters = [];
+
+        filterizr.filter('all');
+
+        $('select.filter-controls').each( function (key, select) {
+          var value = select.options[select.options.selectedIndex].value;
+
+          if (!filters.includes(value) && value != "all") {
+            filters.push(value);
+          }
+        });
+
+          filters.forEach( function (filter) {
+             filterizr.toggleFilter(filter);
+          });
+      });
+
+      updateFilters();
     });
+
+    function updateFilters () {
+      $('select.filter-controls').trigger('change');
+    }
   } catch (err) {
     console.log(err);
   }

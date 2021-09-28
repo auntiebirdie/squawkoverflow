@@ -1,7 +1,136 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { title : flock.name }) %>
+    <%- include('../partials/page-title.ejs', { title : "Manage Flocks" }) %>
 
-    <%- include('../partials/gallery.ejs', { photos : photos }) %>
+    <form id="flock-container" method="POST">
+      <input id="featuredFlock" type="hidden" name="featuredFlock" value="<%= member.flock ? member.flock : "" %>">
+      <% for (let flock of flocks) { %>
+      <div class="row mb-3">
+        <div class="col-1 text-center">
+          <button class="btn btn-sm btn-<%= member.flock == flock._id ? "warning" : "light" %>" data-action="feature" type="button" tabindex="-1"><strong>☆</strong></button>
+        </div>
+        <div class="col-10">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <a href="/flocks/<%= flock._id %>" target="_blank" class="btn btn-sm btn-secondary">
+                ☷ 
+              </a>
+            </div>
+            <input type="text" name="existingFlocks[<%= flock._id %>]" value="<%= flock.name %>" autocomplete="off" style="width: 75%; padding: 0 5px;">
+            <div class="input-group-append">
+              <button class="btn btn-sm btn-danger" data-action="delete" type="button" tabindex="-1"><strong>✖</strong></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% } %>
+      <div class="row mb-3">
+        <div class="col-1 text-center">
+          <button class="btn btn-sm btn-light" data-action="feature" type="button" tabindex="-1"><strong>☆</strong></button>
+        </div>
+        <div class="col-10">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <a class="btn btn-sm" style="visibility: hidden;">
+                ☷
+              </a>
+            </div>
+            <input type="text" name="newFlocks[0]" autocomplete="off" style="width: 75%; padding: 0 5px;">
+            <div class="input-group-append">
+              <button class="btn btn-sm btn-danger" data-action="delete" type="button" tabindex="-1"><strong>✖</strong></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-1 text-center">
+          <small>feature on profile</small>
+        </div>
+        <div class="col-10">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <a class="btn btn-sm" style="visibility: hidden;">
+                ☷
+              </a>
+            </div>
+            <input type="text" autocomplete="off" style="width: 75%; padding: 0 5px; visibility: hidden;" disabled>
+            <div class="input-group-append">
+              <button class="btn btn-sm btn-success" data-action="add" type="button" tabindex="-1"><strong>✚</strong></button>
+            </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-8 text-center">
+          <button class="btn btn-primary" type="submit">Save Changes</button>
+        </div>
+      </div>
+    </form>
+
+
+<script type="text/javascript">
+  var featuredFlock = document.getElementById('featuredFlock');
+  var newFlockIndex = 1;
+
+  document.getElementById('flock-container').addEventListener('click', function (e) {
+    var target = e.target;
+
+    if (target.nodeName == 'STRONG') {
+      target = target.parentNode;
+    }
+
+    var action = target.getAttribute('data-action');
+    var row = target.parentNode.parentNode.parentNode.parentNode;
+
+    switch (action) {
+      case "add":
+        var newRow = document.createElement('div');
+
+        newRow.className = 'row mb-3';
+        newRow.innerHTML = `
+          <div class="col-1 text-center">
+            <button class="btn btn-sm btn-light" data-action="feature" type="button" tabindex="-1"><strong>☆</strong></button>
+          </div>
+          <div class="col-10">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <a class="btn btn-sm" style="visibility: hidden;">
+                  ☷
+                </a>
+              </div>
+              <input type="text" name="newFlocks[${newFlockIndex++}]" autocomplete="off" style="width: 75%; padding: 0 5px;">
+              <div class="input-group-append">
+                <button class="btn btn-sm btn-danger" data-action="delete" type="button" tabindex="-1"><strong>✖</strong></button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('flock-container').insertBefore(
+          newRow,
+          row
+        );
+        break;
+      case "delete":
+         row.remove();
+        break;
+      case "feature":
+        var currentlySelected = document.querySelector('button[data-action="feature"].btn-warning');
+
+        if (currentlySelected) {
+          currentlySelected.className = 'btn btn-sm btn-light';
+        }
+
+        if (currentlySelected == target) {
+          featuredFlock.value = "";
+        }
+        else {
+          target.className = 'btn btn-sm btn-warning';
+          featuredFlock.value = row.querySelector('input').name;
+        }
+
+        break;
+    }
+  });
+</script>
 
 <%- include('../footer.ejs') %>

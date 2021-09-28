@@ -1,24 +1,6 @@
 const helpers = require('../helpers');
-const secrets = require('../secrets.json');
 const express = require('express');
 const router = express.Router();
-
-const DiscordOauth2 = require("discord-oauth2");
-const oauth = new DiscordOauth2();
-
-router.get('/', async (req, res) => {
-  var recentlyAdded = await helpers.DB.fetch({
-    "kind": "Photo",
-    "order": ["submittedAt", {
-      "descending": true
-    }],
-    "limit": 20
-  });
-
-  res.render('home/index', {
-    recentlyAdded: recentlyAdded
-  });
-});
 
 router.get('/login', (req, res) => {
   if (process.env.KONAMI && process.env.KONAMI == req.query.code) {

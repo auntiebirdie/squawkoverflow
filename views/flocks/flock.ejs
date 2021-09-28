@@ -1,0 +1,73 @@
+<%- include('../header.ejs') %>
+
+    <%- include('../partials/page-title.ejs', { title : entity.name, breadcrumb: 'Manage Flock' }) %>
+
+    <div class="row">
+      <% if (flocks.length > 0) { %>
+      <div class="col-6 mb-4">
+        <h4>Flock</h4>
+        <select class="selectpicker filter-controls">
+          <option value="all">[ALL]</option>
+          <% for (var flock of flocks) { %>
+            <option value="<%= flock._id %>" <%= flock._id == entity._id ? "selected" : "" %>><%= flock.name %></option>
+          <% } %>
+          <% if (locals.loggedInUser && entity.member == loggedInUser.id) { %>
+            <option value="flockless">[FLOCKLESS]</option>
+            <option value="nonickname">[NO NICKNAME]</option>
+          <% } %>
+        </select>
+      </div>
+      <% } %>
+      <div class="col-6 mb-4">
+        <h4>Family</h4>
+        <select class="selectpicker filter-controls">
+          <option value="all">[ALL]</option>
+          <% for (var family of families) { %>
+            <option value="<%= family.toLowerCase() %>"><%= family %></option>
+          <% } %>
+        </select>
+      </div>
+    </div>
+
+    <div class="row filter-container">
+      <% for (var userpet of userpets) { %>
+      <div class="col-md-3 filter-item" data-category="<%= [userpet.birdypet.species.family.toLowerCase(), ...(userpet.flocks.length > 0 ? userpet.flocks : ["flockless"]), (userpet.nickname ? "nicknamed" : "nonickname")].join(", ") %>">
+        <div class="pb-4">
+          <div class="card <%= userpet.flocks.includes(entity._id) || userpet.flocks.includes(`${entity._id}`) ? "border-primary" : "" %>">
+          <% if (userpet.birdypet) { %>
+            <p></p>
+            <div class="lazy birdypet" data-id="<%= userpet.id %>" data-bg="https://storage.googleapis.com/birdypets/<%= userpet.birdypet.species.order %>/<%= userpet.birdypet.species.family %>/<%= userpet.birdypet.species.scientificName %>/<%= userpet.birdypet.id %>.jpg"></div>
+            <h3 class="text-center"><%= userpet.nickname ? userpet.nickname : userpet.birdypet.species.commonName %></h3>
+            <h6 class="text-center"><%= userpet.nickname ? userpet.birdypet.species.commonName : (userpet.birdypet.label + " " + userpet.birdypet.version) %></h6>
+          <% } %>
+          </div>
+        </div>
+      </div>
+      <% } %>
+    </div>
+
+  <script>
+    var loader = `
+      <div class="spinner-border d-block mx-auto" role="status">
+        <span class="visually-hidden">Saving...</span>
+      </div>
+    `;
+
+    $('.filter-container').on('click', '.card', function () {
+      var image = this.querySelector('.birdypet');
+
+      if (!image.style.opacity) {
+        image.style.opacity = .5;
+        image.innerHTML = loader;
+
+        $.getJSON(`/api/flocks/<%= entity._id %>/${image.getAttribute('data-id')}`, function (data) {
+          image.style.opacity = null;
+          image.innerHTML = "";
+
+          $(image.parentNode)[`${data.action}Class`]('border-primary');
+        });
+      }
+    });
+  </script>
+
+<%- include('../footer.ejs') %>

@@ -59,7 +59,9 @@
         <ul class="navbar-nav me-auto mb-2 mb-md-0">
 	  <% locals.siteMenu.forEach( function (item) { %>
           <li class="nav-item">
-		  <a class="nav-link<% if (item.active) { %> active" aria-current="page<% } %>" href="<%= item.href %>"><%= item.label %></a>
+		  <a href="<%= item.href %>" class="nav-link<% if (item.active) { %> active" aria-current="page<% } %>" <% if (item.newWindow) { %>target="_blank"<% } %>>
+                    <%= item.label %>
+		  </a>
           </li>
 	  <% }); %>
         </ul>
@@ -72,9 +74,9 @@
 		</a>
 		<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 			<li><a class="dropdown-item" href="/members/<%= locals.loggedInUser.id %>">Profile</a></li>
-			<li><a class="dropdown-item" href="/birdypets/mine">My BirdyPets</a></li>
+			<li><a class="dropdown-item" href="/flocks">Manage Flocks</a></li>
 			<li><hr class="dropdown-divider"></li>
-			<li><a class="dropdown-item" href="/logout">Logout</a></li>
+			<li><a class="dropdown-item" href="/account/logout">Logout</a></li>
 		</ul>
 		<% } else { %>
 		<a href="https://discord.com/api/oauth2/authorize?client_id=885956624777351199&redirect_uri=https%3A%2F%2Fsquawkoverflow.com%2Flogin&response_type=code&scope=identify"

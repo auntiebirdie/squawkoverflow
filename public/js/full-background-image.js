@@ -18,18 +18,23 @@
       images[randomIndex] = temporaryValue;
     }
 
-    var image = images.pop();
+    var containers = document.querySelectorAll('.full-image-background');
 
+    for (var i = 0, len = containers.length; i < len; i++) {
+      var image = images.pop();
 
-    document.querySelector('.full-image-background').style.backgroundImage = "url('" + image.image + "')";
+      containers[i].style.backgroundImage = "url('" + image.image + "')";
 
-    if (image.position) {
-      document.querySelector('.full-image-background').style.backgroundPosition = image.position;
+      if (image.position) {
+        containers[i].style.backgroundPosition = image.position;
+      }
+
+      var attribution = containers[i].querySelector('.attribution');
+	    
+      attribution.href = image.source;
+      attribution.target = '_blank';
+      attribution.innerHTML = "&copy; " + image.attribution + " / Unsplash";
     }
-
-    document.getElementById('attribution').href = image.source;
-    document.getElementById('attribution').target = '_blank';
-    document.getElementById('attribution').innerHTML = "background &copy; " + image.attribution + " / Unsplash";
   };
 
   xhr.send();

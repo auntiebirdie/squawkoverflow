@@ -11,7 +11,7 @@
         <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
           <%- include('../partials/spacer.ejs'); %>
 
-          <form id="manageBirdyPet" method="post">
+          <form id="manageBirdyPet" method="POST">
 
           <h5><label>Nickname</label></h5>
           <input id="nickname" type="text" name="nickname" value="<%= userpet.nickname %>" style="width: 100%">
@@ -34,12 +34,12 @@
           <% } %>
 
           <% if (locals.flocks) { %>
-          <h5 class="mb-4"><label>Flocks</label> <a href="/birdypets/flocks"><small>(manage)</small></a></h5>
+          <h5 class="mb-4"><label>Flocks</label> <a href="/flocks"><small>(manage)</small></a></h5>
 
           <% for (var flock of flocks) { %>
           <p>
             <label>
-              <input type="checkbox" name="flocks[]" value="<%= flock._id%>" <%= userpet.flocks && userpet.flocks.includes(flock._id) ? "checked" : ""%>>
+              <input type="checkbox" name="flocks[]" value="<%= flock._id%>" <%= userpet.flocks && (userpet.flocks.includes(flock._id) || userpet.flocks.includes(`${flock._id}`)) ? "checked" : ""%>>
               <%= flock.name %>
             </label>
           </p>
@@ -77,7 +77,7 @@
         <h6>Aviary</h6>
         <p>
         <% if (member._id) { %>
-          <a href="/birdypets/aviary/<%= member._id %>">
+          <a href="/aviary/<%= member._id %>">
             <%= member.username %>'s Aviary
           </a>
         <% } else { %>
@@ -90,12 +90,12 @@
 
           <div class="text-center">
             <% if (member.birdyBuddy != userpet._id) { %>
-            <p><a href="/birdypets/buddy/<%= userpet._id %>" class="btn btn-primary">💖 Make Birdy Buddy</a></p>
+            <p><a href="/birdypet/buddy/<%= userpet._id %>" class="btn btn-primary">💖 Make Birdy Buddy</a></p>
             <% } else {  %>
             <%- include('../partials/friendshipMeter.ejs', { friendship : userpet.friendship || 0 }) %>
             <% } %>
-            <p><a href="/birdypets/gift/<%= userpet._id %>" class="btn btn-primary">🎁 Gift to Someone</a></p>
-            <p><a href="/birdypets/release/<%= userpet._id %>" class="btn btn-primary">👋 Release Bird</a></p>
+            <p><a href="/birdypet/gift/<%= userpet._id %>" class="btn btn-primary">🎁 Gift to Someone</a></p>
+            <p><a href="/birdypet/release/<%= userpet._id %>" class="btn btn-primary">👋 Release Bird</a></p>
           </div>
         <% } %>
       </div>
