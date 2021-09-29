@@ -100,10 +100,12 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
     var flocks = [];
 
     for (var flock of req.entity.flocks) {
+	    if (!isNaN(flock * 1)) {
 	    let flockData = await helpers.DB.get('MemberFlock', flock * 1);
 
 	    if (flockData) {
 		    flocks.push(flockData);
+	    }
 	    }
     }
   }
@@ -120,17 +122,23 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
 
 router.post('/:id', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, (req, res) => {
   var nickname = req.body.nickname;
+  var variant = req.body.variant || req.entity.birdypet;
+  var description = req.body.description;
+  var flocks = req.body.flocks || [];
 
   if (nickname.length > 50) {
     nickname = nickname.slice(0, 50);
   }
 
-  var variant = req.body.variant || req.entity.birdypet;
+  if (description.length > 500) {
+    description = description.slice(0, 500);
+  }
 
   helpers.DB.set('MemberPet', req.params.id, {
     nickname: nickname,
     birdypet: variant,
-    flocks: req.body.flocks
+    description: description,
+    flocks: flocks.map( (flock) => flock * 1 )
   }).then(() => {
     res.redirect('/birdypet/' + req.params.id);
   });

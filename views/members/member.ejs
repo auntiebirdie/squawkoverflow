@@ -11,11 +11,6 @@
       <h5>Joined</h5>
       <p><%= new Date(member.joinedAt).toLocaleString('en-US', { dateStyle: "long" }) %></p>
 
-      <% if (submissions > 0) { %>
-      <h5>Submissions</h5>
-      <p><%= submissions %> Photos</p>
-      <% } %>
-
       <% if (birdypets > 0) { %>
       <h5>Aviary</h5>
       <p><a href="/aviary/<%= member._id %>"><%= birdypets %> BirdyPets</a></p>

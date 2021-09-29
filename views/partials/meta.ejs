@@ -5,11 +5,19 @@
             <meta property="og:title" content="<%= entity.name %>">
             <meta property="og:description" content="<%= member.username %>'s Flock">
             <meta property="og:image" content="<% if (userpets.length > 0) { %>https://storage.googleapis.com/birdypets/<%= userpets[0].birdypet.species.order %>/<%= userpets[0].birdypet.species.family %>/<%= userpets[0].birdypet.species.scientificName %>/<%= userpets[0].birdypet.id %>.jpg<% } %>">
+        <% } else if (locals.page && page == 'member') { %>
+            <meta property="og:title" content="<%= member.username %>">
+            <meta property="og:image" content="<% if (member.avatar) { %>https://cdn.discordapp.com/avatars/<%= member._id %>/<%= member.avatar %>.webp<% } else { %>/img/avatar-placeholder.jpeg<% } %>">
+            <meta property="og:type" content="profile">
+            <meta property="profile:username" content="<%= member.username %>">
+            <meta property="profile:first_name" content="<%= member.username %>">
+            <meta property="profile:last_name" content="">
         <% } else if (locals.userpet && locals.member) { %>
             <meta property="og:title" content="<%= userpet.nickname ? userpet.nickname : birdypet.species.commonName %>">
-            <meta property="og:description" content="<%= member.username %>'s <%= birdypet.species.commonName %>">
+            <meta property="og:description" content="<% if (userpet.description) { %><%= userpet.description %> <% } else { %><%= member.username %>'s <%= birdypet.species.commonName %><% } %>">
             <meta property="og:image" content="https://storage.googleapis.com/birdypets/<%= birdypet.species.order %>/<%= birdypet.species.family %>/<%= birdypet.species.scientificName %>/<%= birdypet.id %>.jpg">
-            <meta property="article:author" content="<%= member.username %>'s">
+            <meta property="og:type" content="article">
+            <meta property="article:author" content="https://squawkoverflow.com/members/<%= member._id %>">
             <meta property="twitter:card" content="summary_large_image">
             <meta property="twitter:image" content="https://storage.googleapis.com/birdypets/<%= birdypet.species.order %>/<%= birdypet.species.family %>/<%= birdypet.species.scientificName %>/<%= birdypet.id %>.jpg">
         <% } else { %>

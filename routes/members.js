@@ -17,14 +17,6 @@ router.get('/:id', async (req, res) => {
   var member = await helpers.DB.get('Member', req.params.id);
 
   if (member) {
-    var submissions = await helpers.DB.fetch({
-      'kind': 'Photo',
-      'filters': [
-        ['submittedBy', '=', req.params.id]
-      ],
-      'keysOnly': true
-    });
-
     var birdypets = await helpers.DB.fetch({
       'kind': 'MemberPet',
       'filters': [
@@ -72,8 +64,8 @@ router.get('/:id', async (req, res) => {
     }
 
     res.render('members/member', {
+	   page: "member",
       member: member,
-      submissions: submissions.length || 0,
       birdypets: birdypets.length || 0,
       birdybuddy: birdybuddy || {},
       flock: flock || null,
