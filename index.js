@@ -77,6 +77,7 @@ app.use('/aviary', require('./routes/aviary.js'));
 app.use('/flocks', require('./routes/flocks.js'));
 app.use('/birdypedia', require('./routes/birdypedia.js'));
 app.use('/members', require('./routes/members.js'));
+app.use('/faq', require('./routes/faq.js'));
 app.use('/account', require('./routes/account.js'));
 app.use('/api', require('./routes/api.js'));
 

@@ -1,3 +1,72 @@
 <%- include('../header.ejs') %>
 
+  <%- include('../partials/page-title.ejs', { title: "FAQ" }) %>
+
+  <div class="row">
+    <div class="col-4">
+      <div class="list-group">
+        <a class="list-group-item list-group-item-action" href="#what-is-this">
+          What is this site?
+        </a>
+        <a class="list-group-item list-group-item-action" href="#discord-authentication">
+          Why is authentication through Discord?
+        </a>
+        <a class="list-group-item list-group-item-action" href="#weird-eggs">
+          What's with the weird eggs?
+        </a>
+        <a class="list-group-item list-group-item-action" href="#flock-management">
+          How do I organize my aviary into flocks?
+        </a>
+      </div>
+    </div>
+
+    <div id="faq" class="col-8">
+      <div>
+        <h4 class="mb-4"><a name="what-is-this"></a>What is this site?</h4>
+
+        <p>SQUAWKoverflow is a virtual bird collecting game where you can amass an aviary of your favorite birds!  All you have to do is hatch eggs and decide if you want to keep the bird inside or release it for someone else to add to their own aviary.</p>
+
+        <p>You can engage as much or as little as you like. We have a small community of members who like to gift and trade birds, and there are games on the Discord server you can play to gain friendship with your favorite bird ("Birdy Buddy"). If the social aspect isn't for you, that's fine! Collect all the birds you want and enjoy them however you prefer.</p>
+      </div>
+
+      <%- include('../partials/spacer.ejs') %>
+
+      <div>
+        <h4 class="mb-4"><a name="discord-authentication"></a>Why is authentication through Discord?</h4>
+
+        <p>SQUAWKoverflow started primarily as a complement to a Discord server. This makes the server sort of the central hub - it's where trading and discussion take place, as well as where notifications, update notes, and bug reports go. Rather than implementing our own authentication service, it made sense to leverage Discord since the server and the site are tightly interconnected.</p>
+
+        <p>You do not need to be a member of the server to be a member of the site. Authentication does not grant any personal information or account access. The only information that is exchanged is that you have a Discord account, what your public username is, and your current avatar.</p>
+      </div>
+
+      <%- include('../partials/spacer.ejs') %>
+
+      <div>
+        <h4 class="mb-4"><a name="weird-eggs"></a>What's with the weird eggs?</a></h4>
+
+        <p>You'll likely discover some pretty weird eggs while deciding which to hatch. Much egg? Forked egg? <em>Human egg??</em></p>
+
+        <p>The adjectives for the eggs come from the descriptions of birds on <a href="https://ebird.org">eBird.org</a>. Originally, the plan was to collect all the adjectives, then go through them and do some quality control to ensure the results made sense.</p>
+
+        <p>But then we hatched the perpendicular eggs. We were delighted when we found fluffy, lovelorn, lethargic, and monstrous eggs.</p>
+
+        <p>So we kept them all! Besides, what's the fun in making sense?</p>
+      </div>
+
+      <%- include('../partials/spacer.ejs') %>
+
+      <div>
+        <h4 class="mb-4"><a name="flock-management"></a>How do I organize my aviary into flocks?</h4>
+
+        <p>The more birds you get, the more you may want to organize them! You can make as many flocks as you want, and birds can belong to more than one flock.</p>
+
+        <p>In your user dropdown, there is a link to <a href="/flocks" target="_blank">Manage Flocks</a> that will take you to a screen with some input boxes. How you want to name your flocks is completely up to you, and can even include emoji!</p>
+
+        <p>Once you've created a flock, there will be a new button available: <button class="btn btn-sm btn-secondary" type="button">☷</button> This button will take you to a special view of your aviary where you can easily add/remove birds by clicking on them. Birds surrounded by a blue outline are in the current flock, and those with a grey outline are not.</p>
+
+        <p>You may also notice another button on the Manage Flocks screen: <button class="btn btn-sm btn-light"><strong>☆</strong></button> Clicking this will activate it <button class="btn btn-sm btn-warning"><strong>☆</strong></button> which means the selected flock will appear on your Profile. Show off your faovirte birds!</p>
+      </div>
+    </div>
+  </div>
+
 <%- include('../footer.ejs') %>

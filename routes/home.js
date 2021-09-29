@@ -7,17 +7,7 @@ const DiscordOauth2 = require("discord-oauth2");
 const oauth = new DiscordOauth2();
 
 router.get('/', async (req, res) => {
-  var recentlyAdded = await helpers.DB.fetch({
-    "kind": "Photo",
-    "order": ["submittedAt", {
-      "descending": true
-    }],
-    "limit": 20
-  });
-
-  res.render('home/index', {
-    recentlyAdded: recentlyAdded
-  });
+  res.render('home/index');
 });
 
 router.get('/login', (req, res) => {
