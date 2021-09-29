@@ -76,7 +76,7 @@ router.post('/', async (req, res) => {
         case "release":
           // TODO - only post to webhook if a verified server member
   helpers.Discord.Webhook.send('free-birds', {
-	  user: req.session.user.id,
+	  member: req.session.user.id,
     birdypet: birdypet
   });
           return res.redirect('/hatch');

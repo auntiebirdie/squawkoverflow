@@ -25,10 +25,10 @@ Webhook.prototype.send = function(channel, data) {
     switch (channel) {
       case "egg-hatchery":
         pubSubClient.topic('squawkoverflow-egg-hatchery').publish(Buffer.from(""), {
-          member: data.member,
-          birdypet: data.birdypet.id,
-	  adjective: data.adjective,
-	  userpet: data.userpet,
+          member: `${data.member}`,
+          birdypet: `${data.birdypet.id}`,
+	  adjective: `${data.adjective}`,
+	  userpet: `${data.userpet}`,
           source: "WEB"
         }).then((response) => {
           resolve();
@@ -50,8 +50,8 @@ Webhook.prototype.send = function(channel, data) {
         break;
       case "free-birds":
         pubSubClient.topic('squawkoverflow-free-birds').publish(Buffer.from(""), {
-          user: data.user,
-          birdypet: data.birdypet.id,
+	  member: `${data.member}`,
+          birdypet: `${data.birdypet.id}`,
           source: "WEB"
         }).then((response) => {
           resolve();
