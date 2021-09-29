@@ -1,0 +1,62 @@
+<%- include('../header.ejs') %>
+
+    <%- include('../partials/page-title.ejs', { title : "Birds by Family", breadcrumb: "Birdypedia" }) %>
+
+    <div class="row mb-5">
+      <div class="col-4 text-center">
+        <%- include ('../partials/birddatalist.ejs') %>
+      </div>
+    </div>
+
+    <div id="birdDisplay" class="row"></div>
+
+<script type="text/javascript">
+  var userpets = [<%= userpets %>];
+  var cache = {};
+
+  $('#birdList').on('input', function () {
+    var value = this.value;
+    var option = $('#birdListOptions option[value="' + value + '"]')[0];
+    try {
+      var family = option.getAttribute('data-family');
+
+      $('#birdDisplay').html(`
+        <div class="spinner-border d-block mx-auto" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      `);
+
+      if (cache[family]) {
+        displayBirdyPets(family);
+      }
+      else {
+        $.getJSON(`/api/birdypedia/family/${family}`, function (data) {
+          cache[family] = data;
+          displayBirdyPets(family);
+        });
+      }
+    } catch (err) {
+      $('#birdDisplay').html("");
+    }
+  });
+
+  function displayBirdyPets (family) {
+    var birdypets = cache[family];
+    var output = "";
+    for (var birdypet of birdypets) {
+        output += `<div class="col-md-3 mb-4" data-id="${birdypet.id}" data-credit="${birdypet.credit}" data-original="${birdypet.illustration}">`;
+          output += `<div class="card">`;
+            output += `<div class="lazy birdypet birdypet-${userpets.includes(birdypet.id * 1) ? "hatched" : "unhatched"}"`;
+              output += ` data-bg="https://storage.googleapis.com/birdypets/${birdypet.species.order}/${birdypet.species.family}/${birdypet.species.scientificName}/${birdypet.id}.jpg">`;
+            output += `</div>`;
+             output += `<h3 class="text-center">${birdypet.species.commonName}</h3>`;
+             output += `<h6 class="text-center">${birdypet.version}&nbsp;${birdypet.label}</h6>`;
+          output += `</div>`;
+        output += `</div>`;
+    }
+
+    $("#birdDisplay").html(output);
+    lazyLoadInstance.update();
+  }
+</script>
+<%- include('../footer.ejs') %>
