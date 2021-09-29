@@ -33,10 +33,10 @@
           <p>&nbsp;</p>
           <% } %>
 
-          <% if (locals.flocks) { %>
+          <% if (locals.allFlocks) { %>
           <h5 class="mb-4"><label>Flocks</label> <a href="/flocks"><small>(manage)</small></a></h5>
 
-          <% for (var flock of flocks) { %>
+          <% for (var flock of allFlocks) { %>
           <p>
             <label>
               <input type="checkbox" name="flocks[]" value="<%= flock._id%>" <%= userpet.flocks && (userpet.flocks.includes(flock._id) || userpet.flocks.includes(`${flock._id}`)) ? "checked" : ""%>>
@@ -82,6 +82,13 @@
           </a>
         <% } else { %>
           #<%= member %>'s Aviary
+        <% } %>
+        </p>
+
+        <h6>Flocks</h6>
+        <p>
+        <% for (var flock of flocks) { %>
+          <a href="/flocks/<%= flock._id %>"><%= flock.name %></a><br>
         <% } %>
         </p>
 

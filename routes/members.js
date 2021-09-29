@@ -49,25 +49,25 @@ router.get('/:id', async (req, res) => {
       });
 
       if (member.flock) {
-	      var flock = await helpers.DB.get('MemberFlock', member.flock * 1);
+        var flock = await helpers.DB.get('MemberFlock', member.flock * 1);
 
-		      if (flock && flock.member == member._id) {
-	      var flockpets = await helpers.DB.fetch({
-		      'kind' : 'MemberPet',
-		      'filters' : [
-			      ['member', '=', req.params.id],
-			      ['flocks', '=', member.flock]
-		      ]
-	      }).then( (userpets) => {
-		      return userpets.map( (userpet) => {
-			      return {
-			      id: userpet._id,
-				      nickname: userpet.nickname,
-				      birdypet: helpers.BirdyPets.fetch(userpet.birdypet)
-			      }
-		      });
-	      });
-		      }
+        if (flock && flock.member == member._id) {
+          var flockpets = await helpers.DB.fetch({
+            'kind': 'MemberPet',
+            'filters': [
+              ['member', '=', req.params.id],
+              ['flocks', '=', `${member.flock}`]
+            ]
+          }).then((userpets) => {
+            return userpets.map((userpet) => {
+              return {
+                id: userpet._id,
+                nickname: userpet.nickname,
+                birdypet: helpers.BirdyPets.fetch(userpet.birdypet)
+              }
+            });
+          });
+        }
       }
     }
 

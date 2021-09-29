@@ -49,17 +49,15 @@ router.get('/flocks/:MemberFlock/:MemberPet', helpers.Middleware.isLoggedIn, hel
   var index = req.entities['MemberPet'].flocks ? req.entities['MemberPet'].flocks.indexOf(req.entities['MemberFlock']._id) : -1;
   var flocks = req.entities['MemberPet'].flocks ? req.entities['MemberPet'].flocks : [];
 
-	if (index !== -1) {
-			flocks.splice(index, -1);
-	}
-	else {
-		flocks.push(req.entities['MemberFlock']._id);
-	}
+  if (index !== -1) {
+    flocks = flocks.splice(index, -1);
+  } else {
+    flocks.push(req.entities['MemberFlock']._id);
+  }
 
   helpers.DB.set('MemberPet', req.entities['MemberPet']._id, {
     flocks: flocks
   }).then(() => {
-
     res.json({
       action: index !== -1 ? "remove" : "add"
     });

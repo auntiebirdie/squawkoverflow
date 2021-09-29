@@ -9,6 +9,14 @@ router.get('/mine', helpers.Middleware.isLoggedIn, (req, res, next) => {
 router.get('/:id', helpers.Middleware.entityExists, async (req, res, next) => {
   var families = new Set();
 
+  var flocks = await helpers.DB.fetch({
+    "kind": "MemberFlock",
+    "filters": [
+      ["member", "=", req.entity._id]
+    ],
+    "order": ["displayOrder"]
+  });
+
   var userpets = await helpers.DB.fetch({
     "kind": "MemberPet",
     "filters": [
@@ -27,21 +35,14 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res, next) => {
         id: userpet._id,
         nickname: userpet.nickname,
         hatchedAt: userpet.hatchedAt,
-        flocks: userpet.flocks || [],
+        flocks: userpet.flocks ? userpet.flocks.filter( (id) => flocks.find((flock) => flock._id == id)) : [],
         birdypet: birdypet
       }
     });
   });
 
-  var flocks = await helpers.DB.fetch({
-    "kind": "MemberFlock",
-    "filters": [
-      ["member", "=", req.entity._id]
-    ],
-    "order": ["displayOrder"]
-  });
-
   res.render('aviary/index', {
+    page: 'aviary',
     member: req.entity,
     userpets: userpets,
     flocks: flocks,

@@ -44,11 +44,6 @@ app.use(function(req, res, next) {
       "label": "My Aviary",
       "href": `/aviary/${req.session.user.id}`
     });
-  } else {
-    menu.push({
-      "label": "Login",
-      "href": "https://discord.com/api/oauth2/authorize?client_id=885956624777351199&redirect_uri=https%3A%2F%2Fsquawkoverflow.com%2Flogin&response_type=code&scope=identify"
-    });
   }
 
   menu.push({

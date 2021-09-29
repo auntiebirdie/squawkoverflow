@@ -87,17 +87,33 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
     }
   }
 
-  res.render('birdypet/birdypet', {
-    userpet: req.entity,
-    birdypet: birdypet,
-    member: member,
-    flocks: await helpers.DB.fetch({
+  if (req.session.user && req.session.user.id == member._id) {
+    var allFlocks = await helpers.DB.fetch({
       "kind": "MemberFlock",
       "filters": [
         ["member", "=", member._id]
       ],
       "order": ["displayOrder", {}]
-    }),
+    });
+  }
+  if (req.entity.flocks) {
+    var flocks = [];
+
+    for (var flock of req.entity.flocks) {
+	    let flockData = await helpers.DB.get('MemberFlock', flock * 1);
+
+	    if (flockData) {
+		    flocks.push(flockData);
+	    }
+    }
+  }
+
+  res.render('birdypet/birdypet', {
+    userpet: req.entity,
+    birdypet: birdypet,
+    member: member,
+    flocks: flocks || [],
+    allFlocks: allFlocks || [],
     otherVersions: helpers.BirdyPets.findBy("species.speciesCode", birdypet.species.speciesCode)
   });
 });

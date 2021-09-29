@@ -6,7 +6,7 @@
       <% if (flocks.length > 0) { %>
       <div class="col-6 mb-4">
         <h4>Flock</h4>
-        <select class="selectpicker filter-controls">
+        <select id="flocks" class="selectpicker filter-controls">
           <option value="all">[ALL]</option>
           <% for (var flock of flocks) { %>
             <option value="<%= flock._id %>"><%= flock.name %></option>
@@ -47,5 +47,26 @@
       </div>
       <% } %>
     </div>
+
+<script>
+  var statePushed = false;
+
+  $('#flocks').on('change', function () {
+    var value = this.options[this.selectedIndex].value;
+
+    if (!isNaN(value)) {
+      if (statePushed) {
+        window.history.replaceState(null, null, `/flocks/${value}`);
+      }
+      else {
+        window.history.pushState(null, null, `/flocks/${value}`);
+        statePushed = true;
+      }
+    }
+    else if (statePushed) {
+      window.history.go(-1);
+    }
+  });
+</script>
 
 <%- include('../footer.ejs') %>
