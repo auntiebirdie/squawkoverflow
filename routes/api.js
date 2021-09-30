@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/birdypedia/family/:family', async (req, res) => {
-  var birdypets = require('../public/data/birdypets.json').filter((birdypet) => birdypet.species.family == req.params.family);
+  var birdypets = require('../public/data/birdypets.json').filter((birdypet) => birdypet.species.family.toLowerCase() == req.params.family.toLowerCase());
 
   res.json(birdypets);
 });

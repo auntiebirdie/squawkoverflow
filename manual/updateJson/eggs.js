@@ -20,7 +20,9 @@ const fs = require('fs');
       });
     });
 
-    fs.writeFileSync(__dirname + '/eggs.json', JSON.stringify([...output], null, 2));
+    output = output.sort((a, b) => a.localeCompare(b));
+
+    fs.writeFileSync(__dirname + '/../../public/data/eggs.json', JSON.stringify([...output], null, 2));
   } catch (err) {
     console.log(err);
   }

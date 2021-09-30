@@ -11,15 +11,11 @@
         </div>
         <div class="col-11">
           <div class="input-group">
-            <div class="input-group-prepend">
-              <a href="/flocks/<%= flock._id %>" target="_blank" class="btn btn-sm btn-secondary">
-                ☷ 
-              </a>
-            </div>
-            <input type="text" name="existingFlocks[<%= flock._id %>]" value="<%= flock.name %>" autocomplete="off" style="width: 80%; padding: 0 5px;">
-            <div class="input-group-append">
+            <a class="btn btn-sm btn-secondary" type="button" tabindex="-1" href="/flocks/<%= flock._id %>" target="_blank">
+              ☷
+            </a>
+            <input type="text" name="existingFlocks[<%= flock._id %>]" value="<%= flock.name %>" class="form-control" autocomplete="off">
               <button class="btn btn-sm btn-danger" data-action="delete" type="button" tabindex="-1"><strong>✖</strong></button>
-            </div>
           </div>
         </div>
       </div>
@@ -30,15 +26,11 @@
         </div>
         <div class="col-11">
           <div class="input-group">
-            <div class="input-group-prepend">
               <a class="btn btn-sm" style="visibility: hidden;">
                 ☷
               </a>
-            </div>
-            <input type="text" name="newFlocks[0]" autocomplete="off" style="width: 80%; padding: 0 5px;">
-            <div class="input-group-append">
+            <input type="text" name="newFlocks[0]" class="form-control" autocomplete="off">
               <button class="btn btn-sm btn-danger" data-action="delete" type="button" tabindex="-1"><strong>✖</strong></button>
-            </div>
           </div>
         </div>
       </div>
@@ -47,15 +39,11 @@
         </div>
         <div class="col-11">
           <div class="input-group">
-            <div class="input-group-prepend">
               <a class="btn btn-sm" style="visibility: hidden;">
                 ☷
               </a>
-            </div>
-            <input type="text" autocomplete="off" style="width: 80%; padding: 0 5px; visibility: hidden;" disabled>
-            <div class="input-group-append">
+            <input type="text" autocomplete="off" class="form-control" style="visibility: hidden;" disabled>
               <button class="btn btn-sm btn-success" data-action="add" type="button" tabindex="-1"><strong>✚</strong></button>
-            </div>
         </div>
       </div>
       <div class="row">
@@ -91,15 +79,11 @@
           </div>
           <div class="col-11">
             <div class="input-group">
-              <div class="input-group-prepend">
                 <a class="btn btn-sm" style="visibility: hidden;">
                   ☷
                 </a>
-              </div>
-              <input type="text" name="newFlocks[${newFlockIndex++}]" autocomplete="off" style="width: 80%; padding: 0 5px;">
-              <div class="input-group-append">
+              <input type="text" name="newFlocks[${newFlockIndex++}]" class="form-control"" autocomplete="off">
                 <button class="btn btn-sm btn-danger" data-action="delete" type="button" tabindex="-1"><strong>✖</strong></button>
-              </div>
             </div>
           </div>
         `;

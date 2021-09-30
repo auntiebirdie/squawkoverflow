@@ -16,12 +16,12 @@
           <div class="row mb-3">
             <div class="col-8">
               <h5><label>Nickname</label></h5>
-              <input id="nickname" type="text" name="nickname" value="<%= userpet.nickname %>" style="width: 100%">
+              <input id="nickname" type="text" name="nickname" class="form-control" value="<%= userpet.nickname %>" style="width: 100%">
             </div>
             <div class="col-4">
             <% if (otherVersions.length > 1) { %>
               <h5><label>Variant</label></h5>
-              <select name="variant">
+              <select name="variant" class="form-select">
                 <% for (let otherVersion of otherVersions) { %>
                 <option value="<%= otherVersion.id %>" <%= otherVersion.id == birdypet.id ? "selected" : "" %>>
                   <%= otherVersion.version %>
@@ -36,25 +36,25 @@
 
           <div class="mb-3">
             <h5><label>Description</label></h5>
-            <textarea name="description" maxlength="500" style="height: 150px; width: 100%;"><%= userpet.description %></textarea>
+            <textarea name="description" maxlength="500" class="form-control" style="height: 150px; width: 100%;"><%= userpet.description %></textarea>
           </div>
 
           <% if (locals.allFlocks) { %>
-          <h5 class="mb-4"><label>Flocks</label> <a href="/flocks"><small>(manage)</small></a></h5>
+            <h5 class="mb-4"><label>Flocks</label> <a href="/flocks"><small>(manage)</small></a></h5>
 
-          <% for (var flock of allFlocks) { %>
-          <p>
-            <label>
-              <input type="checkbox" name="flocks[]" value="<%= flock._id%>" <%= userpet.flocks && (userpet.flocks.includes(flock._id) || userpet.flocks.includes(`${flock._id}`)) ? "checked" : ""%>>
-              <%= flock.name %>
-            </label>
-          </p>
+            <% for (var flock of allFlocks) { %>
+            <p>
+              <label>
+                <input type="checkbox" name="flocks[]" class="form-check-input" value="<%= flock._id%>" <%= userpet.flocks && (userpet.flocks.includes(flock._id) || userpet.flocks.includes(`${flock._id}`)) ? "checked" : ""%>>
+                &nbsp;
+                <%= flock.name %>
+              </label>
+            </p>
+            <% } %>
+
           <% } %>
 
-          <p>&nbsp;</p>
-          <% } %>
-
-          <button class="btn btn-primary" type="submit">Save Changes</button>
+          <button class="btn btn-primary mt-3" type="submit">Save Changes</button>
 
           </form>
         <% } else { %>

@@ -36,7 +36,7 @@ const DB = new Datastore({
       });
     }
 
-    fs.writeFileSync(__dirname + '/../public/data/birdypets.json', JSON.stringify([...output], null, 2));
+    fs.writeFileSync(__dirname + '/../../public/data/birdypets.json', JSON.stringify([...output], null, 2));
   } catch (err) {
     console.log(err);
   }

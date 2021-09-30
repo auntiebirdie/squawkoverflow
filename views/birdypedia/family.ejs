@@ -2,23 +2,24 @@
 
     <%- include('../partials/page-title.ejs', { title : "Birds by Family", breadcrumb: "Birdypedia" }) %>
 
-    <div class="row mb-5">
-      <div class="col-4 text-center">
-        <%- include ('../partials/birddatalist.ejs') %>
-      </div>
-    </div>
+    <%- include('../partials/filter-search-sort.ejs') %>
 
-    <div id="birdDisplay" class="row"></div>
+    <%- include('../partials/spacer.ejs'); %>
+
+    <div id="birdDisplay" class="row filter-container" data-delay="true"></div>
 
 <script type="text/javascript">
   var userpets = [<%= userpets %>];
   var cache = {};
+  $('#family').on('change', function () {
+    var family = this.value;
 
-  $('#birdList').on('input', function () {
-    var value = this.value;
-    var option = $('#birdListOptions option[value="' + value + '"]')[0];
+    filterizr.destroy();
+
     try {
-      var family = option.getAttribute('data-family');
+      if (family == "") {
+        throw "";
+      }
 
       $('#birdDisplay').html(`
         <div class="spinner-border d-block mx-auto" role="status">
@@ -43,20 +44,21 @@
   function displayBirdyPets (family) {
     var birdypets = cache[family];
     var output = "";
+
     for (var birdypet of birdypets) {
-        output += `<div class="col-md-3 mb-4" data-id="${birdypet.id}" data-credit="${birdypet.credit}" data-original="${birdypet.illustration}">`;
-          output += `<div class="card">`;
-            output += `<div class="lazy birdypet birdypet-${userpets.includes(birdypet.id * 1) ? "hatched" : "unhatched"}"`;
-              output += ` data-bg="https://storage.googleapis.com/birdypets/${birdypet.species.order}/${birdypet.species.family}/${birdypet.species.scientificName}/${birdypet.id}.jpg">`;
-            output += `</div>`;
-             output += `<h3 class="text-center">${birdypet.species.commonName}</h3>`;
-             output += `<h6 class="text-center">${birdypet.version}&nbsp;${birdypet.label}</h6>`;
-          output += `</div>`;
-        output += `</div>`;
+        output += `<%- include('../partials/birdypet.js.ejs') %>`;
     }
 
     $("#birdDisplay").html(output);
+
     lazyLoadInstance.update();
+
+    setTimeout( function () {
+      initializeFilterizr();
+    }, 1000);
   }
 </script>
+
+<%- include('../scripts/filterizr.ejs') %>
+
 <%- include('../footer.ejs') %>

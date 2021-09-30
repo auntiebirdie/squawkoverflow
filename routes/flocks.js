@@ -83,6 +83,7 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
     flocks: []
   };
 
+  var allFamilies = require('../public/data/families.json'); 
   var families = new Set();
 
   if (req.session.user && req.session.user.id == req.entity.member) {
@@ -113,7 +114,7 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
     }).map((userpet) => {
       let birdypet = helpers.BirdyPets.fetch(userpet.birdypet);
 
-      families.add(birdypet.species.family);
+	    families.add(allFamilies.find( (a) => a.value == birdypet.species.family));
 
       return {
         id: userpet._id,
@@ -125,7 +126,7 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
     });
   });
 
-  output.families = [...families].sort((a, b) => a.localeCompare(b));
+  output.families = [...families].sort((a, b) => a.value.localeCompare(b.value))
 
   res.render('flocks/flock', output);
 });
