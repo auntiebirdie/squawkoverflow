@@ -1,0 +1,64 @@
+<%- include('../header.ejs') %>
+
+    <%- include('../partials/page-title.ejs', { title : "Birds by Family", breadcrumb: "Birdypedia" }) %>
+
+    <%- include('../partials/filter-search-sort.ejs') %>
+
+    <%- include('../partials/spacer.ejs'); %>
+
+    <div id="birdDisplay" class="row filter-container" data-delay="true"></div>
+
+<script type="text/javascript">
+  var userpets = [<%= userpets %>];
+  var cache = {};
+  $('#family').on('change', function () {
+    var family = this.value;
+
+    filterizr.destroy();
+
+    try {
+      if (family == "") {
+        throw "";
+      }
+
+      $('#birdDisplay').html(`
+        <div class="spinner-border d-block mx-auto" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      `);
+
+      if (cache[family]) {
+        displayBirdyPets(family);
+      }
+      else {
+        $.getJSON(`/api/birdypedia/family/${family}`, function (data) {
+          cache[family] = data;
+          displayBirdyPets(family);
+        });
+      }
+    } catch (err) {
+      $('#birdDisplay').html("");
+    }
+  });
+
+  function displayBirdyPets (family) {
+    var birdypets = cache[family];
+    var output = "";
+
+    for (var birdypet of birdypets) {
+        output += `<%- include('../partials/birdypet.js.ejs') %>`;
+    }
+
+    $("#birdDisplay").html(output);
+
+    lazyLoadInstance.update();
+
+    setTimeout( function () {
+      initializeFilterizr();
+    }, 1000);
+  }
+</script>
+
+<%- include('../scripts/filterizr.ejs') %>
+
+<%- include('../footer.ejs') %>

@@ -1,0 +1,65 @@
+<%- include('../header.ejs') %>
+
+    <%- include('../partials/page-title.ejs', { title : birdypet.species.commonName, breadcrumb : "Birdypedia" }) %>
+
+    <div class="row">
+      <div class="col-md-8 pt-3">
+        <div class="text-center">
+          <img id="birdy" class="birdypet-<%= hatched ? "hatched" : "unhatched" %>" src="https://storage.googleapis.com/birdypets/<%= birdypet.species.order %>/<%= birdypet.species.family %>/<%= birdypet.species.scientificName %>/<%= birdypet.id %>.jpg">
+        </div>
+      </div>
+      <div class="col-md-4 pt-3 border-start">
+        <h6>Common Name</h6>
+        <p><%= birdypet.species.commonName %></p>
+
+        <h6>Scientific Name</h6>
+        <p><%= birdypet.species.scientificName %></p>
+
+        <h6>Family</h6>
+        <p><%= birdypet.species.family %></p>
+
+        <h6>Order</h6>
+        <p><%= birdypet.species.order %></p>
+
+        <% if (birdypet.version || birdypet.label) { %>
+        <h6>Variant</h6>
+        <p><%= birdypet.version + ' ' + birdypet.label %></p>
+        <% } %>
+      </div>
+    </div>
+
+  <%- include('../partials/spacer.ejs') %>
+
+  <h4>Aviaries</h4>
+
+  <% if (members.length > 0) { %>
+    <% for (var i = 0, len = members.length; i < len; i++) { %>
+      <% if (i % 4 === 0) { %>
+        <% if (i > 0) { %>
+          </div>
+          <%- include('../partials/spacer.ejs') %>
+        <% } %>
+      <div class="row">
+      <% } %>
+        <div class="col-md-3">
+          <div class="row">
+          <div class="col-md-3 text-center">
+            <a href="/members/<%= members[i]._id %>">
+              <img class="member-avatar" src="https://cdn.discordapp.com/avatars/<%= members[i]._id %>/<%= members[i].avatar %>.webp?size=40" data-id="<%= members[i]._id %>" onerror="missingMemberAvatar(this)">
+            </a>
+          </div>
+          <div class="col-md-8">
+            <h5 class="pt-2">
+              <a href="/members/<%= members[i]._id %>">
+                <%= members[i].username %>
+              </a>
+            </h5>
+          </div>
+        </div>
+      </div>
+    <% }; %>
+  <% } else { %>
+    <p><em>This bird doesn't appear to be in anyone's aviaries... yet!</em></p>
+  <% } %>
+
+<%- include('../footer.ejs') %>

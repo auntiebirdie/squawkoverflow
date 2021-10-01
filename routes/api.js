@@ -2,47 +2,16 @@ const helpers = require('../helpers');
 const express = require('express');
 const router = express.Router();
 
-router.get('/birdypets/:family', async (req, res) => {
-  var birds = await helpers.DB.fetch({
-    "kind": "Illustration",
-    "filters": [
-      ["species.family", "=", req.params.family]
-    ]
-  });
+router.get('/birdypedia/family/:family', async (req, res) => {
+  var birdypets = require('../public/data/birdypets.json').filter((birdypet) => birdypet.species.family.toLowerCase() == req.params.family.toLowerCase());
 
-  if (req.session.user) {
-    var userpets = await helpers.DB.fetch({
-      "kind": "MemberPet",
-      "filters": [
-        ["member", "=", req.session.user.id]
-      ]
-    }).then((birdypets) => {
-      return birdypets.map((bird) => bird.birdypet);
-    });
-  } else {
-    var userpets = [];
-  }
+  res.json(birdypets);
+});
 
-  var output = {};
+router.get('/birdypedia/eggs/:adjective', async (req, res) => {
+  var birdypets = require('../public/data/birdypets.json').filter((birdypet) => birdypet.adjectives.includes(req.params.adjective));
 
-  for (var bird of birds) {
-    let commonName = bird.species.commonName;
-
-    if (!output[commonName]) {
-      output[commonName] = [];
-    }
-
-    output[commonName].push({
-      id: bird[helpers.DB.KEY].name,
-      species: bird.species,
-      illustration: bird.illustration,
-      version: bird.version,
-      label: bird.label,
-      hatched: userpets.includes(bird[helpers.DB.KEY].name)
-    });
-  }
-
-  res.json(output);
+  res.json(birdypets);
 });
 
 router.get('/flocks/:MemberFlock/:MemberPet', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res) => {

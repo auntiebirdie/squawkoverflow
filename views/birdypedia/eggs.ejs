@@ -1,0 +1,64 @@
+<%- include('../header.ejs') %>
+
+    <%- include('../partials/page-title.ejs', { title : "Eggs Guide", breadcrumb: "Birdypedia" }) %>
+
+    <div class="row">
+      <div class="col-4">
+        <h4>Egg</h4>
+        <select id="eggList" class="form-select">
+          <option value=""></option>
+        <% for (var adjective of adjectives) { %>
+          <option value="<%= adjective %>">
+            <%= adjective %>
+          </option>
+        <% } %>
+        </select>
+      </div>
+    </div>
+
+    <%- include('../partials/spacer.ejs'); %>
+
+    <div id="birdDisplay" class="row"></div>
+
+<script type="text/javascript">
+  var userpets = [<%= userpets %>];
+
+  var cache = {};
+
+  $('#eggList').on('change', function () {
+    var adjective = this.value;
+
+    try {
+      $('#birdDisplay').html(`
+        <div class="spinner-border d-block mx-auto" role="status">
+          <span class="visually-hidden">Saving...</span>
+        </div>
+      `);
+
+      if (cache[adjective]) {
+        displayBirdyPets(adjective);
+      }
+      else {
+        $.getJSON(`/api/birdypedia/eggs/${adjective}`, function (data) {
+          cache[adjective] = data;
+          displayBirdyPets(adjective);
+        });
+      }
+    } catch (err) {
+      $('#birdDisplay').html("");
+    }
+  });
+
+  function displayBirdyPets (adjective) {
+    var birdypets = cache[adjective];
+    var output = "";
+
+    for (var birdypet of birdypets) {
+        output += `<%- include('../partials/birdypet.js.ejs') %>`;
+    }
+
+    $("#birdDisplay").html(output);
+    lazyLoadInstance.update();
+  }
+</script>
+<%- include('../footer.ejs') %>

@@ -1,0 +1,6 @@
+  <select id="sortList" class="form-select" data-sortOrder>
+    <option value="">Sort by...</option>
+  <% for (var field of fields) { %>
+    <option value="<%= field.value %>"><%= field.label %></option>
+  <% } %>
+  </select>

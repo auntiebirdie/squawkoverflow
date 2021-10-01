@@ -11,17 +11,28 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-  if (process.env.KONAMI && process.env.KONAMI == req.query.code) {
-    helpers.DB.get('Member', `${process.env.USER_ID}`).then((member) => {
-      req.session.user = {
-        id: process.env.USER_ID,
-        username: member.username,
-        avatar: member.avatar
-      };
+  if (req.query.konami) {
+    helpers.DB.get('KonamiCode', req.query.konami * 1).then((code) => {
+      if (code.used) {
+        res.redirect('/error');
+      } else {
+        helpers.DB.get('Member', `${code.member}`).then((member) => {
+          req.session.user = {
+            id: member._id,
+            username: member.username,
+            avatar: member.avatar
+          };
 
-      res.redirect('/');
+          helpers.DB.set('KonamiCode', req.query.konami * 1, {
+            used: true
+          }).then(() => {
+
+            res.redirect('/');
+          });
+        });
+      }
     });
-  } else {
+  } else if (req.query.code) {
     oauth.tokenRequest({
       clientId: secrets.DISCORD.CLIENT_ID,
       clientSecret: secrets.DISCORD.CLIENT_SECRET,
@@ -65,12 +76,19 @@ router.get('/login', (req, res) => {
       res.redirect('/error');
     });
   }
+  else { 
+    res.redirect("https://discord.com/api/oauth2/authorize?client_id=885956624777351199&redirect_uri=https%3A%2F%2Fsquawkoverflow.com%2Flogin&response_type=code&scope=identify");
+  }
 });
 
 router.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     res.redirect('/');
   });
+});
+
+router.get('/birdypets/mine', (req, res) => {
+  res.redirect(`/aviary/${req.session.user.id}`);
 });
 
 module.exports = router;

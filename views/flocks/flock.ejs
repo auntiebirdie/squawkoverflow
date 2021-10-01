@@ -2,32 +2,9 @@
 
     <%- include('../partials/page-title.ejs', { title : entity.name, breadcrumb: locals.loggedInUser && loggedInUser.id == member._id ? 'Manage Flock' : `${member.username}'s Flock`  }) %>
 
-    <div class="row">
-      <% if (flocks.length > 0) { %>
-      <div class="col-6 mb-4">
-        <h4>Flock</h4>
-        <select class="selectpicker filter-controls">
-          <option value="all">[ALL]</option>
-          <% for (var flock of flocks) { %>
-            <option value="<%= flock._id %>" <%= flock._id == entity._id ? "selected" : "" %>><%= flock.name %></option>
-          <% } %>
-          <% if (locals.loggedInUser && entity.member == loggedInUser.id) { %>
-            <option value="flockless">[FLOCKLESS]</option>
-            <option value="nonickname">[NO NICKNAME]</option>
-          <% } %>
-        </select>
-      </div>
-      <% } %>
-      <div class="col-6 mb-4">
-        <h4>Family</h4>
-        <select class="selectpicker filter-controls">
-          <option value="all">[ALL]</option>
-          <% for (var family of families) { %>
-            <option value="<%= family.toLowerCase() %>"><%= family %></option>
-          <% } %>
-        </select>
-      </div>
-    </div>
+    <%- include('../partials/filter-search-sort.ejs', { includeAllFamily: true, selectedFlock: entity._id, sortFields : [{ "value" : "hatched-at", "label" : "Hatched At" }, { "value" : "name", "label" : "Name" }, { "value" : "common-name", "label" : "Species" }] }) %>
+
+    <%- include('../partials/spacer.ejs') %>
 
     <div class="row filter-container">
       <% for (var userpet of userpets) { %>
@@ -45,6 +22,8 @@
       </div>
       <% } %>
     </div>
+
+  <%- include('../scripts/filterizr.ejs') %>
 
   <% if (locals.loggedInUser && entity.member == loggedInUser.id) { %>
   <script>

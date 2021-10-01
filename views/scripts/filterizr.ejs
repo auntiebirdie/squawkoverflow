@@ -1,0 +1,55 @@
+<script type="text/javascript">
+    var filterizr = {
+      destroy : function () {}
+    };
+
+    $(document).ready(function() {
+      if (!$('.filter-container').attr('data-delay')) {
+        initializeFilterizr();
+      }
+
+      try {
+        $('select[data-sort]').change(function() {
+          filterizr.sort(this.options[this.options.selectedIndex].value, this.options[this.options.selectedIndex].hasAttribute('data-sort-desc') ? "desc" : "asc");
+        });
+
+        $('select.custom-controls').change(function() {
+          var filters = [];
+
+          filterizr.filter('all');
+
+          $('select.custom-controls').each( function (key, select) {
+            var value = select.options[select.options.selectedIndex].value;
+
+            if (!filters.includes(value) && value != "all") {
+              filters.push(value);
+            }
+          });
+
+          filters.forEach( function (filter) {
+             filterizr.toggleFilter(filter);
+          });
+        });
+      } catch (err) {}
+    });
+
+    function initializeFilterizr () {
+      filterizr = new window.Filterizr('.filter-container', {
+        controlsSelector: '.filter-control',
+        gridItemsSelector: '.filter-item',
+        multifilterLogicalOperator: 'and',
+        layout: 'sameWidth',
+        spinner: {
+          enabled: true
+        }
+      });
+
+    <% if (locals.page && locals.page == 'flock') { %>
+      updateFilters();
+    <% } %>
+    }
+
+    function updateFilters () {
+      $('select.custom-controls').trigger('change');
+    }
+</script>

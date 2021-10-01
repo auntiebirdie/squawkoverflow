@@ -1,0 +1,54 @@
+    <div class="row">
+      <div class="col-md-6 mt-4">
+      <% if (locals.flocks && flocks.length > 0) { %>
+        <div class="mb-4">
+          <h4>Flock</h4>
+          <select id="flocks" class="form-select custom-controls">
+            <option value="all">[ALL]</option>
+            <% for (var flock of flocks) { %>
+              <option value="<%= flock._id %>" <%= locals.selectedFlock && selectedFlock == flock._id ? "selected" : "" %>>
+                <%= flock.name %>
+              </option>
+            <% } %>
+            <% if (locals.loggedInUser && member._id == loggedInUser.id) { %>
+              <option value="flockless">[FLOCKLESS]</option>
+              <option value="nonickname">[NO NICKNAME]</option>
+            <% } %>
+          </select>
+        </div>
+      <% } %>
+        <div>
+          <h4>Family</h4>
+          <select id="family" class="form-select custom-controls">
+            <% if (locals.includeAllFamily) { %>
+              <option value="all">[ALL]</option>
+            <% } else { %>
+              <option value=""></option>
+            <% } %>
+            <% for (var family of families) { %>
+              <option value="<%= family.value.toLowerCase() %>"><%= family.label %></option>
+            <% } %>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-md-6 mt-4">
+        <div class="mb-4">
+          <h4>Search</h4>
+          <input type="text" name="search" class="form-control filter-control" data-search>
+        </div>
+
+        <% if (locals.sortFields) { %>
+        <div>
+          <h4>Sort</h4>
+          <select id="sortList" class="form-select filter-control" data-sort>
+            <% for (var sort of sortFields) { %>
+              <option value="<%= sort.value %>" <%= sort.attr %>>
+                <%= sort.label %>
+              </option>
+            <% } %>
+          </select>
+        </div>
+        <% } %>
+      </div>
+    </div>
