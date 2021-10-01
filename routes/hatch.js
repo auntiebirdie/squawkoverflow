@@ -58,8 +58,9 @@ router.post('/', async (req, res) => {
 
       switch (action) {
         case "keep":
-          return helpers.DB.create('MemberPet', {
-            birdypet: birdypet.id,
+          return helpers.Redis.create('memberpet', {
+            birdypetId: birdypet.id,
+		  birdypetSpecies: birdypet.species.speciesCode,
             member: req.session.user.id,
             hatchedAt: Date.now()
           }).then((id) => {

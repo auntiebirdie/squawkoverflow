@@ -1,4 +1,4 @@
-const DB = require('./database.js');
+const Redis = require('./redis.js');
 
 function Middleware() {}
 
@@ -15,7 +15,7 @@ Middleware.prototype.entityExists = async function(req, res, next) {
     req.entities = {};
 
     for (let kind in req.params) {
-      let entity = await DB.get(kind, req.params[kind] * 1);
+      let entity = await Redis.get(kind, req.params[kind] * 1);
 
       if (!entity) {
         return next(`enttiy ${kind}:${req.params[kind]} not found`);
@@ -31,28 +31,26 @@ Middleware.prototype.entityExists = async function(req, res, next) {
     switch (req.baseUrl) {
       case "/aviary":
       case "/member":
-        kind = 'Member';
+        kind = 'member';
         break;
       case "/birdypet":
-        kind = "MemberPet";
-        req.params.id *= 1;
+        kind = "memberpet";
         break;
       case "/flocks":
-        kind = "MemberFlock";
-        req.params.id *= 1;
+        kind = "flock";
         break;
       default:
         return next(`unknown entity kind for ${req.baseUrl}`);
     };
 
-    DB.get(kind, req.params.id).then((entity) => {
-      if (entity) {
-        req.entity = entity;
-        next();
-      } else {
-        next(`entity ${kind}:${req.params.id} not found`);
-      }
-    });
+      Redis.get(kind, req.params.id).then((entity) => {
+        if (entity) {
+          req.entity = entity;
+          next();
+        } else {
+          next(`entity ${kind}:${req.params.id} not found`);
+        }
+      });
   }
 }
 

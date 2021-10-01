@@ -14,18 +14,18 @@ router.get('/birdypedia/eggs/:adjective', async (req, res) => {
   res.json(birdypets);
 });
 
-router.get('/flocks/:MemberFlock/:MemberPet', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res) => {
-  var index = req.entities['MemberPet'].flocks ? req.entities['MemberPet'].flocks.indexOf(req.entities['MemberFlock']._id) : -1;
-  var flocks = req.entities['MemberPet'].flocks ? req.entities['MemberPet'].flocks : [];
+router.get('/flocks/:flock/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res) => {
+  var index = req.entities['memberpet'].flocks ? req.entities['member[et'].flocks.indexOf(req.entities['flock']._id) : -1;
+  var flocks = req.entities['memberpet'].flocks ? req.entities['memberpet'].flocks : [];
 
   if (index !== -1) {
     flocks = flocks.splice(index, -1);
   } else {
-    flocks.push(req.entities['MemberFlock']._id);
+    flocks.push(req.entities['flock']._id);
   }
 
-  helpers.DB.set('MemberPet', req.entities['MemberPet']._id, {
-    flocks: flocks
+  helpers.redis.set('memberpet', req.entities['memberpet']._id, {
+    flocks: flocks.join(',')
   }).then(() => {
     res.json({
       action: index !== -1 ? "remove" : "add"

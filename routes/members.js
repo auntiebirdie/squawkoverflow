@@ -4,7 +4,6 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   var members = await helpers.DB.fetch({
-    "cacheId": "members",
     "kind": "Member"
   });
 
@@ -14,11 +13,11 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-  var member = await helpers.DB.get('Member', req.params.id);
+  var member = await helpers.Redis.get('member', req.params.id);
 
   if (member) {
-    var birdypets = await helpers.DB.fetch({
-      'kind': 'MemberPet',
+    var birdypets = await helpers.Redis.fetch({
+      'kind': 'memberpet',
       'filters': [
         ['member', '=', req.params.id]
       ],
@@ -26,7 +25,7 @@ router.get('/:id', async (req, res) => {
     });
 
     if (member.birdyBuddy) {
-      var birdybuddy = await helpers.DB.get('MemberPet', member.birdyBuddy * 1).then((userpet) => {
+      var birdybuddy = await helpers.Redis.get('member[et', member.birdyBuddy).then((userpet) => {
         if (userpet && userpet.member == member._id) {
           return {
             id: userpet._id,
@@ -41,11 +40,11 @@ router.get('/:id', async (req, res) => {
       });
 
       if (member.flock) {
-        var flock = await helpers.DB.get('MemberFlock', member.flock * 1);
+        var flock = await helpers.Redis.get('flock', member.flock);
 
         if (flock && flock.member == member._id) {
-          var flockpets = await helpers.DB.fetch({
-            'kind': 'MemberPet',
+          var flockpets = await helpers.Redis.fetch({
+            'kind': 'memberpet',
             'filters': [
               ['member', '=', req.params.id],
               ['flocks', '=', `${member.flock}`]

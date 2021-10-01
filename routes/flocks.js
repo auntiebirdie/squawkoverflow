@@ -4,25 +4,23 @@ const router = express.Router();
 
 router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
   res.render('flocks/index', {
-    member: await helpers.DB.get('Member', req.session.user.id),
-    flocks: await helpers.DB.fetch({
-      "kind": "MemberFlock",
+    member: await helpers.Redis.get('member', req.session.user.id),
+    flocks: await helpers.Redis.fetch({
+      "kind": "flock",
       "filters": [
-        ["member", "=", req.session.user.id]
-      ],
-      "order": ["displayOrder"]
+	      { field: "member", value: req.session.user.id }
+      ]
     })
   });
 });
 
 router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
   var existingFlocks = req.body.existingFlocks;
-  var existingFlockKeys = await helpers.DB.fetch({
-    "kind": "MemberFlock",
+  var existingFlockKeys = await helpers.Redis.fetch({
+    "kind": "flock",
     "filters": [
-      ["member", "=", req.session.user.id]
-    ],
-    "keysOnly": true
+	    { field: "member", value: req.session.user.id }
+    ]
   }).then((flocks) => {
     return flocks.map((flock) => {
       return flock._id;
@@ -34,7 +32,7 @@ router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
       let name = helpers.sanitize(existingFlocks[key]).trim();
 
       if (name != "") {
-        await helpers.DB.set('MemberFlock', key * 1, {
+        await helpers.Redis.set('flock', key, {
           name: name
         });
 
@@ -42,7 +40,7 @@ router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
       }
     }
 
-    await helpers.DB.delete('MemberFlock', key * 1);
+    await helpers.Redis.delete('flock', key);
   }
 
   var newFlocks = req.body.newFlocks;
@@ -52,7 +50,7 @@ router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
       var featuredFlock = req.body.featuredFlock.match(/\[([0-9]+)\]/)[1];
 
       if (req.body.featuredFlock.includes('existingFlocks')) {
-        await helpers.DB.set('Member', req.session.user.id, {
+        await helpers.Redis.set('member', req.session.user.id, {
           "flock": featuredFlock
         });
       }
@@ -65,7 +63,7 @@ router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
     let name = helpers.sanitize(newFlocks[i]).trim();
 
     if (name != "") {
-      await helpers.DB.create('MemberFlock', {
+      await helpers.Redis.create('flock', {
         member: req.session.user.id,
         name: name,
         displayOrder: 0
@@ -88,24 +86,26 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
 
   if (req.session.user && req.session.user.id == req.entity.member) {
     output.member = req.session.user;
-    output.flocks = await helpers.DB.fetch({
-      "kind": "MemberFlock",
+    output.flocks = await helpers.Redis.fetch({
+      "kind": "flock",
       "filters": [
         ["member", "=", req.session.user.id]
       ],
       "order": ["displayOrder"]
     });
   } else {
-    output.member = await helpers.DB.get("Member", req.entity.member);
+    output.member = await helpers.Redis.get("member", req.entity.member);
   }
 
-  output.userpets = await helpers.DB.fetch({
-    "kind": "MemberPet",
+  output.userpets = await helpers.Redis.fetch({
+    "kind": "memberpet",
     "filters": [
-	    ["member", "=", req.entity.member]
+            { field: "member", value: req.entity.member}
     ]
   }).then((userpets) => {
     return userpets.filter( (userpet) => {
+	    userpet.flocks = userpet.flocks.split(",");
+
 	    if (req.session.user && req.session.user.id == req.entity.member) {
 		    return true;
 	    } else {

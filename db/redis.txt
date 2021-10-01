@@ -1,0 +1,2 @@
+FT.CREATE memberpet ON HASH PREFIX 1 memberpet: SCHEMA birdypetId TAG birdypetSpecies TAG member TAG flocks TAG
+FT.CREATE flock ON HASH PREFIX 1 flock: SCHEMA member TAG

@@ -17,6 +17,7 @@ module.exports = {
   },
   Chance: Chance,
   DB: require('./helpers/database.js'),
+  Redis: require('./helpers/redis.js'),
   Discord: {
     Webhook: require('./helpers/webhook.js')
   },
@@ -36,6 +37,9 @@ module.exports = {
         return Array.isArray(tmp) ? tmp.includes(value) : tmp == value;
       });
     }
+  },
+  UserPets: {
+	  fetch: require('./helpers/fetchUserPets.js')
   },
   Middleware: require('./helpers/middleware.js')
 }

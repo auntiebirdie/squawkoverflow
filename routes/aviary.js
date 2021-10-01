@@ -11,34 +11,24 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res, next) => {
 
   var families = new Set();
 
-  var flocks = await helpers.DB.fetch({
-    "kind": "MemberFlock",
+  var flocks = await helpers.Redis.fetch({
+    "kind": "flock",
     "filters": [
-      ["member", "=", req.entity._id]
-    ],
-    "order": ["displayOrder"]
+	    { field : "member", value: req.entity._id }
+    ]
   });
 
-  var userpets = await helpers.DB.fetch({
-    "kind": "MemberPet",
-    "filters": [
-      ["member", "=", req.entity._id]
-    ]
-  }).then((userpets) => {
+  var userpets = await helpers.UserPets.fetch([{
+    field: "member",
+    value: req.entity._id
+  }]).then((userpets) => {
     return userpets.map((userpet) => {
-      let birdypet = helpers.BirdyPets.fetch(userpet.birdypet);
-
-      families.add(allFamilies.find( (a) => a.value == birdypet.species.family));
+      families.add(allFamilies.find((a) => a.value == userpet.birdypet.species.family));
 
       return {
-        id: userpet._id,
-        nickname: userpet.nickname,
-        hatchedAt: userpet.hatchedAt,
-        flocks: userpet.flocks ? userpet.flocks.filter( (id) => flocks.find((flock) => flock._id == id)) : [],
-        birdypet: birdypet
-      }
-    }).sort( (a, b) => {
-	  return b.hatchedAt - a.hatchedAt;
+        ...userpet,
+        flocks: userpet.flocks.filter((id) => flocks.find((flock) => flock._id == id))
+      };
     });
   });
 

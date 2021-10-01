@@ -16,7 +16,7 @@ router.get('/login', (req, res) => {
       if (code.used) {
         res.redirect('/error');
       } else {
-        helpers.DB.get('Member', `${code.member}`).then((member) => {
+        helpers.Redis.get('member', code.member).then((member) => {
           req.session.user = {
             id: member._id,
             username: member.username,
@@ -49,20 +49,19 @@ router.get('/login', (req, res) => {
             avatar: user.avatar
           };
 
-          helpers.DB.get('Member', user.id).then((member) => {
-            var data = {
-              lastLogin: Date.now(),
-              username: user.username,
-              avatar: user.avatar
-            };
-
+          helpers.Redis.get('member', user.id).then((member) => {
             if (!member) {
               data.joinedAt = Date.now();
-              helpers.DB.save('Member', user.id, data).then(() => {
+              helpers.Redis.set('member', user.id, { lastLogin : Date.now() }).then(() => {
                 res.redirect('/');
               });
             } else {
-              helpers.DB.set('Member', user.id, data).then(() => {
+              helpers.Redis.save('member', user.id, {
+		      username: user.username,
+		      avatar: user.avatar,
+		      joinedAt: Date.now(),
+		      lastLogin: Date.now()
+	      }).then(() => {
                 res.redirect('/');
               });
             }
