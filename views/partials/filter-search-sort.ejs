@@ -43,7 +43,7 @@
           <h4>Sort</h4>
           <select id="sortList" class="form-select filter-control" data-sort>
             <% for (var sort of sortFields) { %>
-              <option value="<%= sort.value %>">
+              <option value="<%= sort.value %>" <%= sort.attr %>>
                 <%= sort.label %>
               </option>
             <% } %>

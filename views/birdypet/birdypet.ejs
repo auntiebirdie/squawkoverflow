@@ -1,6 +1,6 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { title : userpet.nickname ? userpet.nickname : birdypet.species.commonName }) %>
+    <%- include('../partials/page-title.ejs', { title : userpet.nickname ? userpet.nickname : birdypet.species.commonName, breadcrumb: `${member.username}'s` }) %>
 
     <div class="row">
       <div class="col-md-8 pt-3">

@@ -7,6 +7,30 @@
       if (!$('.filter-container').attr('data-delay')) {
         initializeFilterizr();
       }
+
+      try {
+        $('select[data-sort]').change(function() {
+          filterizr.sort(this.options[this.options.selectedIndex].value, this.options[this.options.selectedIndex].hasAttribute('data-sort-desc') ? "desc" : "asc");
+        });
+
+        $('select.custom-controls').change(function() {
+          var filters = [];
+
+          filterizr.filter('all');
+
+          $('select.custom-controls').each( function (key, select) {
+            var value = select.options[select.options.selectedIndex].value;
+
+            if (!filters.includes(value) && value != "all") {
+              filters.push(value);
+            }
+          });
+
+          filters.forEach( function (filter) {
+             filterizr.toggleFilter(filter);
+          });
+        });
+      } catch (err) {}
     });
 
     function initializeFilterizr () {
@@ -20,31 +44,9 @@
         }
       });
 
-      $('select[data-sort]').change(function() {
-        filterizr.sort(this.options[this.options.selectedIndex].value);
-      });
-
-      $('select.custom-controls').change(function() {
-        var filters = [];
-
-        filterizr.filter('all');
-
-        $('select.custom-controls').each( function (key, select) {
-          var value = select.options[select.options.selectedIndex].value;
-
-          if (!filters.includes(value) && value != "all") {
-            filters.push(value);
-          }
-        });
-
-        filters.forEach( function (filter) {
-           filterizr.toggleFilter(filter);
-        });
-      });
-
-      <% if (locals.page && locals.page == 'flock') { %>
-        updateFilters();
-      <% } %>
+    <% if (locals.page && locals.page == 'flock') { %>
+      updateFilters();
+    <% } %>
     }
 
     function updateFilters () {

@@ -38,7 +38,7 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res, next) => {
         birdypet: birdypet
       }
     }).sort( (a, b) => {
-	  return a.hatchedAt - b.hatchedAt;
+	  return b.hatchedAt - a.hatchedAt;
     });
   });
 
