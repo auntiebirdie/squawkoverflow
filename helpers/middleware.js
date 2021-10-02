@@ -35,6 +35,12 @@ Middleware.prototype.entityExists = async function(req, res, next) {
         break;
       case "/birdypet":
         kind = "memberpet";
+
+        var newIds = require('../manual/newBirds.json');
+
+        if (newIds[req.params.id]) {
+          return res.redirect(`/birdypet/${newIds[req.params.id]}`);
+        }
         break;
       case "/flocks":
         kind = "flock";
@@ -43,14 +49,14 @@ Middleware.prototype.entityExists = async function(req, res, next) {
         return next(`unknown entity kind for ${req.baseUrl}`);
     };
 
-      Redis.get(kind, req.params.id).then((entity) => {
-        if (entity) {
-          req.entity = entity;
-          next();
-        } else {
-          next(`entity ${kind}:${req.params.id} not found`);
-        }
-      });
+    Redis.get(kind, req.params.id).then((entity) => {
+      if (entity) {
+        req.entity = entity;
+        next();
+      } else {
+        next(`entity ${kind}:${req.params.id} not found`);
+      }
+    });
   }
 }
 

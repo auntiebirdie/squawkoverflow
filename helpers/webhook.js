@@ -27,30 +27,37 @@ Webhook.prototype.send = function(channel, data) {
         pubSubClient.topic('squawkoverflow-egg-hatchery').publish(Buffer.from(""), {
           member: `${data.member}`,
           birdypet: `${data.birdypet.id}`,
-	  adjective: `${data.adjective}`,
-	  userpet: `${data.userpet}`,
+          adjective: `${data.adjective}`,
+          userpet: `${data.userpet}`,
           source: "WEB"
         }).then((response) => {
           resolve();
         });
         break;
       case "exchange":
+        var embeds = [
+          new MessageEmbed()
+          .setTitle(data.userpet.nickname ? data.userpet.nickname : data.birdypet.species.commonName)
+          .setDescription(data.userpet.nickname ? data.birdypet.species.commonName : (data.birdypet.version + ' ' + data.birdypet.label))
+          .setURL(`https://squawkoverflow.com/birdypet/${data.userpet._id}`)
+          .setImage(data.birdypet.illustration)
+        ];
+
         webhookClient.send({
-          content: `<@!${data.from}> has sent <@${data.to}> a gift!`,
-          embeds: [
-            new MessageEmbed()
-            .setTitle(data.userpet.nickname ? data.userpet.nickname : data.birdypet.species.commonName)
-            .setDescription(data.userpet.nickname ? data.birdypet.species.commonName : (data.birdypet.version + ' ' + data.birdypet.label))
-            .setURL(`https://squawkoverflow.com/birdypet/${data.userpet._id}`)
-            .setImage(data.birdypet.illustration)
-          ]
-        }).then(() => {
-          resolve();
+          content: `${data.from.username} has sent <@${data.to}> a gift!`,
+          embeds: embeds
+        }).then((sent) => {
+          webhookClient.editMessage(sent, {
+            content: `<@${data.from.id}> has sent <@${data.to}> a gift!`,
+            embeds: embeds
+          }).then(() => {
+            resolve();
+          });
         });
         break;
       case "free-birds":
         pubSubClient.topic('squawkoverflow-free-birds').publish(Buffer.from(""), {
-	  member: `${data.member}`,
+          member: `${data.member}`,
           birdypet: `${data.birdypet.id}`,
           source: "WEB"
         }).then((response) => {

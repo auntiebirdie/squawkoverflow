@@ -38,7 +38,7 @@ router.post('/gift/:id', helpers.Middleware.isLoggedIn, helpers.Middleware.entit
       var birdypet = helpers.BirdyPets.fetch(req.entity.birdypetId);
 
       helpers.Discord.Webhook.send('exchange', {
-        from: req.session.user.id,
+        from: req.session.user,
         to: req.body.member,
         userpet: req.entity,
         birdypet: birdypet
