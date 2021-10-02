@@ -24,7 +24,7 @@ router.get('/flocks/:flock/:memberpet', helpers.Middleware.isLoggedIn, helpers.M
     flocks.push(req.entities['flock']._id);
   }
 
-  helpers.redis.set('memberpet', req.entities['memberpet']._id, {
+  helpers.Redis.set('memberpet', req.entities['memberpet']._id, {
     flocks: flocks.join(',')
   }).then(() => {
     res.json({

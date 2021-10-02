@@ -134,7 +134,7 @@ router.post('/:id', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExis
 
   helpers.Redis.set('memberpet', req.params.id, {
     nickname: nickname,
-    birdypet: variant,
+    birdypetId: variant,
     description: description,
     flocks: flocks.map( (flock) => flock ).join(',')
   }).then(() => {

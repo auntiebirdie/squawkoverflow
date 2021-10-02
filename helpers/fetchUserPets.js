@@ -9,6 +9,9 @@ module.exports = function(filters) {
       "filters": filters
     }).then((userpets) => {
       return userpets.map((userpet) => {
+	      if (!userpet.birdypetId) {
+		      console.log(userpet);
+	      }
         let birdypet = birdypets.find((birdypet) => birdypet.id == userpet.birdypetId);
 
         return {

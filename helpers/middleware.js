@@ -15,7 +15,7 @@ Middleware.prototype.entityExists = async function(req, res, next) {
     req.entities = {};
 
     for (let kind in req.params) {
-      let entity = await Redis.get(kind, req.params[kind] * 1);
+      let entity = await Redis.get(kind, req.params[kind]);
 
       if (!entity) {
         return next(`enttiy ${kind}:${req.params[kind]} not found`);

@@ -36,7 +36,7 @@ Webhook.prototype.send = function(channel, data) {
         break;
       case "exchange":
         webhookClient.send({
-          content: `<@${data.from}> has sent <@${data.to}> a gift!`,
+          content: `<@!${data.from}> has sent <@${data.to}> a gift!`,
           embeds: [
             new MessageEmbed()
             .setTitle(data.userpet.nickname ? data.userpet.nickname : data.birdypet.species.commonName)

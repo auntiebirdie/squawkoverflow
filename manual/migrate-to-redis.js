@@ -53,7 +53,7 @@ const fs = require('fs');
                 "birdypetSpecies": birdypetData.find((birdypet) => birdypet.id == birdypets[i].birdypet).species.speciesCode,
                 "member": birdypets[i].member,
                 "hatchedAt": birdypets[i].hatchedAt,
-                "nickname": birdypets[i].nikcname || "",
+                "nickname": birdypets[i].nickname || "",
                 "friendship": birdypets[i].friendship || 0,
                 "flocks": flocks.join(",")
               },

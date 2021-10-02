@@ -41,12 +41,11 @@
         layout: 'sameWidth',
         spinner: {
           enabled: true
+        },
+        callbacks: {
+          onInit: updateFilters
         }
       });
-
-    <% if (locals.page && locals.page == 'flock') { %>
-      updateFilters();
-    <% } %>
     }
 
     function updateFilters () {

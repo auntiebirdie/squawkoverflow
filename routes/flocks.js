@@ -89,40 +89,24 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
     output.flocks = await helpers.Redis.fetch({
       "kind": "flock",
       "filters": [
-        ["member", "=", req.session.user.id]
-      ],
-      "order": ["displayOrder"]
+	      { field: "member", value: req.session.user.id }
+      ]
     });
   } else {
     output.member = await helpers.Redis.get("member", req.entity.member);
   }
 
-  output.userpets = await helpers.Redis.fetch({
-    "kind": "memberpet",
-    "filters": [
-            { field: "member", value: req.entity.member}
-    ]
-  }).then((userpets) => {
-    return userpets.filter( (userpet) => {
-	    userpet.flocks = userpet.flocks.split(",");
-
-	    if (req.session.user && req.session.user.id == req.entity.member) {
-		    return true;
-	    } else {
-		    return userpet.flocks && (userpet.flocks.includes(req.entity._id) || userpet.flocks.includes(`${req.entity._id}`));
-	    }
-    }).map((userpet) => {
-      let birdypet = helpers.BirdyPets.fetch(userpet.birdypet);
-
-	    families.add(allFamilies.find( (a) => a.value == birdypet.species.family));
+  output.userpets = await helpers.UserPets.fetch([{
+    field: "member",
+    value: req.entity.member
+  }]).then((userpets) => {
+    return userpets.map((userpet) => {
+      families.add(allFamilies.find((a) => a.value == userpet.birdypet.species.family));
 
       return {
-        id: userpet._id,
-        nickname: userpet.nickname,
-        hatchedAt: userpet.hatchedAt,
-        flocks: userpet.flocks || [],
-        birdypet: birdypet
-      }
+        ...userpet,
+        flocks: userpet.flocks.filter((id) => output.flocks.find((flock) => flock._id == id))
+      };
     });
   });
 

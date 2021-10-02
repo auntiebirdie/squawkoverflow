@@ -16,56 +16,28 @@ router.get('/:id', async (req, res) => {
   var member = await helpers.Redis.get('member', req.params.id);
 
   if (member) {
-    var birdypets = await helpers.Redis.fetch({
-      'kind': 'memberpet',
-      'filters': [
-        ['member', '=', req.params.id]
-      ],
-      'keysOnly': true
-    });
+	  var userpets = await helpers.UserPets.fetch([{
+    field: "member",
+    value: member._id
+  }]);
 
     if (member.birdyBuddy) {
-      var birdybuddy = await helpers.Redis.get('member[et', member.birdyBuddy).then((userpet) => {
-        if (userpet && userpet.member == member._id) {
-          return {
-            id: userpet._id,
-            nickname: userpet.nickname,
-            hatchedAt: userpet.hatchedAt,
-            friendship: userpet.friendship || 0,
-            birdypet: helpers.BirdyPets.fetch(userpet.birdypet)
-          }
-        } else {
-          return {}
-        }
-      });
+      var birdybuddy = userpets.find( (userpet) => userpet._id == member.birdyBuddy);
+	    console.log(birdybuddy);
+    }
 
       if (member.flock) {
         var flock = await helpers.Redis.get('flock', member.flock);
 
         if (flock && flock.member == member._id) {
-          var flockpets = await helpers.Redis.fetch({
-            'kind': 'memberpet',
-            'filters': [
-              ['member', '=', req.params.id],
-              ['flocks', '=', `${member.flock}`]
-            ]
-          }).then((userpets) => {
-            return userpets.map((userpet) => {
-              return {
-                id: userpet._id,
-                nickname: userpet.nickname,
-                birdypet: helpers.BirdyPets.fetch(userpet.birdypet)
-              }
-            });
-          });
+          var flockpets = userpets.filter((userpet) => userpet.flocks.includes(member.flock));
         }
-      }
     }
 
     res.render('members/member', {
-	   page: "member",
+      page: "member",
       member: member,
-      birdypets: birdypets.length || 0,
+      birdypets: userpets.length || 0,
       birdybuddy: birdybuddy || {},
       flock: flock || null,
       flockpets: flockpets || {}
