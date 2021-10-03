@@ -7,7 +7,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/bird/:id', async (req, res) => {
-  var birdypet = require('../public/data/birdypets.json').find((birdypet) => birdypet.id == req.params.id);
+  var birdypet = helpers.BirdyPets.fetch(req.params.id);
 
   var userpets = await helpers.UserPets.fetch([{
     field: "birdypetId",
@@ -32,7 +32,7 @@ router.get('/bird/:id', async (req, res) => {
 });
 
 router.get('/family', async (req, res) => {
-  var birdypets = require('../public/data/birdypets.json');
+  var birdypets = require('../public/data/birdypets.json').map( (birdypet) => helpers.BirdyPets.format(birdypet));
   var families = require('../public/data/families.json');
 
   var userpets = req.session.user ? await helpers.UserPets.fetch([{

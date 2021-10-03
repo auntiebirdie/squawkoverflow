@@ -65,7 +65,16 @@ router.get('/login', (req, res) => {
                 res.redirect('/');
               });
             }
-          });
+          }).catch( (err) => {
+              helpers.Redis.save('member', user.id, {
+                      username: user.username,
+                      avatar: user.avatar,
+                      joinedAt: Date.now(),
+                      lastLogin: Date.now()
+              }).then(() => {
+                res.redirect('/');
+              });
+	  });
         });
       } else {
         res.redirect('/error');

@@ -41,8 +41,8 @@ app.use(function(req, res, next) {
       "label": "Hatch Eggs",
       "href": "/hatch"
     }, {
-      "label": "My Aviary",
-      "href": `/aviary/${req.session.user.id}`
+      "label": "Free Birds",
+      "href": `/freebirds`
     });
   }
 
@@ -75,6 +75,7 @@ app.use('/hatch', require('./routes/hatch.js'));
 app.use('/birdypet', require('./routes/birdypet.js'));
 app.use('/aviary', require('./routes/aviary.js'));
 app.use('/flocks', require('./routes/flocks.js'));
+app.use('/freebirds', require('./routes/freebirds.js'));
 app.use('/birdypedia', require('./routes/birdypedia.js'));
 app.use('/members', require('./routes/members.js'));
 app.use('/faq', require('./routes/faq.js'));

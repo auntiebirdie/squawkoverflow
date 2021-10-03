@@ -21,25 +21,9 @@ module.exports = {
   Discord: {
     Webhook: require('./helpers/webhook.js')
   },
-  BirdyPets: {
-    random: function(num = 1) {
-      return Chance.pickset(birdypets, num);
-    },
-    fetch: function(id) {
-      return birdypets.find((birdypet) => birdypet.id == id);
-    },
-    findBy: function(key, value) {
-      var keys = key.split('.');
-
-      return birdypets.filter((birdypet) => {
-        let tmp = keys.length > 1 ? birdypet[keys[0]][keys[1]] : birdypet[key];
-
-        return Array.isArray(tmp) ? tmp.includes(value) : tmp == value;
-      });
-    }
-  },
+  BirdyPets: require('./helpers/birdypets.js'),
   UserPets: {
-	  fetch: require('./helpers/fetchUserPets.js')
+    fetch: require('./helpers/fetchUserPets.js')
   },
   Middleware: require('./helpers/middleware.js')
 }

@@ -5,7 +5,7 @@
     <div class="row">
       <div class="col-md-8 pt-3">
         <div class="text-center">
-          <img id="birdy" src="https://storage.googleapis.com/birdypets/<%= birdypet.species.order %>/<%= birdypet.species.family %>/<%= birdypet.species.scientificName %>/<%= birdypet.id %>.jpg">
+          <img id="birdy" src="<%= birdypet.image %>">
         </div>
 
         <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
@@ -84,7 +84,7 @@
         <% } %>
 
         <h6>Hatch Date</h6>
-        <p><%= new Date(userpet.hatchedAt).toLocaleString('en-US', { dateStyle: "long" }) %></p>
+        <p><%= new Date(userpet.hatchedAt * 1).toLocaleString('en-US', { dateStyle: "long" }) %></p>
 
         <h6>Aviary</h6>
         <p>

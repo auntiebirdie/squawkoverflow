@@ -1,25 +1,19 @@
 var Redis = require('./redis.js');
+var BirdyPets = require('./birdypets.js');
 
 module.exports = function(filters) {
-  var birdypets = require('../public/data/birdypets.json');
-
   return new Promise((resolve, reject) => {
     Redis.fetch({
       "kind": "memberpet",
       "filters": filters
     }).then((userpets) => {
       return userpets.map((userpet) => {
-	      if (!userpet.birdypetId) {
-		      console.log(userpet);
-	      }
-        let birdypet = birdypets.find((birdypet) => birdypet.id == userpet.birdypetId);
+        let birdypet = BirdyPets.fetch(userpet.birdypetId);
 
         return {
           ...userpet,
-          ...{
-            birdypet: birdypet,
-            flocks: userpet.flocks ? userpet.flocks.split(',') : []
-          }
+          birdypet: birdypet,
+          flocks: userpet.flocks ? userpet.flocks.split(',') : []
         }
       }).sort((a, b) => {
         return b.hatchedAt - a.hatchedAt;

@@ -5,7 +5,8 @@ const Redis = require("redis");
 function Database() {
   let databases = {
     "MEMBERPETS": ["memberpet", "flock"],
-    "MEMBERS": ["member"]
+    "MEMBERS": ["member"],
+    "FREEBIRDS": ["freebird"]
   };
 
   this.databases = {};
@@ -56,44 +57,83 @@ Database.prototype.fetch = function({
   filters,
   order,
   limit,
+  startAt,
+  maxResults,
   keysOnly
 }) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     let query = [kind];
+    var output = [];
 
     if (filters) {
       for (filter of filters) {
         query.push(`@${filter.field}:{${filter.value}}`);
       }
-    }
 
-    query.push('LIMIT');
+      query.push('LIMIT');
 
-    if (limit) {
-      query.push(limit[0], limit[1]);
-    } else {
-      query.push(0, 5000);
-    }
-
-    this.databases[kind].sendCommand('FT.SEARCH', query, function(err, response) {
-      var output = [];
-
-      for (var i = 1, len = response.length; i < len; i++) {
-        var id = response[i];
-        var rawData = response[++i];
-        var data = {
-          _id: id.split(":").pop()
-        };
-
-        for (var l = 0, llen = rawData.length; l < llen; l++) {
-          data[rawData[l]] = rawData[++l];
-        }
-
-        output.push(data);
+      if (limit) {
+        query.push(limit[0], limit[1]);
+      } else {
+        query.push(0, 5000);
       }
 
+      this.databases[kind].sendCommand('FT.SEARCH', query, function(err, response) {
+        if (response) {
+
+          for (var i = 1, len = response.length; i < len; i++) {
+            var id = response[i];
+            var rawData = response[++i];
+            var data = {
+              _id: id.split(":").pop()
+            };
+
+            for (var l = 0, llen = rawData.length; l < llen; l++) {
+              data[rawData[l]] = rawData[++l];
+            }
+
+            output.push(data);
+          }
+        }
+
+        resolve(output);
+      });
+    } else {
+      var noResultsLeft = false;
+      var cursor = startAt || 0;
+
+      do {
+        await Promise.all([new Promise((resolve, reject) => {
+          this.databases[kind].scan(cursor, async (err, response) => {
+            if (err) {
+		    console.log(err);
+              noResultsLeft = true;
+            } else {
+              if (response[0] == 0) {
+                noResultsLeft = true;
+              } else {
+                cursor = response[0];
+              }
+
+              var results = response[1];
+
+              for (var i = 0, len = results.length; i < len; i++) {
+		      if (output.length < maxResults) {
+                await this.get(kind, results[i].split(':').pop()).then((data) => {
+                  output.push(data);
+                });
+		      }
+              }
+            }
+
+            resolve();
+          });
+        })]);
+      }
+      while (!noResultsLeft && output.length < maxResults);
+
       resolve(output);
-    });
+    }
   });
 }
 

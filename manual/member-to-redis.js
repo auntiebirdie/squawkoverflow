@@ -20,8 +20,8 @@ const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS]
 });
 
-      var birdypetsMasterlist = require('./newBirds.json');
-      var flocksMasterlist = require('./newFlocks.json');
+var birdypetsMasterlist = require('./newBirds.json');
+var flocksMasterlist = require('./newFlocks.json');
 
 client.login(secrets.DISCORD.BOT_TOKEN);
 
