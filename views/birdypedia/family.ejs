@@ -2,15 +2,23 @@
 
     <%- include('../partials/page-title.ejs', { title : "Birds by Family", breadcrumb: "Birdypedia" }) %>
 
-    <%- include('../partials/filter-search-sort.ejs') %>
+    <%- include('../partials/filter-search-sort.ejs', { selectedFamily : locals.selectedFamily ? selectedFamily : "" }) %>
 
     <%- include('../partials/spacer.ejs'); %>
 
     <div id="birdDisplay" class="row filter-container" data-delay="true"></div>
 
 <script type="text/javascript">
+  var filterizr = {
+    destroy : function () {}
+  };
+
   var userpets = [<%= userpets %>];
   var cache = {};
+  var timeout = null;
+
+  var statePushed = false;
+
   $('#family').on('change', function () {
     var family = this.value;
 
@@ -27,6 +35,14 @@
         </div>
       `);
 
+      if (statePushed) {
+        window.history.replaceState(null, null, `/birdypedia/family/${family}`);
+      }
+      else {
+        window.history.pushState(null, null, `/birdypedia/family/${family}`);
+        statePushed = true;
+      }
+
       if (cache[family]) {
         displayBirdyPets(family);
       }
@@ -38,8 +54,17 @@
       }
     } catch (err) {
       $('#birdDisplay').html("");
+
+      if (statePushed) {
+        window.history.go(-1);
+        statePushed = false;
+      }
     }
   });
+
+  <% if (locals.selectedFamily) { %>
+    $('#family').change();
+  <% } %>
 
   function displayBirdyPets (family) {
     var birdypets = cache[family];
@@ -53,12 +78,16 @@
 
     lazyLoadInstance.update();
 
-    setTimeout( function () {
-      initializeFilterizr();
-    }, 1000);
+    var filterizr = new window.Filterizr('.filter-container', {
+      controlsSelector: '.filter-control',
+      gridItemsSelector: '.filter-item',
+      multifilterLogicalOperator: 'and',
+      layout: 'sameWidth',
+      spinner: {
+        enabled: true
+      }
+    });
   }
 </script>
-
-<%- include('../scripts/filterizr.ejs') %>
 
 <%- include('../footer.ejs') %>

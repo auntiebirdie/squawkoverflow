@@ -6,7 +6,6 @@
     $(document).ready(function() {
       if (!$('.filter-container').attr('data-delay')) {
         initializeFilterizr();
-      }
 
       try {
         $('select[data-sort]').change(function() {
@@ -31,6 +30,7 @@
           });
         });
       } catch (err) {}
+      }
     });
 
     function initializeFilterizr () {

@@ -11,8 +11,9 @@ router.get('/buddy/:id', helpers.Middleware.isLoggedIn, helpers.Middleware.entit
 });
 
 router.get('/gift/:id', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res) => {
-  helpers.DB.fetch({
-    "kind": "Member"
+  helpers.Redis.fetch({
+    "kind": "member",
+	  "limit": 50
   }).then((members) => {
     res.render('birdypet/gift', {
       giftpet: {
@@ -61,17 +62,21 @@ router.get('/release/:id', helpers.Middleware.isLoggedIn, helpers.Middleware.ent
 router.post('/release/:id', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res, next) => {
   var birdypet = helpers.BirdyPets.fetch(req.entity.birdypetId);
 
-  helpers.Discord.Webhook.send('free-birds', {
-    birdypet: birdypet
-  }).then(() => {
+  helpers.Redis.save(
+    'freebird',
+    birdypet.id, {
+    "member": req.session.user.id,
+    "source": "WEB"
+  }
+).then(() => {
 
-    helpers.Redis.delete('memberpet', req.params.id).then(() => {
+  helpers.Redis.delete('memberpet', req.params.id).then(() => {
 
-      res.redirect('/aviary/' + req.session.user.id);
-    });
-  }).catch((err) => {
-    next(err);
+    res.redirect('/aviary/' + req.session.user.id);
   });
+}).catch((err) => {
+  next(err);
+});
 });
 
 router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
@@ -89,22 +94,23 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
   if (req.session.user && req.session.user.id == member._id) {
     var allFlocks = await helpers.Redis.fetch({
       "kind": "flock",
-      "filters": [
-	      { field : "member", value : member._id }
-      ]
+      "filters": [{
+        field: "member",
+        value: member._id
+      }]
     });
   }
 
   if (req.entity.flocks) {
-	  req.entity.flocks = req.entity.flocks.split(',');
+    req.entity.flocks = req.entity.flocks.split(',');
     var flocks = [];
 
     for (var flock of req.entity.flocks) {
-	    let flockData = await helpers.Redis.get('flock', flock);
+      let flockData = await helpers.Redis.get('flock', flock).catch( (err) => { });
 
-	    if (flockData) {
-		    flocks.push(flockData);
-	    }
+      if (flockData) {
+        flocks.push(flockData);
+      }
     }
   }
 
@@ -136,7 +142,7 @@ router.post('/:id', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExis
     nickname: nickname,
     birdypetId: variant,
     description: description,
-    flocks: flocks.map( (flock) => flock ).join(',')
+    flocks: flocks.map((flock) => flock).join(',')
   }).then(() => {
     res.redirect('/birdypet/' + req.params.id);
   });

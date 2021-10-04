@@ -20,7 +20,7 @@ module.exports = {
     return birdypets.filter((birdypet) => {
       let tmp = keys.length > 1 ? birdypet[keys[0]][keys[1]] : birdypet[key];
 
-      return Array.isArray(tmp) ? tmp.includes(value) : tmp == value;
+      return Array.isArray(tmp) ? tmp.map((val) => val.toLowerCase()).includes(value) : tmp.toLowerCase() == value;
     }).map((birdypet) => this.format(birdypet));
   }
 }

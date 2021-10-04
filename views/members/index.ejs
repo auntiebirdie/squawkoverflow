@@ -6,18 +6,17 @@
       <% if (i % 4 === 0) { %>
         <% if (i > 0) { %>
           </div>
-          <%- include('../partials/spacer.ejs') %>
         <% } %>
       <div class="row">
       <% } %>
-        <div class="col-md-3">
+        <div class="col-sm-6 col-md-3 mb-3">
           <div class="row">
-          <div class="col-md-3 text-center">
+          <div class="col-3 text-center">
             <a href="/members/<%= members[i]._id %>">
-              <img class="member-avatar" src="https://cdn.discordapp.com/avatars/<%= members[i]._id %>/<%= members[i].avatar %>.webp?size=40" data-id="<%= members[i]._id %>" onerror="missingMemberAvatar(this)">
+              <img class="member-avatar" src="<%= members[i].avatar %>" data-id="<%= members[i]._id %>" onerror="missingMemberAvatar(this)">
             </a>
           </div>
-          <div class="col-md-8">
+          <div class="col-8">
             <h5 class="pt-2">
               <a href="/members/<%= members[i]._id %>">
                 <%= members[i].username %>

@@ -12,7 +12,10 @@
         <div class="col-md-3">
           <div class="pb-4">
             <div class="card" style="cursor: pointer">
-              <div class="lazy birdypet" data-id="<%= birdypet.id %>" data-bg="https://storage.googleapis.com/birdypets/<%= birdypet.species.order %>/<%= birdypet.species.family %>/<%= birdypet.species.scientificName %>/<%= birdypet.id %>.jpg"></div>
+              <div class="lazy birdypet <%= userpets.includes(birdypet.species.speciesCode) ? (userpets.includes(birdypet.id) ? "checkmark2" :"checkmark1") : "" %>"
+                   data-id="<%= birdypet.id %>"
+                   data-bg="https://storage.googleapis.com/birdypets/<%= birdypet.species.order %>/<%= birdypet.species.family %>/<%= birdypet.species.scientificName %>/<%= birdypet.id %>.jpg"
+              ></div>
               <h3 class="text-center"><%= birdypet.species.commonName %></h3>
               <h6 class="text-center"><%= birdypet.label + " " + birdypet.version %></h6>
             </div>

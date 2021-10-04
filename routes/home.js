@@ -50,7 +50,10 @@ router.get('/login', (req, res) => {
           };
 
           helpers.Redis.get('member', user.id).then((member) => {
-            if (!member) {
+            if (member) {
+	      req.session.username = member.username;
+	      req.session.avatar = member.avatar;
+
               data.joinedAt = Date.now();
               helpers.Redis.set('member', user.id, { lastLogin : Date.now() }).then(() => {
                 res.redirect('/');

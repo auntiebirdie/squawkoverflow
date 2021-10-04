@@ -26,7 +26,9 @@
               <option value=""></option>
             <% } %>
             <% for (var family of families) { %>
-              <option value="<%= family.value.toLowerCase() %>"><%= family.label %></option>
+              <option value="<%= family.value.toLowerCase() %>" <%= locals.selectedFamily && selectedFamily.toLowerCase() == family.value.toLowerCase() ? "selected" : "" %>>
+                <%= family.label %>
+              </option>
             <% } %>
           </select>
         </div>
@@ -35,7 +37,7 @@
       <div class="col-md-6 mt-4">
         <div class="mb-4">
           <h4>Search</h4>
-          <input type="text" name="search" class="form-control filter-control" data-search>
+          <input id="search" type="text" name="search" class="form-control filter-control" data-search>
         </div>
 
         <% if (locals.sortFields) { %>

@@ -21,6 +21,34 @@ module.exports = {
   Discord: {
     Webhook: require('./helpers/webhook.js')
   },
+  MemberTiers: function(member) {
+    var tier = {
+      name: "",
+      eggTimer: 0 //30 after alpha
+    };
+
+    switch (`${member.tier}`) {
+      case "4":
+        tier.name = "Post-Alpha Normal";
+        tier.eggTimer = 30;
+		    break;
+      case "3":
+        tier.name = "Birdy";
+        tier.eggTimer = 0; // unlimited
+        break;
+      case "2":
+        tier.name = "Hatchling";
+        tier.eggTimer = 10;
+        break;
+      case "1":
+        tier.name = "Birdy";
+        tier.eggTimer = 15;
+        break;
+
+    }
+
+    return tier;
+  },
   BirdyPets: require('./helpers/birdypets.js'),
   UserPets: {
     fetch: require('./helpers/fetchUserPets.js')

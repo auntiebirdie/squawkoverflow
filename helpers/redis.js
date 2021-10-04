@@ -58,7 +58,6 @@ Database.prototype.fetch = function({
   order,
   limit,
   startAt,
-  maxResults,
   keysOnly
 }) {
   return new Promise(async (resolve, reject) => {
@@ -66,9 +65,12 @@ Database.prototype.fetch = function({
     var output = [];
 
     if (filters) {
+      var filterString = "";
       for (filter of filters) {
-        query.push(`@${filter.field}:{${filter.value}}`);
+        filterString += `@${filter.field}:{${filter.value}} `;
       }
+
+      query.push(filterString);
 
       query.push('LIMIT');
 
@@ -106,7 +108,7 @@ Database.prototype.fetch = function({
         await Promise.all([new Promise((resolve, reject) => {
           this.databases[kind].scan(cursor, async (err, response) => {
             if (err) {
-		    console.log(err);
+              console.log(err);
               noResultsLeft = true;
             } else {
               if (response[0] == 0) {
@@ -118,11 +120,11 @@ Database.prototype.fetch = function({
               var results = response[1];
 
               for (var i = 0, len = results.length; i < len; i++) {
-		      if (output.length < maxResults) {
-                await this.get(kind, results[i].split(':').pop()).then((data) => {
-                  output.push(data);
-                });
-		      }
+                if (output.length < limit) {
+                  await this.get(kind, results[i].split(':').pop()).then((data) => {
+                    output.push(data);
+                  });
+                }
               }
             }
 
@@ -130,7 +132,7 @@ Database.prototype.fetch = function({
           });
         })]);
       }
-      while (!noResultsLeft && output.length < maxResults);
+      while (!noResultsLeft && output.length < limit);
 
       resolve(output);
     }

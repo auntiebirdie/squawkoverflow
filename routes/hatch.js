@@ -4,27 +4,37 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   if (req.session.user) {
-    var skipAdjectives = [
-      'circular',
-      'dead',
-      'east', 'eastern',
-      'featherless', 'fleshy', 'forked',
-      'human', 'hybrid',
-      'last',
-      'north', 'northern', 'northeastern', 'northwestern',
-      'rummaging',
-      'south', 'southern', 'southeastern', 'southwestern',
-      'west', 'western', 'wooded'
-    ];
-    var adjectives = helpers.Chance.pickset(
-      helpers.data('eggs').filter((adjective) => !skipAdjectives.includes(adjective)),
-      5
-    );
+    var member = await helpers.Redis.get('member', req.session.user.id);
+    var timeUntil = 0;
 
-    req.session.adjectives = adjectives;
+    if (member.tier) {
+      if (member.lastHatchedAt) {
+        var tier = helpers.MemberTiers(member);
+
+        if (tier.eggTimer) {
+          var timeSinceLastHatch = (Date.now() - member.lastHatchedAt) / 60000;
+
+          if (timeSinceLastHatch < tier.eggTimer) {
+            timeUntil = Math.floor(tier.eggTimer - timeSinceLastHatch);
+          }
+        }
+      }
+    }
+
+    if (timeUntil == 0) {
+      var adjectives = helpers.Chance.pickset(
+        helpers.data('eggs'),
+        5
+      );
+
+      req.session.adjectives = adjectives;
+    } else {
+      var adjectives = [];
+    }
 
     res.render('hatch/eggs', {
-      adjectives: adjectives
+      adjectives: adjectives,
+      timeUntil: timeUntil
     });
   } else {
     res.redirect('/account/login');
@@ -42,10 +52,47 @@ router.post('/', async (req, res) => {
         req.session.adjective = adjective;
         delete req.session.adjectives;
 
+        var userpets = [];
+
+        await helpers.Redis.fetchOne({
+          kind: 'memberpet',
+          filters: [{
+              field: 'member',
+              value: req.session.user.id
+            },
+            {
+              field: 'birdypetSpecies',
+              value: birdypet.species.speciesCode
+            }
+          ]
+        }).then((result) => {
+          if (result) {
+            userpets.push(birdypet.species.speciesCode);
+          }
+        });
+
+        await helpers.Redis.fetchOne({
+          kind: 'memberpet',
+          filters: [{
+              field: 'member',
+              value: req.session.user.id
+            },
+            {
+              field: 'birdypetId',
+              value: birdypet.id
+            }
+          ]
+        }).then((result) => {
+          if (result) {
+            userpets.push(birdypet.id);
+          }
+        });
+
         if (birdypet) {
           return res.render('hatch/hatched', {
             adjective: adjective,
-            birdypet: birdypet
+            birdypet: birdypet,
+            userpets: userpets
           });
         } else {
           return res.redirect('/error');
@@ -60,26 +107,32 @@ router.post('/', async (req, res) => {
         case "keep":
           return helpers.Redis.create('memberpet', {
             birdypetId: birdypet.id,
-		  birdypetSpecies: birdypet.species.speciesCode,
+            birdypetSpecies: birdypet.species.speciesCode,
             member: req.session.user.id,
             hatchedAt: Date.now()
           }).then((id) => {
-            helpers.Discord.Webhook.send('egg-hatchery', {
-              adjective: req.session.adjective,
-              member: req.session.user.id,
-              userpet: id,
-              birdypet: birdypet
+            helpers.Redis.set('member', req.session.user.id, {
+              lastHatchedAt: Date.now()
+            }).then(() => {
+              helpers.Discord.Webhook.send('egg-hatchery', {
+                adjective: req.session.adjective,
+                member: req.session.user.id,
+                userpet: id,
+                birdypet: birdypet
+              });
+              delete req.session.adjective;
+              return res.redirect(`/birdypet/${id}`);
             });
-            delete req.session.adjective;
-            return res.redirect(`/birdypet/${id}`);
           });
           break;
         case "release":
-          // TODO - only post to webhook if a verified server member
-          helpers.Discord.Webhook.send('free-birds', {
-            member: req.session.user.id,
-            birdypet: birdypet
-          });
+          helpers.Redis.save(
+            'freebird',
+            birdypet.id, {
+              "member": req.session.user.id,
+              "source": "WEB"
+            }
+          );
           return res.redirect('/hatch');
           break;
       }

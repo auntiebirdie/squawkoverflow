@@ -83,6 +83,9 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
 
   var allFamilies = require('../public/data/families.json'); 
   var families = new Set();
+  var filters = [
+	  { field: "member", value: req.entity.member }
+  ];
 
   if (req.session.user && req.session.user.id == req.entity.member) {
     output.member = req.session.user;
@@ -94,12 +97,14 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
     });
   } else {
     output.member = await helpers.Redis.get("member", req.entity.member);
+	  filters.push({
+		  field: "flocks",
+		  value: req.entity._id
+	  });
   }
 
-  output.userpets = await helpers.UserPets.fetch([{
-    field: "member",
-    value: req.entity.member
-  }]).then((userpets) => {
+
+  output.userpets = await helpers.UserPets.fetch(filters).then((userpets) => {
     return userpets.map((userpet) => {
       families.add(allFamilies.find((a) => a.value == userpet.birdypet.species.family));
 

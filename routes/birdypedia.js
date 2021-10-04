@@ -47,6 +47,23 @@ router.get('/family', async (req, res) => {
   });
 });
 
+router.get('/family/:family', async (req, res) => {
+  var birdypets = require('../public/data/birdypets.json').map( (birdypet) => helpers.BirdyPets.format(birdypet));
+  var families = require('../public/data/families.json');
+
+  var userpets = req.session.user ? await helpers.UserPets.fetch([{
+    field: "member",
+    value: req.session.user.id
+  }]).then( (userpets) => { return userpets.map((userpet) => userpet.birdypetId) }) : [];
+
+  res.render('birdypedia/family', {
+    families: families,
+    selectedFamily: req.params.family,
+    birdypets: birdypets,
+    userpets: userpets
+  });
+});
+
 router.get('/eggs', async (req, res) => {
   var adjectives = require('../public/data/eggs.json');
 

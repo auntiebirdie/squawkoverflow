@@ -132,6 +132,17 @@ nav .brand-logo h4 {
 	filter: saturate(0%) brightness(55%) contrast(1000%);
 }
 
+.birdypet.checkmark1:after, .birdypet.checkmark2:after {
+	content: '✔️';
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.birdypet.checkmark2:after {
+	content: '✔️✔️';
+}
+
 select {
 	width: 100%;
 }

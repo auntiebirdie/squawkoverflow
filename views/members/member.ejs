@@ -36,7 +36,7 @@
         <img src="<%= birdybuddy.birdypet.image %>">
       </div>
       <div class="col-md-6">
-        <h4><a href="/birdypet/<%= birdybuddy.id %>"><%= birdybuddy.nickname ? birdybuddy.nickname : birdybuddy.birdypet.species.commonName %></a></h4>
+        <h4><a href="/birdypet/<%= birdybuddy._id %>"><%= birdybuddy.nickname ? birdybuddy.nickname : birdybuddy.birdypet.species.commonName %></a></h4>
         <div>
           <%- include('../partials/friendshipMeter.ejs', { friendship : birdybuddy.friendship }) %>
         </div>

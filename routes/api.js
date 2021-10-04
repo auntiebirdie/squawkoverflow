@@ -1,15 +1,15 @@
-const helpers = require('../helpers');
+const helpers = require('../helpers.js');
 const express = require('express');
 const router = express.Router();
 
 router.get('/birdypedia/family/:family', async (req, res) => {
-  var birdypets = helpers.BirdyPets.find('species.family', req.params.family.toLowerCase());
+  var birdypets = helpers.BirdyPets.findBy('species.family', req.params.family.toLowerCase());
 
   res.json(birdypets);
 });
 
 router.get('/birdypedia/eggs/:adjective', async (req, res) => {
-  var birdypets = helpers.BirdyPets.find('adjectives', req.params.adjective);
+  var birdypets = helpers.BirdyPets.findBy('adjectives', req.params.adjective);
 
   res.json(birdypets);
 });

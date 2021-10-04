@@ -50,7 +50,7 @@
         try {
           $('#giftTo').val(memberId);
 
-          memberDisplay.html(`<h3><img src="https://cdn.discordapp.com/avatars/${memberId}/${option.getAttribute('data-avatar')}.webp?size=64" class="member-avatar" data-id="${memberId}" onerror="missingMemberAvatar(this)"> ${option.value}</h3>`);
+          memberDisplay.html(`<h3><img src="${option.getAttribute('data-avatar')}" class="member-avatar" data-id="${memberId}" onerror="missingMemberAvatar(this)"> ${option.value}</h3>`);
 
           actionButton.attr('disabled', false);
         }
