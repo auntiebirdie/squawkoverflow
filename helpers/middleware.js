@@ -31,6 +31,7 @@ Middleware.prototype.entityExists = async function(req, res, next) {
     switch (req.baseUrl) {
       case "/aviary":
       case "/member":
+      case "/members":
         kind = 'member';
         break;
       case "/birdypet":

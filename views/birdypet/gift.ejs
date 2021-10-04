@@ -23,7 +23,8 @@
         <input class="form-control mt-4" list="memberListOptions" id="memberList" placeholder="Pick a member..." autocomplete="off">
         <datalist id="memberListOptions">
         <% for (var member of members) { %>
-          <option data-id="<%= member._id %>" data-avatar="<%= member.avatar %>" value="<%= member.username %>"></option>
+          <option data-id="<%= member._id %>" data-avatar="<%= member.avatar %>" value="<%= member.username %>">
+          </option>
         <% } %>
         </datalist>
 
@@ -60,6 +61,10 @@
           actionButton.attr('disabled', true);
         }
       });
+
+      <% if (locals.selectedMember) { %>
+        $('#memberList').val("<%= members.find((member) => member._id == selectedMember).username%>").trigger('input');
+      <% } %>
     </script>
 
 <%- include('../footer.ejs') %>

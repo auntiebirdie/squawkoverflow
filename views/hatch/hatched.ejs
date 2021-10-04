@@ -8,13 +8,12 @@
       </div>
       <div class="col-md-4">
         <h3>
-          <%= userpets.includes(birdypet.species.speciesCode) ? "✔️" : "&nbsp;" %>
           <%= birdypet.species.commonName %>
         </h3>
         <h6>
-          <%= userpets.includes(birdypet.id) ? "✔️" : "&nbsp;" %>
           <%= birdypet.version %> <%= birdypet.label %>
         </h6>
+        <h6><%= userpets.includes(birdypet.species.speciesCode) ? "✔️" : "" %><%= userpets.includes(birdypet.id) ? "✔️" : "" %></h6>
 
         <%- include('../partials/spacer.ejs') %>
 

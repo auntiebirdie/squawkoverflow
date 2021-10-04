@@ -12,15 +12,18 @@ router.get('/buddy/:id', helpers.Middleware.isLoggedIn, helpers.Middleware.entit
 
 router.get('/gift/:id', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res) => {
   helpers.Redis.fetch({
-    "kind": "member",
-	  "limit": 50
+    kind: "member",
+    order: {
+      field: "username"
+    }
   }).then((members) => {
     res.render('birdypet/gift', {
       giftpet: {
         userpet: req.entity,
         birdypet: helpers.BirdyPets.fetch(req.entity.birdypetId)
       },
-      members: members
+      members: members,
+      selectedMember: req.query.member ? req.query.member : null
     });
   });
 });
@@ -65,18 +68,18 @@ router.post('/release/:id', helpers.Middleware.isLoggedIn, helpers.Middleware.en
   helpers.Redis.save(
     'freebird',
     birdypet.id, {
-    "member": req.session.user.id,
-    "source": "WEB"
-  }
-).then(() => {
+      "member": req.session.user.id,
+      "source": "WEB"
+    }
+  ).then(() => {
 
-  helpers.Redis.delete('memberpet', req.params.id).then(() => {
+    helpers.Redis.delete('memberpet', req.params.id).then(() => {
 
-    res.redirect('/aviary/' + req.session.user.id);
+      res.redirect('/aviary/' + req.session.user.id);
+    });
+  }).catch((err) => {
+    next(err);
   });
-}).catch((err) => {
-  next(err);
-});
 });
 
 router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
@@ -106,7 +109,7 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
     var flocks = [];
 
     for (var flock of req.entity.flocks) {
-      let flockData = await helpers.Redis.get('flock', flock).catch( (err) => { });
+      let flockData = await helpers.Redis.get('flock', flock).catch((err) => {});
 
       if (flockData) {
         flocks.push(flockData);

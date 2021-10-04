@@ -105,7 +105,7 @@ Database.prototype.fetch = function({
       var cursor = startAt || 0;
 
       do {
-        await Promise.all([new Promise((resolve, reject) => {
+        await new Promise((resolve, reject) => {
           this.databases[kind].scan(cursor, async (err, response) => {
             if (err) {
               console.log(err);
@@ -120,7 +120,7 @@ Database.prototype.fetch = function({
               var results = response[1];
 
               for (var i = 0, len = results.length; i < len; i++) {
-                if (output.length < limit) {
+                if (!limit || output.length < limit) {
                   await this.get(kind, results[i].split(':').pop()).then((data) => {
                     output.push(data);
                   });
@@ -130,11 +130,23 @@ Database.prototype.fetch = function({
 
             resolve();
           });
-        })]);
+        });
       }
-      while (!noResultsLeft && output.length < limit);
+      while (!noResultsLeft && (!limit || output.length < limit));
 
       resolve(output);
+    }
+  }).then((output) => {
+    if (order) {
+      return output.sort((a, b) => {
+        if (order.dir == "desc") {
+          return b[order.field].localeCompare(a[order.field]);
+        } else {
+          return a[order.field].localeCompare(b[order.field]);
+        }
+      });
+    } else {
+      return output;
     }
   });
 }
@@ -147,7 +159,6 @@ Database.prototype.fetchOne = function(args) {
     }).then((results) => {
       resolve(results[0] || null);
     });
-
   });
 }
 

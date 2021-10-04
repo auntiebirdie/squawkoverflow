@@ -16,7 +16,10 @@
       <p><a href="/aviary/<%= member._id %>"><%= birdypets %> BirdyPets</a></p>
       <% } %>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 text-end">
+      <% if (locals.loggedInUser && loggedInUser.id != member._id) { %>
+        <p><a href="/members/<%= member._id %>/gift" class="btn btn-primary">🎁 Send Gift</a></p>
+      <% } %>
     </div>
   </div>
 
