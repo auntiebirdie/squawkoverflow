@@ -14,6 +14,31 @@ router.get('/birdypedia/eggs/:adjective', async (req, res) => {
   res.json(birdypets);
 });
 
+router.get('/birdypet/:memberpet/feedBug', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, async (req, res) => {
+	var bugs = await helpers.Redis.get('member', req.session.user.id, 'bugs');
+
+	if (bugs > 0) {
+		await helpers.Redis.increment('member', req.session.user.id, 'bugs', -1);
+
+	await helpers.Redis.increment('memberpet', req.entities['memberpet']._id, "friendship", 5);
+		res.json({
+			bugs: bugs - 1,
+			response: helpers.Chance.pickone([
+				"Mmm!  Tastes like... bug.",
+				"Tasty!",
+				"Thanks!",
+				"More?",
+				"Oooh, that one was still wiggling.",
+				"Yum!",
+				"Another one!!"
+			])
+		});
+	}
+	else {
+		res.json({ error : "You don't have any more bugs!" });
+	}
+});
+
 router.get('/flocks/:flock/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res) => {
   var index = req.entities['memberpet'].flocks ? req.entities['memberpet'].flocks.indexOf(req.entities['flock']._id) : -1;
   var flocks = req.entities['memberpet'].flocks ? req.entities['memberpet'].flocks : [];

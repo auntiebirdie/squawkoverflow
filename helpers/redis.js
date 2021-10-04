@@ -21,20 +21,26 @@ function Database() {
   }
 }
 
-Database.prototype.get = function(kind, id) {
+Database.prototype.get = function(kind, id, field = "") {
   return new Promise((resolve, reject) => {
-    this.databases[kind].hgetall(`${kind}:${id}`, (err, result) => {
-      if (result) {
+    if (field != "") {
+      this.databases[kind].hget(`${kind}:${id}`, field, (err, result) => {
+        resolve(result);
+      });
+    } else {
+      this.databases[kind].hgetall(`${kind}:${id}`, (err, result) => {
+        if (err) {
+          return resolve();
+        }
+
         resolve({
           ...result,
           ...{
             _id: id
           }
         });
-      } else {
-        reject(err);
-      }
-    });
+      });
+    }
   });
 }
 
@@ -47,6 +53,14 @@ Database.prototype.set = function(kind, id, data) {
         await this.databases[kind].hdel(`${kind}:${id}`, datum);
       }
     }
+
+    resolve();
+  });
+}
+
+Database.prototype.increment = function(kind, id, field, value) {
+  return new Promise(async (resolve, reject) => {
+    await this.databases[kind].sendCommand('HINCRBY', [`${kind}:${id}`, field, value]);
 
     resolve();
   });

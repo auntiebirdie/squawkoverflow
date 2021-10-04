@@ -126,6 +126,7 @@ nav .brand-logo h4 {
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center center;
+	position: relative;
 }
 
 .birdypet-unhatched {
@@ -141,6 +142,25 @@ nav .brand-logo h4 {
 
 .birdypet.checkmark2:after {
 	content: '✔️✔️';
+}
+
+.birdybuddy {
+	position: relative;
+}
+
+.birdybuddy .message {
+	position: absolute;
+	top: -30px;
+	right: 0;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, .9);
+        padding: 10px;
+	width: 50%;
+}
+
+.birdybuddy .message:before {
+	content: '💬';
+	margin-right: 5px;
 }
 
 select {

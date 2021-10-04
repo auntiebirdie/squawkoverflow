@@ -36,13 +36,20 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
     }
   }
 
+  if (req.session.user) {
+    var bugs = await helpers.Redis.get('member', req.session.user.id, 'bugs') || 0;
+  } else {
+    var bugs = 0;
+  }
+
   res.render('members/member', {
     page: "member",
     member: member,
     birdypets: userpets.length || 0,
     birdybuddy: birdybuddy || {},
     flock: flock || null,
-    flockpets: flockpets || {}
+    flockpets: flockpets || {},
+    bugs: bugs
   });
 });
 
