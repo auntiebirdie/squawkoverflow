@@ -13,7 +13,7 @@
     destroy : function () {}
   };
 
-  var userpets = [<%= userpets %>];
+  var userpets = ["<%= userpets.join('","') %>"];
   var cache = {};
   var timeout = null;
 

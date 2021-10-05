@@ -24,27 +24,22 @@ module.exports = {
   MemberTiers: function(member) {
     var tier = {
       name: "",
-      eggTimer: 0 //30 after alpha
+      eggTimer: 0
     };
 
     switch (`${member.tier}`) {
-      case "4":
-        tier.name = "Post-Alpha Normal";
-        tier.eggTimer = 30;
-		    break;
       case "3":
-        tier.name = "Birdy";
-        tier.eggTimer = 0; // unlimited
+        tier.name = "Alpha Squad";
+        tier.eggTimer = 10; // opt-in for timer
         break;
       case "2":
-        tier.name = "Hatchling";
-        tier.eggTimer = 10;
+        tier.name = "Alpha Squad";
+        tier.eggTimer = 0;
         break;
       case "1":
-        tier.name = "Birdy";
-        tier.eggTimer = 15;
+        tier.name = "Supporter";
+        tier.eggTimer = 0;
         break;
-
     }
 
     return tier;

@@ -10,6 +10,18 @@ automatic_scaling:
     min_idle_instances: 0
 
 handlers:
+- url: /css
+  static_dir: public/css
+
+- url: /js
+  static_dir: public/js
+
+- url: /data
+  static_dir: public/data
+
+- url: /img
+  static_dir: public/img
+
 - url: /.*
   secure: always
   redirect_http_response_code: 301

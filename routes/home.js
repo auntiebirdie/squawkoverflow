@@ -51,11 +51,10 @@ router.get('/login', (req, res) => {
 
           helpers.Redis.get('member', user.id).then((member) => {
             if (member) {
-	      req.session.username = member.username;
-	      req.session.avatar = member.avatar;
+	      req.session.user.username = member.username;
+	      req.session.user.avatar = member.avatar;
 
-              data.joinedAt = Date.now();
-              helpers.Redis.set('member', user.id, { lastLogin : Date.now() }).then(() => {
+              helpers.Redis.set('member', user.id, 'lastLogin',  Date.now()).then(() => {
                 res.redirect('/');
               });
             } else {
@@ -69,12 +68,8 @@ router.get('/login', (req, res) => {
               });
             }
           }).catch( (err) => {
-              helpers.Redis.save('member', user.id, {
-                      username: user.username,
-                      avatar: user.avatar,
-                      joinedAt: Date.now(),
-                      lastLogin: Date.now()
-              }).then(() => {
+		  console.error(err);
+              helpers.Redis.set('member', user.id, 'lastLogin', Date.now()).then( () => {
                 res.redirect('/');
               });
 	  });

@@ -3,9 +3,20 @@ const birdypets = require('../public/data/birdypets.json');
 
 module.exports = {
   format: function(birdypet) {
-    return {
-      ...birdypet,
-      image: `https://storage.googleapis.com/birdypets/${birdypet.species.order}/${birdypet.species.family}/${birdypet.species.scientificName}/${birdypet.id}.${birdypet.filetype ? birdypet.filetype : "jpg"}`
+    if (birdypet) {
+      return {
+        ...birdypet,
+        image: `https://storage.googleapis.com/birdypets/${birdypet.species.order}/${birdypet.species.family}/${birdypet.species.scientificName}/${birdypet.id}.${birdypet.filetype ? birdypet.filetype : "jpg"}`
+      }
+    } else {
+      return {
+        species: {
+          order: "Unknown",
+          family: "Unknown",
+          scientificName: "Unknown"
+        },
+        image: "/img/placeholder.jpeg"
+      }
     }
   },
   random: function(num = 1) {

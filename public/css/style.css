@@ -50,6 +50,18 @@ nav .brand-logo h4 {
 	border-radius: 100%;
 }
 
+nav .member-avatar {
+	height: 40px;
+}
+
+nav .member-name {
+	max-width: 150px;
+	display: inline-block;
+	vertical-align: middle;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .member-badge::before {
 	display: inline-block;
 	font-size: 2.5em;
@@ -133,14 +145,14 @@ nav .brand-logo h4 {
 	filter: saturate(0%) brightness(55%) contrast(1000%);
 }
 
-.birdypet.checkmark1:after, .birdypet.checkmark2:after {
+.birdypet.checkmark1::after, .birdypet.checkmark2::after {
 	content: '✔️';
 	position: absolute;
 	top: 0;
 	right: 0;
 }
 
-.birdypet.checkmark2:after {
+.birdypet.checkmark2::after {
 	content: '✔️✔️';
 }
 
@@ -158,7 +170,7 @@ nav .brand-logo h4 {
 	width: 50%;
 }
 
-.birdybuddy .message:before {
+.birdybuddy .message::before {
 	content: '💬';
 	margin-right: 5px;
 }

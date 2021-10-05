@@ -36,12 +36,6 @@ Middleware.prototype.entityExists = async function(req, res, next) {
         break;
       case "/birdypet":
         kind = "memberpet";
-
-        var newIds = require('../manual/newBirds.json');
-
-        if (newIds[req.params.id]) {
-          return res.redirect(`/birdypet/${newIds[req.params.id]}`);
-        }
         break;
       case "/flocks":
         kind = "flock";

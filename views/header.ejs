@@ -49,9 +49,9 @@
 	<div class="d-flex dropdown">
 		<% if (locals.loggedInUser) { %>
 		<a class="nav-link dropdown-toggle link-light" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-			<img class="member-avatar" src="https://cdn.discordapp.com/avatars/<%= locals.loggedInUser.id %>/<%= locals.loggedInUser.avatar %>.webp?size=40" data-id="<%= locals.loggedInUser.id %>" onerror="missingMemberAvatar(this)">
+			<img class="member-avatar" src="<%= locals.loggedInUser.avatar %>" data-id="<%= locals.loggedInUser.id %>" onerror="missingMemberAvatar(this)">
 		    &nbsp;
-		    <%= locals.loggedInUser.username %>
+		    <span class="member-name"><%= locals.loggedInUser.username %></span>
 		</a>
 		<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 			<li><a class="dropdown-item" href="/members/<%= locals.loggedInUser.id %>">Profile</a></li>

@@ -41,7 +41,7 @@ router.get('/family', async (req, res) => {
   }]).then( (userpets) => { return userpets.map((userpet) => userpet.birdypetId) }) : [];
 
   res.render('birdypedia/family', {
-    families: families,
+    families: families.sort( (a, b) => a.label.localeCompare(b.label) ),
     birdypets: birdypets,
     userpets: userpets
   });
@@ -57,7 +57,7 @@ router.get('/family/:family', async (req, res) => {
   }]).then( (userpets) => { return userpets.map((userpet) => userpet.birdypetId) }) : [];
 
   res.render('birdypedia/family', {
-    families: families,
+    families: families.sort( (a, b) => a.label.localeCompare(b.label) ),
     selectedFamily: req.params.family,
     birdypets: birdypets,
     userpets: userpets
