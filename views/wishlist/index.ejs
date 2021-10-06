@@ -1,0 +1,68 @@
+<%- include('../header.ejs') %>
+
+    <%- include('../partials/page-title.ejs', { title : `${member.username}'s Wishlist` }) %>
+
+    <%- include('../partials/filter-search-sort.ejs', { includeAllFamily : true }) %>
+
+    <%- include('../partials/spacer.ejs') %>
+
+    <div id="birdDisplay" class="row filter-container">
+      <% for (var bird of wishlist) { %>
+      <div class="col-md-3 filter-item"
+           data-category="<%= bird.family.toLowerCase() %>"
+      >
+        <div class="pb-4">
+          <div class="card">
+            <% if (locals.loggedInUser && loggedInUser.id == member._id) { %>
+            <button class="wishlist-heart btn btn-light btn-sm" data-id="<%= bird.speciesCode %>" data-action="remove" role="button">
+              ❤️
+            </button>
+            <% } %>
+            <div class="lazy birdypet <%= bird.variants[0].hatched ? "hatched" : "unhatched" %> <%= bird.variants.find((variant) => variant.hatched) ? "checkmark1" : "" %>"
+                 data-bg="<%= bird.variants[0].image %>">
+            </div>
+            <h3 class="text-center">
+              <%= bird.commonName %>
+            </h3>
+          </div>
+        </div>
+      </div>
+      <% } %>
+    </div>
+
+  <%- include('../scripts/filterizr.ejs') %>
+
+
+<script type="text/javascript">
+<% if (locals.loggedInUser && loggedInUser.id == member._id) { %>
+  $('#birdDisplay').on('click', '.wishlist-heart', function (event) {
+    var button = event.target;
+
+      if (!button.style.opacity) { 
+        var action = button.getAttribute('data-action');
+        button.style.opacity = .5;
+
+        $.ajax({
+          url: `/api/wishlist/${action}/${button.getAttribute('data-id')}`,
+          method: 'post',
+          dataType: "json",
+          success: function(data) {
+            button.style.opacity = null;
+
+            if (action == "add") {
+              button.innerHTML = "❤️";
+              button.setAttribute('data-action', 'remove');
+            }
+            else {
+              button.innerHTML = "🤍";
+              button.setAttribute('data-action', 'add');
+            }
+          }
+        });
+      }
+
+  });
+<% } %>
+</script>
+
+<%- include('../footer.ejs') %>

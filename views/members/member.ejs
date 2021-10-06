@@ -17,6 +17,7 @@
       <% } %>
     </div>
     <div class="col-md-6 text-end">
+        <p><a href="/wishlist/<%= member._id %>" class="btn btn-primary">❤️ View Wishlist</a></p>
       <% if (locals.loggedInUser && loggedInUser.id != member._id) { %>
         <p><a href="/members/<%= member._id %>/gift" class="btn btn-primary">🎁 Send Gift</a></p>
       <% } %>
@@ -71,7 +72,7 @@
               <div class="lazy birdypet" data-bg="<%= userpet.birdypet.image %>"></div>
             </a>
             <h3 class="text-center"><a href="/birdypet/<%= userpet.id %>"><%= userpet.nickname ? userpet.nickname : userpet.birdypet.species.commonName %></a></h3>
-            <h6 class="text-center"><%= userpet.nickname ? userpet.birdypet.species.commonName : (userpet.birdypet.label + " " + userpet.birdypet.version) %></h6>
+            <h6 class="text-center"><%= userpet.nickname ? userpet.birdypet.species.commonName : (userpet.birdypet.version + " " + userpet.birdypet.label) %></h6>
             <% } %>
           </div>
         </div>

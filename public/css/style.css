@@ -141,7 +141,20 @@ nav .member-name {
 	position: relative;
 }
 
-.birdypet-unhatched {
+.birdypet.mini {
+	cursor: pointer;
+	height: 50px;
+	width: 50px;
+	display: inline-block;
+	margin-right: 5px;
+	vertical-align: middle;
+}
+
+.birdypet.full {
+	height: auto;
+}
+
+.birdypet.unhatched {
 	filter: saturate(0%) brightness(55%) contrast(1000%);
 }
 
@@ -154,6 +167,12 @@ nav .member-name {
 
 .birdypet.checkmark2::after {
 	content: '✔️✔️';
+}
+
+.wishlist-heart {
+	position: absolute;
+	right: 0;
+	z-index: 100;
 }
 
 .birdybuddy {

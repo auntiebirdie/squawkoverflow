@@ -5,11 +5,18 @@ const Redis = require("redis");
 function Database() {
   let databases = {
     "MEMBERPETS": ["memberpet", "flock"],
-    "MEMBERS": ["member"],
+    "MEMBERS": ["member", "wishlist"],
     "FREEBIRDS": ["freebird"]
   };
 
   this.databases = {};
+  this.dataTypes = {
+    "memberpet": "h",
+    "flock": "h",
+    "member": "h",
+    "wishlist": "s",
+    "freebird": "h"
+  };
 
   for (let DB in databases) {
     let conn = Redis.createClient(secrets.REDIS[DB].PORT, secrets.REDIS[DB].HOST);
@@ -23,23 +30,32 @@ function Database() {
 
 Database.prototype.get = function(kind, id, field = "") {
   return new Promise((resolve, reject) => {
-    if (field != "") {
-      this.databases[kind].hget(`${kind}:${id}`, field, (err, result) => {
-        resolve(result);
-      });
-    } else {
-      this.databases[kind].hgetall(`${kind}:${id}`, (err, result) => {
-        if (err) {
-          return resolve();
-        }
+    switch (this.dataTypes[kind]) {
+      case "h":
+        if (field != "") {
+          this.databases[kind].hget(`${kind}:${id}`, field, (err, result) => {
+            resolve(result);
+          });
+        } else {
+          this.databases[kind].hgetall(`${kind}:${id}`, (err, result) => {
+            if (err) {
+              return resolve();
+            }
 
-        resolve({
-          ...result,
-          ...{
-            _id: id
-          }
+            resolve({
+              ...result,
+              ...{
+                _id: id
+              }
+            });
+          });
+        }
+        break;
+      case "s":
+        this.databases[kind].smembers(`${kind}:${id}`, (err, result) => {
+          resolve(result);
         });
-      });
+        break;
     }
   });
 }
@@ -47,7 +63,7 @@ Database.prototype.get = function(kind, id, field = "") {
 Database.prototype.set = function(kind, id, data) {
   return new Promise(async (resolve, reject) => {
     for (var datum in data) {
-      if (data[datum] !== null) {
+      if (data[datum] !== null && data[datum] !== undefined) {
         await this.databases[kind].hset(`${kind}:${id}`, datum, data[datum]);
       } else {
         await this.databases[kind].hdel(`${kind}:${id}`, datum);
@@ -62,6 +78,21 @@ Database.prototype.increment = function(kind, id, field, value) {
   return new Promise(async (resolve, reject) => {
     await this.databases[kind].sendCommand('HINCRBY', [`${kind}:${id}`, field, value]);
 
+    resolve();
+  });
+}
+
+Database.prototype.push = function(kind, id, value) {
+  return new Promise(async (resolve, reject) => {
+    await this.databases[kind].sadd(`${kind}:${id}`, value);
+
+    resolve();
+  });
+}
+
+Database.prototype.pop = function(kind, id, value) {
+  return new Promise(async (resolve, reject) => {
+    await this.databases[kind].srem(`${kind}:${id}`, value);
     resolve();
   });
 }
@@ -120,7 +151,7 @@ Database.prototype.fetch = function({
 
       do {
         await new Promise((resolve, reject) => {
-          this.databases[kind].scan(cursor, async (err, response) => {
+          this.databases[kind].scan(cursor, 'MATCH', `${kind}:*`, async (err, response) => {
             if (err) {
               console.log(err);
               noResultsLeft = true;
@@ -153,10 +184,14 @@ Database.prototype.fetch = function({
   }).then((output) => {
     if (order) {
       return output.sort((a, b) => {
-        if (order.dir == "desc") {
-          return b[order.field].localeCompare(a[order.field]);
-        } else {
-          return a[order.field].localeCompare(b[order.field]);
+        try {
+          if (order.dir == "desc") {
+            return b[order.field].localeCompare(a[order.field]);
+          } else {
+            return a[order.field].localeCompare(b[order.field]);
+          }
+        } catch (err) {
+          return 0;
         }
       });
     } else {
@@ -204,7 +239,7 @@ Database.prototype.save = function(kind, id, data) {
       id = uuid.generate();
     }
 
-    this.databases[kind].hmset(`${kind}:${id}`, data, function(err, response) {
+    this.set(kind, id, data).then( () => {
       resolve(id);
     });
   });

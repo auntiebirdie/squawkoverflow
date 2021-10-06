@@ -2,7 +2,7 @@
 
     <%- include('../partials/page-title.ejs', { title : `Send Gift to: ${member.username}` }) %>
 
-    <%- include('../partials/filter-search-sort.ejs', { includeAllFamily : true, sortFields : [{ "value" : "hatched-at", "label" : "Hatch Date (Newest)", "attr" : "data-sort-desc" }, { "value" : "hatched-at", "label" : "Hatch Date (Oldest)" }, { "value" : "name", "label" : "Name" }, { "value" : "common-name", "label" : "Species" }] }) %>
+    <%- include('../partials/filter-search-sort.ejs', { includeAllFamily : true, sortFields : [{ "value" : "wishlist", "label" : "In Their Wishlist" }, {"value" : "hatched-at", "label" : "Hatch Date (Newest)", "attr" : "data-sort-desc" }, { "value" : "hatched-at", "label" : "Hatch Date (Oldest)" }, { "value" : "name", "label" : "Name" }, { "value" : "common-name", "label" : "Species" }] }) %>
 
     <%- include('../partials/spacer.ejs') %>
 
@@ -10,6 +10,7 @@
       <% for (var userpet of myPets) { %>
       <div class="col-md-3 filter-item"
            data-category="<%= [userpet.birdypet.species.family.toLowerCase(), ...(userpet.flocks.length > 0 ? userpet.flocks : ["flockless"]), (userpet.nickname ? "nicknamed" : "nonickname")].join(", ") %>"
+           data-wishlist="<%= wishlist.includes(userpet.birdypet.species.speciesCode) ? "1" : "0" %>"
            data-hatched-at="<%= userpet.hatchedAt %>"
            data-name="<%= userpet.nickname ? userpet.nickname.trim() : userpet.birdypet.species.commonName %>"
            data-common-name="<%= userpet.birdypet.species.commonName %>"
@@ -17,12 +18,17 @@
         <div class="pb-4">
         <div class="card">
           <a href="/birdypet/gift/<%= userpet._id %>?member=<%= member._id %>">
+            <% if (wishlist.includes(userpet.birdypet.species.speciesCode)) {  %>
+              <a class="wishlist-heart">
+                ❤️
+              </a>
+            <% } %>
             <div class="lazy birdypet <%= theirPets.includes(userpet.birdypet.species.speciesCode) ? (theirPets.includes(userpet.birdypet.id) ? "checkmark2" :"checkmark1") : "" %>"
                  data-bg="<%= userpet.birdypet.image %>">
             </div>
           </a>
           <h3 class="text-center"><a href="/birdypet/gift/<%= userpet._id %>?member=<%= member._id %>"><%= userpet.nickname ? userpet.nickname : userpet.birdypet.species.commonName %></a></h3>
-          <h6 class="text-center"><%= userpet.nickname ? userpet.birdypet.species.commonName : (userpet.birdypet.label + " " + userpet.birdypet.version) %></h6>
+          <h6 class="text-center"><%= userpet.nickname ? userpet.birdypet.species.commonName : (userpet.birdypet.version + " " + userpet.birdypet.label) %></h6>
         </div>
         </div>
       </div>

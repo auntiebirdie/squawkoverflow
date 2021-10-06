@@ -74,6 +74,7 @@ app.use('/', require('./routes/home.js'));
 app.use('/hatch', require('./routes/hatch.js'));
 app.use('/birdypet', require('./routes/birdypet.js'));
 app.use('/aviary', require('./routes/aviary.js'));
+app.use('/wishlist', require('./routes/wishlist.js'));
 app.use('/flocks', require('./routes/flocks.js'));
 app.use('/freebirds', require('./routes/freebirds.js'));
 app.use('/birdypedia', require('./routes/birdypedia.js'));

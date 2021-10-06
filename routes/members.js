@@ -48,7 +48,7 @@ router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
     birdypets: userpets.length || 0,
     birdybuddy: birdybuddy || {},
     flock: flock || null,
-    flockpets: flockpets || {},
+    flockpets: flockpets || [],
     bugs: bugs
   });
 });
@@ -66,6 +66,8 @@ router.get('/:id/gift', helpers.Middleware.isLoggedIn, helpers.Middleware.entity
     }]
   });
 
+  var wishlist = await helpers.Redis.get('wishlist', req.entity._id);
+
   var myPets = await helpers.UserPets.fetch([{
     field: "member",
     value: req.session.user.id
@@ -77,6 +79,11 @@ router.get('/:id/gift', helpers.Middleware.isLoggedIn, helpers.Middleware.entity
         ...userpet,
         flocks: userpet.flocks.filter((id) => flocks.find((flock) => flock._id == id))
       }
+    }).sort(function(a, b) {
+      var aIndex = wishlist.indexOf(a.birdypet.species.speciesCode);
+      var bIndex = wishlist.indexOf(b.birdypet.species.speciesCode);
+
+      return (aIndex > -1 ? aIndex : Infinity) - (bIndex > -1 ? bIndex : Infinity);
     });
   });
 
@@ -97,7 +104,8 @@ router.get('/:id/gift', helpers.Middleware.isLoggedIn, helpers.Middleware.entity
     myPets: myPets,
     theirPets: [...theirPets],
     flocks: flocks,
-    families: [...families].sort((a, b) => a.value.localeCompare(b.value))
+    families: [...families].sort((a, b) => a.value.localeCompare(b.value)),
+	  wishlist: wishlist || []
   });
 });
 

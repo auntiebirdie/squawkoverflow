@@ -28,33 +28,6 @@ router.get('/gift/:id', helpers.Middleware.isLoggedIn, helpers.Middleware.entity
   });
 });
 
-router.post('/gift/:id', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res, next) => {
-  helpers.Redis.get('member', req.body.member).then((member) => {
-    if (!member) {
-      throw "that isn't a registered member!";
-    }
-
-    helpers.Redis.set('memberpet', req.params.id, {
-      "member": member._id,
-      "flocks": "",
-      "friendship": 0
-    }).then(() => {
-      var birdypet = helpers.BirdyPets.fetch(req.entity.birdypetId);
-
-      helpers.Discord.Webhook.send('exchange', {
-        from: req.session.user,
-        to: req.body.member,
-        userpet: req.entity,
-        birdypet: birdypet
-      });
-
-      res.redirect('/birdypet/' + req.params.id);
-    });
-  }).catch((err) => {
-    next(err);
-  });
-});
-
 router.get('/release/:id', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res) => {
   res.render('birdypet/release', {
     userpet: req.entity,

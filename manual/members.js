@@ -35,7 +35,6 @@ client.on('ready', async () => {
 			birdyBuddy: members[i].birdyBuddy
 		});
         }).catch((err) => {
-		console.log(err);
           client.users.fetch(memberId).then((user) => {
             console.log('USER', user);
           });

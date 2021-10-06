@@ -44,6 +44,9 @@ module.exports = {
 
     return tier;
   },
+  Birds: {
+	  fetchBy: require('./helpers/fetchBirdBy.js')
+  },
   BirdyPets: require('./helpers/birdypets.js'),
   UserPets: {
     fetch: require('./helpers/fetchUserPets.js')

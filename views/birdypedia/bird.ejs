@@ -1,0 +1,88 @@
+<%- include('../header.ejs') %>
+
+    <%- include('../partials/page-title.ejs', { title : bird.commonName, breadcrumb : "Birdypedia" }) %>
+
+    <div class="row">
+      <div class="col-md-8 pt-3">
+        <div class="text-center">
+          <img id="birdy" class="birdypet full <%= hatched.includes(birdypets[0].id) ? "hatched" : "unhatched" %>" src="<%= birdypets[0].image %>">
+        </div>
+      </div>
+      <div class="col-md-4 pt-3 border-start">
+        <h6>Common Name</h6>
+        <p><%= bird.commonName %></p>
+
+        <h6>Scientific Name</h6>
+        <p><%= bird.scientificName %></p>
+
+        <h6>Family</h6>
+        <p><%= bird.family %></p>
+
+        <h6>Order</h6>
+        <p><%= bird.order %></p>
+
+        <% if (birdypets.length > 1) { %>
+        <h6>Variants</h6>
+          <div id="birdDisplay">
+          <% for (var birdypet of birdypets) { %>
+            <p>
+              <div class="birdypet mini <%= hatched.includes(birdypet.id) ? "hatched" : "unhatched" %>" data-src="<%= birdypet.image %>" style="background-image: url('<%= birdypet.image %>');"></div>
+              <%= birdypet.version %> <%= birdypet.label %>
+            </p>
+          <% } %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+  <%- include('../partials/spacer.ejs') %>
+
+  <h4 class="mb-3">Who has one?</h4>
+
+  <% if (members.length > 0) { %>
+    <% for (var i = 0, len = members.length; i < len; i++) { %>
+      <% if (i % 4 === 0) { %>
+        <% if (i > 0) { %>
+          </div>
+          <%- include('../partials/spacer.ejs') %>
+        <% } %>
+      <div class="row">
+      <% } %>
+        <div class="col-md-3">
+          <div class="row">
+          <div class="col-md-3 text-center">
+            <a href="/members/<%= members[i]._id %>">
+              <img class="member-avatar" src="<%= members[i].avatar %>" data-id="<%= members[i]._id %>" onerror="missingMemberAvatar(this)">
+            </a>
+          </div>
+          <div class="col-md-8">
+            <h5 class="pt-2">
+              <a href="/members/<%= members[i]._id %>">
+                <%= members[i].username %>
+              </a>
+            </h5>
+          </div>
+        </div>
+      </div>
+    <% }; %>
+  <% } else { %>
+    <p><em>This bird doesn't appear to be in anyone's aviaries... yet!</em></p>
+  <% } %>
+
+  <script type="text/javascript">
+  $('#birdDisplay').on('click', '.birdypet.mini', function (event) {
+    var variant = event.target;
+    var full = document.getElementById('birdy');
+
+    full.src = variant.getAttribute('data-src');
+
+    if (variant.className.includes('unhatched')) {
+      $(full).removeClass('hatched').addClass('unhatched');
+    }
+    else {
+      $(full).removeClass('unhatched').addClass('hatched');
+    }
+  });
+  </script>
+
+<%- include('../footer.ejs') %>

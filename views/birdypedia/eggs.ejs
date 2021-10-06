@@ -21,9 +21,23 @@
     <div id="birdDisplay" class="row"></div>
 
 <script type="text/javascript">
-  var userpets = ["<%= userpets.join('","') %>"];
+  var userpets = ["<%- userpets.join('","') %>"];
 
   var cache = {};
+
+  $('#birdDisplay').on('click', '.birdypet.mini', function (event) {
+    var variant = event.target;
+    var full = variant.parentNode.parentNode.parentNode.querySelector('.birdypet');
+
+    full.style.backgroundImage = variant.style.backgroundImage;
+
+    if (variant.className.includes('unhatched')) {
+      $(full).removeClass('hatched').addClass('unhatched');
+    }
+    else {
+      $(full).removeClass('unhatched').addClass('hatched');
+    }
+  });
 
   $('#eggList').on('change', function () {
     var adjective = this.value;
@@ -50,11 +64,18 @@
   });
 
   function displayBirdyPets (adjective) {
-    var birdypets = cache[adjective];
+    var birds = cache[adjective];
     var output = "";
 
-    for (var birdypet of birdypets) {
-        output += `<%- include('../partials/birdypet.js.ejs') %>`;
+    for (var bird of birds) {
+        bird.variants.sort( function (a, b) { 
+          var aIndex = userpets.indexOf(a.id);
+          var bIndex = userpets.indexOf(b.id);
+
+          return (aIndex > -1 ? aIndex : Infinity) - (bIndex > -1 ? bIndex : Infinity);
+        });
+
+        output += `<%- include('../partials/js/birdypedia.ejs') %>`;
     }
 
     $("#birdDisplay").html(output);

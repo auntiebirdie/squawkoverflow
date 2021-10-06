@@ -20,7 +20,7 @@
             <div class="lazy birdypet" data-bg="<%= userpet.birdypet.image %>"></div>
           </a>
           <h3 class="text-center"><a href="/birdypet/<%= userpet._id %>"><%= userpet.nickname ? userpet.nickname : userpet.birdypet.species.commonName %></a></h3>
-          <h6 class="text-center"><%= userpet.nickname ? userpet.birdypet.species.commonName : (userpet.birdypet.label + " " + userpet.birdypet.version) %></h6>
+          <h6 class="text-center"><%= userpet.nickname ? userpet.birdypet.species.commonName : (userpet.birdypet.version + " " + userpet.birdypet.label) %></h6>
         </div>
         </div>
       </div>

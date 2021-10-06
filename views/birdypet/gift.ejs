@@ -20,23 +20,21 @@
         <h4>Who is the lucky person to receive this gift?</h4>
         <h6>&nbsp;</h6>
 
-        <input class="form-control mt-4" list="memberListOptions" id="memberList" placeholder="Pick a member..." autocomplete="off">
-        <datalist id="memberListOptions">
+        <select id="memberList">
+          <option></option>
         <% for (var member of members) { %>
-          <option data-id="<%= member._id %>" data-avatar="<%= member.avatar %>" value="<%= member.username %>">
+          <option data-avatar="<%= member.avatar %>" data-username="<%= member.username %>" value="<%= member._id %>">
+            <%= member.username %>
           </option>
         <% } %>
-        </datalist>
+        </select>
 
         <div id="memberDisplay" class="mt-3"></div>
-      </div>
-    </div>
 
-    <div class="row">
-      <form id="giftBirdyPet" method="post" class="text-center">
-        <input id="giftTo" name="member" type="hidden">
-        <button id="actionButton" class="btn btn-primary" type="submit" disabled>Send Gift!</button>
-      </form>
+        <div class="text-center">
+          <button id="actionButton" class="btn btn-primary" type="button" disabled>Send Gift!</button>
+        </div>
+      </div>
     </div>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@2.3.7/dist/latest/bootstrap-autocomplete.min.js"></script>
@@ -44,26 +42,45 @@
       var actionButton = $('#actionButton');
       var memberDisplay = $('#memberDisplay');
 
-      $('#memberList').on('input', function () {
-        var option = $('#memberListOptions option[value="' + this.value + '"]')[0];
-        var memberId = option.getAttribute('data-id');
+      $('#memberList').on('change', function () {
+        var option = this.options[this.options.selectedIndex];
+        var memberId = option.value;
 
-        try {
-          $('#giftTo').val(memberId);
-
-          memberDisplay.html(`<h3><img src="${option.getAttribute('data-avatar')}" class="member-avatar" data-id="${memberId}" onerror="missingMemberAvatar(this)"> ${option.value}</h3>`);
-
+        if (memberId) {
+          memberDisplay.html(`<h3><img src="${option.getAttribute('data-avatar')}" class="member-avatar" data-id="${memberId}" onerror="missingMemberAvatar(this)"> ${option.getAttribute('data-username')}</h3>`);
           actionButton.attr('disabled', false);
         }
-        catch (err) {
-          $('#giftTo').val("");
+        else {
           memberDisplay.html("");
           actionButton.attr('disabled', true);
         }
       });
 
+      actionButton.on('click', function (event) {
+    var button = event.target;
+
+      if (!button.style.opacity) { 
+        button.style.opacity = .5;
+
+        var member = $('#memberList').val();
+
+        $.ajax({
+          url: `/api/gift/${member}/<%= giftpet.userpet._id %>`,
+          method: 'post',
+          dataType: "json",
+          success: function(data) {
+            button.style.opacity = null;
+
+            if (!data.error) {
+              window.history.back();
+            }
+          }
+        });
+      }
+      });
+
       <% if (locals.selectedMember) { %>
-        $('#memberList').val("<%= members.find((member) => member._id == selectedMember).username%>").trigger('input');
+        $('#memberList').val("<%= selectedMember %>").trigger('change');
       <% } %>
     </script>
 
