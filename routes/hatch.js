@@ -95,7 +95,7 @@ router.post('/', async (req, res) => {
             userpets: userpets
           });
         } else {
-          return res.redirect('/error');
+          return res.redirect('/hatch');
         }
       }
     } else if (req.body.action) {
@@ -142,7 +142,7 @@ router.post('/', async (req, res) => {
     delete req.session.adjective;
     delete req.session.birdypet;
 
-    res.redirect('/error');
+    res.redirect('/hatch');
   } else {
     res.redirect('/account/login');
   }
