@@ -2,52 +2,61 @@
 
     <%- include('../partials/page-title.ejs', { title : `${member.username}'s Aviary` }) %>
 
-    <%- include('../partials/filter-search-sort.ejs', { includeAllFamily : true, sortFields : [{ "value" : "hatched-at", "label" : "Hatch Date (Newest)", "attr" : "data-sort-desc" }, { "value" : "hatched-at", "label" : "Hatch Date (Oldest)" }, { "value" : "name", "label" : "Name" }, { "value" : "common-name", "label" : "Species" }] }) %>
+    <%- include('../partials/filter-search-sort.ejs', { includeAllFamily : true, sortFields : [{ "value" : "hatchedAt", "label" : "Hatch Date (Newest)", "dir" : "desc" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
 
     <%- include('../partials/spacer.ejs') %>
 
-    <div class="row filter-container">
-      <% for (var userpet of userpets) { %>
-      <div class="col-md-3 filter-item"
-           data-category="<%= [userpet.birdypet.species.family.toLowerCase(), ...(userpet.flocks.length > 0 ? userpet.flocks : ["flockless"]), (userpet.nickname ? "nicknamed" : "nonickname")].join(", ") %>"
-           data-hatched-at="<%= userpet.hatchedAt %>"
-           data-name="<%= userpet.nickname ? userpet.nickname.trim() : userpet.birdypet.species.commonName %>"
-           data-common-name="<%= userpet.birdypet.species.commonName %>"
-      >
-        <div class="pb-4">
-        <div class="card">
-          <a href="/birdypet/<%= userpet._id %>">
-            <div class="lazy birdypet" data-bg="<%= userpet.birdypet.image %>"></div>
-          </a>
-          <h3 class="text-center"><a href="/birdypet/<%= userpet._id %>"><%= userpet.nickname ? userpet.nickname : userpet.birdypet.species.commonName %></a></h3>
-          <h6 class="text-center"><%= userpet.nickname ? userpet.birdypet.species.commonName : (userpet.birdypet.version + " " + userpet.birdypet.label) %></h6>
-        </div>
-        </div>
-      </div>
-      <% } %>
-    </div>
+    <div id="birdDisplay" class="row" data-endpoint="/api/aviary/<%= member._id %>"></div>
 
-  <%- include('../scripts/filterizr.ejs') %>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.appear/0.4.1/jquery.appear.min.js" integrity="sha512-vYYoQJKYzaJQaOaYxaJhhmxikOJ2SEgHwmCNa0EMP0aRr7opdt4HHrorAwnCyPm8bdW/JBApIomo85YaBX81zA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-  var statePushed = false;
+  var page = 1;
+  var container = document.getElementById('birdDisplay');;
+  var endpoint = container.getAttribute('data-endpoint');
+  var timeout;
 
-  $('#flocks').on('change', function () {
-    var value = this.options[this.selectedIndex].value;
+  function template (birdypet, last) {
+   return `<%- include('../templates/birdypet.ejs') %>`;
+  }
 
-    if (!isNaN(value)) {
-      if (statePushed) {
-        window.history.replaceState(null, null, `/flocks/${value}`);
-      }
-      else {
-        window.history.pushState(null, null, `/flocks/${value}`);
-        statePushed = true;
-      }
-    }
-    else if (statePushed) {
-      window.history.go(-1);
-    }
+  $(document).ready( function () {
+    updateResults();
+
+    $('select', '#controls').on('change', function (event) {
+      container.innerHTML = "";
+      page = 1;
+      updateResults();
+    });
   });
+
+  function updateResults () {
+        var sort = $('#sortList option:selected');
+
+        $.ajax({
+          url: endpoint,
+          data: {
+            sort: [sort.val(), sort.attr('data-dir')],
+            page: page++
+          },
+          method: "POST",
+          dataType: "json",
+          success: function (data) {
+            if (data.length > 0 ) {
+              for (var i = 0, len = data.length; i < len; i++) {
+                container.innerHTML += template(data[i], i == len - 1);
+               }
+
+               lazyLoadInstance.update();
+
+               $('div[data-last]', container).appear().one('appear', function (event) {
+                 event.target.removeAttribute('data-last');
+
+                 updateResults();
+               });
+             }
+          }
+        });
+      }
 </script>
 
 <%- include('../footer.ejs') %>

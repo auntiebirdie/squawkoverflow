@@ -1,0 +1,14 @@
+<div class="col-6 col-md-4" ${last ? "data-last" : ""}>
+  <div class="pb-4">
+    <div class="card">
+      <a href="/birdypedia/bird/${birdypet._id}">
+        <div class="lazy birdypet"
+             data-id="${birdypet._id}"
+             data-bg="${birdypet.image}"
+        ></div>
+      </a>
+      <h3 class="text-center">${birdypet.nickname ? birdypet.nickname : birdypet.species.commonName}</h3> 
+      <h6 class="text-center">${birdypet.version}&nbsp;${birdypet.label}</h6>
+    </div>
+  </div>
+</div>

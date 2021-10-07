@@ -97,106 +97,75 @@ Database.prototype.pop = function(kind, id, value) {
   });
 }
 
-Database.prototype.fetch = function({
-  kind,
-  filters,
-  order,
-  limit,
-  startAt,
-  keysOnly
-}) {
+Database.prototype.sendCommand = function(kind, command, args) {
   return new Promise(async (resolve, reject) => {
-    let query = [kind];
+    this.databases[kind].sendCommand(command, args, function(err, response) {
+      console.log(err, response);
+      resolve(response);
+    });
+  });
+}
+
+Database.prototype.fetch = function(kind, args) {
+  return new Promise(async (resolve, reject) => {
     var output = [];
+    var query = [kind];
 
-    if (filters) {
-      var filterString = "";
-      for (filter of filters) {
-        filterString += `@${filter.field}:{${filter.value}} `;
-      }
+    if (args.FILTER) {
+      query.push(args.FILTER);
+    }
 
-      query.push(filterString);
+    if (args.RETURN) {
+      query.push('RETURN', args.RETURN.length, ...args.RETURN);
+    }
 
-      query.push('LIMIT');
+	  if (args.SORTBY) {
+		  query.push('SORTBY', ...args.SORTBY);
+	  }
 
-      if (limit) {
-        query.push(limit[0], limit[1]);
-      } else {
-        query.push(0, 5000);
-      }
+    if (args.LIMIT) {
+      query.push('LIMIT', ...args.LIMIT);
+    } else {
+      query.push('LIMIT', 0, 10);
+    }
 
-      this.databases[kind].sendCommand('FT.SEARCH', query, function(err, response) {
-        if (response) {
+    var noResultsLeft = false;
 
-          for (var i = 1, len = response.length; i < len; i++) {
-            var id = response[i];
-            var rawData = response[++i];
-            var data = {
-              _id: id.split(":").pop()
-            };
+    do {
+      await new Promise((resolve, reject) => {
+        this.databases[kind].sendCommand('FT.SEARCH', query, function(err, response) {
+          if (err) {
+            console.error(err);
+            noResultsLeft = true;
+          } else {
+            for (var i = 1, len = response.length; i < len; i++) {
+              var id = response[i];
+              var rawData = response[++i];
+              var data = {
+                _id: id.split(":").pop()
+              };
 
-            for (var l = 0, llen = rawData.length; l < llen; l++) {
-              data[rawData[l]] = rawData[++l];
+              for (var l = 0, llen = rawData.length; l < llen; l++) {
+                data[rawData[l]] = rawData[++l];
+              }
+
+              output.push(data);
             }
 
-            output.push(data);
-          }
-        }
-
-        resolve(output);
-      });
-    } else {
-      var noResultsLeft = false;
-      var cursor = startAt || 0;
-
-      do {
-        await new Promise((resolve, reject) => {
-          this.databases[kind].scan(cursor, 'MATCH', `${kind}:*`, async (err, response) => {
-            if (err) {
-              console.log(err);
+            if (args.LIMIT || output.length >= response[0]) {
               noResultsLeft = true;
             } else {
-              if (response[0] == 0) {
-                noResultsLeft = true;
-              } else {
-                cursor = response[0];
-              }
-
-              var results = response[1];
-
-              for (var i = 0, len = results.length; i < len; i++) {
-                if (!limit || output.length < limit) {
-                  await this.get(kind, results[i].split(':').pop()).then((data) => {
-                    output.push(data);
-                  });
-                }
-              }
+              query[query.length - 2] = output.length;
             }
 
             resolve();
-          });
-        });
-      }
-      while (!noResultsLeft && (!limit || output.length < limit));
-
-      resolve(output);
-    }
-  }).then((output) => {
-    if (order) {
-      return output.sort((a, b) => {
-        try {
-          if (order.dir == "desc") {
-            return b[order.field].localeCompare(a[order.field]);
-          } else {
-            return a[order.field].localeCompare(b[order.field]);
           }
-        } catch (err) {
-          return 0;
-        }
+        });
       });
-    } else {
-      return output;
     }
+    while (!noResultsLeft);
+
+    resolve(output);
   });
 }
 
@@ -239,7 +208,7 @@ Database.prototype.save = function(kind, id, data) {
       id = uuid.generate();
     }
 
-    this.set(kind, id, data).then( () => {
+    this.set(kind, id, data).then(() => {
       resolve(id);
     });
   });
