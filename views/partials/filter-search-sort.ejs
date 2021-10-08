@@ -3,7 +3,7 @@
       <% if (locals.flocks && flocks.length > 0) { %>
         <div class="mb-4">
           <h4>Flock</h4>
-          <select id="flocks" class="form-select">
+          <select id="flock" class="form-select">
             <option value="all">[ALL]</option>
             <% for (var flock of flocks) { %>
               <option value="<%= flock._id %>" <%= locals.selectedFlock && selectedFlock == flock._id ? "selected" : "" %>>
@@ -43,7 +43,7 @@
         <% if (locals.sortFields) { %>
         <div>
           <h4>Sort</h4>
-          <select id="sortList" class="form-select">
+          <select id="sort" class="form-select">
             <% for (var sort of sortFields) { %>
               <option value="<%= sort.value %>" data-dir="<%= sort.dir || "asc" %>">
                 <%= sort.label %>

@@ -1,2 +1,3 @@
 FT.CREATE memberpet ON HASH PREFIX 1 memberpet: SCHEMA birdypetId TAG birdypetSpecies TAG member TAG flocks TAG
+FT.CREATE memberpet ON HASH PREFIX 1 memberpet: SCHEMA birdypetId TAG birdypetSpecies TAG member TAG flocks TAG hatchedAt NUMERIC SORTABLE NOINDEX family TAG NOINDEX species TAG SORTABLE NOINDEX
 FT.CREATE flock ON HASH PREFIX 1 flock: SCHEMA member TAG

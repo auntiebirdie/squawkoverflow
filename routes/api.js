@@ -3,18 +3,23 @@ const express = require('express');
 const router = express.Router();
 
 router.post('/aviary/:member', helpers.Middleware.entityExists, (req, res) => {
-	var page = req.body.page || 1;
+  var page = req.body.page || 1;
+  var filters = [
+    `@member:{${req.entities['member']._id}}`,
+    req.body.family && req.body.family != "all" ? `@family:{${req.body.family}}` : '',
+    req.body.flock && req.body.flock != "all" ? `@flocks:{${req.body.flock}}` : ''
+  ].join(' ');
 
   helpers.Redis.fetch('memberpet', {
-    'FILTER': `@member:{${req.entities['member']._id}}`,
-    'SORTBY':  req.body.sort,
-    'LIMIT': [(page - 1) * 10, 10]
+    'FILTER': filters,
+    'SORTBY': req.body.sort,
+    'LIMIT': [(page - 1) * 50, 50]
   }).then((response) => {
-    res.json(response.map( (memberpet) => {
-	    return {
-		    ...memberpet,
-		    ...helpers.BirdyPets.format(helpers.BirdyPets.fetch(memberpet.birdypetId))
-	    };
+    res.json(response.map((memberpet) => {
+      return {
+        ...memberpet,
+        ...helpers.BirdyPets.format(helpers.BirdyPets.fetch(memberpet.birdypetId))
+      };
     }));
   });
 });
