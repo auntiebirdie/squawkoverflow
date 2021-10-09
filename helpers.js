@@ -1,5 +1,4 @@
 const Chance = require('chance').Chance();
-const birdypets = require('./public/data/birdypets.json');
 
 module.exports = {
   sanitize: function(input) {
@@ -44,12 +43,8 @@ module.exports = {
 
     return tier;
   },
-  Birds: {
-	  fetchBy: require('./helpers/fetchBirdBy.js')
-  },
+  Birds: require('./helpers/birds.js'),
   BirdyPets: require('./helpers/birdypets.js'),
-  UserPets: {
-    fetch: require('./helpers/fetchUserPets.js')
-  },
+  MemberPets: require('./helpers/memberpets.js'),
   Middleware: require('./helpers/middleware.js')
 }

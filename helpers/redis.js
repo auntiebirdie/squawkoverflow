@@ -106,27 +106,33 @@ Database.prototype.sendCommand = function(kind, command, args) {
   });
 }
 
-Database.prototype.fetch = function(kind, args) {
+Database.prototype.fetch = function(kind, args = {}) {
   return new Promise(async (resolve, reject) => {
     var output = [];
     var query = [kind];
 
     if (args.FILTER) {
       query.push(args.FILTER);
+    } else {
+      query.push('*');
     }
 
     if (args.RETURN) {
       query.push('RETURN', args.RETURN.length, ...args.RETURN);
     }
 
-	  if (args.SORTBY) {
-		  query.push('SORTBY', ...args.SORTBY);
-	  }
+    if (args.SORTBY) {
+      query.push('SORTBY', ...args.SORTBY);
+    }
 
-    if (args.LIMIT) {
-      query.push('LIMIT', ...args.LIMIT);
+    if (args.COUNT) {
+      query.push('LIMIT', 0, 0);
     } else {
-      query.push('LIMIT', 0, 10);
+      if (args.LIMIT) {
+        query.push('LIMIT', ...args.LIMIT);
+      } else {
+        query.push('LIMIT', 0, 10);
+      }
     }
 
     var noResultsLeft = false;
@@ -138,28 +144,33 @@ Database.prototype.fetch = function(kind, args) {
             console.error(err);
             noResultsLeft = true;
           } else {
-            for (var i = 1, len = response.length; i < len; i++) {
-              var id = response[i];
-              var rawData = response[++i];
-              var data = {
-                _id: id.split(":").pop()
-              };
-
-              for (var l = 0, llen = rawData.length; l < llen; l++) {
-                data[rawData[l]] = rawData[++l];
-              }
-
-              output.push(data);
-            }
-
-            if (args.LIMIT || output.length >= response[0]) {
+            if (args.COUNT) {
+              output = response[0];
               noResultsLeft = true;
             } else {
-              query[query.length - 2] = output.length;
-            }
+              for (var i = 1, len = response.length; i < len; i++) {
+                var id = response[i];
+                var rawData = response[++i];
+                var data = {
+                  _id: id.split(":").pop()
+                };
 
-            resolve();
+                for (var l = 0, llen = rawData.length; l < llen; l++) {
+                  data[rawData[l]] = rawData[++l];
+                }
+
+                output.push(data);
+              }
+
+              if (args.LIMIT || output.length >= response[0] || response.length <= 1) {
+                noResultsLeft = true;
+              } else {
+                query[query.length - 2] = output.length;
+              }
+            }
           }
+
+          resolve();
         });
       });
     }
@@ -169,22 +180,79 @@ Database.prototype.fetch = function(kind, args) {
   });
 }
 
-Database.prototype.fetchOne = function(args) {
+Database.prototype.fetchOne = function(kind, args) {
   return new Promise((resolve, reject) => {
-    this.fetch({
+    this.fetch(kind, {
       ...args,
-      "limit": [0, 1]
+      "LIMIT": [0, 1]
     }).then((results) => {
       resolve(results[0] || null);
     });
   });
 }
 
+Database.prototype.scan = async function(kind, args = {}) {
+  return new Promise(async (resolve, reject) => {
+    var noResultsLeft = false;
+    var cursor = args.CURSOR || 0;
+    var output = [];
+
+    do {
+      await new Promise((resolve, reject) => {
+        this.databases[kind].scan(cursor, 'MATCH', `${kind}:*`, async (err, response) => {
+          if (err) {
+            console.log(err);
+            noResultsLeft = true;
+          } else {
+            if (response[0] == 0) {
+              noResultsLeft = true;
+            } else {
+              cursor = response[0];
+            }
+
+            var results = response[1];
+
+            for (var i = 0, len = results.length; i < len; i++) {
+              if (!args.LIMIT || output.length < args.LIMIT) {
+                var key = results[i].split(':').pop();
+
+                if (args.KEYSONLY) {
+                  output.push(key);
+                } else {
+                  await this.get(kind, key).then((data) => {
+                    output.push(data);
+                  });
+                }
+              }
+            }
+          }
+
+          resolve();
+        });
+      });
+    }
+    while (!noResultsLeft && (!args.LIMIT || output.length < args.LIMIT));
+
+    resolve(output);
+  }).then((output) => {
+    if (args.SORTBY) {
+      output.sort((a, b) => {
+        if (args.SORTBY[1] == "DESC") {
+          return b[args.SORTBY[0]].localeCompare(a[args.SORTBY[0]]);
+        } else {
+          return a[args.SORTBY[0]].localeCompare(b[args.SORTBY[0]]);
+        }
+      });
+    }
+
+    return output;
+  });
+}
+
 Database.prototype.create = function(kind, data, uniqueField = false) {
   return new Promise((resolve, reject) => {
     if (uniqueField) {
-      this.fetchOne({
-        "kind": kind,
+      this.fetchOne(kind, {
         "filters": [{
           field: uniqueField,
           value: data[uniqueField]

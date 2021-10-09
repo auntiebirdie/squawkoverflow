@@ -1,5 +1,3 @@
-const helpers = require('../helpers');
-const secrets = require('../secrets.json');
 const express = require('express');
 const router = express.Router();
 

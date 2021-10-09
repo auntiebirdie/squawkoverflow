@@ -1,7 +1,18 @@
 <div class="mt-3"></div>
 
 <% if (locals.breadcrumb) { %>
-  <h6><%= breadcrumb %></h6>
+  <h6>
+  <% if (breadcrumb.url) { %>
+    <a href="<%= breadcrumb.url %>">
+      <% if (breadcrumb.prepend) { %>
+        <%- breadcrumb.prepend %>
+      <% } %>
+      <%= breadcrumb.text %>
+    </a>
+  <% } else { %>
+    <%= breadcrumb.text %>
+  <% } %>
+  </h6>
 <% } %>
 
 <h1 class="mb-4 pb-3 border-bottom"><%= title %></h1>

@@ -1,23 +1,89 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { title : "Birdypedia" }) %>
+  <%- include('../partials/page-title.ejs', { title : "Birdypedia" }) %> 
 
-    <p>Welcome to the Birdypedia! This is your guide to all the birds on SQUAWKoverflow.</p>
-
-    <div class="row mt-5">
-      <div class="col-6 text-center">
-        <a class="btn btn-lg btn-secondary" href="/birdypedia/family">
-          <h2>🐦</h2>
-          <h5>Birds by Family</h5>
-        </a>
-      </div>
-      <div class="col-6 text-center">
-        <a class="btn btn-lg btn-secondary" href="/birdypedia/eggs">
-          <h2>🥚</h2>
-          <h5>Eggs Guide</h5>
-        </a>
-      </div>
+  <div id="toggles" class="row select-none">
+    <div class="col-2"></div>
+    <div class="col-4 text-center">
+      <button id="byFamily" class="btn btn-lg btn-primary" type="button" data-toggle="family">
+        <h2>🐦</h2>
+        <h5>By Family</h5>
+      </button>
     </div>
+    <div class="col-4 text-center">
+      <button id="byAdjectives" class="btn btn-lg btn-secondary" type="button" data-toggle="adjectives">
+        <h2>🥚</h2>
+        <h5>By Eggs</h5>
+      </button>
+    </div>
+    <div class="col-2"></div>
+  </div>
 
+  <%- include('../partials/filter-search-sort.ejs') %>
 
+  <%- include('../partials/spacer.ejs'); %>
+
+  <div id="lazyLoader" class="row" data-endpoint="/api/birdypedia"></div>
+
+  <%- include('../scripts/lazyloader.ejs', { template: '../templates/birdypedia.ejs' }) %>
+
+  <script type="text/javascript">
+    $('#toggles').on('click', 'button', function (event) {
+      var button = event.currentTarget;
+
+      if (!button.classList.contains('btn-primary')) {
+        var selected = $('.btn-primary', '#toggles')[0];
+
+        selected.classList.remove('btn-primary');
+        selected.classList.add('btn-secondary');
+        var toggle = document.getElementById(selected.getAttribute('data-toggle'));
+        toggle.selectedIndex = 0;
+        toggle.parentNode.style.display = 'none';
+
+        button.classList.add('btn-primary');
+        button.classList.remove('btn-secondary');
+        document.getElementById(button.getAttribute('data-toggle')).parentNode.style.display = 'block';
+
+        resetResults();
+      }
+    });
+
+    $('#lazyLoader').on('click', '.wishlist-heart', function (event) {
+      var button = event.target;
+
+      if (!button.style.opacity) { 
+        var action = button.getAttribute('data-action');
+        button.style.opacity = .5;
+
+        $.ajax({
+          url: `/api/wishlist/${action}/${button.getAttribute('data-id')}`,
+          method: 'post',
+          dataType: "json",
+          success: function(data) {
+            button.style.opacity = null;
+            if (action == "add") {
+              button.innerHTML = "❤️";
+              button.setAttribute('data-action', 'remove');
+            }
+            else {
+              button.innerHTML = "🤍";
+              button.setAttribute('data-action', 'add');
+            }
+          }
+        });
+      }
+    });
+
+    $('#lazyLoader').on('click', '.birdypet.mini', function (event) {
+      var variant = event.target;
+      var full = variant.parentNode.parentNode.parentNode.querySelector('.birdypet');
+      full.style.backgroundImage = variant.style.backgroundImage;
+      if (variant.className.includes('unhatched')) {
+        $(full).removeClass('hatched').addClass('unhatched');
+      }
+      else {
+        $(full).removeClass('unhatched').addClass('hatched');
+      }
+    });
+  </script>
 <%- include('../footer.ejs') %>

@@ -1,0 +1,95 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.appear/0.4.1/jquery.appear.min.js" integrity="sha512-vYYoQJKYzaJQaOaYxaJhhmxikOJ2SEgHwmCNa0EMP0aRr7opdt4HHrorAwnCyPm8bdW/JBApIomo85YaBX81zA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  var page = 1;
+  var container = document.getElementById('lazyLoader');
+  var endpoint = container.getAttribute('data-endpoint');
+  var search = document.getElementById('search');
+  var timeout;
+
+  function template (bird) {
+    return `<%- include(locals.template ? template : '../templates/birdypet.ejs') %>`;
+  }
+
+  $(document).ready( function () {
+    updateResults();
+
+    $('select', '#controls').on('change', resetResults);
+
+    $('#search').on('change', function () {
+      clearTimeout(timeout);
+
+      timeout = setTimeout(function () {
+        if (search.value.trim() == "") {
+          resetResults();
+        }
+        else {
+          searchResults();
+        }
+      }, 500);
+    });
+  });
+
+  function resetResults () {
+    container.innerHTML = "";
+    page = 1;
+    updateResults();
+  }
+
+  function searchResults () {
+    if (search && search.value.trim() != "") {
+      var birdypets = $('#lazyLoader > div:visible');
+
+      for (var birdypet of birdypets) {
+        if ($('#lazyLoader > div:visible').last().is(':appeared')) {
+            updateResults();
+        }
+
+        birdypet.style.display = birdypet.innerText.toLowerCase().includes(search.value.trim().toLowerCase()) ? 'block' : 'none';
+      }
+    }
+  }
+
+  function updateResults () {
+    var sort = $('#sort option:selected');
+
+    $.ajax({
+      url: endpoint,
+      data: {
+        sort: [sort.val(), sort.attr('data-dir')],
+        page: page++,
+        family : $('#family').is(':visible') ? $('#family').val() : "",
+        flock : $('#flock').val(),
+        adjectives : $('#adjectives').is(':visible') ? $('#adjectives').val() : "",
+        search : $('#search').val()
+      },
+      method: "POST",
+      dataType: "json",
+      success: function (data) {
+        if (data.length > 0 ) {
+          var searchText = search ? search.value.trim().toLowerCase() : "";
+          var newElements = 0;
+
+          for (var i = 0, len = data.length; i < len; i++) {
+            if (searchText == "" || data[i].nickname?.toLowerCase().includes(searchText) || data[i].commonName.toLowerCase().includes(searchText)) {
+              container.innerHTML += template(data[i]);
+              newElements++;
+            }
+          }
+
+          lazyLoadInstance.update();
+
+          var lastElement = $('#lazyLoader > div').last();
+
+          if (lastElement.is(':appeared') || newElements == 0) {
+            updateResults();
+          }
+          else {
+            lastElement.appear().one('appear', function (event) {
+              updateResults();
+            });
+          }
+        }
+      }
+    });
+  }
+</script>

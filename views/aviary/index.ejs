@@ -2,102 +2,12 @@
 
     <%- include('../partials/page-title.ejs', { title : `${member.username}'s Aviary` }) %>
 
-    <%- include('../partials/filter-search-sort.ejs', { includeAllFamily : true, sortFields : [{ "value" : "hatchedAt", "label" : "Hatch Date (Newest)", "dir" : "desc" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
+    <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies : true, sortFields : [{ "value" : "hatchedAt", "label" : "Hatch Date (Newest)", "dir" : "desc" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
 
     <%- include('../partials/spacer.ejs') %>
 
-    <div id="birdDisplay" class="row" data-endpoint="/api/aviary/<%= member._id %>"></div>
+    <div id="lazyLoader" class="row" data-endpoint="/api/aviary/<%= member._id %>"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.appear/0.4.1/jquery.appear.min.js" integrity="sha512-vYYoQJKYzaJQaOaYxaJhhmxikOJ2SEgHwmCNa0EMP0aRr7opdt4HHrorAwnCyPm8bdW/JBApIomo85YaBX81zA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script>
-  var page = 1;
-  var container = document.getElementById('birdDisplay');;
-  var endpoint = container.getAttribute('data-endpoint');
-  var timeout;
-
-  function template (birdypet) {
-    return `<%- include('../templates/birdypet.ejs') %>`;
-  }
-
-  $(document).ready( function () {
-    updateResults();
-
-    $('select', '#controls').on('change', function (event) {
-      container.innerHTML = "";
-      page = 1;
-      updateResults();
-    });
-
-    $('#search').on('change', function () {
-      clearTimeout(timeout);
-
-      timeout = setTimeout(function () {
-        if ($('#search').val().trim() == "") {
-          $('#birdDisplay > div:hidden').show();
-        }
-        else {
-          searchResults();
-        }
-      }, 500);
-    });
-  });
-
-  function searchResults () {
-    var search = $('#search').val().trim().toLowerCase();
-
-    if (search != "") {
-      var birdypets = $('#birdDisplay > div:visible');
-
-      for (var birdypet of birdypets) {
-        if ($('#birdDisplay > div:visible').last().is(':appeared')) {
-            updateResults();
-        }
-
-        birdypet.style.display = birdypet.innerText.toLowerCase().includes(search) ? 'block' : 'none';
-      }
-    }
-  }
-
-  function updateResults () {
-    var sort = $('#sort option:selected');
-
-    $.ajax({
-      url: endpoint,
-      data: {
-        sort: [sort.val(), sort.attr('data-dir')],
-        page: page++,
-        family : $('#family').val(),
-        flock : $('#flock').val(),
-        search : $('#search').val()
-      },
-      method: "POST",
-      dataType: "json",
-      success: function (data) {
-        if (data.length > 0 ) {
-          var searchText = $('#search').val().trim().toLowerCase();
-
-          for (var i = 0, len = data.length; i < len; i++) {
-            if (searchText == "" || data[i].nickname?.toLowerCase().includes(searchText) || data[i].species?.commonName.toLowerCase().includes(searchText)) {
-              container.innerHTML += template(data[i]);
-            }
-          }
-
-          lazyLoadInstance.update();
-
-          var lastElement = $('#birdDisplay > div').last();
-
-          if (lastElement.is(':appeared')) {
-            updateResults();
-          }
-          else {
-            lastElement.appear().one('appear', function (event) {
-              updateResults();
-            });
-          }
-        }
-      }
-    });
-  }
-</script>
+<%- include('../scripts/lazyloader.ejs') %>
 
 <%- include('../footer.ejs') %>

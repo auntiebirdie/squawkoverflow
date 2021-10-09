@@ -11,9 +11,9 @@
       <h5>Joined</h5>
       <p><%= new Date(member.joinedAt * 1).toLocaleString('en-US', { dateStyle: "long" }) %></p>
 
-      <% if (birdypets > 0) { %>
+      <% if (aviary > 0) { %>
       <h5>Aviary</h5>
-      <p><a href="/aviary/<%= member._id %>"><%= birdypets %> BirdyPets</a></p>
+      <p><a href="/aviary/<%= member._id %>"><%= aviary %> BirdyPets</a></p>
       <% } %>
     </div>
     <div class="col-md-6 text-end">
@@ -24,61 +24,42 @@
     </div>
   </div>
 
-  <% if (member.birdybuddy) { %>
+  <% if (member.birdyBuddy) { %>
   <div class="row">
 
   </div>
-  <% } %>
 
-  <% if (birdybuddy.birdypet) { %>
-    <%- include('../partials/spacer.ejs') %>
+  <%- include('../partials/spacer.ejs') %>
 
-    <h3 class="mb-4">Birdy Buddy</h3>
+  <h3 class="mb-4">Birdy Buddy</h3>
 
-    <div class="row">
-      <div class="col-md-6 text-center">
-        <div class="birdybuddy">
-          <img src="<%= birdybuddy.birdypet.image %>">
-          <span class="message" style="display: none;"></span>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <h4><a href="/birdypet/<%= birdybuddy._id %>"><%= birdybuddy.nickname ? birdybuddy.nickname : birdybuddy.birdypet.species.commonName %></a></h4>
-        <div>
-          <%- include('../partials/friendshipMeter.ejs', { friendship : birdybuddy.friendship }) %>
-
-          <% if (locals.loggedInUser && bugs > 0) { %>
-             <p>&nbsp;</p>
-             <p><button id="feedBug" class="btn btn-primary" role="button" data-birdypet="<%= birdybuddy._id %>">🐛 Feed a Bug (you have <span><%= bugs %></span>)</button></p>
-          <% } %>
-        </div>
+  <div class="row">
+    <div class="col-md-6 text-center">
+      <div class="birdybuddy">
+        <img src="<%= member.birdyBuddy.image %>">
+        <span class="message" style="display: none;"></span>
       </div>
     </div>
+    <div class="col-md-6">
+      <h4><a href="/birdypet/<%= member.birdyBuddy._id %>"><%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddyspecies.commonName %></a></h4>
+      <div>
+        <%- include('../partials/friendshipMeter.ejs', { friendship : member.birdyBuddy.friendship }) %>
+
+        <% if (locals.loggedInUser && bugs > 0) { %>
+           <p>&nbsp;</p>
+           <p><button id="feedBug" class="btn btn-primary" role="button" data-birdypet="<%= member.birdyBuddy._id %>">🐛 Feed a Bug (you have <span><%= bugs %></span>)</button></p>
+        <% } %>
+      </div>
+    </div>
+  </div>
   <% } %>
 
-  <% if (flock) { %>
+  <% if (member.flock) { %>
     <%- include('../partials/spacer.ejs'); %>
 
-    <h4 class="mb-5"><%= flock.name %></h4>
+    <h4 class="mb-5"><%= member.flock.name %></h4>
 
-    <div class="row">
-      <% for (var userpet of flockpets) { %>
-      <div class="col-md-3">
-        <div class="pb-4">
-          <div class="card">
-            <% if (userpet.birdypet) { %>
-            <p></p>
-            <a href="/birdypet/<%= userpet._id %>">
-              <div class="lazy birdypet" data-bg="<%= userpet.birdypet.image %>"></div>
-            </a>
-            <h3 class="text-center"><a href="/birdypet/<%= userpet.id %>"><%= userpet.nickname ? userpet.nickname : userpet.birdypet.species.commonName %></a></h3>
-            <h6 class="text-center"><%= userpet.nickname ? userpet.birdypet.species.commonName : (userpet.birdypet.version + " " + userpet.birdypet.label) %></h6>
-            <% } %>
-          </div>
-        </div>
-      </div>
-      <% } %>
-    </div>
+    <div id="lazyLoader" class="row" data-endpoint="/api/flocks/<%= member.flock._id %>"></div>
   <% } %>
 
   <script type="text/javascript">
@@ -108,5 +89,7 @@
         });
     });
   </script>
+
+  <%- include('../scripts/lazyloader.ejs') %>
 
 <%- include('../footer.ejs') %>

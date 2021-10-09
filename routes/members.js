@@ -3,12 +3,8 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  var members = await helpers.Redis.fetch({
-    kind: "member",
-    order: {
-      field: "username",
-      dir: "asc"
-    }
+  var members = await helpers.Redis.scan('member', {
+    'SORTBY': ['username']
   });
 
   res.render('members/index', {
@@ -16,41 +12,31 @@ router.get('/', async (req, res) => {
   });
 });
 
-router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
-  var member = await helpers.Redis.get('member', req.params.id);
+router.get('/:member', helpers.Middleware.entityExists, async (req, res) => {
+  var output = {
+    page: 'member',
+    member: req.entities['member'],
+    bugs: 0,
+    aviary: await helpers.Redis.fetch('memberpet', {
+      "FILTER": `@member:{${req.entities['member']._id}}`,
+      "COUNT": true
+    }) || 0,
+    flock: {}
+  };
 
-  var userpets = await helpers.UserPets.fetch([{
-    field: "member",
-    value: member._id
-  }]);
-
-  if (member.birdyBuddy) {
-    var birdybuddy = userpets.find((userpet) => userpet._id == member.birdyBuddy);
+  if (output.member.birdyBuddy) {
+    output.member.birdyBuddy = await helpers.MemberPets.get(output.member.birdyBuddy);
   }
 
-  if (member.flock) {
-    var flock = await helpers.Redis.get('flock', member.flock);
-
-    if (flock && flock.member == member._id) {
-      var flockpets = userpets.filter((userpet) => userpet.flocks.includes(member.flock));
-    }
+  if (output.member.flock) {
+    output.member.flock = await helpers.Redis.get('flock', output.member.flock);
   }
 
   if (req.session.user) {
-    var bugs = await helpers.Redis.get('member', req.session.user.id, 'bugs') || 0;
-  } else {
-    var bugs = 0;
+    output.bugs = await helpers.Redis.get('member', req.session.user.id, 'bugs') || 0;
   }
 
-  res.render('members/member', {
-    page: "member",
-    member: member,
-    birdypets: userpets.length || 0,
-    birdybuddy: birdybuddy || {},
-    flock: flock || null,
-    flockpets: flockpets || [],
-    bugs: bugs
-  });
+  res.render('members/member', output);
 });
 
 router.get('/:id/gift', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, async (req, res) => {
@@ -105,7 +91,7 @@ router.get('/:id/gift', helpers.Middleware.isLoggedIn, helpers.Middleware.entity
     theirPets: [...theirPets],
     flocks: flocks,
     families: [...families].sort((a, b) => a.value.localeCompare(b.value)),
-	  wishlist: wishlist || []
+    wishlist: wishlist || []
   });
 });
 

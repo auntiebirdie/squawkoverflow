@@ -49,7 +49,7 @@
 	<div class="d-flex dropdown">
 		<% if (locals.loggedInUser) { %>
 		<a class="nav-link dropdown-toggle link-light" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-			<img class="member-avatar" src="<%= locals.loggedInUser.avatar %>" data-id="<%= locals.loggedInUser.id %>" onerror="missingMemberAvatar(this)">
+			<img class="member-avatar avatar-sm" src="<%= locals.loggedInUser.avatar %>" data-id="<%= locals.loggedInUser.id %>" onerror="missingMemberAvatar(this)">
 		    &nbsp;
 		    <span class="member-name"><%= locals.loggedInUser.username %></span>
 		</a>
