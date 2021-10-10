@@ -21,6 +21,55 @@ router.post('/aviary/:member', helpers.Middleware.entityExists, (req, res) => {
   });
 });
 
+router.post('/gift/:member', helpers.Middleware.entityExists, (req, res) => {
+  var page = --req.body.page * 50;
+  var filters = [
+    `@member:{${req.session.user.id}}`,
+    req.body.family ? `@family:{${req.body.family}}` : '',
+    req.body.flock ? `@flocks:{${req.body.flock}}` : ''
+  ].join(' ');
+
+  helpers.Redis.fetch('memberpet', {
+    'FILTER': filters,
+    'SORTBY': req.body.sort,
+    'LIMIT': [page, 50]
+  }).then(async (response) => {
+    var wishlist = await helpers.Redis.get('wishlist', req.entities['member']._id);
+    var output = [];
+
+    for (var memberpet of response) {
+      var commonName = memberpet.species.replace(/([\'\s\-])/g, "\\$1");
+      var owned = await helpers.Redis.fetch('memberpet', {
+        'FILTER': `@member:{${req.entities['member']._id}} @species:{ ${commonName} }`,
+        'RETURN': ['birdypetId']
+      }).then((owned) => owned.map((birdypet) => birdypet.birdypetId));
+
+
+      output.push({
+        ...helpers.MemberPets.format(memberpet),
+        wishlisted: wishlist.includes(memberpet.birdypetSpecies),
+        checkmark: owned.includes(memberpet.birdypetId) ? 2 : (owned.length > 0 ? 1 : 0)
+      });
+    }
+
+    res.json(output);
+  });
+});
+
+router.post('/wishlist/:member', helpers.Middleware.entityExists, async (req, res) => {
+  var page = --req.body.page * 50;
+  var wishlist = await helpers.Redis.get('wishlist', req.entities['member']._id).then( (birds) => birds.map( (bird) => helpers.Birds.findBy('speciesCode', bird) ) ) || [];
+  var output = [];
+
+  for (var i = page, len = Math.min(page + 50, wishlist.length); i < len; i++) {
+    wishlist[i].variants = helpers.BirdyPets.findBy('species.speciesCode', wishlist[i].speciesCode);
+
+    output.push(wishlist[i]);
+  }
+
+  res.json(output);
+});
+
 router.post('/flocks/:flock', helpers.Middleware.entityExists, (req, res) => {
   var page = --req.body.page * 50;
 
@@ -127,7 +176,7 @@ router.get('/flocks/:flock/:memberpet', helpers.Middleware.isLoggedIn, helpers.M
   }
 
   helpers.Redis.set('memberpet', req.entities['memberpet']._id, {
-  flocks: flocks.length == 0 ? "<none>" : flocks.join(',')
+    flocks: flocks.join(',')
   }).then(() => {
     res.json({
       action: index !== -1 ? "remove" : "add"
@@ -144,6 +193,8 @@ router.get('/freebirds/:freebird', helpers.Middleware.isLoggedIn, async (req, re
     helpers.Redis.create('memberpet', {
       birdypetId: birdypet.id,
       birdypetSpecies: birdypet.species.speciesCode,
+      species: birdypet.species.commonName,
+      family: birdypet.species.family,
       member: req.session.user.id,
       hatchedAt: Date.now()
     }).then((id) => {

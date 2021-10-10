@@ -39,59 +39,33 @@ router.get('/:member', helpers.Middleware.entityExists, async (req, res) => {
   res.render('members/member', output);
 });
 
-router.get('/:id/gift', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, async (req, res) => {
+router.get('/:member/gift', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, async (req, res) => {
   var allFamilies = require('../public/data/families.json');
-
   var families = new Set();
 
-  var flocks = await helpers.Redis.fetch({
-    "kind": "flock",
-    "filters": [{
-      field: "member",
-      value: req.session.user.id
-    }]
+  var flocks = await helpers.Redis.fetch('flock', {
+    "FILTER": `@member:{${req.session.user.id}}`,
+    "SORTBY": ["name", "DESC"]
   });
 
-  var wishlist = await helpers.Redis.get('wishlist', req.entity._id);
+  await helpers.Redis.fetch('memberpet', {
+    'FILTER': `@member:{${req.session.user.id}}`,
+    'RETURN': ['family'],
+  }).then((response) => {
+    response.forEach((item) => {
+      var family = allFamilies.find((a) => a.value == item.family);
 
-  var myPets = await helpers.UserPets.fetch([{
-    field: "member",
-    value: req.session.user.id
-  }]).then((userpets) => {
-    return userpets.map((userpet) => {
-      families.add(allFamilies.find((a) => a.value == userpet.birdypet.species.family));
-
-      return {
-        ...userpet,
-        flocks: userpet.flocks.filter((id) => flocks.find((flock) => flock._id == id))
+      if (family) {
+        families.add(family);
       }
-    }).sort(function(a, b) {
-      var aIndex = wishlist.indexOf(a.birdypet.species.speciesCode);
-      var bIndex = wishlist.indexOf(b.birdypet.species.speciesCode);
-
-      return (aIndex > -1 ? aIndex : Infinity) - (bIndex > -1 ? bIndex : Infinity);
-    });
-  });
-
-  var theirPets = new Set();
-
-  await helpers.UserPets.fetch([{
-    field: "member",
-    value: req.entity._id
-  }]).then((userpets) => {
-    userpets.forEach((userpet) => {
-      theirPets.add(userpet.birdypetId);
-      theirPets.add(userpet.birdypetSpecies);
     });
   });
 
   res.render('members/gift', {
-    member: req.entity,
-    myPets: myPets,
-    theirPets: [...theirPets],
+    page: 'gift',
+    member: req.entities['member'],
     flocks: flocks,
-    families: [...families].sort((a, b) => a.value.localeCompare(b.value)),
-    wishlist: wishlist || []
+    families: [...families].sort((a, b) => a.value.localeCompare(b.value))
   });
 });
 

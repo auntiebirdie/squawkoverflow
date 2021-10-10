@@ -161,7 +161,7 @@ nav .member-name {
 }
 
 .birdypet.unhatched {
-	filter: saturate(0%) brightness(55%) contrast(1000%);
+	filter: saturate(0%);
 }
 
 .birdypet.checkmark1::after, .birdypet.checkmark2::after {

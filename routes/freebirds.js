@@ -3,57 +3,37 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
-  var freebirds = await helpers.Redis.fetch({
-    "kind": "freebird",
-    "startAt": helpers.Chance.integer({
+  var freebirds = await helpers.Redis.scan('freebird', {
+    'CURSOR': helpers.Chance.integer({
       min: 0,
-      max: 50
+      max: 2000
     }),
-    "limit": 20
+    'LIMIT': 20
   });
 
   if (freebirds.length == 0) {
-    freebirds = await helpers.Redis.fetch({
-      "kind": "freebird",
-      "limit": 20
+    freebirds = await helpers.Redis.scan('freebird', {
+      'LIMIT': 20
     });
   }
 
-  var userpets = [];
-
   for (var i = 0, len = freebirds.length; i < len; i++) {
-	  freebirds[i] = helpers.BirdyPets.fetch(freebirds[i]._id);
+    freebirds[i] = helpers.BirdyPets.fetch(freebirds[i]._id);
 
-	  if (req.session.user) {
-		  await helpers.Redis.fetchOne({
-			  kind: 'memberpet',
-			  filters: [
-				  { field: 'member', value: req.session.user.id },
-				  { field: 'birdypetSpecies', value : freebirds[i].species.speciesCode }
-			  ]
-		  }).then( (result) => {
-			  if (result) {
-				  userpets.push(freebirds[i].species.speciesCode);
-			  }
-		  });
+    var commonName = freebirds[i].species.commonName.replace(/([\'\s\-])/g, "\\$1");
 
-		  await helpers.Redis.fetchOne({
-			  kind: 'memberpet',
-			  filters: [
-				  { field: 'member', value: req.session.user.id },
-				  { field: 'birdypetId', value: freebirds[i].id }
-			  ]
-		  }).then( (result) => {
-			  if (result) {
-				  userpets.push(freebirds[i].id);
-			  }
-		  });
-	  }
+    await helpers.Redis.fetch('memberpet', {
+      "FILTER": `@member:{${req.session.user.id}} @species:{ ${commonName} }`,
+      "RETURN": ['birdypetId', 'species']
+    }).then((results) => {
+      if (results.length > 0) {
+        freebirds[i].checkmark = results.find((result) => result.birdypetId == freebirds[i]._id) ? 2 : 1;
+      }
+    });
   }
 
   res.render('freebirds/index', {
-    birdypets: freebirds,
-	  userpets: userpets
+    birdypets: freebirds
   });
 });
 
