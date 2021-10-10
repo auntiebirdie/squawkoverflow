@@ -19,12 +19,11 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.4.0/dist/lazyload.min.js" integrity="sha256-Uukz8+FlQ78tU43ix2oKDcK84sJpKYzuU8XweQ1DaU0=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/filterizr@2.2.4/dist/vanilla.filterizr.min.js" integrity="sha256-XI1PitIc0U3YitVOqoylH9iLhbPm+XHfk12Nlbon7Ho=" crossorigin="anonymous"></script>
-
-<script type="text/javascript">
-  var lazyLoadInstance = new LazyLoad({ });
-</script>
-
+  <script type="text/javascript">
+    $(document).ready( function () {
+      lazyLoadInstance.update();
+    });
+  </script>
 </body>
 </html>

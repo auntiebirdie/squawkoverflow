@@ -14,14 +14,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.4.0/dist/lazyload.min.js" integrity="sha256-Uukz8+FlQ78tU43ix2oKDcK84sJpKYzuU8XweQ1DaU0=" crossorigin="anonymous"></script>
 
-        <script type="text/javascript">
-            function missingMemberAvatar (img) {
-                img.onerror = "";
-                img.src = '/img/avatar-placeholder.jpeg';
-                img.style.transform = `rotate(${Math.max(0, img.getAttribute('data-id'))}deg)`;
-            };
-        </script>
+      <script type="text/javascript">
+        function missingMemberAvatar (img) {
+          img.onerror = "";
+          img.src = '/img/avatar-placeholder.jpeg';
+          img.style.transform = `rotate(${Math.max(0, img.getAttribute('data-id'))}deg)`;
+        };
+
+        var lazyLoadInstance = new LazyLoad({ });
+      </script>
     </head>
 
     <body <% if (locals.error) { %> class="error-page full-image-background" <% } %>>

@@ -6,47 +6,41 @@ router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
   res.render('flocks/index', {
     member: await helpers.Redis.get('member', req.session.user.id),
     flocks: await helpers.Redis.fetch('flock', {
-	    'FILTER' : `@member:{${req.session.user.id}}`
+      'FILTER': `@member:{${req.session.user.id}}`
     })
   });
 });
 
 router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
   var existingFlocks = req.body.existingFlocks;
-  var existingFlockKeys = await helpers.Redis.fetch('flock',
-	  {
-		  'FILTER' : `@member:{${req.session.user.id}}`,
-		  'KEYSONLY' : true
-	  }
-  );
+  var existingFlockKeys = await helpers.Redis.fetch('flock', {
+    'FILTER': `@member:{${req.session.user.id}}`,
+    'KEYSONLY': true
+  });
 
   for (var key of existingFlockKeys) {
-    if (existingFlocks[key]) {
-      let name = helpers.sanitize(existingFlocks[key]).trim();
+    if (existingFlocks[key._id]) {
+      let name = helpers.sanitize(existingFlocks[key._id]).trim();
 
       if (name != "") {
-        await helpers.Redis.set('flock', key, {
+        await helpers.Redis.set('flock', key._id, {
           name: name
         });
-
-        continue;
       }
+
+      continue;
     }
 
-    await helpers.Redis.delete('flock', key);
+    await helpers.Redis.delete('flock', key._id);
   }
 
   var newFlocks = req.body.newFlocks;
 
   if (req.body.featuredFlock) {
     try {
-      var featuredFlock = req.body.featuredFlock.match(/\[([0-9]+)\]/)[1];
-
-      if (req.body.featuredFlock.includes('existingFlocks')) {
-        await helpers.Redis.set('member', req.session.user.id, {
-          "flock": featuredFlock
-        });
-      }
+      await helpers.Redis.set('member', req.session.user.id, {
+        "flock": req.body.featuredFlock
+      });
     } catch (err) {
       console.log(err);
     }
