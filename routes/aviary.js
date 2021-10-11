@@ -6,36 +6,31 @@ router.get('/mine', helpers.Middleware.isLoggedIn, (req, res, next) => {
   res.redirect(`/aviary/${req.session.user.id}`);
 });
 
-router.get('/:id', helpers.Middleware.entityExists, async (req, res, next) => {
+router.get('/:member', helpers.Middleware.entityExists, async (req, res, next) => {
   var allFamilies = require('../public/data/families.json');
-
   var families = new Set();
 
-  var flocks = await helpers.Redis.fetch({
-    "kind": "flock",
-    "filters": [
-	    { field : "member", value: req.entity._id }
-    ]
+  var flocks = await helpers.Redis.fetch('flock', {
+    "FILTER": `@member:{${req.entities['member']._id}}`,
+    "SORTBY": ["name", "DESC"]
   });
 
-  var userpets = await helpers.UserPets.fetch([{
-    field: "member",
-    value: req.entity._id
-  }]).then((userpets) => {
-    return userpets.map((userpet) => {
-      families.add(allFamilies.find((a) => a.value == userpet.birdypet.species.family));
+  await helpers.Redis.fetch('memberpet', {
+    'FILTER': `@member:{${req.entities['member']._id}}`,
+    'RETURN': ['family'],
+  }).then((response) => {
+    response.forEach((item) => {
+      var family = allFamilies.find((a) => a.value == item.family);
 
-      return {
-        ...userpet,
-        flocks: userpet.flocks.filter((id) => flocks.find((flock) => flock._id == id))
-      };
+      if (family) {
+        families.add(family);
+      }
     });
   });
 
   res.render('aviary/index', {
     page: 'aviary',
-    member: req.entity,
-    userpets: userpets,
+    member: req.entities['member'],
     flocks: flocks,
     families: [...families].sort((a, b) => a.value.localeCompare(b.value))
   });

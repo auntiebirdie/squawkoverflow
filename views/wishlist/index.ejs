@@ -1,41 +1,26 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { title : `${member.username}'s Wishlist` }) %>
+    <%- include('../partials/page-title.ejs', {
+          title : {
+            url: `/members/${member._id}`,
+            prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member._id}" onerror="missingMemberAvatar(this)"> `,
+            text: member.username,
+            append: "'s Wishlist"
+          }
+    }) %>
 
-    <%- include('../partials/filter-search-sort.ejs', { includeAllFamily : true }) %>
+    <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies : true } ) %>
 
     <%- include('../partials/spacer.ejs') %>
 
-    <div id="birdDisplay" class="row filter-container">
-      <% for (var bird of wishlist) { %>
-      <div class="col-md-3 filter-item"
-           data-category="<%= bird.family.toLowerCase() %>"
-      >
-        <div class="pb-4">
-          <div class="card">
-            <% if (locals.loggedInUser && loggedInUser.id == member._id) { %>
-            <button class="wishlist-heart btn btn-light btn-sm" data-id="<%= bird.speciesCode %>" data-action="remove" role="button">
-              ❤️
-            </button>
-            <% } %>
-            <div class="lazy birdypet <%= bird.variants[0].hatched ? "hatched" : "unhatched" %> <%= bird.variants.find((variant) => variant.hatched) ? "checkmark1" : "" %>"
-                 data-bg="<%= bird.variants[0].image %>">
-            </div>
-            <h3 class="text-center">
-              <%= bird.commonName %>
-            </h3>
-          </div>
-        </div>
-      </div>
-      <% } %>
-    </div>
+    <div id="lazyLoader" class="row" data-endpoint="/api/wishlist/<%= member._id %>"></div>
 
-  <%- include('../scripts/filterizr.ejs') %>
-
+<%- include('../scripts/lazyloader.ejs', { template: '../templates/wishlist.ejs' }) %>
 
 <script type="text/javascript">
+
 <% if (locals.loggedInUser && loggedInUser.id == member._id) { %>
-  $('#birdDisplay').on('click', '.wishlist-heart', function (event) {
+  $('#lazyLoader').on('click', '.wishlist-heart', function (event) {
     var button = event.target;
 
       if (!button.style.opacity) { 

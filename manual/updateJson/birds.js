@@ -1,6 +1,7 @@
 const csv = require('csv-parser');
 const https = require('https');
 const fs = require('fs');
+const birdypets = require('../../helpers/birdypets.js');
 
 var output = {};
 
@@ -16,6 +17,7 @@ https.get('https://www.birds.cornell.edu/clementschecklist/wp-content/uploads/20
       if (row['CATEGORY'] == 'species') {
         var order = row['ORDER1']
         var family = row['FAMILY'].split(' ').shift();
+	var adjectives = birdypets.findBy('species.speciesCode', row['SPECIES_CODE'])[0]?.adjectives || [];
 
         if (!output[order]) {
           output[order] = {}
@@ -33,7 +35,8 @@ https.get('https://www.birds.cornell.edu/clementschecklist/wp-content/uploads/20
           "scientificName": row['SCI_NAME'],
           "speciesCode": row['SPECIES_CODE'],
           "family": family,
-          "order": order
+          "order": order,
+          "adjectives": adjectives
         });
       }
     })

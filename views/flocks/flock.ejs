@@ -1,33 +1,16 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { title : entity.name, breadcrumb: locals.loggedInUser && loggedInUser.id == entity.member ? 'Manage Flock' : `${member.username}'s Flock`  }) %>
+    <%- include('../partials/page-title.ejs', { title : flock.name, breadcrumb: locals.loggedInUser && loggedInUser.id == flock.member ? 'Manage Flock' : `${member.username}'s Flock` }) %>
 
-    <%- include('../partials/filter-search-sort.ejs', { includeAllFamily: true, selectedFlock: entity._id, sortFields : [{ "value" : "hatched-at", "label" : "Hatched At" }, { "value" : "name", "label" : "Name" }, { "value" : "common-name", "label" : "Species" }] }) %>
+    <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies: true, selectedFlock: flock._id, sortFields : [{ "value" : "hatchedAt", "label" : "Hatch Date (Newest)", "dir" : "desc" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
 
     <%- include('../partials/spacer.ejs') %>
 
-    <div class="row filter-container">
-      <% for (var userpet of userpets) { %>
-      <div class="col-md-3 filter-item" data-category="<%= [userpet.birdypet.species.family.toLowerCase(), ...(userpet.flocks.length > 0 ? userpet.flocks : ["flockless"]), (userpet.nickname ? "nicknamed" : "nonickname")].join(", ") %>">
-        <div class="pb-4">
-          <div class="card <%= locals.loggedInUser && loggedInUser.id == entity.member && userpet.flocks.includes(entity._id) ? "border-primary" : "" %>">
-            <p></p>
-              <div class="lazy birdypet" data-id="<%= userpet._id %>" data-bg="<%= userpet.birdypet.image %>"></div>
-            <h3 class="text-center">
-              <a <% if (!locals.loggedInUser || loggedInUser.id == entity.member) { %>href="/birdypet/<%= userpet._id%>"<% } %>>
-                <%= userpet.nickname ? userpet.nickname : userpet.birdypet.species.commonName %>
-              </a>
-            </h3>
-            <h6 class="text-center"><%= userpet.nickname ? userpet.birdypet.species.commonName : (userpet.birdypet.version + " " + userpet.birdypet.label) %></h6>
-          </div>
-        </div>
-      </div>
-      <% } %>
-    </div>
+    <div id="lazyLoader" class="row" data-endpoint="/api/aviary/<%= member._id %>"></div>
 
-  <%- include('../scripts/filterizr.ejs') %>
+  <%- include('../scripts/lazyloader.ejs') %>
 
-  <% if (locals.loggedInUser && loggedInUser.id == entity.member) { %>
+  <% if (locals.loggedInUser && loggedInUser.id == member._id) { %>
   <script>
     var loader = `
       <div class="spinner-border d-block mx-auto" role="status">
@@ -35,7 +18,7 @@
       </div>
     `;
 
-    $('.filter-container').on('click', '.card', function () {
+    $('#lazyLoader').on('click', '.card', function () {
       var image = this.querySelector('.birdypet');
 
       if (!image.style.opacity) {
@@ -44,7 +27,7 @@
 
         $.ajax({
           cache: false,
-          url: `/api/flocks/<%= entity._id %>/${image.getAttribute('data-id')}`,
+          url: `/api/flocks/<%= flock._id %>/${image.getAttribute('data-id')}`,
           dataType: "json",
           success: function(data) {
             image.style.opacity = null;

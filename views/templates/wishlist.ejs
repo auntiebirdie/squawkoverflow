@@ -1,0 +1,15 @@
+<div class="col-6 col-md-4">
+  <div class="pb-4">
+    <div class="card">
+      <% if (locals.loggedInUser && loggedInUser.id == member._id) { %>
+      <button class="wishlist-heart btn btn-light btn-sm" data-id="${bird.speciesCode}" data-action="remove" role="button">
+        ❤️
+      </button>
+      <% } %>
+      <div class="lazy birdypet"
+           data-bg="${bird.variants[0].image}"
+      ></div>
+      <h3 class="text-center"><a href="/birdypedia/bird/${bird.speciesCode}">${bird.commonName}</a></h3> 
+    </div>
+  </div>
+</div>

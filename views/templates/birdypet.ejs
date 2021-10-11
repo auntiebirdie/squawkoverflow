@@ -1,0 +1,17 @@
+<div class="col-6 col-md-4">
+  <div class="pb-4">
+    <div class="card <% if (locals.page && page == 'flock') { %>${bird.flocks.includes('<%= flock._id %>') ? 'border-primary' : ''}<% } %>">
+      <% if (locals.page && page == 'gift') { %>
+        <button class="wishlist-heart btn btn-light btn-sm" role="button">
+          ${bird.wishlisted ? '❤️' : '🤍'}
+        </button>
+      <% } %>
+      <div class="lazy birdypet"
+           data-id="${bird._id}"
+           data-bg="${bird.image}"
+      ></div>
+      <h3 class="text-center"><a href="/birdypet/${bird._id}">${bird.nickname ? bird.nickname : bird.species.commonName}</a></h3> 
+      <h6 class="text-center">${bird.nickname ? bird.species.commonName : (`${bird.version}&nbsp;${bird.label}`)}</h6>
+    </div>
+  </div>
+</div>

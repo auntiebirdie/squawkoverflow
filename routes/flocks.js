@@ -5,55 +5,42 @@ const router = express.Router();
 router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
   res.render('flocks/index', {
     member: await helpers.Redis.get('member', req.session.user.id),
-    flocks: await helpers.Redis.fetch({
-      "kind": "flock",
-      "filters": [
-	      { field: "member", value: req.session.user.id }
-      ]
+    flocks: await helpers.Redis.fetch('flock', {
+      'FILTER': `@member:{${req.session.user.id}}`
     })
   });
 });
 
 router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
   var existingFlocks = req.body.existingFlocks;
-  var existingFlockKeys = await helpers.Redis.fetch({
-    "kind": "flock",
-    "filters": [
-	    { field: "member", value: req.session.user.id }
-    ]
-  }).then((flocks) => {
-    return flocks.map((flock) => {
-      return flock._id;
-    });
+  var existingFlockKeys = await helpers.Redis.fetch('flock', {
+    'FILTER': `@member:{${req.session.user.id}}`,
+    'KEYSONLY': true
   });
 
   for (var key of existingFlockKeys) {
-    if (existingFlocks[key]) {
-      let name = helpers.sanitize(existingFlocks[key]).trim();
+    if (existingFlocks[key._id]) {
+      let name = helpers.sanitize(existingFlocks[key._id]).trim();
 
       if (name != "") {
-        await helpers.Redis.set('flock', key, {
+        await helpers.Redis.set('flock', key._id, {
           name: name
         });
-
-        continue;
       }
+
+      continue;
     }
 
-    await helpers.Redis.delete('flock', key);
+    await helpers.Redis.delete('flock', key._id);
   }
 
   var newFlocks = req.body.newFlocks;
 
   if (req.body.featuredFlock) {
     try {
-      var featuredFlock = req.body.featuredFlock.match(/\[([0-9]+)\]/)[1];
-
-      if (req.body.featuredFlock.includes('existingFlocks')) {
-        await helpers.Redis.set('member', req.session.user.id, {
-          "flock": featuredFlock
-        });
-      }
+      await helpers.Redis.set('member', req.session.user.id, {
+        "flock": req.body.featuredFlock
+      });
     } catch (err) {
       console.log(err);
     }
@@ -74,50 +61,36 @@ router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
   res.redirect('/flocks');
 });
 
-router.get('/:id', helpers.Middleware.entityExists, async (req, res) => {
-  var output = {
-    page: "flock",
-    entity: req.entity,
-    flocks: []
-  };
-
-  var allFamilies = require('../public/data/families.json'); 
+router.get('/:flock', helpers.Middleware.entityExists, async (req, res) => {
+  var allFamilies = require('../public/data/families.json');
   var families = new Set();
-  var filters = [
-	  { field: "member", value: req.entity.member }
-  ];
+  var member = await helpers.Redis.get('member', req.entities['flock'].member);
 
-  if (req.session.user && req.session.user.id == req.entity.member) {
-    output.member = req.session.user;
-    output.flocks = await helpers.Redis.fetch({
-      "kind": "flock",
-      "filters": [
-	      { field: "member", value: req.session.user.id }
-      ]
-    });
-  } else {
-    output.member = await helpers.Redis.get("member", req.entity.member);
-	  filters.push({
-		  field: "flocks",
-		  value: req.entity._id
-	  });
-  }
+  var flocks = await helpers.Redis.fetch('flock', {
+    "FILTER": `@member:{${req.entities['flock'].member}}`,
+    "SORTBY": ["name", "DESC"]
+  });
 
+  await helpers.Redis.fetch('memberpet', {
+    'FILTER': `@member:{${req.entities['flock'].member}}`,
+    'RETURN': ['family'],
+  }).then((response) => {
+    response.forEach((item) => {
+      var family = allFamilies.find((a) => a.value == item.family);
 
-  output.userpets = await helpers.UserPets.fetch(filters).then((userpets) => {
-    return userpets.map((userpet) => {
-      families.add(allFamilies.find((a) => a.value == userpet.birdypet.species.family));
-
-      return {
-        ...userpet,
-        flocks: userpet.flocks.filter((id) => output.flocks.find((flock) => flock._id == id))
-      };
+      if (family) {
+        families.add(family);
+      }
     });
   });
 
-  output.families = [...families].sort((a, b) => a.value.localeCompare(b.value))
-
-  res.render('flocks/flock', output);
+  res.render('flocks/flock', {
+    page: 'flock',
+    member: member,
+    flock: req.entities['flock'],
+    flocks: flocks,
+    families: [...families].sort((a, b) => a.value.localeCompare(b.value))
+  });
 });
 
 module.exports = router;

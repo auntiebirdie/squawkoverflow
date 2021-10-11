@@ -2,9 +2,9 @@
             <meta property="og:title" content="<%= member.username %>'s Aviary">
             <meta property="og:image" content="<%= member.avatar ? member.avatar : "/img/avatar-placeholder.jpeg" %>">
         <% } else if (locals.page && page == 'flock') { %>
-            <meta property="og:title" content="<%= entity.name %>">
+            <meta property="og:title" content="<%= flock.name %>">
             <meta property="og:description" content="<%= member.username %>'s Flock">
-            <meta property="og:image" content="<% userpets.length > 0 ? userpets[0].image : member.avatar %>">
+            <meta property="og:image" content="<% member.avatar %>">
         <% } else if (locals.page && page == 'member') { %>
             <meta property="og:title" content="<%= member.username %>">
             <meta property="og:image" content="<%= member.avatar ? member.avatar : "/img/avatar-placeholder.jpeg" %>">
@@ -12,14 +12,14 @@
             <meta property="profile:username" content="<%= member.username %>">
             <meta property="profile:first_name" content="<%= member.username %>">
             <meta property="profile:last_name" content="">
-        <% } else if (locals.userpet && locals.member) { %>
-            <meta property="og:title" content="<%= userpet.nickname ? userpet.nickname : birdypet.species.commonName %>">
-            <meta property="og:description" content="<% if (userpet.description) { %><%= userpet.description %> <% } else { %><%= member.username %>'s <%= birdypet.species.commonName %><% } %>">
-            <meta property="og:image" content="<%= birdypet.image %>">
+        <% } else if (locals.memberpet && locals.member) { %>
+            <meta property="og:title" content="<%= memberpet.nickname ? memberpet.nickname : memberpet.species.commonName %>">
+            <meta property="og:description" content="<% if (memberpet.description) { %><%= memberpet.description %> <% } else { %><%= member.username %>'s <%= memberpet.species.commonName %><% } %>">
+            <meta property="og:image" content="<%= memberpet.image %>">
             <meta property="og:type" content="article">
             <meta property="article:author" content="https://squawkoverflow.com/members/<%= member._id %>">
             <meta property="twitter:card" content="summary_large_image">
-            <meta property="twitter:image" content="<%= birdypet.image %>">
+            <meta property="twitter:image" content="<%= memberpet.image %>">
         <% } else { %>
             <meta property="og:title" content="the ultimate bird collecting game">
             <meta property="og:description" content="🥚 hatch | ❤️ collect | 🤝 connect">

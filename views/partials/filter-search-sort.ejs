@@ -1,29 +1,43 @@
-    <div class="row">
-      <div class="col-md-6 mt-4">
-      <% if (locals.flocks && flocks.length > 0) { %>
+    <div id="controls" class="row">
+      <div class="col-md-6 mb-4">
+        <% if (locals.flocks && flocks.length > 0) { %>
         <div class="mb-4">
           <h4>Flock</h4>
-          <select id="flocks" class="form-select custom-controls">
-            <option value="all">[ALL]</option>
+          <select id="flock" class="form-select">
+            <% if (locals.page && page == 'gift') { %>
+             <option data-special='<%= JSON.stringify({ "field" : "wishlisted", "value" : true }) %>'>[IN THEIR WISHLIST]</option>
+            <% } %>
+            <option value="">[ALL]</option>
             <% for (var flock of flocks) { %>
               <option value="<%= flock._id %>" <%= locals.selectedFlock && selectedFlock == flock._id ? "selected" : "" %>>
                 <%= flock.name %>
               </option>
             <% } %>
             <% if (locals.loggedInUser && member._id == loggedInUser.id) { %>
-              <option value="flockless">[FLOCKLESS]</option>
-              <option value="nonickname">[NO NICKNAME]</option>
+              <option data-special='<%= JSON.stringify({ "field" : "flocks", "attr" : "length", "value" : 0}) %>'>[FLOCKLESS]</option>
+              <option data-special='<%= JSON.stringify({ "field" : "nickname", "value" : "" }) %>'>[NO NICKNAME]</option>
             <% } %>
           </select>
         </div>
-      <% } %>
-        <div>
+        <% } %>
+        <% if (locals.adjectives) { %>
+        <div class="mb-4" style="display: none;">
+          <h4>Hatches From</h4>
+          <select id="adjectives" class="form-select">
+            <% for (var adjective of adjectives) { %>
+            <option value="<%= adjective %>">
+              <%= adjective %> eggs
+            </option>
+            <% } %>
+          </select>
+        </div>
+        <% } %>
+        <% if (locals.families) { %>
+        <div class="mb-4">
           <h4>Family</h4>
-          <select id="family" class="form-select custom-controls">
-            <% if (locals.includeAllFamily) { %>
-              <option value="all">[ALL]</option>
-            <% } else { %>
-              <option value=""></option>
+          <select id="family" class="form-select">
+            <% if (locals.includeAllFamilies) { %>
+              <option value="">[ALL]</option>
             <% } %>
             <% for (var family of families) { %>
               <option value="<%= family.value.toLowerCase() %>" <%= locals.selectedFamily && selectedFamily.toLowerCase() == family.value.toLowerCase() ? "selected" : "" %>>
@@ -32,25 +46,28 @@
             <% } %>
           </select>
         </div>
+        <% } %>
       </div>
 
-      <div class="col-md-6 mt-4">
-        <div class="mb-4">
-          <h4>Search</h4>
-          <input id="search" type="text" name="search" class="form-control filter-control" data-search>
-        </div>
+      <div class="col-md-6">
+        <div class="row">
+          <div class="<% if (locals.sortFields) { %>col-6 col-md-12<% } %> mb-4">
+            <h4>Search</h4>
+            <input id="search" type="text" name="search" class="form-control">
+          </div>
 
-        <% if (locals.sortFields) { %>
-        <div>
-          <h4>Sort</h4>
-          <select id="sortList" class="form-select filter-control" data-sort>
-            <% for (var sort of sortFields) { %>
-              <option value="<%= sort.value %>" <%= sort.attr %>>
-                <%= sort.label %>
-              </option>
-            <% } %>
-          </select>
+          <% if (locals.sortFields) { %>
+          <div class="col-6 col-md-12 mb-4">
+            <h4>Sort</h4>
+            <select id="sort" class="form-select">
+              <% for (var sort of sortFields) { %>
+                <option value="<%= sort.value %>" data-dir="<%= sort.dir || "asc" %>" >
+                  <%= sort.label %>
+                </option>
+              <% } %>
+            </select>
+          </div>
+          <% } %>
         </div>
-        <% } %>
       </div>
     </div>

@@ -50,7 +50,7 @@ nav .brand-logo h4 {
 	border-radius: 100%;
 }
 
-nav .member-avatar {
+.member-avatar.avatar-sm {
 	height: 40px;
 }
 
@@ -141,6 +141,12 @@ nav .member-name {
 	position: relative;
 }
 
+@media (max-width: 576px) {
+	.birdypet {
+		height: 150px;
+	}
+}
+
 .birdypet.mini {
 	cursor: pointer;
 	height: 50px;
@@ -155,7 +161,7 @@ nav .member-name {
 }
 
 .birdypet.unhatched {
-	filter: saturate(0%) brightness(55%) contrast(1000%);
+	filter: saturate(0%);
 }
 
 .birdypet.checkmark1::after, .birdypet.checkmark2::after {

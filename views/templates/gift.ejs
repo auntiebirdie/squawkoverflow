@@ -1,0 +1,17 @@
+<div class="col-6 col-md-4">
+  <div class="pb-4">
+    <div class="card">
+      <a class="wishlist-heart">
+        ${bird.wishlisted ? '❤️' : ''}
+      </a>
+      <a href="/birdypet/gift/${bird._id}?member=<%= member._id %>">
+        <div class="lazy birdypet checkmark${bird.checkmark}"
+             data-id="${bird._id}"
+             data-bg="${bird.image}"
+        ></div>
+      </a>
+      <h3 class="text-center"><a href="/birdypet/gift/${bird._id}?member=<%= member._id %>">${bird.nickname ? bird.nickname : bird.species.commonName}</a></h3> 
+      <h6 class="text-center">${bird.nickname ? bird.species.commonName : (`${bird.version}&nbsp;${bird.label}`)}</h6>
+    </div>
+  </div>
+</div>

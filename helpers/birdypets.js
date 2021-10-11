@@ -6,7 +6,7 @@ module.exports = {
     if (birdypet) {
       return {
         ...birdypet,
-        image: `https://storage.googleapis.com/birdypets/${birdypet.species.order}/${birdypet.species.family}/${birdypet.species.scientificName}/${birdypet.id}.${birdypet.filetype ? birdypet.filetype : "jpg"}`
+        image: `https://storage.googleapis.com/birdypets/${birdypet.species.order}/${birdypet.species.family}/${birdypet.species.scientificName.replace(/\s/, '%20')}/${birdypet.id}.${birdypet.filetype ? birdypet.filetype : "jpg"}`
       }
     } else {
       return {
