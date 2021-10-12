@@ -58,7 +58,7 @@ router.post('/gift/:member', helpers.Middleware.entityExists, (req, res) => {
 
 router.post('/wishlist/:member', helpers.Middleware.entityExists, async (req, res) => {
   var page = --req.body.page * 50;
-  var wishlist = await helpers.Redis.get('wishlist', req.entities['member']._id).then( (birds) => birds.map( (bird) => helpers.Birds.findBy('speciesCode', bird) ) ) || [];
+  var wishlist = await helpers.Redis.get('wishlist', req.entities['member']._id).then((birds) => birds.map((bird) => helpers.Birds.findBy('speciesCode', bird))) || [];
   var output = [];
 
   for (var i = page, len = Math.min(page + 50, wishlist.length); i < len; i++) {
@@ -86,22 +86,33 @@ router.post('/flocks/:flock', helpers.Middleware.entityExists, (req, res) => {
 
 router.post('/birdypedia', async (req, res) => {
   var page = --req.body.page * 50;
-  var birds = helpers.Birds.fetch(req.body.family).sort((a, b) => a.commonName.localeCompare(b.commonName)).filter((bird) => req.body.adjectives ? bird.adjectives.includes(req.body.adjectives) : true);
   var wishlist = req.session.user ? await helpers.Redis.get('wishlist', req.session.user.id) : [];
   var output = [];
 
+  if (req.body.family) {
+    var birds = helpers.Birds.fetch("family", req.body.family);
+  } else {
+    var birds = helpers.Birds.fetch().filter((bird) => req.body.adjectives ? bird.adjectives.includes(req.body.adjectives) : true);
+  }
+
+  birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
+
   for (var i = page, len = Math.min(page + 50, birds.length); i < len; i++) {
+    birds[i].wishlisted = wishlist.includes(birds[i].speciesCode);
     birds[i].variants = helpers.BirdyPets.findBy('species.speciesCode', birds[i].speciesCode);
 
     if (req.session.user) {
       for (var variant of birds[i].variants) {
-        variant.wishlisted = wishlist.includes(birds[i].speciesCode);
         variant.hatched = await helpers.Redis.fetchOne('memberpet', {
           'FILTER': `@member:{${req.session.user.id}} @birdypetId:{${variant.id}}`
         }) !== null;
       }
 
-      birds[i].variants.sort((a, b) => Number(b.hatched) - Number(a.hatched));
+      if (birds[i].variants.length > 0) {
+        birds[i].variants.sort((a, b) => Number(b.hatched) - Number(a.hatched));
+      } else {
+        birds[i].SKIP = true;
+      }
     }
 
     output.push(birds[i]);

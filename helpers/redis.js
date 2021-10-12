@@ -237,10 +237,14 @@ Database.prototype.scan = async function(kind, args = {}) {
   }).then((output) => {
     if (args.SORTBY) {
       output.sort((a, b) => {
-        if (args.SORTBY[1] == "DESC") {
-          return b[args.SORTBY[0]].localeCompare(a[args.SORTBY[0]]);
-        } else {
-          return a[args.SORTBY[0]].localeCompare(b[args.SORTBY[0]]);
+        try {
+          if (args.SORTBY[1] == "DESC") {
+            return b[args.SORTBY[0]].localeCompare(a[args.SORTBY[0]]);
+          } else {
+            return a[args.SORTBY[0]].localeCompare(b[args.SORTBY[0]]);
+          }
+        } catch (err) {
+          return 0;
         }
       });
     }

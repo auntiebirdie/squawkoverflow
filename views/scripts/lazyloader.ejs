@@ -52,7 +52,26 @@
   function displayResult (result) {
     var searchText = search ? search.value.trim().toLowerCase() : "";
 
-    if (searchText != "" && !result.nickname?.toLowerCase().includes(searchText) && !result.commonName.toLowerCase().includes(searchText)) {
+    if (result.innerText) {
+      var resultText = result.innerText;
+    }
+    else {
+      var resultText = "";
+
+      if (result.nickname) {
+        resultText += result.nickname + " ";
+      }
+
+      if (result.species) {
+        resultText += result.species.commonName;
+      }
+
+      if (result.commonName) {
+        resultText += result.commonName;
+      }
+    }
+
+    if (searchText != "" && !resultText.toLowerCase().includes(searchText)) {
       return false;
     }
 
@@ -94,7 +113,7 @@
           var newElements = 0;
 
           for (var i = 0, len = data.length; i < len; i++) {
-            if (displayResult(data[i])) {
+            if (!data[i].SKIP && displayResult(data[i])) {
               container.innerHTML += template(data[i]);
               newElements++;
             }
@@ -104,7 +123,7 @@
 
           var lastElement = $('#lazyLoader > div').last();
 
-          if (lastElement.is(':appeared') || newElements == 0) {
+          if (lastElement.is(':appeared') || (newElements == 0 && $('#lazyLoader > div').length < 50)) {
             updateResults();
           }
           else {

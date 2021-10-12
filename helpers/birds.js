@@ -2,41 +2,50 @@ const Chance = require('chance').Chance();
 const birds = require('../public/data/birds.json');
 
 module.exports = {
-  random: function(taxonomy) {
-    var matchingBirds = this.fetch(taxonomy);
+  random: function(key, value) {
+    var matchingBirds = this.fetch(key, value);
 
     return matchingBirds.length > 0 ? Chance.pickone(matchingBirds) : Chance.pickone(this.fetch());
   },
-  fetch: function(taxonomy) {
+  fetch: function(key, value) {
     var matchingBirds = [];
 
     for (let order in birds) {
-      var isOrderMatch = true;
-      var isFamilyMatch = true;
+      var isMatch = !key;
 
-      if (taxonomy) {
-        if (taxonomy.toLowerCase() == order.toLowerCase()) {
-          isOrderMatch = true;
-        } else {
-          isOrderMatch = false;
-        }
+      if (key == "order") {
+        isMatch = value.toLowerCase() == order.toLowerCase();
       }
 
       for (let family in birds[order]) {
-        if (taxonomy) {
-          if (isOrderMatch || taxonomy.toLowerCase() == family.toLowerCase()) {
-            isFamilyMatch = true;
-          } else {
-            isFamilyMatch = false;
+        if (key == "family") {
+          isMatch = value.toLowerCase() == family.toLowerCase();
+        }
+
+        if (isMatch) {
+          matchingBirds = [...matchingBirds, ...birds[order][family].children];
+
+          if (key == "family") {
+            break;
+          }
+        } else {
+          for (let bird in birds[order][family].children) {
+            if (bird[key]) {
+              isMatch = Array.isArray(bird[key]) ? bird[key].map((val) => val.toLowerCase()).includes(value) : bird[key].toLowerCase() == value;
+
+              if (isMatch) {
+                matchingBirds.push(bird);
+              }
+            }
           }
         }
+      }
 
-        if (isOrderMatch || isFamilyMatch) {
-          matchingBirds = [...matchingBirds, ...birds[order][family].children];
-        }
-
+      if (isMatch && key == "order") {
+        break;
       }
     }
+
     return matchingBirds;
   },
   findBy: function(key, value) {
