@@ -75,11 +75,12 @@ router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
   } else if (req.body.action) {
     var action = req.body.action;
     var birdypet = req.session.birdypet;
-    delete req.session.birdypet;
 
     switch (action) {
       case "keep":
-        console.log('keep');
+		    if (!birdypet) {
+			    console.log(req.session);
+		    }
         var id = await helpers.Redis.create('memberpet', {
           birdypetId: birdypet.id,
           birdypetSpecies: birdypet.species.speciesCode,
@@ -89,12 +90,9 @@ router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
           hatchedAt: Date.now()
         });
 
-        console.log('set member last hatched at');
-
         await helpers.Redis.set('member', req.session.user.id, {
           lastHatchedAt: Date.now()
         });
-        console.log('send webhook');
 
         helpers.Discord.Webhook.send('egg-hatchery', {
           adjective: req.session.adjective,
@@ -104,7 +102,6 @@ router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
         });
 
         delete req.session.adjective;
-        console.log('redirect');
         return res.redirect(`/birdypet/${id}`);
         break;
       case "release":
