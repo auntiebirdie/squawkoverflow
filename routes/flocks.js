@@ -12,7 +12,7 @@ router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
 });
 
 router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
-  var existingFlocks = req.body.existingFlocks;
+  var existingFlocks = req.body.existingFlocks || {};
   var existingFlockKeys = await helpers.Redis.fetch('flock', {
     'FILTER': `@member:{${req.session.user.id}}`,
     'KEYSONLY': true

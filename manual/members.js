@@ -18,9 +18,7 @@ client.on('error', (err) => {
 
 client.on('ready', async () => {
   client.guilds.fetch("863864246835216464").then((guild) => {
-    Helpers.Redis.fetch({
-      kind: "member"
-    }).then(async (members) => {
+    Helpers.Redis.scan('member').then(async (members) => {
       for (var i = 0, len = members.length; i < len; i++) {
         var memberId = members[i]._id;
         await guild.members.fetch(memberId).then(async (member) => {
