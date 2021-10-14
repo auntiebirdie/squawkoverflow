@@ -7,7 +7,8 @@ router.post('/aviary/:member', helpers.Middleware.entityExists, (req, res) => {
   var filters = [
     `@member:{${req.entities['member']._id}}`,
     req.body.family ? `@family:{${req.body.family}}` : '',
-    req.body.flock ? `@flocks:{${req.body.flock}}` : ''
+    req.body.flock ? `@flocks:{${req.body.flock}}` : '',
+    req.body.search ? `@nickname|species:${req.body.search}*` : ''
   ].join(' ');
 
   helpers.Redis.fetch('memberpet', {
@@ -26,7 +27,8 @@ router.post('/gift/:member', helpers.Middleware.entityExists, (req, res) => {
   var filters = [
     `@member:{${req.session.user.id}}`,
     req.body.family ? `@family:{${req.body.family}}` : '',
-    req.body.flock ? `@flocks:{${req.body.flock}}` : ''
+    req.body.flock ? `@flocks:{${req.body.flock}}` : '',
+    req.body.search ? `@nickname|species:${req.body.search}*` : ''
   ].join(' ');
 
   helpers.Redis.fetch('memberpet', {
@@ -72,9 +74,14 @@ router.post('/wishlist/:member', helpers.Middleware.entityExists, async (req, re
 
 router.post('/flocks/:flock', helpers.Middleware.entityExists, (req, res) => {
   var page = --req.body.page * 25;
+  var filters = [
+    `@member:{${req.entities['member']._id}}`,
+    `@flocks:{${req.entities['flock']._id}}`,
+    req.body.search ? `@nickname|species:${req.body.search}*` : ''
+  ].join(' ');
 
   helpers.Redis.fetch('memberpet', {
-    'FILTER': `@member:{${req.entities['flock'].member}} @flocks:{${req.entities['flock']._id}}`,
+    'FILTER': filters,
     'SORTBY': req.body.sort,
     'LIMIT': [page, 25]
   }).then((response) => {
@@ -93,6 +100,10 @@ router.post('/birdypedia', async (req, res) => {
     var birds = helpers.Birds.fetch("family", req.body.family);
   } else {
     var birds = helpers.Birds.fetch().filter((bird) => req.body.adjectives ? bird.adjectives.includes(req.body.adjectives) : true);
+  }
+
+  if (req.body.search) {
+   birds = birds.filter((bird) => bird.commonName.toLowerCase().includes(req.body.search.toLowerCase()));
   }
 
   birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
