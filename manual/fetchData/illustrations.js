@@ -11,12 +11,9 @@ const DB = new Datastore({
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-//const prompt = require('prompt');
 
 const storage = new Storage();
 const bucket = storage.bucket('birdypets');
-
-//prompt.start();
 
 (async () => {
   try {
@@ -33,7 +30,6 @@ const bucket = storage.bucket('birdypets');
 
     var errors = 0;
 
-    //await DB.runQuery(DB.createQuery(['Bird']).filter('family', '=', process.argv[2])).then(async ([birds]) => {
     await DB.runQuery(DB.createQuery(['Bird']).filter('type', '=', 'species')).then(async ([birds]) => {
       for (let bird of birds) {
         if (!birdypets.includes(bird.code) && !noIllustration.includes(bird.code)) {

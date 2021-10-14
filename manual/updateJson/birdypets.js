@@ -17,11 +17,11 @@ const DB = new Datastore({
     for (var birdypet of birdypets) {
       output.push({
         id: birdypet[Datastore.KEY].name,
-	image: '',
-        original: birdypet.illustration,
+        illustration: birdypet.illustration,
         species: birdypet.species,
         version: birdypet.version,
-        label: birdypet.label
+        label: birdypet.label,
+	filetype: birdypet.filetype || "jpg"
       });
     }
 
