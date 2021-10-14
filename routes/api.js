@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 router.post('/aviary/:member', helpers.Middleware.entityExists, (req, res) => {
-  var page = --req.body.page * 50;
+  var page = --req.body.page * 25;
   var filters = [
     `@member:{${req.entities['member']._id}}`,
     req.body.family ? `@family:{${req.body.family}}` : '',
@@ -13,7 +13,7 @@ router.post('/aviary/:member', helpers.Middleware.entityExists, (req, res) => {
   helpers.Redis.fetch('memberpet', {
     'FILTER': filters,
     'SORTBY': req.body.sort,
-    'LIMIT': [page, 50]
+    'LIMIT': [page, 25]
   }).then((response) => {
     res.json(response.map((memberpet) => {
       return helpers.MemberPets.format(memberpet);
@@ -22,7 +22,7 @@ router.post('/aviary/:member', helpers.Middleware.entityExists, (req, res) => {
 });
 
 router.post('/gift/:member', helpers.Middleware.entityExists, (req, res) => {
-  var page = --req.body.page * 50;
+  var page = --req.body.page * 25;
   var filters = [
     `@member:{${req.session.user.id}}`,
     req.body.family ? `@family:{${req.body.family}}` : '',
@@ -32,7 +32,7 @@ router.post('/gift/:member', helpers.Middleware.entityExists, (req, res) => {
   helpers.Redis.fetch('memberpet', {
     'FILTER': filters,
     'SORTBY': req.body.sort,
-    'LIMIT': [page, 50]
+    'LIMIT': [page, 25]
   }).then(async (response) => {
     var wishlist = await helpers.Redis.get('wishlist', req.entities['member']._id);
     var output = [];
@@ -57,11 +57,11 @@ router.post('/gift/:member', helpers.Middleware.entityExists, (req, res) => {
 });
 
 router.post('/wishlist/:member', helpers.Middleware.entityExists, async (req, res) => {
-  var page = --req.body.page * 50;
+  var page = --req.body.page * 25;
   var wishlist = await helpers.Redis.get('wishlist', req.entities['member']._id).then((birds) => birds.map((bird) => helpers.Birds.findBy('speciesCode', bird))) || [];
   var output = [];
 
-  for (var i = page, len = Math.min(page + 50, wishlist.length); i < len; i++) {
+  for (var i = page, len = Math.min(page + 25, wishlist.length); i < len; i++) {
     wishlist[i].variants = helpers.BirdyPets.findBy('species.speciesCode', wishlist[i].speciesCode);
 
     output.push(wishlist[i]);
@@ -71,12 +71,12 @@ router.post('/wishlist/:member', helpers.Middleware.entityExists, async (req, re
 });
 
 router.post('/flocks/:flock', helpers.Middleware.entityExists, (req, res) => {
-  var page = --req.body.page * 50;
+  var page = --req.body.page * 25;
 
   helpers.Redis.fetch('memberpet', {
     'FILTER': `@member:{${req.entities['flock'].member}} @flocks:{${req.entities['flock']._id}}`,
     'SORTBY': req.body.sort,
-    'LIMIT': [page, 50]
+    'LIMIT': [page, 25]
   }).then((response) => {
     res.json(response.map((memberpet) => {
       return helpers.MemberPets.format(memberpet);
@@ -85,7 +85,7 @@ router.post('/flocks/:flock', helpers.Middleware.entityExists, (req, res) => {
 });
 
 router.post('/birdypedia', async (req, res) => {
-  var page = --req.body.page * 50;
+  var page = --req.body.page * 25;
   var wishlist = req.session.user ? await helpers.Redis.get('wishlist', req.session.user.id) : [];
   var output = [];
 
@@ -97,7 +97,7 @@ router.post('/birdypedia', async (req, res) => {
 
   birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
 
-  for (var i = page, len = Math.min(page + 50, birds.length); i < len; i++) {
+  for (var i = page, len = Math.min(page + 25, birds.length); i < len; i++) {
     birds[i].wishlisted = wishlist.includes(birds[i].speciesCode);
     birds[i].variants = helpers.BirdyPets.findBy('species.speciesCode', birds[i].speciesCode);
 

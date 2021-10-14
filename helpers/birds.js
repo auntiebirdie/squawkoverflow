@@ -9,17 +9,18 @@ module.exports = {
   },
   fetch: function(key, value) {
     var matchingBirds = [];
+    value = value ? value.toLowerCase() : "";
 
     for (let order in birds) {
       var isMatch = !key;
 
       if (key == "order") {
-        isMatch = value.toLowerCase() == order.toLowerCase();
+        isMatch = value == order.toLowerCase();
       }
 
       for (let family in birds[order]) {
         if (key == "family") {
-          isMatch = value.toLowerCase() == family.toLowerCase();
+          isMatch = value == family.toLowerCase();
         }
 
         if (isMatch) {
@@ -29,7 +30,7 @@ module.exports = {
             break;
           }
         } else {
-          for (let bird in birds[order][family].children) {
+          for (let bird of birds[order][family].children) {
             if (bird[key]) {
               isMatch = Array.isArray(bird[key]) ? bird[key].map((val) => val.toLowerCase()).includes(value) : bird[key].toLowerCase() == value;
 
