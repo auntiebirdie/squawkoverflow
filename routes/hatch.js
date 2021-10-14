@@ -42,7 +42,8 @@ router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
     var adjective = req.body.egg;
 
     if (req.session.adjectives && req.session.adjectives.includes(adjective)) {
-      var birdypet = helpers.Chance.pickone(helpers.BirdyPets.findBy('adjectives', adjective));
+      var bird = helpers.Birds.random('adjectives', adjective);
+      var birdypet = helpers.Chance.pickone(helpers.BirdyPets.findBy('species.speciesCode', bird.speciesCode));
       delete req.session.adjectives;
 
       if (birdypet) {
