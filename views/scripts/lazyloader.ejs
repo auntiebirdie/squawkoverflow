@@ -42,7 +42,14 @@
     var flock = $('#flock option:selected');
 
     $('select:visible', '#controls').each( (i, select) => {
-      urlParams.set(select.id, select.options[select.options.selectedIndex].value);
+      var value = select.options[select.options.selectedIndex].value;
+
+      if (value) {
+        urlParams.set(select.id, select.options[select.options.selectedIndex].value);
+      }
+      else {
+        urlParams.delete(select.id);
+      }
     });
 
     window.history.replaceState(null, '', window.location.pathname + '?' + urlParams.toString());

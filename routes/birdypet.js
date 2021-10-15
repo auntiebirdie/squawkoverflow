@@ -91,7 +91,7 @@ router.post('/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middleware.ent
   var nickname = req.body.nickname;
   var variant = req.body.variant || req.entities['memberpet'].birdypetId;
   var description = req.body.description;
-  var flocks = req.body.flocks || [];
+  var flocks = req.body.flocks || ["NONE"];
 
   if (nickname.length > 50) {
     nickname = nickname.slice(0, 50);

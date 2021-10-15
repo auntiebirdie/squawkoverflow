@@ -4,18 +4,14 @@
         <div class="mb-4">
           <h4>Flock</h4>
           <select id="flock" class="form-select">
-            <% if (locals.page && page == 'gift') { %>
-             <option data-special='<%= JSON.stringify({ "field" : "wishlisted", "value" : true }) %>'>[IN THEIR WISHLIST]</option>
-            <% } %>
             <option value="">[ALL]</option>
+            <% if (locals.loggedInUser && member._id == loggedInUser.id) { %>
+              <option value="NONE">[FLOCKLESS]</option>
+            <% } %>
             <% for (var flock of flocks) { %>
               <option value="<%= flock._id %>" <%= locals.selectedFlock && selectedFlock == flock._id ? "selected" : "" %>>
                 <%= flock.name %>
               </option>
-            <% } %>
-            <% if (locals.loggedInUser && member._id == loggedInUser.id) { %>
-              <option data-special='<%= JSON.stringify({ "field" : "flocks", "attr" : "length", "value" : 0}) %>'>[FLOCKLESS]</option>
-              <option data-special='<%= JSON.stringify({ "field" : "nickname", "value" : "" }) %>'>[NO NICKNAME]</option>
             <% } %>
           </select>
         </div>

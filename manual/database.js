@@ -12,6 +12,10 @@ const helpers = require('../helpers.js');
 		    if (!memberpet.species) {
 			    helpers.Redis.set('memberpet', memberpet._id, { species : birdypet.species.commonName });
 		    }
+
+		    if (!memberpet.flocks || memberpet.flocks.length == 0) {
+			    helpers.Redis.set('memberpet', memberpet._id, { flocks : "NONE" });
+		    }
 	    }
 
 	    process.exit(0);

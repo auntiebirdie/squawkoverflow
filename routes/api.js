@@ -6,7 +6,7 @@ router.post('/aviary/:member', helpers.Middleware.entityExists, (req, res) => {
   var page = --req.body.page * 25;
   var filters = [
     `@member:{${req.entities['member']._id}}`,
-    req.body.family ? `@family:{${req.body.family}}` : '',
+    req.body.family ? `@family:${req.body.family}` : '',
     req.body.flock ? `@flocks:{${req.body.flock}}` : '',
     req.body.search ? `@nickname|species:${req.body.search}*` : ''
   ].join(' ');
@@ -26,7 +26,7 @@ router.post('/gift/:member', helpers.Middleware.entityExists, (req, res) => {
   var page = --req.body.page * 25;
   var filters = [
     `@member:{${req.session.user.id}}`,
-    req.body.family ? `@family:{${req.body.family}}` : '',
+    req.body.family ? `@family:${req.body.family}` : '',
     req.body.flock ? `@flocks:{${req.body.flock}}` : '',
     req.body.search ? `@nickname|species:${req.body.search}*` : ''
   ].join(' ');
@@ -40,9 +40,8 @@ router.post('/gift/:member', helpers.Middleware.entityExists, (req, res) => {
     var output = [];
 
     for (var memberpet of response) {
-      var commonName = memberpet.species.replace(/([\'\s\-])/g, "\\$1");
       var owned = await helpers.Redis.fetch('memberpet', {
-        'FILTER': `@member:{${req.entities['member']._id}} @birdypetSpecies:{${memberpet.speciesCode}}`,
+        'FILTER': `@member:{${req.entities['member']._id}} @birdypetSpecies:{${memberpet.birdypetSpecies}}`,
         'RETURN': ['birdypetId']
       }).then((owned) => owned.map((birdypet) => birdypet.birdypetId));
 
@@ -61,6 +60,10 @@ router.post('/wishlist/:member', helpers.Middleware.entityExists, async (req, re
   var page = --req.body.page * 25;
   var birds = await helpers.Redis.get('wishlist', req.entities['member']._id).then((birds) => birds.map((bird) => helpers.Birds.findBy('speciesCode', bird))) || [];
   var output = [];
+
+  if (req.body.family) {
+	  birds = birds.filter((bird) => bird.family.toLowerCase() == req.body.family.toLowerCase());
+  }
 
   if (req.body.search) {
    birds = birds.filter((bird) => bird.commonName.toLowerCase().includes(req.body.search.toLowerCase()) || bird.nickname?.toLowerCase().includes(req.body.search.toLowerCase()));
@@ -129,7 +132,9 @@ router.post('/birdypedia', async (req, res) => {
       }
     }
 
-    output.push(birds[i]);
+    if (birds[i].variants.length > 0) {
+      output.push(birds[i]);
+    }
   }
 
   res.json(output);

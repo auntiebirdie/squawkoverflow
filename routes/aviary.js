@@ -20,11 +20,7 @@ router.get('/:member', helpers.Middleware.entityExists, async (req, res, next) =
     'RETURN': ['family'],
   }).then((response) => {
     response.forEach((item) => {
-      var family = allFamilies.find((a) => a.value == item.family);
-
-      if (family) {
-        families.add(family);
-      }
+      families.add(item.family);
     });
   });
 
@@ -32,7 +28,7 @@ router.get('/:member', helpers.Middleware.entityExists, async (req, res, next) =
     page: 'aviary',
     member: req.entities['member'],
     flocks: flocks,
-    families: [...families].sort((a, b) => a.value.localeCompare(b.value))
+    families: [...families].map((family) => allFamilies.find((a) => a.value == family)).sort((a, b) => a.value.localeCompare(b.value))
   });
 });
 
