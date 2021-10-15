@@ -29,7 +29,7 @@ function Database() {
 }
 
 Database.prototype.escape = function (text) {
-	return text.replace(/\-/g, " ").replace(/\s/g, "* ") + "*";
+	return text.replace(/\'s/g, "").replace(/\-/g, " ").replace(/\s/g, "* ") + "*";
 }
 
 Database.prototype.get = function(kind, id, field = "") {
