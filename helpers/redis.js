@@ -28,6 +28,10 @@ function Database() {
   }
 }
 
+Database.prototype.escape = function (text) {
+	return text.replace(/\-/g, " ").replace(/\s/g, "* ") + "*";
+}
+
 Database.prototype.get = function(kind, id, field = "") {
   return new Promise((resolve, reject) => {
     switch (this.dataTypes[kind]) {

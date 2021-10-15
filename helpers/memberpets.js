@@ -8,7 +8,7 @@ module.exports = {
     return {
       ...memberpet,
       ...birdypet,
-      flocks: memberpet.flocks ? memberpet.flocks.split(',').filter((flock) => flock != "flockless") : []
+      flocks: memberpet.flocks ? memberpet.flocks.split(',').filter((flock) => flock != "NONE") : []
     }
   },
 

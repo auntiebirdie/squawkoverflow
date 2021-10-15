@@ -9,7 +9,14 @@
       <div class="lazy birdypet"
            data-bg="${bird.variants[0].image}"
       ></div>
-      <h3 class="text-center"><a href="/birdypedia/bird/${bird.speciesCode}">${bird.commonName}</a></h3> 
+      <h3 class="text-center">
+        <a
+          <% if (locals.loggedInUser && loggedInUser.id == member._id) { %>${bird.owned ? `href="/aviary/<%= loggedInUser.id %>?search=${bird.commonName}"` : ``}<% } %>
+          <% if (locals.loggedInUser && loggedInUser.id != member._id) { %>${bird.owned ? `href="/members/<%= member._id %>/gift?search=${bird.commonName}"` : ``}<% } %>
+        >
+          ${bird.commonName}
+        </a>
+      </h3> 
     </div>
   </div>
 </div>

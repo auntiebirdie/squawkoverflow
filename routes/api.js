@@ -8,7 +8,7 @@ router.post('/aviary/:member', helpers.Middleware.entityExists, (req, res) => {
     `@member:{${req.entities['member']._id}}`,
     req.body.family ? `@family:${req.body.family}` : '',
     req.body.flock ? `@flocks:{${req.body.flock}}` : '',
-    req.body.search ? `@nickname|species:${req.body.search}*` : ''
+    req.body.search ? `@nickname|species:${helpers.Redis.escape(req.body.search)}` : ''
   ].join(' ');
 
   helpers.Redis.fetch('memberpet', {
@@ -28,7 +28,7 @@ router.post('/gift/:member', helpers.Middleware.entityExists, (req, res) => {
     `@member:{${req.session.user.id}}`,
     req.body.family ? `@family:${req.body.family}` : '',
     req.body.flock ? `@flocks:{${req.body.flock}}` : '',
-    req.body.search ? `@nickname|species:${req.body.search}*` : ''
+    req.body.search ? `@nickname|species:${helpers.Redis.escape(req.body.search)}` : ''
   ].join(' ');
 
   helpers.Redis.fetch('memberpet', {
@@ -69,7 +69,13 @@ router.post('/wishlist/:member', helpers.Middleware.entityExists, async (req, re
    birds = birds.filter((bird) => bird.commonName.toLowerCase().includes(req.body.search.toLowerCase()) || bird.nickname?.toLowerCase().includes(req.body.search.toLowerCase()));
   }
 
+  birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
+
   for (var i = page, len = Math.min(page + 25, birds.length); i < len; i++) {
+    birds[i].owned = req.session.user ? await helpers.Redis.fetchOne('memberpet', {
+	    'FILTER': `@member:{${req.session.user.id}} @birdypetSpecies:{${birds[i].speciesCode}}`
+    }) : false;
+
     birds[i].variants = helpers.BirdyPets.findBy('species.speciesCode', birds[i].speciesCode);
 
     output.push(birds[i]);
@@ -83,7 +89,7 @@ router.post('/flocks/:flock', helpers.Middleware.entityExists, (req, res) => {
   var filters = [
     `@member:{${req.entities['flock'].member}}`,
     `@flocks:{${req.entities['flock']._id}}`,
-    req.body.search ? `@nickname|species:${req.body.search}*` : ''
+    req.body.search ? `@nickname|species:${helpers.Redis.escape(req.body.search)}` : ''
   ].join(' ');
 
   helpers.Redis.fetch('memberpet', {
