@@ -52,15 +52,13 @@ router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
 
         var userpets = [];
 
-        var commonName = birdypet.species.commonName.replace(/([\'\s\-])/g, "\\$1");
-
         await helpers.Redis.fetch('memberpet', {
-          "FILTER": `@member:{${req.session.user.id}} @species:{ ${commonName} }`,
+          "FILTER": `@member:{${req.session.user.id}} @birdypetSpecies:{${birdypet.species.speciesCode}}`,
           "RETURN": ['birdypetId', 'species']
         }).then((results) => {
           for (var i = 0, len = results.length; i < len; i++) {
             userpets.push(results[i].birdypetId);
-            userpets.push(results[i].species);
+            userpets.push(results[i].birdypetSpecies);
           }
         });
 

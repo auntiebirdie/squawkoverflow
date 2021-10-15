@@ -10,10 +10,17 @@ router.get('/:member', helpers.Middleware.entityExists, async (req, res, next) =
   var allFamilies = require('../public/data/families.json');
   var families = new Set();
 
+  await helpers.Redis.get('wishlist', req.entities['member']._id).then((birds) => {
+    birds.forEach((bird) => {
+      var family = helpers.Birds.findBy('speciesCode', bird).family;
+      families.add(family);
+    });
+  });
+
   res.render('wishlist/index', {
     page: 'wishlist',
     member: req.entities['member'],
-    families: [...families].sort((a, b) => a.value.localeCompare(b.value))
+    families: [...families].map((family) => allFamilies.find((a) => a.value == family)).sort((a, b) => a.value.localeCompare(b.value))
   });
 });
 

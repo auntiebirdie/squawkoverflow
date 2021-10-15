@@ -20,10 +20,8 @@ router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
   for (var i = 0, len = freebirds.length; i < len; i++) {
     freebirds[i] = helpers.BirdyPets.fetch(freebirds[i]._id);
 
-    var commonName = freebirds[i].species.commonName.replace(/([\'\s\-])/g, "\\$1");
-
     await helpers.Redis.fetch('memberpet', {
-      "FILTER": `@member:{${req.session.user.id}} @species:{ ${commonName} }`,
+      "FILTER": `@member:{${req.session.user.id}} @birdypetSpecies:{${freebirds[i].species.speciesCode}}`,
       "RETURN": ['birdypetId', 'species']
     }).then((results) => {
       if (results.length > 0) {

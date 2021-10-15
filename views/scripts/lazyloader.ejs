@@ -36,7 +36,7 @@
   }
 
   function updateResults () {
-    container.classList.add('loading');
+    container.classList.add('loadingData');
 
     var sort = $('#sort option:selected');
     var flock = $('#flock option:selected');
@@ -73,10 +73,17 @@
             updateResults();
           }
           else {
-            container.classList.remove('loading');
+            container.classList.remove('loadingData');
             lastElement.appear().one('appear', function (event) {
               updateResults();
             });
+          }
+        }
+        else {
+          container.classList.remove('loadingData');
+
+          if (container.childNodes.length == 0) {
+             container.innerHTML = '<p class="text-center"><em><%= locals.noResultsFound ? noResultsFound : 'No birdies match the selected criteria.  Where could they be hiding?' %></em></p>';
           }
         }
       }

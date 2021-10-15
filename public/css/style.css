@@ -234,12 +234,12 @@ select {
 	color: rgb(100, 100, 100);
 }
 
-.loading {
+.loadingData {
 	opacity: 0.5;
 	position: relative;
 }
 
-.loading::after {
+.loadingData::after {
 	content: ' ';
 	position: fixed;
 	left: 50%;

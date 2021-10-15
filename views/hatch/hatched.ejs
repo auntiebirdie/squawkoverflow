@@ -13,7 +13,7 @@
         <h6>
           <%= birdypet.version %> <%= birdypet.label %>
         </h6>
-        <h6><%= userpets.includes(birdypet.species.commonName) ? "✔️" : "" %><%= userpets.includes(birdypet.id) ? "✔️" : "" %></h6>
+        <h6><%= userpets.includes(birdypet.species.speciesCode) ? "✔️" : "" %><%= userpets.includes(birdypet.id) ? "✔️" : "" %></h6>
 
         <%- include('../partials/spacer.ejs') %>
 

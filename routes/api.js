@@ -42,10 +42,9 @@ router.post('/gift/:member', helpers.Middleware.entityExists, (req, res) => {
     for (var memberpet of response) {
       var commonName = memberpet.species.replace(/([\'\s\-])/g, "\\$1");
       var owned = await helpers.Redis.fetch('memberpet', {
-        'FILTER': `@member:{${req.entities['member']._id}} @species:{ ${commonName} }`,
+        'FILTER': `@member:{${req.entities['member']._id}} @birdypetSpecies:{${memberpet.speciesCode}}`,
         'RETURN': ['birdypetId']
       }).then((owned) => owned.map((birdypet) => birdypet.birdypetId));
-
 
       output.push({
         ...helpers.MemberPets.format(memberpet),
@@ -60,13 +59,17 @@ router.post('/gift/:member', helpers.Middleware.entityExists, (req, res) => {
 
 router.post('/wishlist/:member', helpers.Middleware.entityExists, async (req, res) => {
   var page = --req.body.page * 25;
-  var wishlist = await helpers.Redis.get('wishlist', req.entities['member']._id).then((birds) => birds.map((bird) => helpers.Birds.findBy('speciesCode', bird))) || [];
+  var birds = await helpers.Redis.get('wishlist', req.entities['member']._id).then((birds) => birds.map((bird) => helpers.Birds.findBy('speciesCode', bird))) || [];
   var output = [];
 
-  for (var i = page, len = Math.min(page + 25, wishlist.length); i < len; i++) {
-    wishlist[i].variants = helpers.BirdyPets.findBy('species.speciesCode', wishlist[i].speciesCode);
+  if (req.body.search) {
+   birds = birds.filter((bird) => bird.commonName.toLowerCase().includes(req.body.search.toLowerCase()) || bird.nickname?.toLowerCase().includes(req.body.search.toLowerCase()));
+  }
 
-    output.push(wishlist[i]);
+  for (var i = page, len = Math.min(page + 25, birds.length); i < len; i++) {
+    birds[i].variants = helpers.BirdyPets.findBy('species.speciesCode', birds[i].speciesCode);
+
+    output.push(birds[i]);
   }
 
   res.json(output);
@@ -75,7 +78,7 @@ router.post('/wishlist/:member', helpers.Middleware.entityExists, async (req, re
 router.post('/flocks/:flock', helpers.Middleware.entityExists, (req, res) => {
   var page = --req.body.page * 25;
   var filters = [
-    `@member:{${req.entities['member']._id}}`,
+    `@member:{${req.entities['flock'].member}}`,
     `@flocks:{${req.entities['flock']._id}}`,
     req.body.search ? `@nickname|species:${req.body.search}*` : ''
   ].join(' ');
