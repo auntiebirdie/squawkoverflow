@@ -36,6 +36,8 @@
   }
 
   function updateResults () {
+    container.classList.add('loading');
+
     var sort = $('#sort option:selected');
     var flock = $('#flock option:selected');
 
@@ -71,6 +73,7 @@
             updateResults();
           }
           else {
+            container.classList.remove('loading');
             lastElement.appear().one('appear', function (event) {
               updateResults();
             });

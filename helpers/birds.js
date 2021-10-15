@@ -61,5 +61,33 @@ module.exports = {
     }
 
     return {};
+  },
+  data: {
+    orders: function() {
+      var output = [];
+
+      for (let order in birds) {
+        output.push(order);
+      }
+
+      return output;
+    },
+    families: function(inOrder) {
+      var output = [];
+
+      for (let order in birds) {
+        if (!inOrder || order == inOrder) {
+          for (let family in birds[order]) {
+            output.push(family);
+          }
+
+          if (inOrder) {
+            break;
+          }
+        }
+      }
+
+      return output;
+    }
   }
 }

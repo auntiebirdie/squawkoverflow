@@ -233,3 +233,21 @@ select {
 	opacity: .75;
 	color: rgb(100, 100, 100);
 }
+
+.loading {
+	opacity: 0.5;
+	position: relative;
+}
+
+.loading::after {
+	content: ' ';
+	position: fixed;
+	left: 50%;
+	display: inline-block;
+	width: 2rem;
+	height: 2rem;
+	border: .25em solid currentColor;
+	border-right-color: transparent;
+	border-radius: 50%;
+        animation: spinner-border .75s linear infinite;
+}

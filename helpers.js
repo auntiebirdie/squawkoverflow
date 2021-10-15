@@ -28,11 +28,11 @@ module.exports = {
 
     switch (`${member.tier}`) {
       case "3":
-        tier.name = "Alpha Squad";
+        tier.name = "Owlpha Squad";
         tier.eggTimer = 10; // opt-in for timer
         break;
       case "2":
-        tier.name = "Alpha Squad";
+        tier.name = "Owllpha Squad";
         tier.eggTimer = 0;
         break;
       case "1":
