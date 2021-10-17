@@ -62,18 +62,18 @@ router.post('/wishlist/:member', helpers.Middleware.entityExists, async (req, re
   var output = [];
 
   if (req.body.family) {
-	  birds = birds.filter((bird) => bird.family.toLowerCase() == req.body.family.toLowerCase());
+    birds = birds.filter((bird) => bird.family.toLowerCase() == req.body.family.toLowerCase());
   }
 
   if (req.body.search) {
-   birds = birds.filter((bird) => bird.commonName.toLowerCase().includes(req.body.search.toLowerCase()) || bird.nickname?.toLowerCase().includes(req.body.search.toLowerCase()));
+    birds = birds.filter((bird) => bird.commonName.toLowerCase().includes(req.body.search.toLowerCase()) || bird.nickname?.toLowerCase().includes(req.body.search.toLowerCase()));
   }
 
   birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
 
   for (var i = page, len = Math.min(page + 25, birds.length); i < len; i++) {
     birds[i].owned = req.session.user ? await helpers.Redis.fetchOne('memberpet', {
-	    'FILTER': `@member:{${req.session.user.id}} @birdypetSpecies:{${birds[i].speciesCode}}`
+      'FILTER': `@member:{${req.session.user.id}} @birdypetSpecies:{${birds[i].speciesCode}}`
     }) : false;
 
     birds[i].variants = helpers.BirdyPets.findBy('species.speciesCode', birds[i].speciesCode);
@@ -115,7 +115,7 @@ router.post('/birdypedia', async (req, res) => {
   }
 
   if (req.body.search) {
-   birds = birds.filter((bird) => bird.commonName.toLowerCase().includes(req.body.search.toLowerCase()));
+    birds = birds.filter((bird) => bird.commonName.toLowerCase().includes(req.body.search.toLowerCase()));
   }
 
   birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
@@ -149,7 +149,7 @@ router.post('/birdypedia', async (req, res) => {
 router.post('/gift/:member/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, (req, res, next) => {
   helpers.Redis.set('memberpet', req.entities['memberpet']._id, {
     "member": req.entities['member']._id,
-    "flocks": "",
+    "flocks": "NONE",
     "friendship": 0
   }).then(() => {
     var birdypet = helpers.BirdyPets.fetch(req.entities['memberpet'].birdypetId);
@@ -232,6 +232,7 @@ router.get('/freebirds/:freebird', helpers.Middleware.isLoggedIn, async (req, re
       species: birdypet.species.commonName,
       family: birdypet.species.family,
       member: req.session.user.id,
+      flocks: "NONE",
       hatchedAt: Date.now()
     }).then((id) => {
       helpers.Redis.delete('freebird', req.params.freebird);
