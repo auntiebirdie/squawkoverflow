@@ -1,12 +1,16 @@
 <div class="col-6 col-md-4">
   <div class="pb-4">
-    <div class="card <% if (locals.page && page == 'flock') { %>${bird.flocks.includes('<%= flock._id %>') ? 'border-primary' : ''}<% } %>">
+    <div class="card <% if (locals.loggedInUser && locals.page && page == 'flock' && loggedInUser.id == member._id) { %>${bird.flocks.includes('<%= flock._id %>') ? 'border-chartreuse' : ''}<% } %>">
       <% if (locals.page && page == 'gift') { %>
         <button class="wishlist-heart btn btn-light btn-sm" role="button">
           ${bird.wishlisted ? '❤️' : '🤍'}
         </button>
+      <% } else { %>
+        <a class="wishlist-heart">
+          ${bird.wishlisted ? '❤️' : ''}
+        </a>
       <% } %>
-      <div class="lazy birdypet"
+      <div class="lazy birdypet checkmark${bird.checkmark}"
            data-id="${bird._id}"
            data-bg="${bird.image}"
       ></div>

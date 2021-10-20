@@ -15,14 +15,29 @@ router.post('/aviary/:member', helpers.Middleware.entityExists, (req, res) => {
     'FILTER': filters,
     'SORTBY': req.body.sort,
     'LIMIT': [page, 25]
-  }).then((response) => {
-    res.json(response.map((memberpet) => {
-      return helpers.MemberPets.format(memberpet);
-    }));
+  }).then(async (response) => {
+    var myAviary = req.session.user ? req.entities['member']._id == req.session.user.id : false;
+    var wishlist = req.session.user && !myAviary ? await helpers.Redis.get('wishlist', req.session.user.id) : [];
+    var output = [];
+
+    for (var memberpet of response) {
+      var owned = !myAviary ? await helpers.Redis.fetch('memberpet', {
+        'FILTER': `@member:{${req.session.user.id}} @birdypetSpecies:{${memberpet.birdypetSpecies}}`,
+        'RETURN': ['birdypetId']
+      }).then((owned) => owned.map((birdypet) => birdypet.birdypetId)) : [];
+
+      output.push({
+        ...helpers.MemberPets.format(memberpet),
+        wishlisted: wishlist.includes(memberpet.birdypetSpecies),
+        checkmark: owned.includes(memberpet.birdypetId) ? 2 : (owned.length > 0 ? 1 : 0)
+      });
+    }
+
+    res.json(output);
   });
 });
 
-router.post('/gift/:member', helpers.Middleware.entityExists, (req, res) => {
+router.post('/gift/:member', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, (req, res) => {	
   var page = --req.body.page * 25;
   var filters = [
     `@member:{${req.session.user.id}}`,
@@ -72,11 +87,11 @@ router.post('/wishlist/:member', helpers.Middleware.entityExists, async (req, re
   birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
 
   for (var i = page, len = Math.min(page + 25, birds.length); i < len; i++) {
-    birds[i].owned = req.session.user ? await helpers.Redis.fetchOne('memberpet', {
+    birds[i].hatched = req.session.user ? await helpers.Redis.fetchOne('memberpet', {
       'FILTER': `@member:{${req.session.user.id}} @birdypetSpecies:{${birds[i].speciesCode}}`
     }) : false;
 
-    birds[i].variants = helpers.BirdyPets.findBy('species.speciesCode', birds[i].speciesCode);
+    birds[i].variants = helpers.BirdyPets.findBy('speciesCode', birds[i].speciesCode).filter( (birdypet) => !birdypet.special);
 
     output.push(birds[i]);
   }
@@ -122,7 +137,7 @@ router.post('/birdypedia', async (req, res) => {
 
   for (var i = page, len = Math.min(page + 25, birds.length); i < len; i++) {
     birds[i].wishlisted = wishlist.includes(birds[i].speciesCode);
-    birds[i].variants = helpers.BirdyPets.findBy('species.speciesCode', birds[i].speciesCode);
+    birds[i].variants = helpers.BirdyPets.findBy('speciesCode', birds[i].speciesCode);
 
     if (req.session.user) {
       for (var variant of birds[i].variants) {
@@ -228,7 +243,7 @@ router.get('/freebirds/:freebird', helpers.Middleware.isLoggedIn, async (req, re
 
     helpers.Redis.create('memberpet', {
       birdypetId: birdypet.id,
-      birdypetSpecies: birdypet.species.speciesCode,
+      birdypetSpecies: birdypet.speciesCode,
       species: birdypet.species.commonName,
       family: birdypet.species.family,
       member: req.session.user.id,

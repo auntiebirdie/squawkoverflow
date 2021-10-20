@@ -1,6 +1,13 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { title : flock.name, breadcrumb: locals.loggedInUser && loggedInUser.id == flock.member ? 'Manage Flock' : `${member.username}'s Flock` }) %>
+    <%- include('../partials/page-title.ejs', {
+          title : flock.name,
+          breadcrumb: {
+            text: `${member.username}'s Flock`,
+            url: `/members/${member._id}`,
+            prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member._id}" onerror="missingMemberAvatar(this)">`
+          }
+    }) %>
 
     <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies: true, selectedFlock: flock._id, sortFields : [{ "value" : "hatchedAt", "label" : "Hatch Date (Newest)", "dir" : "desc" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
 

@@ -29,7 +29,7 @@ function Database() {
 }
 
 Database.prototype.escape = function (text) {
-	return text.replace(/\'s/g, "").replace(/\-/g, " ").replace(/\s/g, "* ") + "*";
+	return text.trim().replace(/\'s/g, "").replace(/\-/g, " ").replace(/\s/g, "* ") + "*";
 }
 
 Database.prototype.get = function(kind, id, field = "") {
@@ -42,7 +42,7 @@ Database.prototype.get = function(kind, id, field = "") {
           });
         } else {
           this.databases[kind].hgetall(`${kind}:${id}`, (err, result) => {
-            if (err) {
+            if (err || !result) {
               return resolve();
             }
 

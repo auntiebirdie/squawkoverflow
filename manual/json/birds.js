@@ -1,7 +1,14 @@
 const csv = require('csv-parser');
 const https = require('https');
 const fs = require('fs');
-const birdypets = require('../../helpers/birdypets.js');
+
+const {
+  Datastore
+} = require('@google-cloud/datastore');
+
+const DB = new Datastore({
+  namespace: 'squawkoverflow'
+});
 
 var output = {};
 
@@ -10,15 +17,13 @@ var output = {};
 // Downloaded from https://www.birds.cornell.edu/clementschecklist/download/
 
 https.get('https://www.birds.cornell.edu/clementschecklist/wp-content/uploads/2021/08/eBird_Taxonomy_v2021.csv', (res) => {
-
   res
     .pipe(csv())
     .on('data', (row) => {
       if (row['CATEGORY'] == 'species') {
         var order = row['ORDER1']
         var family = row['FAMILY'].split(' ').shift();
-	var adjectives = birdypets.findBy('species.speciesCode', row['SPECIES_CODE'])[0]?.adjectives || [];
-
+	      
         if (!output[order]) {
           output[order] = {}
         }
@@ -35,12 +40,21 @@ https.get('https://www.birds.cornell.edu/clementschecklist/wp-content/uploads/20
           "scientificName": row['SCI_NAME'],
           "speciesCode": row['SPECIES_CODE'],
           "family": family,
-          "order": order,
-          "adjectives": adjectives
+          "order": order
         });
       }
     })
-    .on('end', () => {
+    .on('end', async () => {
+	    for (var order in output) {
+		    for (var family in output[order]) {
+			    for (var bird of output[order][family].children) {
+				    await DB.runQuery(DB.createQuery('Bird').filter('code', '=', bird.speciesCode)).then( ([results]) => {
+					    bird.adjectives = results[0].adjectives || [];
+				    });
+			    }
+		    }
+	    }
+
       fs.writeFileSync(__dirname + '/../../public/data/birds.json', JSON.stringify(output));
     });
 });

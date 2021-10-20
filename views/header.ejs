@@ -1,83 +1,78 @@
 <!doctype html>
 <html lang="en">
-    
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SQUAWKoverflow</title>
-        <meta property="og:site_name" content="SQUAWKoverflow">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQUAWKoverflow</title>
+    <meta property="og:site_name" content="SQUAWKoverflow">
 
-	<%- include('./partials/meta.ejs') %>
+    <%- include('./partials/meta.ejs') %>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
     <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/themes-default.css" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.4.0/dist/lazyload.min.js" integrity="sha256-Uukz8+FlQ78tU43ix2oKDcK84sJpKYzuU8XweQ1DaU0=" crossorigin="anonymous"></script>
 
-      <script type="text/javascript">
-        function missingMemberAvatar (img) {
-          img.onerror = "";
-          img.src = '/img/avatar-placeholder.jpeg';
-          img.style.transform = `rotate(${Math.max(0, img.getAttribute('data-id'))}deg)`;
-        };
+    <script type="text/javascript">
+      function missingMemberAvatar (img) {
+        img.onerror = "";
+        img.src = '/img/avatar-placeholder.jpeg';
+        img.style.transform = `rotate(${Math.max(0, img.getAttribute('data-id'))}deg)`;
+      };
 
-        var lazyLoadInstance = new LazyLoad({ });
-      </script>
-    </head>
+      var lazyLoadInstance = new LazyLoad({ });
+    </script>
+  </head>
 
-    <body <% if (locals.error) { %> class="error-page full-image-background" <% } %>>
-
-<header>
-  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">
-	      <img src="/img/SQUAWK.png" style="height: 45px; margin-right: 5px;">
-	      <span class="chartreuse">SQUAWK</span>overflow
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav me-auto mb-2 mb-md-0">
-	  <% locals.siteMenu.forEach( function (item) { %>
+  <body<% if (locals.error) { %> class="error-page full-image-background"<% } %>>
+    <main>
+      <div class="col-2 col-md-3 col-lg-2 d-flex flex-column flex-shrink-0 position-fixed h-100 bg-dark border-end border-secondary">
+        <a href="/" class="align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+          <img src="/img/SQUAWK.png" class="d-none d-md-block p-3">
+          <h1 class="d-block d-md-none fs-5 m-0 mt-4 text-center"><span class="chartreuse">SQ<span class="d-none d-sm-inline">UAWK</span></span>o</h1>
+          <h1 class="d-none d-md-block fs-5 m-0 text-center"><span class="chartreuse">SQUAWK</span>overflow</h1>
+        </a>
+        <hr class="bg-light mx-3">
+        <ul class="nav flex-column mb-auto text-center">
+          <% siteMenu.forEach( function (item) { %> 
           <li class="nav-item">
-		  <a href="<%= item.href %>" class="nav-link<% if (item.active) { %> active" aria-current="page<% } %>" <% if (item.newWindow) { %>target="_blank"<% } %>>
-                    <%= item.label %>
-		  </a>
+            <a href="<%= item.href %>" class="nav-link p-0 py-2 ps-md-3 text-light">
+              <span class="icon d-block fs-4">
+                <%= item.icon %>
+              </span>
+              <span class="d-none d-sm-block label">
+                <%= item.label %>
+              </span>
+            </a>
           </li>
-	  <% }); %>
+          <% }) %>
         </ul>
-	<div class="d-flex dropdown">
-		<% if (locals.loggedInUser) { %>
-		<a class="nav-link dropdown-toggle link-light" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-			<img class="member-avatar avatar-sm" src="<%= locals.loggedInUser.avatar %>" data-id="<%= locals.loggedInUser.id %>" onerror="missingMemberAvatar(this)">
-		    &nbsp;
-		    <span class="member-name"><%= locals.loggedInUser.username %></span>
-		</a>
-		<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-			<li><a class="dropdown-item" href="/members/<%= locals.loggedInUser.id %>">Profile</a></li>
-			<li><a class="dropdown-item" href="/aviary/<%= locals.loggedInUser.id %>">My Aviary</a></li>
-			<li><a class="dropdown-item" href="/wishlist/<%= locals.loggedInUser.id %>">My Wishlist</a></li>
-			<li><a class="dropdown-item" href="/flocks">Manage Flocks</a></li>
-			<li><hr class="dropdown-divider"></li>
-			<li><a class="dropdown-item" href="/logout">Logout</a></li>
-		</ul>
-		<% } else { %>
-		<a href="/login"
-		   class="btn btn-secondary"
-		   role="button"
-		   tabindex="-1">
-			Log In
-		</a>
-		<% } %>
+        <hr class="bg-light mx-3">
+	<div class="px-3 pt-2 pb-4">
+	<% if (locals.loggedInUser) { %>
+        <div class="dropdown">
+          <a href="#" class="d-flex align-items-center text-light dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+		  <img src="<%= loggedInUser.avatar %>" alt="" width="32" height="32" class="rounded-circle me-2">
+		  <span class="d-none d-sm-inline-block"><%= loggedInUser.username %></span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+            <li><a class="dropdown-item" href="/members/<%= loggedInUser.id %>">Profile</a></li>
+            <li><a class="dropdown-item" href="/aviary/<%= loggedInUser.id %>">My Aviary</a></li>
+            <li><a class="dropdown-item" href="/wishlist/<%= loggedInUser.id %>">My Wishlist</a></li>
+            <li><a class="dropdown-item" href="/flocks">Manage Flocks</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/logout">Sign out</a></li>
+          </ul>
         </div>
+	<% } else { %>
+	  <a href="/login">Log In with Discord</a>
+        <% } %>
+	</div>
       </div>
-    </div>
-  </nav>
-</header>
 
-<main>
-
-  <div class="container" style="padding-top: 70px;">
+      <div class="col-10 col-md-9 col-lg-10 offset-2 offset-md-3 offset-lg-2 d-flex flex-column flex-shrink-0">
+        <div class="container">
+          <div class="mx-3 my-4 p-3">

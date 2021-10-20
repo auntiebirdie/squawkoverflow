@@ -18,14 +18,17 @@ const DB = new Datastore({
       output.push({
         id: birdypet[Datastore.KEY].name,
         illustration: birdypet.illustration,
-        species: birdypet.species,
+        speciesCode: birdypet.speciesCode,
         version: birdypet.version,
         label: birdypet.label,
-	filetype: birdypet.filetype || "jpg"
+        special: birdypet.special || false,
+        filetype: birdypet.filetype || "jpg"
       });
     }
 
     fs.writeFileSync(__dirname + '/../../public/data/birdypets.json', JSON.stringify([...output], null, 2));
+
+    process.exit(0);
   } catch (err) {
     console.log(err);
   }

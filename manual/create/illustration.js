@@ -18,11 +18,14 @@ const bucket = storage.bucket('birdypets');
 
 const birds = require('../../helpers/birds.js');
 
-var prefix = "urlocalcrypt1d";
-var id = "898434642057785405";
-var code = "bkfant2";
-var url = "https://cdn.discordapp.com/attachments/863866986550001665/898434641973874708/Mayan_anthrush_mexico.png";
-var credit = "Urlocalcrypt1d";
+var prefix = "rijksmuseum";
+var id = "RP-P-2000-20";
+var code = "carcro1";
+var url = "https://cdn.discordapp.com/attachments/865328600101945404/899724509354029127/rijksmuseum_rp-p-2000-20.png";
+var credit = "Jacques de Fornazeris";
+var special = true;
+var version = 'Scarecrow';
+var label = '(Halloween)';
 
 (async () => {
   try {
@@ -30,18 +33,13 @@ var credit = "Urlocalcrypt1d";
     var bird = birds.findBy('speciesCode', code);
     var data = {
       illustration: url,
-      species: {
-	      order: bird.order,
-	      family: bird.family,
-	      commonName: bird.commonName,
-	      scientificName: bird.scientificName,
-	      speciesCode: bird.speciesCode
-      },
+      species: code,
       credit: credit,
-      filetype: 'png',
-      version: 'Male',
-      label: 'Mexico',
-      full: true
+      special: special,
+      filetype: url.split('.').pop(),
+      version: version,
+      label: label,
+      full: true,
     };
 
     await DB.save({

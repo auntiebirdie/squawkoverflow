@@ -42,18 +42,25 @@ router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
     var adjective = req.body.egg;
 
     if (req.session.adjectives && req.session.adjectives.includes(adjective)) {
-      var bird = helpers.Birds.random('adjectives', adjective);
-      var birdypet = helpers.Chance.pickone(helpers.BirdyPets.findBy('species.speciesCode', bird.speciesCode));
+      var birdypets = [];
+      do {
+        var bird = helpers.Birds.random('adjectives', adjective);
+        var birdypets = helpers.BirdyPets.findBy('speciesCode', bird.speciesCode).filter( (birdypet) => !birdypet.special );
+      }
+      while (birdypets.length == 0);
+
+      var birdypet = helpers.Chance.pickone(birdypets);
       delete req.session.adjectives;
 
       if (birdypet) {
         req.session.birdypet = birdypet;
         req.session.adjective = adjective;
 
+        var wishlist = await helpers.Redis.get('wishlist', req.session.user.id) || [];
         var userpets = [];
 
         await helpers.Redis.fetch('memberpet', {
-          "FILTER": `@member:{${req.session.user.id}} @birdypetSpecies:{${birdypet.species.speciesCode}}`,
+          "FILTER": `@member:{${req.session.user.id}} @birdypetSpecies:{${birdypet.speciesCode}}`,
           "RETURN": ['birdypetId', 'species']
         }).then((results) => {
           for (var i = 0, len = results.length; i < len; i++) {
@@ -65,7 +72,8 @@ router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
         return res.render('hatch/hatched', {
           adjective: adjective,
           birdypet: birdypet,
-          userpets: userpets
+          userpets: userpets,
+          wishlisted: wishlist.includes(birdypet.speciesCode)
         });
       } else {
         return res.redirect('/hatch');
@@ -77,12 +85,12 @@ router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
 
     switch (action) {
       case "keep":
-		    if (!birdypet) {
-			    console.log(req.session);
-		    }
+        if (!birdypet) {
+          console.log(req.session);
+        }
         var id = await helpers.Redis.create('memberpet', {
           birdypetId: birdypet.id,
-          birdypetSpecies: birdypet.species.speciesCode,
+          birdypetSpecies: birdypet.speciesCode,
           species: birdypet.species.commonName,
           family: birdypet.species.family,
           member: req.session.user.id,

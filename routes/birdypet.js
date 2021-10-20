@@ -83,7 +83,7 @@ router.get('/:memberpet', helpers.Middleware.entityExists, async (req, res) => {
     member: member,
     flocks: flocks || [],
     allFlocks: allFlocks || [],
-    otherVersions: helpers.BirdyPets.findBy("species.speciesCode", memberpet.species.speciesCode)
+    otherVersions: helpers.BirdyPets.findBy("speciesCode", memberpet.speciesCode).filter( (birdypet) => !birdypet.special )
   });
 });
 

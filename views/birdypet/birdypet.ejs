@@ -26,7 +26,7 @@
               <input id="nickname" type="text" name="nickname" class="form-control" value="<%= memberpet.nickname %>" style="width: 100%">
             </div>
             <div class="col-4">
-            <% if (otherVersions.length > 1) { %>
+            <% if (!memberpet.special && otherVersions.length > 1) { %>
               <h5><label>Variant</label></h5>
               <select name="variant" class="form-select">
                 <% for (let otherVersion of otherVersions) { %>
@@ -74,13 +74,13 @@
       </div>
       <div class="col-md-4 pt-3 border-start">
         <h6>Common Name</h6>
-        <p><%= memberpet.species.commonName %></p>
+        <p><a href="/birdypedia/bird/<%= memberpet.species.speciesCode %>"><%= memberpet.species.commonName %></a></p>
 
         <h6>Scientific Name</h6>
         <p><%= memberpet.species.scientificName %></p>
 
         <h6>Family</h6>
-        <p><%= memberpet.species.family %></p>
+        <p><a href="/birdypedia?family=<%= memberpet.species.family.toLowerCase() %>"><%= memberpet.species.family %></a></p>
 
         <h6>Order</h6>
         <p><%= memberpet.species.order %></p>

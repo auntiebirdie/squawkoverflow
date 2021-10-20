@@ -10,39 +10,31 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 main {
-  min-height: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  min-height: 100vh;
+  overflow-wrap: break-word;
 }
 
 .chartreuse {
   color: #DDF600;
 }
 
-.chartreuse-underline {
-	border-bottom: 5px solid #DDF600;
+.border-chartreuse {
+	border-color: #DDF600;
 }
 
 a {
+	color: #7C7C6C;
 	text-decoration: none;
+}
+
+a:hover {
+	color: #DDF600;
 }
 
 img {
 	max-width: 100%;
-}
-
-nav .brand-logo {
-	font-size: inherit;
-}
-
-nav .brand-logo img {
-	height: 64px;
-	width: 64px;
-	vertical-align: middle;
-}
-
-nav .brand-logo h4 {
-	display: inline-block;
-	vertical-align: middle;
-	margin: 0 0 0 15px;
 }
 
 .member-avatar { 
@@ -52,23 +44,6 @@ nav .brand-logo h4 {
 
 .member-avatar.avatar-sm {
 	height: 40px;
-}
-
-nav .member-name {
-	max-width: 150px;
-	display: inline-block;
-	vertical-align: middle;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.member-badge::before {
-	display: inline-block;
-	font-size: 2.5em;
-}
-
-.member-badge[data-badge="founder"]::before {
-	content: "\1F996";
 }
 
 #home-banner {

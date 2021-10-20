@@ -7,7 +7,9 @@ const DiscordOauth2 = require("discord-oauth2");
 const oauth = new DiscordOauth2();
 
 router.get('/', async (req, res) => {
-  res.render('home/index');
+  res.render('home/index', {
+    page: "home"
+  });
 });
 
 router.get('/login', (req, res) => {
@@ -51,28 +53,32 @@ router.get('/login', (req, res) => {
 
           helpers.Redis.get('member', user.id).then((member) => {
             if (member) {
-	      req.session.user.username = member.username;
-	      req.session.user.avatar = member.avatar;
+              req.session.user.username = member.username;
+              req.session.user.avatar = member.avatar;
 
-              helpers.Redis.set('member', user.id, 'lastLogin',  Date.now()).then(() => {
+              helpers.Redis.set('member', user.id, {
+                'lastLogin': Date.now()
+              }).then(() => {
                 res.redirect('/');
               });
             } else {
               helpers.Redis.save('member', user.id, {
-		      username: user.username,
-		      avatar: user.avatar,
-		      joinedAt: Date.now(),
-		      lastLogin: Date.now()
-	      }).then(() => {
+                username: user.username,
+                avatar: user.avatar,
+                joinedAt: Date.now(),
+                lastLogin: Date.now()
+              }).then(() => {
                 res.redirect('/');
               });
             }
-          }).catch( (err) => {
-		  console.error(err);
-              helpers.Redis.set('member', user.id, 'lastLogin', Date.now()).then( () => {
-                res.redirect('/');
-              });
-	  });
+          }).catch((err) => {
+            console.error(err);
+            helpers.Redis.set('member', user.id, {
+              'lastLogin': Date.now()
+            }).then(() => {
+              res.redirect('/');
+            });
+          });
         });
       } else {
         res.redirect('/error');
@@ -81,8 +87,7 @@ router.get('/login', (req, res) => {
       console.log(err);
       res.redirect('/error');
     });
-  }
-  else { 
+  } else {
     res.redirect("https://discord.com/api/oauth2/authorize?client_id=885956624777351199&redirect_uri=https%3A%2F%2Fsquawkoverflow.com%2Flogin&response_type=code&scope=identify");
   }
 });

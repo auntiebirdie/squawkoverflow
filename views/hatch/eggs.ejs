@@ -15,10 +15,10 @@
     <% for (var adjective of adjectives) { %>
     <div class="col">
       <form method="POST">
-        <button class="btn btn-lg btn-secondary mb-2" name="egg" value="<%= adjective %>" type="submit">
+        <button class="btn btn-lg btn-dark mb-2" name="egg" value="<%= adjective %>" type="submit">
           <h3>🥚</h3>
+          <h5><%= adjective %> egg</h5>
         </button>
-        <h5><%= adjective %> egg</h5>
       </form>
     </div>
     <% } %>

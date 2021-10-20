@@ -21,7 +21,7 @@ router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
     freebirds[i] = helpers.BirdyPets.fetch(freebirds[i]._id);
 
     await helpers.Redis.fetch('memberpet', {
-      "FILTER": `@member:{${req.session.user.id}} @birdypetSpecies:{${freebirds[i].species.speciesCode}}`,
+      "FILTER": `@member:{${req.session.user.id}} @birdypetSpecies:{${freebirds[i].speciesCode}}`,
       "RETURN": ['birdypetId', 'species']
     }).then((results) => {
       if (results.length > 0) {

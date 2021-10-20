@@ -62,13 +62,7 @@ const bucket = storage.bucket('birdypets');
 
                 let key = DB.key(['Illustration', tmp.attr('data-asset-id')]);
                 let data = {
-                  species: {
-                    speciesCode: bird.code,
-                    commonName: bird.name,
-                    scientificName: bird.scientific,
-                    family: bird.family,
-                    order: bird.order
-                  },
+                  species: bird.code,
                   illustration: illustration,
                   credit: tmp.attr('data-asset-credit'),
                   label: tmp.attr('data-asset-comname').replace(bird.name, '').trim(),

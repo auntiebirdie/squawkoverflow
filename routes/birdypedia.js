@@ -17,13 +17,14 @@ router.get('/bird/:code', async (req, res) => {
 
   if (bird) {
     var memberpets = await helpers.MemberPets.fetch({
-	    'FILTER' : `@birdypetSpecies:{${bird.speciesCode}}`,
-	    'RETURN' : ['member', 'birdypetId']
+      'FILTER': `@birdypetSpecies:{${bird.speciesCode}}`,
+      'RETURN': ['member', 'birdypetId']
     });
 
     var hatched = req.session.user ? memberpets.filter((memberpet) => memberpet.member == req.session.user.id).map((memberpet) => memberpet.birdypetId) : [];
 
-    var birdypets = helpers.BirdyPets.findBy('species.speciesCode', bird.speciesCode)
+    var birdypets = helpers.BirdyPets.findBy('speciesCode', bird.speciesCode)
+	  .filter((birdypet) => !birdypet.special)
       .sort(function(a, b) {
         var aIndex = hatched.indexOf(a.id);
         var bIndex = hatched.indexOf(b.id);

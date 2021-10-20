@@ -1,12 +1,16 @@
+const Birds = require('./birds.js');
 const Chance = require('chance').Chance();
 const birdypets = require('../public/data/birdypets.json');
 
 module.exports = {
   format: function(birdypet) {
     if (birdypet) {
+	var bird = Birds.findBy('speciesCode', birdypet.speciesCode);
+
       return {
         ...birdypet,
-        image: `https://storage.googleapis.com/birdypets/${birdypet.species.order}/${birdypet.species.family}/${birdypet.species.scientificName.replace(/\s/, '%20')}/${birdypet.id}.${birdypet.filetype ? birdypet.filetype : "jpg"}`
+	species: {...bird},
+        image: `https://storage.googleapis.com/birdypets/${bird.order}/${bird.family}/${bird.scientificName.replace(/\s/, '%20')}/${birdypet.id}.${birdypet.filetype ? birdypet.filetype : "jpg"}`
       }
     } else {
       return {
