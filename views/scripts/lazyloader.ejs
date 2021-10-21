@@ -41,6 +41,7 @@
     var sort = $('#sort option:selected');
     var flock = $('#flock option:selected');
 
+    <% if (!locals.skipParams) { %>
     $('select:visible', '#controls').each( (i, select) => {
       var value = select.options[select.options.selectedIndex].value;
 
@@ -53,6 +54,7 @@
     });
 
     window.history.replaceState(null, '', window.location.pathname + '?' + urlParams.toString());
+    <% } %>
 
     $.ajax({
       url: endpoint,
@@ -64,7 +66,7 @@
         adjectives : $('#adjectives').is(':visible') ? $('#adjectives').val() : "",
         search : $('#search').val()
       },
-      method: "POST",
+      method: "GET",
       dataType: "json",
       success: function (data) {
         if (data.length > 0 ) {

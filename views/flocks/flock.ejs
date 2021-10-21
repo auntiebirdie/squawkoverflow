@@ -9,11 +9,11 @@
           }
     }) %>
 
-    <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies: true, selectedFlock: flock._id, sortFields : [{ "value" : "hatchedAt", "label" : "Hatch Date (Newest)", "dir" : "desc" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
+    <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies: true, sortFields : [{ "value" : "hatchedAt", "label" : "Hatch Date (Newest)", "dir" : "desc" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
 
     <%- include('../partials/spacer.ejs') %>
 
-    <div id="lazyLoader" class="row" data-endpoint="/api/aviary/<%= member._id %>"></div>
+    <div id="lazyLoader" class="row" data-endpoint="/api/flocks/<%= flock._id %>"></div>
 
   <%- include('../scripts/lazyloader.ejs') %>
 
@@ -36,11 +36,12 @@
           cache: false,
           url: `/api/flocks/<%= flock._id %>/${image.getAttribute('data-id')}`,
           dataType: "json",
+          method: "POST",
           success: function(data) {
             image.style.opacity = null;
             image.innerHTML = "";
 
-            $(image.parentNode)[`${data.action}Class`]('border-primary');
+            $(image.parentNode)[`${data.action}Class`]('border-chartreuse');
           }
         });
       }

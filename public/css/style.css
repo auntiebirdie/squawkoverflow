@@ -1,5 +1,4 @@
 html, body {
-  height: 100%;
   min-height: 100%;
   font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
 }
@@ -16,12 +15,24 @@ main {
   overflow-wrap: break-word;
 }
 
-.chartreuse {
-  color: #DDF600;
+.container {
+	width: auto;
+}
+
+.text-chartreuse {
+  color: #DDF600 !important;
 }
 
 .border-chartreuse {
-	border-color: #DDF600;
+	border-color: #DDF600 !important;
+}
+
+.border-dashed {
+	border-style: dashed !important;
+}
+
+.card {
+	border-width: 2px;
 }
 
 a {
@@ -35,6 +46,19 @@ a:hover {
 
 img {
 	max-width: 100%;
+}
+
+.draggable {
+	cursor: move;
+	cursor: grab;
+}
+
+.draggable:active {
+    cursor: grabbing;
+}
+
+.btn:focus {
+  outline: none !important;
 }
 
 .member-avatar { 
@@ -180,6 +204,7 @@ select {
 }
 
 .full-image-background {
+	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: cover;
 }
@@ -190,14 +215,6 @@ select {
 	display: inline-block;
 	background: rgba(255, 255, 255, .9);
 	padding: 10px;
-}
-
-.not-found h1 {
-	font-size: 4em;
-}
-
-.not-found p {
-	font-size: 2em;
 }
 
 .full-image-background .attribution {
@@ -225,4 +242,39 @@ select {
 	border-right-color: transparent;
 	border-radius: 50%;
         animation: spinner-border .75s linear infinite;
+}
+
+// X-Small devices (portrait phones, less than 576px)
+@media (max-width: 575.98px) {
+  .text-small {
+    font-size: .875em;
+  }
+}
+
+// Small devices (landscape phones, less than 768px)
+@media (max-width: 767.98px) {
+  .text-sm-small {
+    font-size: .875em;
+  }
+}
+
+// Medium devices (tablets, less than 992px)
+@media (max-width: 991.98px) {
+  .text-md-small {
+    font-size: .875em;
+  }
+}
+
+// Large devices (desktops, less than 1200px)
+@media (max-width: 1199.98px) {
+  .text-lg-small {
+    font-size: .875em;
+  }
+}
+
+// X-Large devices (large desktops, less than 1400px)
+@media (max-width: 1399.98px) {
+  .text-xl-small {
+    font-size: .875em;
+  }
 }

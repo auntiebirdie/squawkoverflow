@@ -1,7 +1,8 @@
     <div id="controls" class="row">
       <div class="col-md-6 mb-4">
+        <div class="row">
         <% if (locals.flocks && flocks.length > 0) { %>
-        <div class="mb-4">
+        <div class="col-6 col-md-12 mb-4">
           <h4>Flock</h4>
           <select id="flock" class="form-select">
             <option value="">[ALL]</option>
@@ -17,7 +18,7 @@
         </div>
         <% } %>
         <% if (locals.adjectives) { %>
-        <div class="mb-4" style="display: none;">
+        <div class="col-6 col-md-12 mb-4" style="display: none;">
           <h4>Hatches From</h4>
           <select id="adjectives" class="form-select">
             <% for (var adjective of adjectives) { %>
@@ -29,7 +30,7 @@
         </div>
         <% } %>
         <% if (locals.families) { %>
-        <div class="mb-4">
+        <div class="col-6 col-md-12 mb-4">
           <h4>Family</h4>
           <select id="family" class="form-select">
             <% if (locals.includeAllFamilies) { %>
@@ -43,6 +44,7 @@
           </select>
         </div>
         <% } %>
+        </div>
       </div>
 
       <div class="col-md-6">

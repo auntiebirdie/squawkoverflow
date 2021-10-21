@@ -29,18 +29,19 @@
 
   <body<% if (locals.error) { %> class="error-page full-image-background"<% } %>>
     <main>
-      <div class="col-2 col-md-3 col-lg-2 d-flex flex-column flex-shrink-0 position-fixed h-100 bg-dark border-end border-secondary">
+      <div id="sidebarNav" class="col-2 col-md-3 col-lg-2 position-fixed h-100 bg-dark border-end border-secondary" style="z-index: 9999;">
+	<button id="sidebarToggle" class="d-block d-sm-none btn btn-dark rounded-0 position-absolute" data-toggle="expand" style="right: 0; margin-right: -25px;">&rsaquo;</button>
         <a href="/" class="align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
           <img src="/img/SQUAWK.png" class="d-none d-md-block p-3">
-          <h1 class="d-block d-md-none fs-5 m-0 mt-4 text-center"><span class="chartreuse">SQ<span class="d-none d-sm-inline">UAWK</span></span>o</h1>
-          <h1 class="d-none d-md-block fs-5 m-0 text-center"><span class="chartreuse">SQUAWK</span>overflow</h1>
+          <h1 class="d-block d-md-none fs-5 m-0 mt-4 text-center"><span class="text-chartreuse">SQ<span class="d-none d-sm-inline">UAWK</span></span>o</h1>
+          <h1 class="d-none d-md-block fs-4 m-0 text-center"><span class="text-chartreuse">SQUAWK</span>overflow</h1>
         </a>
-        <hr class="bg-light mx-3">
+        <hr class="bg-light mx-2">
         <ul class="nav flex-column mb-auto text-center">
           <% siteMenu.forEach( function (item) { %> 
           <li class="nav-item">
             <a href="<%= item.href %>" class="nav-link p-0 py-2 ps-md-3 text-light">
-              <span class="icon d-block fs-4">
+              <span class="icon d-inline-block fs-4">
                 <%= item.icon %>
               </span>
               <span class="d-none d-sm-block label">
@@ -50,12 +51,12 @@
           </li>
           <% }) %>
         </ul>
-        <hr class="bg-light mx-3">
-	<div class="px-3 pt-2 pb-4">
+        <hr class="bg-light mx-2">
+	<div class="px-2 pt-2 pb-4 text-center">
 	<% if (locals.loggedInUser) { %>
         <div class="dropdown">
-          <a href="#" class="d-flex align-items-center text-light dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-		  <img src="<%= loggedInUser.avatar %>" alt="" width="32" height="32" class="rounded-circle me-2">
+          <a href="#" class="align-items-center text-light" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+		  <img src="<%= loggedInUser.avatar %>" width="32" class="rounded-circle">
 		  <span class="d-none d-sm-inline-block"><%= loggedInUser.username %></span>
           </a>
           <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
@@ -68,11 +69,13 @@
           </ul>
         </div>
 	<% } else { %>
-	  <a href="/login">Log In with Discord</a>
+	  <a href="/login">Login</a>
         <% } %>
 	</div>
       </div>
 
-      <div class="col-10 col-md-9 col-lg-10 offset-2 offset-md-3 offset-lg-2 d-flex flex-column flex-shrink-0">
-        <div class="container">
-          <div class="mx-3 my-4 p-3">
+      <div class="col-10 col-md-9 col-lg-10 offset-2 offset-md-3 offset-lg-2">
+      <% if (!locals.page || page != "home") { %>
+        <div class="container py-5 py-sm-3 mb-5">
+	  <div class="mx-md-3 mb-5">
+      <% } %>

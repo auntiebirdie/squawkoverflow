@@ -38,31 +38,31 @@ app.use(function(req, res, next) {
     res.locals.loggedInUser = req.session.user;
 
     menu.push({
-	    "icon" : "🥚",
+      "icon": "🥚",
       "label": "Hatch Eggs",
       "href": "/hatch"
     }, {
-	    "icon" : "🐣",
+      "icon": "🐣",
       "label": "Free Birds",
       "href": `/freebirds`
     });
   }
 
   menu.push({
-	  "icon" : "📚",
+    "icon": "📚",
     "label": "Birdypedia",
     "href": "/birdypedia"
   }, {
-	  "icon" : "👥",
+    "icon": "👥",
     "label": "Members",
     "href": "/members"
   }, {
-	  "icon" : "💬",
+    "icon": "💬",
     "label": "Discord",
     "href": "https://discord.com/invite/h87wansdg2",
     "newWindow": true
   }, {
-	  "icon" : "❔",
+    "icon": "❔",
     "label": "FAQ",
     "href": "/faq"
   });

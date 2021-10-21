@@ -4,8 +4,6 @@
 
     <p>Look out!  There are birds on the loose!!  They've been released and are running around stealing things for their nests.  Do you have space in your aviary for any of them?</p>
 
-    <%- include('../partials/spacer.ejs') %>
-
     <div class="row">
       <% if (birdypets.length > 0) { %>
         <% for (var birdypet of birdypets) { %>
@@ -50,6 +48,7 @@
           cache: false,
           url: `/api/freebirds/${image.getAttribute('data-id')}`,
           dataType: "json",
+          method: "POST",
           success: function(data) {
             image.innerHTML = "";
 

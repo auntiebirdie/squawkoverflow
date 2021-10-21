@@ -15,8 +15,6 @@
         </h6>
         <h6><%= wishlisted ? "❤️" : "" %><%= userpets.includes(birdypet.speciesCode) ? "✔️" : "" %><%= userpets.includes(birdypet.id) ? "✔️" : "" %></h6>
 
-        <%- include('../partials/spacer.ejs') %>
-
         <form method="POST" class="text-center">
           <button name="action" value="keep" type="submit" class="btn btn-lg btn-primary">❤️&nbsp;Keep</button>
           &nbsp;

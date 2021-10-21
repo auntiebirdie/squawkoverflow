@@ -2,6 +2,19 @@
 	background-color: #7C7C6C !important;
 }
 
+.btn-primary {
+	border-color: #252520 !important;
+}
+
 .btn-primary:hover {
 	background-color: #1F1F17 !important;
+}
+
+.btn-dark:active, .btn-dark:active:focus, .btn-dark:focus {
+    background-color: #212529;
+    border-color: #212529;
+}
+
+.btn:active, .btn:active:focus, .btn:focus {
+	box-shadow: none;
 }

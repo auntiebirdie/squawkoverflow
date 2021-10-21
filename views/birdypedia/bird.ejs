@@ -8,7 +8,7 @@
           <img id="birdy" class="birdypet full <%= hatched.includes(birdypets[0].id) ? "hatched" : "unhatched" %>" src="<%= birdypets[0].image %>">
         </div>
       </div>
-      <div class="col-md-4 pt-3 border-start">
+      <div class="col-md-4 pt-3 border-md-start text-center text-md-start">
         <h6>Scientific Name</h6>
         <p><%= bird.scientificName %></p>
 
@@ -24,7 +24,7 @@
           <% for (var birdypet of birdypets) { %>
             <p>
               <div class="birdypet mini <%= hatched.includes(birdypet.id) ? "hatched" : "unhatched" %>" data-src="<%= birdypet.image %>" style="background-image: url('<%= birdypet.image %>');"></div>
-              <%= birdypet.version %> <%= birdypet.label %>
+              <%= birdypet.version %> <%= birdypet.label %> <%= hatched.includes(birdypet.id) ? "✔️" : "" %>
             </p>
           <% } %>
           </div>
@@ -52,16 +52,16 @@
         <% } %>
       <div class="row">
       <% } %>
-        <div class="col-md-3">
+        <div class="col-md-3 mb-3">
           <div class="row">
-          <div class="col-md-3 text-center">
-            <a href="/members/<%= members[i]._id %>">
+          <div class="col-3 text-center">
+            <a href="/aviary/<%= members[i]._id %>?search=<%= bird.commonName %>">
               <img class="member-avatar" src="<%= members[i].avatar %>" data-id="<%= members[i]._id %>" onerror="missingMemberAvatar(this)">
             </a>
           </div>
-          <div class="col-md-8">
+          <div class="col-8 mb-3">
             <h5 class="pt-2">
-              <a href="/members/<%= members[i]._id %>">
+              <a href="/aviary/<%= members[i]._id %>?search=<%= bird.commonName %>">
                 <%= members[i].username %>
               </a>
             </h5>

@@ -1,0 +1,66 @@
+<%- include('../header.ejs') %>
+
+    <%- include('../partials/page-title.ejs', {
+          title : flock.name,
+          breadcrumb: {
+            text: `Manage Flocks`,
+            url: '/flocks'
+          }
+    }) %>
+
+    <form method="POST">
+      <h5><label>Name</label></h5>
+      <input type="text" name="name" class="form-control mb-3" value="<%= flock.name %>" style="width: 100%">
+
+      <h5><label>Description</label></h5>
+      <textarea name="description" maxlength="500" class="form-control mb-3" style="height: 150px; width: 100%;"><%= flock.description %></textarea>
+
+      <button class="btn btn-primary" type="submit">Save Changes</button>
+    </form>
+
+    <%- include('../partials/spacer.ejs') %>
+
+    <h3 class="mb-3">Add/Remove Birds</h3>
+
+    <p>
+      <span class="border border-2 border-chartreuse p-1 mx-2">In Flock</span>  <span class="border border-2 border-secondary border-dashed p-1 mx-2">Not In Flock</span>
+    </p>
+
+    <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies: true, sortFields : [{ "value" : "hatchedAt", "label" : "Hatch Date (Newest)", "dir" : "desc" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
+
+    <div id="lazyLoader" class="row" data-endpoint="/api/aviary/<%= member._id %>"></div>
+
+  <%- include('../scripts/lazyloader.ejs', { skipParams : true }) %>
+
+  <script>
+    var loader = `
+      <div class="spinner-border d-block mx-auto" role="status">
+        <span class="visually-hidden">Saving...</span>
+      </div>
+    `;
+
+    $('#lazyLoader').on('click', '.card', function () {
+      var image = this.querySelector('.birdypet');
+
+      if (!image.style.opacity) {
+        image.style.opacity = .5;
+        image.innerHTML = loader;
+
+        $.ajax({
+          cache: false,
+          url: `/api/flocks/<%= flock._id %>/${image.getAttribute('data-id')}`,
+          dataType: "json",
+          method: "POST",
+          success: function(data) {
+            image.style.opacity = null;
+            image.innerHTML = "";
+
+            $(image.parentNode)[`${data.action}Class`]('border-chartreuse');
+            $(image.parentNode).toggleClass('border-dashed');
+          }
+        });
+      }
+    });
+  </script>
+
+<%- include('../footer.ejs') %>
