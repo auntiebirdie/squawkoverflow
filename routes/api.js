@@ -217,11 +217,18 @@ router.get('/birdypet/:memberpet/feedBug', helpers.Middleware.isLoggedIn, helper
 });
 
 router.put('/flocks/:flock', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res) => {
+	console.log(req.body);
   helpers.Redis.set('flock', req.entities['flock']._id, {
 	  name: req.body.name || req.entities['flock'].name,
 	  description: req.body.description || req.entities['flock'].description,
 	  displayOrder: req.body.displayOrder || req.entities['flock'].displayOrder || 100
   });
+
+  res.json("ok");
+});
+
+router.delete('/flocks/:flock', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, async (req, res) => {
+  await helpers.Redis.delete('flock', req.entities['flock']._id);
 
   res.json("ok");
 });

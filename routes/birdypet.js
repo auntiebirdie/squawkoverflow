@@ -62,7 +62,8 @@ router.get('/:memberpet', helpers.Middleware.entityExists, async (req, res) => {
 
   if (req.session.user && req.session.user.id == member._id) {
     var allFlocks = await helpers.Redis.fetch('flock', {
-	    'FILTER': `@member:{${member._id}`
+	    'FILTER': `@member:{${member._id}`,
+	    'SORTBY': ['displayOrder', 'ASC']
     });
   }
 

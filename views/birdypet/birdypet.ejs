@@ -46,6 +46,19 @@
             <textarea name="description" maxlength="500" class="form-control" style="height: 150px; width: 100%;"><%= memberpet.description %></textarea>
           </div>
 
+          <% if (locals.allFlocks) { %>
+            <h5 class="mb-4"><label>Flocks</label> <a href="/flocks"><small>(manage)</small></a></h5>
+            <% for (var flock of allFlocks) { %>
+            <p>
+              <label>
+                <input type="checkbox" name="flocks[]" class="form-check-input" value="<%= flock._id%>" <%= memberpet.flocks && (memberpet.flocks.includes(flock._id) || memberpet.flocks.includes(`${flock._id}`)) ? "checked" : ""%>>
+                &nbsp;
+                <%= flock.name %>
+              </label>
+            </p>
+            <% } %>
+          <% } %>
+
           <button class="btn btn-primary mt-3" type="submit">Save Changes</button>
 
           </form>

@@ -11,7 +11,7 @@ router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
   var displayOrder = 0;
 
   for (var flock of flocks) {
-    if (!flock.displayOrder) {
+    if (!flock.displayOrder || flock.displayOrder == '0') {
       displayOrder += 100;
 
       flock.displayOrder = displayOrder;
@@ -49,8 +49,7 @@ router.post('/new', helpers.Middleware.isLoggedIn, async (req, res) => {
     name: name,
     description: description,
     member: req.session.user.id,
-    displayOrder: 0
-
+    displayOrder: 50
   });
 
   res.redirect(`/flocks/manage/${id}`);

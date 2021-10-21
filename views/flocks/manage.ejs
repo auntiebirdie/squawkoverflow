@@ -16,6 +16,8 @@
       <textarea name="description" maxlength="500" class="form-control mb-3" style="height: 150px; width: 100%;"><%= flock.description %></textarea>
 
       <button class="btn btn-primary" type="submit">Save Changes</button>
+
+      <button id="deleteFlock" class="btn btn-danger float-end" type="button">Delete</button>
     </form>
 
     <%- include('../partials/spacer.ejs') %>
@@ -60,6 +62,18 @@
           }
         });
       }
+    });
+
+    $('#deleteFlock').on('click', function () {
+        $.ajax({
+          cache: false,
+          url: `/api/flocks/<%= flock._id %>`,
+          dataType: "json",
+          method: "DELETE",
+          success: function(data) {
+            window.location.href = '/flocks';
+          }
+        });
     });
   </script>
 

@@ -8,16 +8,16 @@
 
   <div id="sortable" class="row">
     <% for (let flock of flocks) { %>
-    <div class="col-12 p-3" data-id="<%= flock._id %>" data-display-order="<%= flock.displayOrder || 0 %>">
+    <div class="col-11 offset-1 offset-md-0 col-md-12 p-3" data-id="<%= flock._id %>" data-display-order="<%= flock.displayOrder || 0 %>">
       <div class="card p-2">
         <div class="row">
-          <div class="col-10">
+          <div class="col-8 col-md-10">
             <h3 class="draggable">
               <small class="text-muted font-weight-light">&#x283F</small>
               <%= flock.name %>
             </h3>
           </div>
-          <div class="col-2 text-end">
+          <div class="col-4 col-md-2 text-end">
             <a class="btn btn-secondary" href="/flocks/manage/<%= flock._id %>">
               ✏️
             </a>

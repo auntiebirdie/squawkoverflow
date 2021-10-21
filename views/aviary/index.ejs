@@ -9,7 +9,7 @@
           }
     }) %>
 
-    <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies : true, sortFields : [{ "value" : "hatchedAt", "label" : "Hatch Date (Newest)", "dir" : "desc" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
+    <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies : true, sortFields : [{ "value" : "hatchedAt-DESC", "label" : "Hatch Date (Newest)" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
 
     <div id="lazyLoader" class="row" data-endpoint="/api/aviary/<%= member._id %>"></div>
 

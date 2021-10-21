@@ -59,7 +59,7 @@
             <h4>Sort</h4>
             <select id="sort" class="form-select">
               <% for (var sort of sortFields) { %>
-                <option value="<%= sort.value %>" data-dir="<%= sort.dir || "asc" %>" >
+                <option value="<%= sort.value %>">
                   <%= sort.label %>
                 </option>
               <% } %>

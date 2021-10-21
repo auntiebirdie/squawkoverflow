@@ -12,7 +12,7 @@ router.get('/:member', helpers.Middleware.entityExists, async (req, res, next) =
 
   var flocks = await helpers.Redis.fetch('flock', {
     "FILTER": `@member:{${req.entities['member']._id}}`,
-    "SORTBY": ["name", "DESC"]
+    "SORTBY": ["displayOrder", "ASC"]
   });
 
   await helpers.Redis.fetch('memberpet', {

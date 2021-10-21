@@ -15,7 +15,7 @@
         </h6>
         <h6><%= wishlisted ? "❤️" : "" %><%= userpets.includes(birdypet.speciesCode) ? "✔️" : "" %><%= userpets.includes(birdypet.id) ? "✔️" : "" %></h6>
 
-        <form method="POST" class="text-center">
+        <form method="POST" class="mt-5 text-center">
           <button name="action" value="keep" type="submit" class="btn btn-lg btn-primary">❤️&nbsp;Keep</button>
           &nbsp;
           <button name="action" value="release" type ="submit" class="btn btn-lg btn-primary">👋&nbsp;Release</button>
