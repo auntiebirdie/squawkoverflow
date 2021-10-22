@@ -17,18 +17,6 @@
           </select>
         </div>
         <% } %>
-        <% if (locals.adjectives) { %>
-        <div class="col-6 col-md-12 mb-4" style="display: none;">
-          <h4>Hatches From</h4>
-          <select id="adjectives" class="form-select">
-            <% for (var adjective of adjectives) { %>
-            <option value="<%= adjective %>">
-              <%= adjective %> eggs
-            </option>
-            <% } %>
-          </select>
-        </div>
-        <% } %>
         <% if (locals.families) { %>
         <div class="col-6 col-md-12 mb-4">
           <h4>Family</h4>

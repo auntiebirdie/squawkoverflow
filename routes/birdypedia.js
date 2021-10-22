@@ -4,12 +4,48 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   var families = require('../public/data/families.json');
-  var adjectives = require('../public/data/adjectives.json');
 
   res.render('birdypedia', {
     families: families.sort((a, b) => a.label.localeCompare(b.label)),
-    adjectives: adjectives
   });
+});
+
+router.get('/eggs', async (req, res) => {
+  var eggs = helpers.data('eggs');
+
+  var memberpets = req.session.user ? await helpers.MemberPets.fetch({
+    'FILTER': `@member:{${req.session.user.id}}`,
+    'RETURN': ['birdypetSpecies']
+  }).then((memberpets) => memberpets.map((memberpet) => memberpet.birdypetSpecies)) : [];
+
+  for (var egg in eggs) {
+    let tmp = eggs[egg].species;
+
+    if (tmp) {
+      eggs[egg] = [tmp.filter((bird) => memberpets.includes(bird)).length, tmp.length];
+    } else {
+      console.log(eggs[egg]);
+      delete eggs[egg];
+    }
+  }
+
+  res.render('birdypedia/eggs', {
+    eggs: eggs
+  });
+});
+
+router.get('/eggs/:egg', async (req, res) => {
+  var egg = helpers.data('eggs')[req.params.egg];
+
+  if (egg) {
+    egg.name = req.params.egg;
+
+    res.render('birdypedia/egg', {
+      egg: egg
+    });
+  } else {
+    res.redirect('/error');
+  }
 });
 
 router.get('/bird/:code', async (req, res) => {
@@ -24,7 +60,7 @@ router.get('/bird/:code', async (req, res) => {
     var hatched = req.session.user ? memberpets.filter((memberpet) => memberpet.member == req.session.user.id).map((memberpet) => memberpet.birdypetId) : [];
 
     var birdypets = helpers.BirdyPets.findBy('speciesCode', bird.speciesCode)
-	  .filter((birdypet) => !birdypet.special)
+      .filter((birdypet) => !birdypet.special)
       .sort(function(a, b) {
         var aIndex = hatched.indexOf(a.id);
         var bIndex = hatched.indexOf(b.id);
@@ -42,11 +78,12 @@ router.get('/bird/:code', async (req, res) => {
       return helpers.Redis.get('member', `${id}`);
     }));
 
+
     res.render('birdypedia/bird', {
       page: 'birdypedia/bird',
       bird: bird,
       birdypets: birdypets,
-      members: members,
+      members: members.filter((member) => member),
       hatched: hatched
     });
   } else {

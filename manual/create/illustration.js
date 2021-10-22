@@ -18,14 +18,14 @@ const bucket = storage.bucket('birdypets');
 
 const birds = require('../../helpers/birds.js');
 
-var prefix = "rijksmuseum";
-var id = "RP-P-2000-20";
-var code = "carcro1";
-var url = "https://cdn.discordapp.com/attachments/865328600101945404/899724509354029127/rijksmuseum_rp-p-2000-20.png";
-var credit = "Jacques de Fornazeris";
-var special = true;
-var version = 'Scarecrow';
-var label = '(Halloween)';
+var prefix = "urlocalcrypt1d";
+var id = "899900084928544788";
+var code = "soalea1";
+var url = "https://cdn.discordapp.com/attachments/863866986550001665/899900084551028746/South_American_Leaftosser_Guianan.png";
+var credit = "Urlocalcrypt1d";
+var special = false;
+var version = "Guianan";
+var label = "";
 
 (async () => {
   try {
@@ -33,7 +33,7 @@ var label = '(Halloween)';
     var bird = birds.findBy('speciesCode', code);
     var data = {
       illustration: url,
-      species: code,
+      speciesCode: code,
       credit: credit,
       special: special,
       filetype: url.split('.').pop(),

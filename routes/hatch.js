@@ -21,18 +21,23 @@ router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
   }
 
   if (timeUntil == 0) {
-    var adjectives = helpers.Chance.pickset(
-      helpers.data('eggs'),
-      5
-    );
+    var eggs = helpers.data('eggs');
+    var keys = helpers.Chance.pickset(Object.keys(eggs), 5);
 
-    req.session.adjectives = adjectives;
+    eggs = keys.map((egg) => {
+      return {
+        ...eggs[egg],
+        name: egg
+      }
+    });
+
+    req.session.adjectives = keys;
   } else {
     var adjectives = [];
   }
 
   res.render('hatch/eggs', {
-    adjectives: adjectives,
+    eggs: eggs,
     timeUntil: timeUntil
   });
 });
@@ -44,8 +49,8 @@ router.post('/', helpers.Middleware.isLoggedIn, async (req, res) => {
     if (req.session.adjectives && req.session.adjectives.includes(adjective)) {
       var birdypets = [];
       do {
-        var bird = helpers.Birds.random('adjectives', adjective);
-        var birdypets = helpers.BirdyPets.findBy('speciesCode', bird.speciesCode).filter( (birdypet) => !birdypet.special );
+        var bird = helpers.Chance.pickone(helpers.data('eggs')[adjective].species);
+        var birdypets = helpers.BirdyPets.findBy('speciesCode', bird).filter((birdypet) => !birdypet.special);
       }
       while (birdypets.length == 0);
 

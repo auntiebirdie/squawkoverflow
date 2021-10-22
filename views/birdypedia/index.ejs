@@ -5,16 +5,16 @@
   <div id="toggles" class="row select-none">
     <div class="col-2"></div>
     <div class="col-4 text-center">
-      <button id="byFamily" class="btn btn-lg btn-primary" type="button" data-toggle="family">
+      <a class="btn btn-lg btn-primary" href="/birdypedia">
         <h2>🐦</h2>
-        <h5>By Family</h5>
-      </button>
+        <h5>Bird Guide</h5>
+      </a>
     </div>
     <div class="col-4 text-center">
-      <button id="byAdjectives" class="btn btn-lg btn-secondary" type="button" data-toggle="adjectives">
+      <a class="btn btn-lg btn-secondary" href="/birdypedia/eggs">
         <h2>🥚</h2>
-        <h5>By Eggs</h5>
-      </button>
+        <h5>Egg Guide</h5>
+      </a>
     </div>
     <div class="col-2"></div>
   </div>
@@ -28,26 +28,6 @@
   <%- include('../scripts/lazyloader.ejs', { template: '../templates/birdypedia.ejs' }) %>
 
   <script type="text/javascript">
-    $('#toggles').on('click', 'button', function (event) {
-      var button = event.currentTarget;
-
-      if (!button.classList.contains('btn-primary')) {
-        var selected = $('.btn-primary', '#toggles')[0];
-
-        selected.classList.remove('btn-primary');
-        selected.classList.add('btn-secondary');
-        var toggle = document.getElementById(selected.getAttribute('data-toggle'));
-        toggle.selectedIndex = 0;
-        toggle.parentNode.style.display = 'none';
-
-        button.classList.add('btn-primary');
-        button.classList.remove('btn-secondary');
-        document.getElementById(button.getAttribute('data-toggle')).parentNode.style.display = 'block';
-
-        resetResults();
-      }
-    });
-
     $('#lazyLoader').on('click', '.wishlist-heart', function (event) {
       var button = event.target;
 

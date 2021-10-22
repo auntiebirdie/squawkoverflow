@@ -10,7 +10,7 @@
              data-bg="${bird.variants[0].image}"
       ></div>
       <div class="card-body">
-        <h6 class="text-center">
+        <h6 class="text-center d-none d-sm-block">
           ${bird.variants.length > 1 ? bird.variants.map(function (variant) { return '<div class="lazy birdypet mini ' + (variant.hatched ? "hatched" : "unhatched") + '" data-bg="' + variant.image + '"></div>'; }).join("") : ""}
         </h6>
         <hr>

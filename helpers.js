@@ -12,7 +12,9 @@ module.exports = {
       } [tag]));
   },
   data: function(file) {
-    return require(`./public/data/${file}.json`);
+    var data = require(`./public/data/${file}.json`);
+
+    return Array.isArray(data) ? [...data] : Object.assign({}, data);
   },
   Chance: Chance,
   DB: require('./helpers/database.js'),

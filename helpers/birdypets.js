@@ -5,11 +5,13 @@ const birdypets = require('../public/data/birdypets.json');
 module.exports = {
   format: function(birdypet) {
     if (birdypet) {
-	var bird = Birds.findBy('speciesCode', birdypet.speciesCode);
+      var bird = Birds.findBy('speciesCode', birdypet.speciesCode);
 
       return {
         ...birdypet,
-	species: {...bird},
+        species: {
+          ...bird
+        },
         image: `https://storage.googleapis.com/birdypets/${bird.order}/${bird.family}/${bird.scientificName.replace(/\s/, '%20')}/${birdypet.id}.${birdypet.filetype ? birdypet.filetype : "jpg"}`
       }
     } else {
@@ -35,7 +37,12 @@ module.exports = {
     return birdypets.filter((birdypet) => {
       let tmp = keys.length > 1 ? birdypet[keys[0]][keys[1]] : birdypet[key];
 
-      return Array.isArray(tmp) ? tmp.map((val) => val.toLowerCase()).includes(value) : tmp.toLowerCase() == value;
+      if (tmp) {
+
+        return Array.isArray(tmp) ? tmp.map((val) => val.toLowerCase()).includes(value) : tmp.toLowerCase() == value;
+      } else {
+        return false;
+      }
     }).map((birdypet) => this.format(birdypet));
   }
 }

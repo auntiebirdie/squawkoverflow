@@ -37,18 +37,19 @@ Webhook.prototype.send = function(channel, data) {
       case "exchange":
         var embeds = [
           new MessageEmbed()
-          .setTitle(data.userpet.nickname ? data.userpet.nickname : data.birdypet.species.commonName)
-          .setDescription(data.userpet.nickname ? data.birdypet.species.commonName : (data.birdypet.version + ' ' + data.birdypet.label))
+          .setAuthor(data.userpet.nickname || " ")
+          .setTitle(data.birdypet.species.commonName)
+          .setDescription(data.birdypet.version + ' ' + data.birdypet.label)
           .setURL(`https://squawkoverflow.com/birdypet/${data.userpet._id}`)
           .setImage(`https://storage.googleapis.com/birdypets/${data.birdypet.species.order}/${data.birdypet.species.family}/${data.birdypet.species.scientificName.replace(' ', '%20')}/${data.birdypet.id}.${data.birdypet.filetype ? data.birdypet.filetype : "jpg"}`)
         ];
 
         webhookClient.send({
-            content: `${data.from.username} has sent <@${data.to}> a gift!`,
-            embeds: embeds
-          }).then(() => {
-            resolve();
-          });
+          content: `${data.from.username} has sent <@${data.to}> a gift!`,
+          embeds: embeds
+        }).then(() => {
+          resolve();
+        });
         break;
       case "free-birds":
         pubSubClient.topic('squawkoverflow-free-birds').publish(Buffer.from(""), {

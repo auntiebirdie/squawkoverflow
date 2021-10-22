@@ -7,26 +7,20 @@ const DB = new Datastore({
 });
 
 const opengraph = require('open-graph');
+const helpers = require('../../helpers.js');
 
 (async () => {
   try {
-    var birds = require('../public/data/birds.json');
+    var birds = helpers.Birds.all();
 
-    for (let order in birds) {
-      for (let family in birds[order]) {
-        for (let bird of birds[order][family].children) {
+        for (let bird of birds) {
           await new Promise((resolve, reject) => {
-opengraph(`https://ebird.org/species/${bird.speciesCode}`, (err, meta) => {
-console.log(meta); resolve();
-});
+            opengraph(`https://ebird.org/species/${bird.speciesCode}`, (err, meta) => {
+              console.log(meta);
+              resolve();
+            });
 
           });
-
-          return false;
-        }
-        return false;
-      }
-      return false;
     }
   } catch (err) {
     console.log(err);

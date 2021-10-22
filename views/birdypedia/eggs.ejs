@@ -1,0 +1,47 @@
+<%- include('../header.ejs') %>
+
+  <%- include('../partials/page-title.ejs', { title : "Egg Guide", breadcrumb: 'Birdypedia' }) %> 
+
+  <div id="toggles" class="row select-none">
+    <div class="col-2"></div>
+    <div class="col-4 text-center">
+      <a class="btn btn-lg btn-primary" href="/birdypedia">
+        <h2>🐦</h2>
+        <h5>Bird Guide</h5>
+      </a>
+    </div>
+    <div class="col-4 text-center">
+      <a class="btn btn-lg btn-secondary" href="/birdypedia/eggs">
+        <h2>🥚</h2>
+        <h5>Egg Guide</h5>
+      </a>
+    </div>
+    <div class="col-2"></div>
+  </div>
+
+  <%- include('../partials/spacer.ejs'); %>
+
+  <% var header = ""; %>
+
+  <div>
+  <% for (var egg in eggs) { %>
+    <% if (header != egg[0]) { %>
+      <% header = egg[0] %>
+      </div>
+      <h3 class="sticky-top bg-secondary text-light py-1 px-2"><%= header.toUpperCase() %></h3>
+      <div class="row mb-3">
+    <% } %>
+    <div class="col-12 col-md-4">
+      <div class="row">
+        <div class="col-5 offset-1">
+          <a href="/birdypedia/eggs/<%= egg %>"><%= egg %></a>
+        </div>
+        <div class="col-5 text-end">
+          <small class="text-muted"><%= eggs[egg][0] == eggs[egg][1] ? "✔️" : "" %> (<%= eggs[egg][0] %>/<%= eggs[egg][1] %>)</small>
+        </div>
+      </div>
+    </div>
+  <% } %>
+  </div>
+ 
+<%- include('../footer.ejs') %>

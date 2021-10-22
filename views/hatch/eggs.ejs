@@ -12,12 +12,14 @@
   </div>
 
   <div class="row text-center mb-5">
-    <% for (var adjective of adjectives) { %>
+    <% for (var egg of eggs) { %>
     <div class="col">
       <form method="POST">
-        <button class="btn btn-lg btn-dark mb-2" name="egg" value="<%= adjective %>" type="submit">
-          <h3>🥚</h3>
-          <h5><%= adjective %> egg</h5>
+        <button class="btn btn-lg btn-outline-secondary p-3 mb-2" name="egg" value="<%= egg.name %>" type="submit">
+          <h3>
+            <img src="/img/eggs/<%= egg.icon ? egg.name : "default" %>.png">
+          </h3>
+          <h5><%= egg.name %> egg</h5>
         </button>
       </form>
     </div>

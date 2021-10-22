@@ -126,7 +126,7 @@ router.get('/birdypedia', async (req, res) => {
   if (req.query.family) {
     var birds = helpers.Birds.fetch("family", req.query.family);
   } else {
-    var birds = helpers.Birds.all().filter((bird) => req.query.adjectives ? bird.adjectives.includes(req.query.adjectives) : true);
+    var birds = helpers.Birds.all().filter( (bird) => req.query.adjectives ? bird.adjectives.includes(req.query.adjectives) : true);
   }
 
   if (req.query.search) {
