@@ -13,9 +13,9 @@
   </h6>
 <% } %>
 
-<h1 class="mb-4 pb-3 border-bottom border-2 border-dark text-capitalize">
+<h1 class="mb-4 pb-3 border-bottom border-2 border-dark">
  <% try { if (typeof title === 'object') { %>
-    <%- title.prepend %><a <%= title.url ? `href="${title.url}"` : "" %>><%= title.text %></a><%- title.append %>
+    <%- title.prepend %><a <%- title.url ? `href="${title.url}"` : "" %>><%= title.text %></a><%- title.append %>
   <% } else { %>
     <%= title %>
   <% } } catch (err) { %>

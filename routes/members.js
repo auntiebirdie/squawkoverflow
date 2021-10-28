@@ -1,3 +1,5 @@
+const Members = require('../helpers/members.js');
+
 const helpers = require('../helpers.js');
 const express = require('express');
 const router = express.Router();
@@ -5,7 +7,11 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   var members = await helpers.Redis.scan('member', {
     'SORTBY': ['username']
-  });
+  }).then((members) => members.filter((member) => {
+    member = Members.format(member);
+
+    return member.lastLogin && !member.settings.privacy?.includes('profile');
+  }));
 
   res.render('members/index', {
     members: members
@@ -13,6 +19,10 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:member', helpers.Middleware.entityExists, async (req, res) => {
+  if (req.entities['member']._id != req.session.user?.id && req.entities['member'].settings.privacy?.includes('profile')) {
+    return res.redirect('/error');
+  }
+
   var output = {
     page: 'member',
     member: req.entities['member'],
@@ -23,6 +33,8 @@ router.get('/:member', helpers.Middleware.entityExists, async (req, res) => {
     }) || 0,
     flock: {}
   };
+
+  output.member.wishlist = await helpers.Redis.get('wishlist', req.entities['member']._id).then((birds) => birds.length > 0);
 
   if (output.member.birdyBuddy) {
     output.member.birdyBuddy = await helpers.MemberPets.get(output.member.birdyBuddy);
@@ -40,6 +52,10 @@ router.get('/:member', helpers.Middleware.entityExists, async (req, res) => {
 });
 
 router.get('/:member/gift', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, async (req, res) => {
+  if (req.entities['member'].settings.privacy?.includes('gifts')) {
+    return res.redirect('/error');
+  }
+
   var allFamilies = require('../public/data/families.json');
   var families = new Set();
 

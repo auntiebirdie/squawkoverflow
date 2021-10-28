@@ -1,6 +1,6 @@
 <%- include('../header.ejs') %>
 
-  <%- include('../partials/page-title.ejs', { title : "Egg Guide", breadcrumb: 'Birdypedia' }) %> 
+  <%- include('../partials/page-title.ejs', { title : "Egg Guide" } }) %> 
 
   <div id="toggles" class="row select-none">
     <div class="col-2"></div>
@@ -28,7 +28,7 @@
     <% if (header != egg[0]) { %>
       <% header = egg[0] %>
       </div>
-      <h3 class="sticky-top bg-secondary text-light py-1 px-2"><%= header.toUpperCase() %></h3>
+      <h3 class="sticky-top bg-secondary text-white py-1 px-2"><%= header.toUpperCase() %></h3>
       <div class="row mb-3">
     <% } %>
     <div class="col-12 col-md-4">
@@ -37,7 +37,7 @@
           <a href="/birdypedia/eggs/<%= egg %>"><%= egg %></a>
         </div>
         <div class="col-5 text-end">
-          <small class="text-muted"><%= eggs[egg][0] == eggs[egg][1] ? "✔️" : "" %> (<%= eggs[egg][0] %>/<%= eggs[egg][1] %>)</small>
+          <small class="text-light"><%= eggs[egg][0] == eggs[egg][1] ? "✔️" : "" %> (<%= eggs[egg][0] %>/<%= eggs[egg][1] %>)</small>
         </div>
       </div>
     </div>

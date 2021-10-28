@@ -7,6 +7,10 @@ router.get('/mine', helpers.Middleware.isLoggedIn, (req, res, next) => {
 });
 
 router.get('/:member', helpers.Middleware.entityExists, async (req, res, next) => {
+  if (req.entities['member']._id != req.session.user?.id && req.entities['member'].settings.privacy?.includes('wishlist')) {
+    return res.redirect('/error');
+  }
+
   var allFamilies = require('../public/data/families.json');
   var families = new Set();
 

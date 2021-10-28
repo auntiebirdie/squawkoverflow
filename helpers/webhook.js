@@ -51,15 +51,6 @@ Webhook.prototype.send = function(channel, data) {
           resolve();
         });
         break;
-      case "free-birds":
-        pubSubClient.topic('squawkoverflow-free-birds').publish(Buffer.from(""), {
-          member: `${data.member}`,
-          birdypet: `${data.birdypet.id}`,
-          source: "WEB"
-        }).then((response) => {
-          resolve();
-        });
-        break;
       default:
         return reject();
     }

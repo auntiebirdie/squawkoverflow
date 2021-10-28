@@ -1,19 +1,20 @@
-<div class="col-6 col-md-4">
-  <div class="pb-4">
-    <div class="card">
+<div class="col-6 col-md-4 d-flex align-items-stretch">
+  <div class="w-100 pb-4">
+    <div class="h-100 card">
       <% if (locals.loggedInUser) { %>
         <button class="wishlist-heart btn btn-light btn-sm" data-id="${bird.speciesCode}" data-action="${bird.wishlisted ? 'remove' : 'add'}" role="button">
           ${bird.wishlisted ? '❤️' : '🤍'}
         </button>
       <% } %>
-      <div class="lazy birdypet ${bird.variants[0].hatched ? "hatched" : "unhatched"}"
-             data-bg="${bird.variants[0].image}"
-      ></div>
-      <div class="card-body">
-        <h6 class="text-center d-none d-sm-block">
-          ${bird.variants.length > 1 ? bird.variants.map(function (variant) { return '<div class="lazy birdypet mini ' + (variant.hatched ? "hatched" : "unhatched") + '" data-bg="' + variant.image + '"></div>'; }).join("") : ""}
+      <div class="h100">
+        <div class="bg-white lazy birdypet ${bird.variants[0].hatched ? "hatched" : "unhatched"}"
+               data-bg="${bird.variants[0].image}"
+        ></div>
+        <h6 class="p-1 bg-white birdypets text-center d-none d-sm-block">
+          ${bird.variants.length > 1 ? bird.variants.map(function (variant) { return '<div class="lazy birdypet mini ' + (variant.hatched ? "hatched" : "unhatched") + '" data-bg="' + variant.image + '"></div>'; }).join("") : '<div class="birdypet mini disabled"></div>'}
         </h6>
-        <hr>
+       </div>
+       <div class="card-body">
         <h3 class="text-center"><a href="/birdypedia/bird/${bird.speciesCode}">${bird.commonName}</a></h3> 
       </div>
     </div>

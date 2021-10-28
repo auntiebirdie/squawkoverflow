@@ -1,33 +1,43 @@
-const helpers = require('../helpers.js');
+const Birds = require('../helpers/birds.js');
+const BirdyPets = require('../helpers/birdypets.js');
+const MemberPets = require('../helpers/memberpets.js');
+const Members = require('../helpers/members.js');
+const Middleware = require('../helpers/middleware.js');
+const Redis = require('../helpers/redis.js');
+const Webhook = require('../helpers/webhook.js');
+
+const chance = require('chance').Chance();
 const express = require('express');
 const router = express.Router();
 
-router.get('/aviary/:member', helpers.Middleware.entityExists, (req, res) => {
+router.use('/hatch', require('./api/hatch.js'));
+
+router.get('/aviary/:member', Middleware.entityExists, (req, res) => {
   var page = --req.query.page * 25;
   var filters = [
     `@member:{${req.entities['member']._id}}`,
     req.query.family ? `@family:${req.query.family}` : '',
     req.query.flock ? `@flocks:{${req.query.flock}}` : '',
-    req.query.search ? `@nickname|species:${helpers.Redis.escape(req.query.search)}` : ''
+    req.query.search ? `@nickname|species:${Redis.escape(req.query.search)}` : ''
   ].join(' ');
 
-  helpers.Redis.fetch('memberpet', {
+  Redis.fetch('memberpet', {
     'FILTER': filters,
     'SORTBY': req.query.sort,
     'LIMIT': [page, 25]
   }).then(async (response) => {
     var myAviary = req.session.user ? req.entities['member']._id == req.session.user.id : false;
-    var wishlist = req.session.user && !myAviary ? await helpers.Redis.get('wishlist', req.session.user.id) : [];
+    var wishlist = req.session.user && !myAviary ? await Redis.get('wishlist', req.session.user.id) : [];
     var output = [];
 
     for (var memberpet of response) {
-      var owned = !myAviary ? await helpers.Redis.fetch('memberpet', {
+      var owned = !myAviary && req.session.user ? await Redis.fetch('memberpet', {
         'FILTER': `@member:{${req.session.user.id}} @birdypetSpecies:{${memberpet.birdypetSpecies}}`,
         'RETURN': ['birdypetId']
       }).then((owned) => owned.map((birdypet) => birdypet.birdypetId)) : [];
 
       output.push({
-        ...helpers.MemberPets.format(memberpet),
+        ...MemberPets.format(memberpet),
         wishlisted: wishlist.includes(memberpet.birdypetSpecies),
         checkmark: owned.includes(memberpet.birdypetId) ? 2 : (owned.length > 0 ? 1 : 0)
       });
@@ -37,31 +47,31 @@ router.get('/aviary/:member', helpers.Middleware.entityExists, (req, res) => {
   });
 });
 
-router.get('/gift/:member', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, (req, res) => {	
+router.get('/gift/:member', Middleware.isLoggedIn, Middleware.entityExists, (req, res) => {
   var page = --req.query.page * 25;
   var filters = [
     `@member:{${req.session.user.id}}`,
     req.query.family ? `@family:${req.query.family}` : '',
     req.query.flock ? `@flocks:{${req.query.flock}}` : '',
-    req.query.search ? `@nickname|species:${helpers.Redis.escape(req.query.search)}` : ''
+    req.query.search ? `@nickname|species:${Redis.escape(req.query.search)}` : ''
   ].join(' ');
 
-  helpers.Redis.fetch('memberpet', {
+  Redis.fetch('memberpet', {
     'FILTER': filters,
     'SORTBY': req.query.sort,
     'LIMIT': [page, 25]
   }).then(async (response) => {
-    var wishlist = await helpers.Redis.get('wishlist', req.entities['member']._id);
+    var wishlist = await Redis.get('wishlist', req.entities['member']._id);
     var output = [];
 
     for (var memberpet of response) {
-      var owned = await helpers.Redis.fetch('memberpet', {
+      var owned = await Redis.fetch('memberpet', {
         'FILTER': `@member:{${req.entities['member']._id}} @birdypetSpecies:{${memberpet.birdypetSpecies}}`,
         'RETURN': ['birdypetId']
       }).then((owned) => owned.map((birdypet) => birdypet.birdypetId));
 
       output.push({
-        ...helpers.MemberPets.format(memberpet),
+        ...MemberPets.format(memberpet),
         wishlisted: wishlist.includes(memberpet.birdypetSpecies),
         checkmark: owned.includes(memberpet.birdypetId) ? 2 : (owned.length > 0 ? 1 : 0)
       });
@@ -71,9 +81,9 @@ router.get('/gift/:member', helpers.Middleware.isLoggedIn, helpers.Middleware.en
   });
 });
 
-router.get('/wishlist/:member', helpers.Middleware.entityExists, async (req, res) => {
+router.get('/wishlist/:member', Middleware.entityExists, async (req, res) => {
   var page = --req.query.page * 25;
-  var birds = await helpers.Redis.get('wishlist', req.entities['member']._id).then((birds) => birds.map((bird) => helpers.Birds.findBy('speciesCode', bird))) || [];
+  var birds = await Redis.get('wishlist', req.entities['member']._id).then((birds) => birds.map((bird) => Birds.findBy('speciesCode', bird))) || [];
   var output = [];
 
   if (req.query.family) {
@@ -87,11 +97,11 @@ router.get('/wishlist/:member', helpers.Middleware.entityExists, async (req, res
   birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
 
   for (var i = page, len = Math.min(page + 25, birds.length); i < len; i++) {
-    birds[i].hatched = req.session.user ? await helpers.Redis.fetchOne('memberpet', {
+    birds[i].hatched = req.session.user ? await Redis.fetchOne('memberpet', {
       'FILTER': `@member:{${req.session.user.id}} @birdypetSpecies:{${birds[i].speciesCode}}`
     }) : false;
 
-    birds[i].variants = helpers.BirdyPets.findBy('speciesCode', birds[i].speciesCode).filter( (birdypet) => !birdypet.special);
+    birds[i].variants = BirdyPets.findBy('speciesCode', birds[i].speciesCode).filter((birdypet) => !birdypet.special);
 
     output.push(birds[i]);
   }
@@ -99,34 +109,34 @@ router.get('/wishlist/:member', helpers.Middleware.entityExists, async (req, res
   res.json(output);
 });
 
-router.get('/flocks/:flock', helpers.Middleware.entityExists, (req, res) => {
+router.get('/flocks/:flock', Middleware.entityExists, (req, res) => {
   var page = --req.query.page * 25;
   var filters = [
     `@member:{${req.entities['flock'].member}}`,
     `@flocks:{${req.entities['flock']._id}}`,
-    req.query.search ? `@nickname|species:${helpers.Redis.escape(req.query.search)}` : ''
+    req.query.search ? `@nickname|species:${Redis.escape(req.query.search)}` : ''
   ].join(' ');
 
-  helpers.Redis.fetch('memberpet', {
+  Redis.fetch('memberpet', {
     'FILTER': filters,
     'SORTBY': req.query.sort,
     'LIMIT': [page, 25]
   }).then((response) => {
     res.json(response.map((memberpet) => {
-      return helpers.MemberPets.format(memberpet);
+      return MemberPets.format(memberpet);
     }));
   });
 });
 
 router.get('/birdypedia', async (req, res) => {
   var page = --req.query.page * 25;
-  var wishlist = req.session.user ? await helpers.Redis.get('wishlist', req.session.user.id) : [];
+  var wishlist = req.session.user ? await Redis.get('wishlist', req.session.user.id) : [];
   var output = [];
 
   if (req.query.family) {
-    var birds = helpers.Birds.fetch("family", req.query.family);
+    var birds = Birds.fetch("family", req.query.family);
   } else {
-    var birds = helpers.Birds.all().filter( (bird) => req.query.adjectives ? bird.adjectives.includes(req.query.adjectives) : true);
+    var birds = Birds.all().filter((bird) => req.query.adjectives ? bird.adjectives.includes(req.query.adjectives) : true);
   }
 
   if (req.query.search) {
@@ -137,11 +147,11 @@ router.get('/birdypedia', async (req, res) => {
 
   for (var i = page, len = Math.min(page + 25, birds.length); i < len; i++) {
     birds[i].wishlisted = wishlist.includes(birds[i].speciesCode);
-    birds[i].variants = helpers.BirdyPets.findBy('speciesCode', birds[i].speciesCode).filter( (birdypet) => !birdypet.special );
+    birds[i].variants = BirdyPets.findBy('speciesCode', birds[i].speciesCode).filter((birdypet) => !birdypet.special);
 
     if (req.session.user) {
       for (var variant of birds[i].variants) {
-        variant.hatched = await helpers.Redis.fetchOne('memberpet', {
+        variant.hatched = await Redis.fetchOne('memberpet', {
           'FILTER': `@member:{${req.session.user.id}} @birdypetId:{${variant.id}}`
         }) !== null;
       }
@@ -161,22 +171,26 @@ router.get('/birdypedia', async (req, res) => {
   res.json(output);
 });
 
-router.post('/gift/:member/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, (req, res, next) => {
-  helpers.Redis.set('memberpet', req.entities['memberpet']._id, {
+router.post('/gift/:member/:memberpet', Middleware.isLoggedIn, Middleware.entityExists, (req, res, next) => {
+  Redis.set('memberpet', req.entities['memberpet']._id, {
     "member": req.entities['member']._id,
     "flocks": "NONE",
     "friendship": 0
   }).then(() => {
-    var birdypet = helpers.BirdyPets.fetch(req.entities['memberpet'].birdypetId);
+    var birdypet = BirdyPets.get(req.entities['memberpet'].birdypetId);
 
-    helpers.Redis.get('member', req.session.user.id).then((member) => {
+    Redis.get('member', req.session.user.id).then((member) => {
       if (member.birdyBuddy == req.entities['memberpet']._id) {
-        helpers.Redis.set('member', member._id, {
+        Redis.set('member', member._id, {
           birdyBuddy: null
         });
       }
 
-      helpers.Discord.Webhook.send('exchange', {
+      if (req.entities['member'].settings.general?.includes('updateWishlist')) {
+        Redis.pop('wishlist', req.entities['member']._id, birdypet.species.speciesCode);
+      }
+
+      Webhook.send('exchange', {
         from: req.session.user,
         to: req.entities['member']._id,
         userpet: req.entities['memberpet'],
@@ -190,16 +204,16 @@ router.post('/gift/:member/:memberpet', helpers.Middleware.isLoggedIn, helpers.M
   });
 });
 
-router.get('/birdypet/:memberpet/feedBug', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, async (req, res) => {
-  var bugs = await helpers.Redis.get('member', req.session.user.id, 'bugs');
+router.get('/birdypet/:memberpet/feedBug', Middleware.isLoggedIn, Middleware.entityExists, async (req, res) => {
+  var bugs = await Redis.get('member', req.session.user.id, 'bugs');
 
   if (bugs > 0) {
-    await helpers.Redis.increment('member', req.session.user.id, 'bugs', -1);
+    await Redis.increment('member', req.session.user.id, 'bugs', -1);
 
-    await helpers.Redis.increment('memberpet', req.entities['memberpet']._id, "friendship", 5);
+    await Redis.increment('memberpet', req.entities['memberpet']._id, "friendship", 5);
     res.json({
       bugs: bugs - 1,
-      response: helpers.Chance.pickone([
+      response: chance.pickone([
         "Mmm!  Tastes like... bug.",
         "Tasty!",
         "Thanks!",
@@ -216,24 +230,23 @@ router.get('/birdypet/:memberpet/feedBug', helpers.Middleware.isLoggedIn, helper
   }
 });
 
-router.put('/flocks/:flock', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res) => {
-	console.log(req.body);
-  helpers.Redis.set('flock', req.entities['flock']._id, {
-	  name: req.body.name || req.entities['flock'].name,
-	  description: req.body.description || req.entities['flock'].description,
-	  displayOrder: req.body.displayOrder || req.entities['flock'].displayOrder || 100
+router.put('/flocks/:flock', Middleware.isLoggedIn, Middleware.entityExists, Middleware.userOwnsEntity, (req, res) => {
+  Redis.set('flock', req.entities['flock']._id, {
+    name: req.body.name || req.entities['flock'].name,
+    description: req.body.description || req.entities['flock'].description,
+    displayOrder: req.body.displayOrder || req.entities['flock'].displayOrder || 100
   });
 
   res.json("ok");
 });
 
-router.delete('/flocks/:flock', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, async (req, res) => {
-  await helpers.Redis.delete('flock', req.entities['flock']._id);
+router.delete('/flocks/:flock', Middleware.isLoggedIn, Middleware.entityExists, Middleware.userOwnsEntity, async (req, res) => {
+  await Redis.delete('flock', req.entities['flock']._id);
 
   res.json("ok");
 });
 
-router.post('/flocks/:flock/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res) => {
+router.post('/flocks/:flock/:memberpet', Middleware.isLoggedIn, Middleware.entityExists, Middleware.userOwnsEntity, (req, res) => {
   var index = req.entities['memberpet'].flocks ? req.entities['memberpet'].flocks.indexOf(req.entities['flock']._id) : -1;
   var flocks = req.entities['memberpet'].flocks ? req.entities['memberpet'].flocks.split(",") : [];
 
@@ -243,7 +256,7 @@ router.post('/flocks/:flock/:memberpet', helpers.Middleware.isLoggedIn, helpers.
     flocks.push(req.entities['flock']._id);
   }
 
-  helpers.Redis.set('memberpet', req.entities['memberpet']._id, {
+  Redis.set('memberpet', req.entities['memberpet']._id, {
     flocks: flocks.join(',')
   }).then(() => {
     res.json({
@@ -252,13 +265,11 @@ router.post('/flocks/:flock/:memberpet', helpers.Middleware.isLoggedIn, helpers.
   });
 });
 
-router.post('/freebirds/:freebird', helpers.Middleware.isLoggedIn, async (req, res) => {
-  var freebird = await helpers.Redis.get('freebird', req.params.freebird);
+router.post('/freebirds/:birdypet', Middleware.isLoggedIn, async (req, res) => {
+  var birdypet = BirdyPets.get(req.params.birdypet);
 
-  if (freebird) {
-    var birdypet = helpers.BirdyPets.fetch(req.params.freebird);
-
-    helpers.Redis.create('memberpet', {
+  if (birdypet) {
+    Redis.create('memberpet', {
       birdypetId: birdypet.id,
       birdypetSpecies: birdypet.speciesCode,
       species: birdypet.species.commonName,
@@ -266,8 +277,12 @@ router.post('/freebirds/:freebird', helpers.Middleware.isLoggedIn, async (req, r
       member: req.session.user.id,
       flocks: "NONE",
       hatchedAt: Date.now()
-    }).then((id) => {
-      helpers.Redis.delete('freebird', req.params.freebird);
+    }).then(async (id) => {
+	    var member = await Members.get(req.session.user.id);
+
+      if (member.settings.general?.includes('updateWishlist')) {
+        Redis.pop('wishlist', req.session.user.id, birdypet.species.speciesCode);
+      }
 
       res.json({
         response: `<a href="/birdypet/${id}">${birdypet.species.commonName}</a>`
@@ -275,16 +290,16 @@ router.post('/freebirds/:freebird', helpers.Middleware.isLoggedIn, async (req, r
     });
   } else {
     res.json({
-      error: "Someone already claimed this bird!"
+      error: "That bird doesn't exist!"
     });
   }
 });
 
-router.post('/wishlist/:action/:speciescode', helpers.Middleware.isLoggedIn, async (req, res) => {
-  var bird = helpers.Birds.findBy('speciesCode', req.params.speciescode);
+router.post('/wishlist/:action/:speciescode', Middleware.isLoggedIn, async (req, res) => {
+  var bird = Birds.findBy('speciesCode', req.params.speciescode);
 
   if (bird) {
-    helpers.Redis[req.params.action == "add" ? "push" : "pop"]('wishlist', req.session.user.id, bird.speciesCode);
+    Redis[req.params.action == "add" ? "push" : "pop"]('wishlist', req.session.user.id, bird.speciesCode);
 
     res.json({
       response: "success"
@@ -294,6 +309,28 @@ router.post('/wishlist/:action/:speciescode', helpers.Middleware.isLoggedIn, asy
       error: "not found"
     });
   }
+});
+
+router.put('/account', Middleware.isLoggedIn, async (req, res) => {
+  var member = await Members.get(req.session.user.id);
+  var fields = ["theme", "general", "privacy"];
+  var data = member.settings;
+
+  Object.keys(req.body).filter((val) => fields.includes(val)).forEach((key) => {
+    data[key] = req.body[key];
+
+    if (key == "theme") {
+      req.session.user.theme = req.body[key];
+    } else {
+      data[key] = req.body[key].split(',');
+    }
+  });
+
+  Redis.set('member', req.session.user.id, {
+    settings: JSON.stringify(data)
+  });
+
+  res.json("ok");
 });
 
 module.exports = router;

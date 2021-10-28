@@ -1,3 +1,7 @@
+try {
+	require('@google-cloud/profiler').start();
+} catch (err) {}
+
 const {
   Datastore
 } = require('@google-cloud/datastore');
@@ -36,6 +40,10 @@ app.use(function(req, res, next) {
 
   if (req.session.user) {
     res.locals.loggedInUser = req.session.user;
+
+    if (!res.locals.loggedInUser.theme) {
+      res.locals.loggedInUser.theme = "default";
+    }
 
     menu.push({
       "icon": "🥚",
@@ -78,6 +86,7 @@ app.use(function(req, res, next) {
 
 app.use('/', require('./routes/home.js'));
 app.use('/hatch', require('./routes/hatch.js'));
+app.use('/hatched', require('./routes/hatched.js'));
 app.use('/birdypet', require('./routes/birdypet.js'));
 app.use('/aviary', require('./routes/aviary.js'));
 app.use('/wishlist', require('./routes/wishlist.js'));
@@ -85,6 +94,8 @@ app.use('/flocks', require('./routes/flocks.js'));
 app.use('/freebirds', require('./routes/freebirds.js'));
 app.use('/birdypedia', require('./routes/birdypedia.js'));
 app.use('/members', require('./routes/members.js'));
+app.use('/login', require('./routes/login.js'));
+app.use('/account', require('./routes/account.js'));
 app.use('/faq', require('./routes/faq.js'));
 app.use('/api', require('./routes/api.js'));
 

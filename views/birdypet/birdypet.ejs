@@ -11,9 +11,9 @@
 
     <div class="row">
       <div class="col-md-8 pt-3">
-        <div class="text-center">
-          <img id="birdy" src="<%= memberpet.image %>">
-        </div>
+        <div class="lazy birdypet full"
+             data-bg="<%= memberpet.image %>"
+        ></div>
 
         <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
           <%- include('../partials/spacer.ejs'); %>
@@ -21,7 +21,7 @@
           <form id="manageBirdyPet" method="POST">
 
           <div class="row">
-            <div class="col-12 col-8 mb-3">
+            <div class="col-12 col-md-8 mb-3">
               <h5><label>Nickname</label></h5>
               <input id="nickname" type="text" name="nickname" class="form-control" value="<%= memberpet.nickname %>" style="width: 100%">
             </div>

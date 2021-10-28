@@ -13,12 +13,15 @@
 
       <% if (aviary > 0) { %>
       <h5>Aviary</h5>
-      <p><a href="/aviary/<%= member._id %>"><%= aviary %> BirdyPets</a></p>
+      <p><%= aviary %> BirdyPets</p>
       <% } %>
     </div>
     <div class="col-md-6 text-end">
+        <p><a href="/aviary/<%= member._id %>" class="btn btn-primary">🐦 View Aviary</a></p>
+      <% if (member.wishlist && !member.settings.privacy?.includes('wishlist')) { %>
         <p><a href="/wishlist/<%= member._id %>" class="btn btn-primary">❤️ View Wishlist</a></p>
-      <% if (locals.loggedInUser && loggedInUser.id != member._id) { %>
+      <% } %>
+      <% if (locals.loggedInUser && loggedInUser.id != member._id && !member.settings.privacy?.includes('gifts')) { %>
         <p><a href="/members/<%= member._id %>/gift" class="btn btn-primary">🎁 Send Gift</a></p>
       <% } %>
     </div>
@@ -43,11 +46,22 @@
     <div class="col-md-6">
       <h4><a href="/birdypet/<%= member.birdyBuddy._id %>"><%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.species.commonName %></a></h4>
       <div>
+        <% if (member.birdyBuddy.description) { %>
+        <div class="py-4 ps-4">
+          <% for (var para of member.birdyBuddy.description.split("\r\n")) { %>
+            <p><%= para %></p>
+          <% } %>
+        </div>
+        <% } %>
+
         <%- include('../partials/friendshipMeter.ejs', { friendship : member.birdyBuddy.friendship }) %>
 
         <% if (locals.loggedInUser && bugs > 0) { %>
-           <p>&nbsp;</p>
-           <p><button id="feedBug" class="btn btn-primary" role="button" data-birdypet="<%= member.birdyBuddy._id %>">🐛 Feed a Bug (you have <span><%= bugs %></span>)</button></p>
+           <% if (member.birdyBuddy.friendship >= 100) { %>
+             <p><em>You have <%= bugs %> bug<%= bugs != 1 ? "s" : "" %>, but <%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.species.commonName %> is full!</em></p>
+           <% } else { %>
+             <p><button id="feedBug" class="btn btn-primary" role="button" data-birdypet="<%= member.birdyBuddy._id %>">🐛 Feed a Bug (you have <span><%= bugs %></span>)</button></p>
+           <% } %>
         <% } %>
       </div>
     </div>

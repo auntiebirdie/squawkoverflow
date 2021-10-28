@@ -1,3 +1,5 @@
+const Members = require('../helpers/members.js');
+
 const helpers = require('../helpers');
 const express = require('express');
 const router = express.Router();
@@ -75,7 +77,7 @@ router.get('/bird/:code', async (req, res) => {
     }
 
     members = await Promise.all([...members].map((id) => {
-      return helpers.Redis.get('member', `${id}`);
+      return Members.get(id);
     }));
 
 
@@ -83,7 +85,7 @@ router.get('/bird/:code', async (req, res) => {
       page: 'birdypedia/bird',
       bird: bird,
       birdypets: birdypets,
-      members: members.filter((member) => member),
+      members: members.filter((member) => member && member.lastLogin && !member.settings.privacy?.includes('profile')),
       hatched: hatched
     });
   } else {

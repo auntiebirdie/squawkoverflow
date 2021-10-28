@@ -1,3 +1,5 @@
+const Members = require('../helpers/members.js');
+
 const helpers = require('../helpers');
 const express = require('express');
 const router = express.Router();
@@ -19,7 +21,11 @@ router.get('/gift/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middleware
         userpet: req.entities['memberpet'],
         birdypet: helpers.BirdyPets.fetch(req.entities['memberpet'].birdypetId)
       },
-      members: members,
+      members: members.filter((member) => {
+          member = Members.format(member);
+
+          return member.lastLogin && !member.settings.privacy?.includes('gifts');
+      }),
       selectedMember: req.query.member ? req.query.member : null
     });
   });
@@ -33,18 +39,8 @@ router.get('/release/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middlew
 });
 
 router.post('/release/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res, next) => {
-  helpers.Redis.save(
-    'freebird',
-    req.entities['memberpet'].birdypetId, {
-      "member": req.session.user.id,
-      "source": "WEB"
-    }
-  ).then(() => {
-    helpers.Redis.delete('memberpet', req.entities['memberpet']._id).then(() => {
-      res.redirect('/aviary/' + req.session.user.id);
-    });
-  }).catch((err) => {
-    next(err);
+  helpers.Redis.delete('memberpet', req.entities['memberpet']._id).then(() => {
+    res.redirect('/aviary/' + req.session.user.id);
   });
 });
 

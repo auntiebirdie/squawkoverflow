@@ -4,7 +4,9 @@
 
     <div class="row">
       <div class="col-md-8 text-center">
-          <img src="<%= birdypet.image %>">
+        <div class="lazy birdypet full border border-1 bg-white"
+             data-bg="<%= birdypet.image %>"
+        ></div>
       </div>
       <div class="col-md-4">
         <h3>
@@ -13,14 +15,44 @@
         <h6>
           <%= birdypet.version %> <%= birdypet.label %>
         </h6>
-        <h6><%= wishlisted ? "❤️" : "" %><%= userpets.includes(birdypet.speciesCode) ? "✔️" : "" %><%= userpets.includes(birdypet.id) ? "✔️" : "" %></h6>
+        <h6><%= wishlisted ? "❤️" : "" %><%= userpets.includes(birdypet.species.commonName) ? "✔️" : "" %><%= userpets.includes(birdypet.id) ? "✔️" : "" %></h6>
 
-        <form method="POST" class="mt-5 text-center">
-          <button name="action" value="keep" type="submit" class="btn btn-lg btn-primary">❤️&nbsp;Keep</button>
+        <div id="actions" data-birdypet="<%= birdypet.id %>" class="mt-5">
+          <button data-action="keep" class="btn btn-lg btn-primary mb-3">❤️&nbsp;Keep</button>
           &nbsp;
-          <button name="action" value="release" type ="submit" class="btn btn-lg btn-primary">👋&nbsp;Release</button>
-        </form>
+          <button data-action="release" class="btn btn-lg btn-primary mb-3">👋&nbsp;Release</button>
+        </div>
       </div>
     </div>
+
+    <script>
+      var container = document.getElementById('actions');
+      var birdypetId = container.getAttribute('data-birdypet');
+
+      $(container).on('click', 'button', function (e) {
+        var button = e.currentTarget;
+
+        switch (button.getAttribute('data-action')) {
+          case "keep":
+            $.ajax({
+              cache: false,
+              url: `/api/hatch`,
+              data: {
+                birdypetId : birdypetId,
+                adjective : "<%= adjective %>"
+              },
+              dataType: "json",
+              method: "POST",
+              success: function(data) {
+                container.innerHTML = `<a class="btn btn-lg btn-primary mb-3" href="/birdypet/${data.memberpet}">🐣 View BirdyPet</a>&nbsp;<a class="btn btn-lg btn-primary mb-3" href="/hatch">🥚 Hatch Another Egg</a>`;
+              }
+            });
+            break;
+          case "release":
+            window.location.href = '/hatch';
+            break;
+        }
+      }); 
+    </script>
 
 <%- include('../footer.ejs') %>

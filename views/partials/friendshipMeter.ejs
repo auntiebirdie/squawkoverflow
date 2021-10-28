@@ -1,5 +1,5 @@
 <% if (!friendship || isNaN(friendship)) { friendship = 0; } %>
 
 <p>
-  Friendship: <%= ['💜', '💙', '💚', '💛', '🧡', '❤️', '💖', '💓', '💗', '💕', '💞'].slice(0, Math.floor(friendship / 10) + 1).join("") %>
+  Friendship: <%= friendship < 10 ? '🤍' : ['💜', '💙', '💚', '💛', '🧡', '❤️', '💖', '💗', '💕', '💞'].slice(0, Math.floor(friendship / 10) + 1).join("") %>
 </p>

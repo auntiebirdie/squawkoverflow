@@ -19,12 +19,12 @@ const bucket = storage.bucket('birdypets');
 const birds = require('../../helpers/birds.js');
 
 var prefix = "urlocalcrypt1d";
-var id = "899900084928544788";
-var code = "soalea1";
-var url = "https://cdn.discordapp.com/attachments/863866986550001665/899900084551028746/South_American_Leaftosser_Guianan.png";
+var id = "901870235823517767";
+var code = "fruith1";
+var url = "https://cdn.discordapp.com/attachments/895043099154337833/901870235588657162/fruit_hunter_male.png";
 var credit = "Urlocalcrypt1d";
 var special = false;
-var version = "Guianan";
+var version = "Male";
 var label = "";
 
 (async () => {

@@ -15,21 +15,17 @@ module.exports = {
         image: `https://storage.googleapis.com/birdypets/${bird.order}/${bird.family}/${bird.scientificName.replace(/\s/, '%20')}/${birdypet.id}.${birdypet.filetype ? birdypet.filetype : "jpg"}`
       }
     } else {
-      return {
-        species: {
-          order: "Unknown",
-          family: "Unknown",
-          scientificName: "Unknown"
-        },
-        image: "/img/placeholder.jpeg"
-      }
+      return null;
     }
   },
   random: function(num = 1) {
     return Chance.pickset(birdypets, num).map((birdypet) => this.format(birdypet));
   },
-  fetch: function(id) {
+  get: function(id) {
     return this.format(birdypets.find((birdypet) => birdypet.id == id));
+  },
+  fetch: function(id) {
+    return this.get(id);
   },
   findBy: function(key, value) {
     var keys = key.split('.');

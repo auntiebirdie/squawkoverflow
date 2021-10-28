@@ -15,7 +15,7 @@ module.exports = {
     var data = require(`./public/data/${file}.json`);
 
     return Array.isArray(data) ? [...data] : Object.assign({}, data);
-  },
+  1},
   Chance: Chance,
   DB: require('./helpers/database.js'),
   Redis: require('./helpers/redis.js'),
