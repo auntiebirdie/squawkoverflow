@@ -1,5 +1,4 @@
 const Redis = require('./redis.js');
-const Security = require('./security.js');
 
 function Middleware() {}
 
@@ -18,7 +17,7 @@ Middleware.prototype.entityExists = async function(req, res, next) {
     let entity = await Redis.get(kind, req.params[kind]);
 
     if (!entity) {
-      return next(`enttiy ${kind}:${req.params[kind]} not found`);
+      return next(`entity ${kind}:${req.params[kind]} not found`);
     }
 
     switch (kind) {
@@ -45,15 +44,5 @@ Middleware.prototype.userOwnsEntity = function(req, res, next) {
 
   return next();
 };
-
-Middleware.prototype.decryptParams = function(req, res, next) {
-  for (let key in req.params) {
-    if (key.endsWith('ENC')) {
-      req.params[key.replace(/ENC$/, '')] = Security.decrypt(req.session.user, req.params[key]);
-    }
-  }
-
-  return next();
-}
 
 module.exports = new Middleware()

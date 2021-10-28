@@ -1,4 +1,5 @@
 const Members = require('../helpers/members.js');
+const Redis = require('../helpers/redis.js');
 
 const helpers = require('../helpers');
 const express = require('express');
@@ -14,7 +15,7 @@ router.get('/buddy/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middlewar
 
 router.get('/gift/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res) => {
   helpers.Redis.scan('member', {
-    'SORTBY' : ['username']
+    'SORTBY': ['username']
   }).then((members) => {
     res.render('birdypet/gift', {
       giftpet: {
@@ -22,9 +23,9 @@ router.get('/gift/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middleware
         birdypet: helpers.BirdyPets.fetch(req.entities['memberpet'].birdypetId)
       },
       members: members.filter((member) => {
-          member = Members.format(member);
+        member = Members.format(member);
 
-          return member.lastLogin && !member.settings.privacy?.includes('gifts');
+        return member.lastLogin && !member.settings.privacy?.includes('gifts');
       }),
       selectedMember: req.query.member ? req.query.member : null
     });
@@ -39,7 +40,9 @@ router.get('/release/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middlew
 });
 
 router.post('/release/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res, next) => {
-  helpers.Redis.delete('memberpet', req.entities['memberpet']._id).then(() => {
+  helpers.Redis.delete('memberpet', req.entities['memberpet']._id).then(async () => {
+    await Redis.push('cache', 'freebirds', req.entities['memberpet'].birdypetId);
+
     res.redirect('/aviary/' + req.session.user.id);
   });
 });
@@ -58,8 +61,8 @@ router.get('/:memberpet', helpers.Middleware.entityExists, async (req, res) => {
 
   if (req.session.user && req.session.user.id == member._id) {
     var allFlocks = await helpers.Redis.fetch('flock', {
-	    'FILTER': `@member:{${member._id}`,
-	    'SORTBY': ['displayOrder', 'ASC']
+      'FILTER': `@member:{${member._id}`,
+      'SORTBY': ['displayOrder', 'ASC']
     });
   }
 
@@ -80,7 +83,7 @@ router.get('/:memberpet', helpers.Middleware.entityExists, async (req, res) => {
     member: member,
     flocks: flocks || [],
     allFlocks: allFlocks || [],
-    otherVersions: helpers.BirdyPets.findBy("speciesCode", memberpet.speciesCode).filter( (birdypet) => !birdypet.special )
+    otherVersions: helpers.BirdyPets.findBy("speciesCode", memberpet.speciesCode).filter((birdypet) => !birdypet.special)
   });
 });
 

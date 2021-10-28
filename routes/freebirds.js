@@ -1,4 +1,5 @@
 const BirdyPets = require('../helpers/birdypets.js');
+const Cache = require('../helpers/cache.js');
 const Middleware = require('../helpers/middleware.js');
 const Redis = require('../helpers/redis.js');
 
@@ -7,9 +8,15 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', Middleware.isLoggedIn, async (req, res) => {
-  var freebirds = BirdyPets.random(20);
+  var freebirds = await Cache.get('freebirds');
+
+	if (freebirds.length > 20) {
+		freebirds = Chance.pickset(freebirds, 20);
+	}
 
   for (var i = 0, len = freebirds.length; i < len; i++) {
+    freebirds[i] = BirdyPets.get(freebirds[i]);
+	  
     await Redis.fetch('memberpet', {
       "FILTER": `@member:{${req.session.user.id}} @birdypetSpecies:{${freebirds[i].species.speciesCode}}`,
       "RETURN": ['birdypetId', 'species']

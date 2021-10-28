@@ -11,6 +11,7 @@ const express = require('express');
 const router = express.Router();
 
 router.use('/hatch', require('./api/hatch.js'));
+router.use('/release', require('./api/release.js'));
 
 router.get('/aviary/:member', Middleware.entityExists, (req, res) => {
   var page = --req.query.page * 25;
@@ -267,8 +268,11 @@ router.post('/flocks/:flock/:memberpet', Middleware.isLoggedIn, Middleware.entit
 
 router.post('/freebirds/:birdypet', Middleware.isLoggedIn, async (req, res) => {
   var birdypet = BirdyPets.get(req.params.birdypet);
+  var freebirds = await Redis.get('cache', 'freebirds');
 
-  if (birdypet) {
+  if (birdypet && freebirds.includes(birdypet.id)) {
+	  await Redis.pop('cache', 'freebirds', birdypet.id);
+
     Redis.create('memberpet', {
       birdypetId: birdypet.id,
       birdypetSpecies: birdypet.speciesCode,
@@ -278,7 +282,7 @@ router.post('/freebirds/:birdypet', Middleware.isLoggedIn, async (req, res) => {
       flocks: "NONE",
       hatchedAt: Date.now()
     }).then(async (id) => {
-	    var member = await Members.get(req.session.user.id);
+      var member = await Members.get(req.session.user.id);
 
       if (member.settings.general?.includes('updateWishlist')) {
         Redis.pop('wishlist', req.session.user.id, birdypet.species.speciesCode);
@@ -290,7 +294,7 @@ router.post('/freebirds/:birdypet', Middleware.isLoggedIn, async (req, res) => {
     });
   } else {
     res.json({
-      error: "That bird doesn't exist!"
+      error: "That bird has already found a home!"
     });
   }
 });

@@ -49,7 +49,18 @@
             });
             break;
           case "release":
-            window.location.href = '/hatch';
+            $.ajax({
+              cache: false,
+              url: `/api/release`,
+              data: {
+                birdypetId : birdypetId
+              },
+              dataType: "json",
+              method: "POST",
+              success: function(data) {
+                window.location.href = '/hatch';
+              }
+            });
             break;
         }
       }); 

@@ -6,7 +6,7 @@ function Database() {
   let databases = {
     "MEMBERPETS": ["memberpet", "flock"],
     "MEMBERS": ["member", "wishlist"],
-    "FREEBIRDS": ["freebird"]
+    "CACHE": ["cache"]
   };
 
   this.databases = {};
@@ -15,7 +15,8 @@ function Database() {
     "flock": "h",
     "member": "h",
     "wishlist": "s",
-    "freebird": "h"
+    "freebird": "h",
+    "cache" : "s"
   };
 
   for (let DB in databases) {
