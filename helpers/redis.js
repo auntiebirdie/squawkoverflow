@@ -6,7 +6,7 @@ function Database() {
   let databases = {
     "MEMBERPETS": ["memberpet", "flock"],
     "MEMBERS": ["member", "wishlist"],
-    "CACHE": ["cache"]
+    "CACHE": ["cache", "aviaryCache", "flockCache", "aviaryTotals", "flockTotals", "eggTotals"]
   };
 
   this.databases = {};
@@ -15,7 +15,6 @@ function Database() {
     "flock": "h",
     "member": "h",
     "wishlist": "s",
-    "freebird": "h",
     "cache" : "s"
   };
 
@@ -36,7 +35,12 @@ Database.prototype.escape = function (text) {
 Database.prototype.get = function(kind, id, field = "") {
   return new Promise((resolve, reject) => {
     switch (this.dataTypes[kind]) {
-      case "h":
+      case "s":
+        this.databases[kind].smembers(`${kind}:${id}`, (err, result) => {
+          resolve(result);
+        });
+        break;
+      default:
         if (field != "") {
           this.databases[kind].hget(`${kind}:${id}`, field, (err, result) => {
             resolve(result);
@@ -55,12 +59,6 @@ Database.prototype.get = function(kind, id, field = "") {
             });
           });
         }
-        break;
-      case "s":
-        this.databases[kind].smembers(`${kind}:${id}`, (err, result) => {
-          resolve(result);
-        });
-        break;
     }
   });
 }
@@ -113,7 +111,10 @@ Database.prototype.sendCommand = function(kind, command, args) {
 
 Database.prototype.fetch = function(kind, args = {}) {
   return new Promise(async (resolve, reject) => {
-    var output = [];
+    var output = {
+	    count: 0,
+	    results: []
+    };
     var query = [kind];
 
     if (args.FILTER) {
@@ -149,8 +150,9 @@ Database.prototype.fetch = function(kind, args = {}) {
             console.error(err);
             noResultsLeft = true;
           } else {
+		  output.count = response[0];
+
             if (args.COUNT) {
-              output = response[0];
               noResultsLeft = true;
             } else {
               for (var i = 1, len = response.length; i < len; i++) {
@@ -164,13 +166,13 @@ Database.prototype.fetch = function(kind, args = {}) {
                   data[rawData[l]] = rawData[++l];
                 }
 
-                output.push(data);
+                output.results.push(data);
               }
 
-              if (args.LIMIT || output.length >= response[0] || response.length <= 1) {
+              if (args.LIMIT || output.results.length >= response[0] || response.length <= 1) {
                 noResultsLeft = true;
               } else {
-                query[query.length - 2] = output.length;
+                query[query.length - 2] = output.results.length;
               }
             }
           }

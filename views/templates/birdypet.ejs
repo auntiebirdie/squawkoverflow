@@ -1,4 +1,4 @@
-<div class="col-6 col-md-4 d-flex align-items-stretch">
+<div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
   <div class="w-100 pb-4">
     <div class="h-100 card <% if (locals.loggedInUser && locals.page && page == 'flock' && loggedInUser.id == member._id) { %>${bird.flocks.includes('<%= flock._id %>') ? 'border-chartreuse' : 'border-secondary border-dashed'}<% } %>">
       <% if (locals.page && page == 'gift') { %>
@@ -18,7 +18,7 @@
       </div>
       <div class="card-body">
         <h3 class="text-center"><a href="/birdypet/${bird._id}">${bird.nickname ? bird.nickname : bird.species.commonName}</a></h3> 
-        <h6 class="text-center">${bird.nickname ? bird.species.commonName : (`${bird.version}&nbsp;${bird.label}`)}</h6>
+        <h6 class="text-center">${bird.nickname ? bird.species.commonName : bird.label}</h6>
       </div>
     </div>
   </div>

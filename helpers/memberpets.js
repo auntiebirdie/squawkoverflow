@@ -1,9 +1,9 @@
-var Redis = require('./redis.js');
-var BirdyPets = require('./birdypets.js');
+const BirdyPets = require('./birdypets.js');
+const Redis = require('./redis.js');
 
 module.exports = {
   format: function(memberpet) {
-    let birdypet = BirdyPets.fetch(memberpet.birdypetId);
+    let birdypet = BirdyPets.get(memberpet.birdypetId);
 
     return {
       ...memberpet,
@@ -15,7 +15,7 @@ module.exports = {
   fetch: function(args) {
     return new Promise((resolve, reject) => {
       Redis.fetch('memberpet', args).then((memberpets) => {
-        resolve(memberpets.map((memberpet) => this.format(memberpet)));
+        resolve(memberpets.results.map((memberpet) => this.format(memberpet)));
       });
     });
   },

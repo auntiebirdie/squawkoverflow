@@ -25,10 +25,10 @@ router.get('/:adjective', helpers.Middleware.isLoggedIn, async (req, res) => {
       await helpers.Redis.fetch('memberpet', {
         "FILTER": `@member:{${req.session.user.id}} @birdypetSpecies:{${birdypet.speciesCode}}`,
         "RETURN": ['birdypetId', 'species']
-      }).then((results) => {
-        for (var i = 0, len = results.length; i < len; i++) {
-          userpets.push(results[i].birdypetId);
-          userpets.push(results[i].species);
+      }).then((response) => {
+        for (var i = 0, len = response.results.length; i < len; i++) {
+          userpets.push(response.results[i].birdypetId);
+          userpets.push(response.results[i].species);
         }
       });
 

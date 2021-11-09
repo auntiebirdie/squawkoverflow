@@ -24,7 +24,8 @@ router.get('/:member', helpers.Middleware.entityExists, async (req, res, next) =
   res.render('wishlist/index', {
     page: 'wishlist',
     member: req.entities['member'],
-    families: [...families].map((family) => allFamilies.find((a) => a.value == family)).sort((a, b) => a.value.localeCompare(b.value))
+    families: [...families].map((family) => allFamilies.find((a) => a.value == family)).sort((a, b) => a.value.localeCompare(b.value)),
+    currentPage : (req.query.page || 1) * 1
   });
 });
 

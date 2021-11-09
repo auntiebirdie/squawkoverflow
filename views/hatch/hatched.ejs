@@ -3,19 +3,21 @@
     <%- include('../partials/page-title.ejs', { title : `You hatch the ${adjective} egg to discover...`}) %>
 
     <div class="row">
-      <div class="col-md-8 text-center">
-        <div class="lazy birdypet full border border-1 bg-white"
-             data-bg="<%= birdypet.image %>"
-        ></div>
+      <div class="col-md-8 text-center mb-3">
+        <img src="<%= birdypet.image %>" class="birdypet full border border-1 bg-white">
       </div>
-      <div class="col-md-4">
+      <div class="col-md-4 text-center text-md-start">
         <h3>
-          <%= birdypet.species.commonName %>
+          <a href="/birdypedia/bird/<%= birdypet.species.speciesCode %>" target="_blank"><%= birdypet.species.commonName %></a>
         </h3>
         <h6>
-          <%= birdypet.version %> <%= birdypet.label %>
+          <%= birdypet.label %>
         </h6>
-        <h6><%= wishlisted ? "❤️" : "" %><%= userpets.includes(birdypet.species.commonName) ? "✔️" : "" %><%= userpets.includes(birdypet.id) ? "✔️" : "" %></h6>
+        <h6>
+          <%= wishlisted ? "❤️" : "" %>
+          <%- userpets.includes(birdypet.species.commonName) ? "<div class=\"small\"><span class=\"checkmark\"></span> <em>You have this species</em></div>" : "" %>
+          <%- userpets.includes(birdypet.id) ? "<div class=\"small\"><span class=\"checkmark\"></span> <em>You have this variant</em></div>" : "" %>
+        </h6>
 
         <div id="actions" data-birdypet="<%= birdypet.id %>" class="mt-5">
           <button data-action="keep" class="btn btn-lg btn-primary mb-3">❤️&nbsp;Keep</button>

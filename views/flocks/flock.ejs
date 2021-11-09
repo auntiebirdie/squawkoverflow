@@ -5,13 +5,11 @@
           breadcrumb: {
             text: `${member.username}'s Flock`,
             url: `/members/${member._id}`,
-            prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member._id}" onerror="missingMemberAvatar(this)">`
+            prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member._id}" onerror="missingMemberAvatar(this)"> `
           }
     }) %>
 
     <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies: true, sortFields : [{ "value" : "hatchedAt-DESC", "label" : "Hatch Date (Newest)" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
-
-    <%- include('../partials/spacer.ejs') %>
 
     <div id="lazyLoader" class="row" data-endpoint="/api/flocks/<%= flock._id %>"></div>
 

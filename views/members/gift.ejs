@@ -4,8 +4,6 @@
 
     <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies : true, sortFields : [{ "value" : "hatchedAt-DESC", "label" : "Hatch Date (Newest)" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
 
-    <%- include('../partials/spacer.ejs') %>
-
     <div id="lazyLoader" class="row" data-endpoint="/api/gift/<%= member._id %>"></div>
 
 <%- include('../scripts/lazyloader.ejs', { template: '../templates/gift.ejs' }) %>

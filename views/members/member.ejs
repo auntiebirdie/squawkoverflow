@@ -74,6 +74,8 @@
     <h4 class="mb-5"><%= member.flock.name %></h4>
 
     <div id="lazyLoader" class="row" data-endpoint="/api/flocks/<%= member.flock._id %>"></div>
+
+    <%- include('../scripts/lazyloader.ejs') %>
   <% } %>
 
   <script type="text/javascript">
@@ -103,7 +105,5 @@
         });
     });
   </script>
-
-  <%- include('../scripts/lazyloader.ejs') %>
 
 <%- include('../footer.ejs') %>

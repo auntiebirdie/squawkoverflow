@@ -11,18 +11,32 @@ a:hover {
 	color: #5f6a10;
 }
 
-.bg-primary, .btn-primary {
+.bg-primary, .btn-primary,
+.pagination .page-link {
 	background-color: #5f6a10 !important;
 }
 
-.btn-primary, .btn-outline-primary {
+.btn-primary, .btn-outline-primary,
+.pagination .page-link {
 	border-color: #5f6a10 !important;
 }
 
 .btn-primary:hover, .btn-outline-primary:hover,
-.btn-check:active+.btn-outline-primary, .btn-check:checked+.btn-outline-primary, .btn-outline-primary.active, .btn-outline-primary:active {
+.btn-check:active+.btn-outline-primary, .btn-check:checked+.btn-outline-primary, .btn-outline-primary.active, .btn-outline-primary:active,
+.pagination .page-link:hover, .pagination .page-link:active,
+.page-item.active .page-link {
 	background-color: #DDF600 !important;
 	color: #5f6a10;
+}
+
+.pagination .page-link {
+	color: #ffffff;
+	cursor: pointer;
+}
+
+.page-item.disabled .page-link {
+	color: #1c2005;
+	font-weight: bold;
 }
 
 .btn-outline-primary {
@@ -71,6 +85,7 @@ a:hover {
 }
 
 .birdypet, .birdypets,
+.birdypet.mini,
 .form-control, .form-check-input, .form-select {
 	filter: brightness(.80);
 }
@@ -86,14 +101,15 @@ a:hover {
 	background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%235f6a10'/%3e%3c/svg%3e");
 }
 
-.birdypet.unhatched {
+.birdypet.unhatched,
+.birdypet.mini.unhatched {
         filter: saturate(0%) brightness(.80);
 }
 
-.birdypet.mini {
+.birdypets .birdypet.mini {
 	filter: none;
 }
 
-.birdypet.mini.unhatched {
+.birdypets .birdypet.mini.unhatched {
 	filter: saturate(0%);
 }

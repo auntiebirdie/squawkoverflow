@@ -3,34 +3,37 @@
     <%- include('../partials/page-title.ejs', { title : bird.commonName, breadcrumb : "Birdypedia" }) %>
 
     <div class="row">
-      <div class="col-md-8 pt-3">
+      <div class="col-md-8 mb-3">
         <div class="text-center">
-          <img id="birdy" class="birdypet full border border-1 <%= hatched.includes(birdypets[0].id) ? "hatched" : "unhatched" %>" src="<%= birdypets[0].image %>">
+          <div class="d-inline-block position-relative">
+            <img id="birdy" class="bg-white birdypet full border border-1 <%= hatched.includes(birdypets[0].id) ? "hatched" : "unhatched" %>" src="<%= birdypets[0].image %>">
+            <a class="attribution bg-light" href="<%= birdypets[0].source %>" target="_blank">&copy; <%= birdypets[0].credit %></a>
+          </div>
         </div>
       </div>
-      <div class="col-md-4 pt-3 border-md-start text-center text-md-start">
-        <h6>Scientific Name</h6>
+      <div class="col-md-4 border-md-start text-center text-md-start">
+        <h5>Scientific Name</h5>
         <p><%= bird.scientificName %></p>
 
-        <h6>Family</h6>
-        <p><a href="/birdypedia?family=<%= bird.family.toLowerCase() %>"><%= bird.family %></a></p>
+        <h5 class="pt-3">Family</h5>
+        <p><a href="/birdypedia?family=<%= bird.family %>"><%= bird.family %></a></p>
 
-        <h6>Order</h6>
+        <h5 class="pt-3">Order</h5>
         <p><%= bird.order %></p>
 
         <% if (birdypets.length > 1) { %>
-        <h6>Variants</h6>
+        <h5 class="pt-3">Variants</h5>
           <div id="birdDisplay">
           <% for (var birdypet of birdypets) { %>
             <p>
-              <div class="birdypet mini <%= hatched.includes(birdypet.id) ? "hatched" : "unhatched" %>" data-src="<%= birdypet.image %>" style="background-image: url('<%= birdypet.image %>');"></div>
-              <%= birdypet.version %> <%= birdypet.label %> <%= hatched.includes(birdypet.id) ? "✔️" : "" %>
+              <div class="bg-white border border-1 birdypet mini <%= hatched.includes(birdypet.id) ? "hatched" : "unhatched" %>" data-id="<%= `${birdypet.prefix}-${birdypet.alias}` %>" data-image="<%= birdypet.image %>" data-credit="<%= birdypet.credit %>" data-source="<%= birdypet.source %>" style="background-image: url('<%= birdypet.image %>');"></div>
+              <%= birdypet.label %> <%- hatched.includes(birdypet.id) ? "<span class=\"checkmark\"></span>" : "" %>
             </p>
           <% } %>
           </div>
         <% } %>
 
-        <h6>Hatches From</h6>
+        <h5 class="pt-3">Hatches From</h5>
         <p>
         <% for (var adjective of bird.adjectives.sort()) { %>
             <%= adjective %> eggs<br>
@@ -73,11 +76,21 @@
   <% } %>
 
   <script type="text/javascript">
+  var urlParams = new URLSearchParams(window.location.search);
+
   $('#birdDisplay').on('click', '.birdypet.mini', function (event) {
     var variant = event.target;
     var full = document.getElementById('birdy');
+    var attribution = document.querySelector('.attribution');
 
-    full.src = variant.getAttribute('data-src');
+    full.src = variant.getAttribute('data-image');
+
+    attribution.href = variant.getAttribute('data-source');
+    attribution.innerHTML = `&copy; ${variant.getAttribute('data-credit')}`;
+
+    urlParams.set('variant', variant.getAttribute('data-id'));
+
+    window.history.replaceState(null, '', window.location.pathname + '?' + urlParams.toString());
 
     if (variant.className.includes('unhatched')) {
       $(full).removeClass('hatched').addClass('unhatched');

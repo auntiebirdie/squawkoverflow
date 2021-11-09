@@ -11,11 +11,13 @@
 
     <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies : true } ) %>
 
-    <%- include('../partials/spacer.ejs') %>
+    <%- include('../partials/pagination.ejs') %>
 
     <div id="lazyLoader" class="row" data-endpoint="/api/wishlist/<%= member._id %>"></div>
 
-<%- include('../scripts/lazyloader.ejs', { template: '../templates/wishlist.ejs' }) %>
+    <%- include('../partials/pagination.ejs') %>
+
+    <%- include('../scripts/lazyloader.ejs', { template: '../templates/wishlist.ejs', paginate: currentPage }) %>
 
 <script type="text/javascript">
 

@@ -4,10 +4,10 @@
 
     <div class="row">
       <div class="col-md-6">
-        <h4><%= userpet.nickname? `"${userpet.nickname}" (${birdypet.species.commonName})` : `${birdypet.species.commonName}   ${birdypet.version} ${birdypet.label}` %></h4>
+        <h4><%= userpet.nickname? `"${userpet.nickname}" (${birdypet.species.commonName})` : `${birdypet.species.commonName}   ${birdypet.label}` %></h4>
 
         <div class="card mt-4 mb-4">
-          <div class="birdypet" style="background-image: url('<%= birdypet.image %>');"></div>
+          <img class="birdypet full border border-1 border-secondary" src="<%= birdypet.image %>">
         </div>
       </div>
       <div class="col-md-6">

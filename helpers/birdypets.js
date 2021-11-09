@@ -19,7 +19,7 @@ module.exports = {
     }
   },
   random: function(num = 1) {
-    return Chance.pickset(birdypets, num).map((birdypet) => this.format(birdypet));
+    return Chance.pickset(birdypets.filter( (birdypet) => !birdypet.special ), num).map((birdypet) => this.format(birdypet));
   },
   get: function(id) {
     return this.format(birdypets.find((birdypet) => birdypet.id == id));
@@ -31,11 +31,12 @@ module.exports = {
     var keys = key.split('.');
 
     return birdypets.filter((birdypet) => {
-      let tmp = keys.length > 1 ? birdypet[keys[0]][keys[1]] : birdypet[key];
+      let tmp = `${keys.length > 1 ? birdypet[keys[0]][keys[1]] : birdypet[key]}`;
 
-      if (tmp) {
-
-        return Array.isArray(tmp) ? tmp.map((val) => val.toLowerCase()).includes(value) : tmp.toLowerCase() == value;
+      if (key == 'prefix-alias') {
+        return `${birdypet.prefix}-${birdypet.alias}` == value;
+      } else if (tmp != "undefined") {
+        return Array.isArray(tmp) ? tmp.map((val) => val.toLowerCase()).includes(value.toLowerCase()) : tmp.toLowerCase() == value.toLowerCase();
       } else {
         return false;
       }

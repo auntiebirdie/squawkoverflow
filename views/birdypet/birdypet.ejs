@@ -3,17 +3,17 @@
     <%- include('../partials/page-title.ejs', {
           title : memberpet.nickname ? memberpet.nickname : memberpet.species.commonName,
           breadcrumb: {
-            text: `${member.username}'s`,
+            text: `${member.username}`,
             url: `/members/${member._id}`,
-            prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member._id}" onerror="missingMemberAvatar(this)">`
+            prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member._id}" onerror="missingMemberAvatar(this)"> `
           }
     }) %>
 
     <div class="row">
       <div class="col-md-8 pt-3">
-        <div class="lazy birdypet full"
-             data-bg="<%= memberpet.image %>"
-        ></div>
+        <div class="text-center">
+          <img id="birdy" src="<%= memberpet.image %>" class="birdypet full">
+        </div>
 
         <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
           <%- include('../partials/spacer.ejs'); %>
@@ -31,7 +31,6 @@
               <select name="variant" class="form-select">
                 <% for (let otherVersion of otherVersions) { %>
                 <option value="<%= otherVersion.id %>" <%= otherVersion.id == memberpet.birdypetId ? "selected" : "" %>>
-                  <%= otherVersion.version %>
                   <%= otherVersion.label %>
                   <%= otherVersion.id == memberpet.birdypetId ? "[current]" : "" %>
                 </option>
@@ -96,14 +95,14 @@
         <p><%= memberpet.species.scientificName %></p>
 
         <h6>Family</h6>
-        <p><a href="/birdypedia?family=<%= memberpet.species.family.toLowerCase() %>"><%= memberpet.species.family %></a></p>
+        <p><a href="/birdypedia?family=<%= memberpet.species.family %>"><%= memberpet.species.family %></a></p>
 
         <h6>Order</h6>
         <p><%= memberpet.species.order %></p>
 
-        <% if (memberpet.version || memberpet.label) { %>
+        <% if (memberpet.label) { %>
         <h6>Variant</h6>
-        <p><%= memberpet.version + ' ' + memberpet.label %></p>
+        <p><%= memberpet.label %></p>
         <% } %>
 
         <h6>Hatch Date</h6>

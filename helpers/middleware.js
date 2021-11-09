@@ -38,7 +38,7 @@ Middleware.prototype.userOwnsEntity = function(req, res, next) {
     let entity = req.entities[kind];
 
     if (entity.member != req.session.user.id) {
-      return next(`entity ${kind}:${entity[Datastore.KEY].id} does not belong to user ${req.session.user.id}`);
+      return next(`entity ${kind}:${entity._id} does not belong to user ${req.session.user.id}`);
     }
   }
 

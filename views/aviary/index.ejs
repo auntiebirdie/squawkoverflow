@@ -1,20 +1,21 @@
 <%- include('../header.ejs') %>
 
     <%- include('../partials/page-title.ejs', {
-          title : {
-            url: `/members/${member._id}`,
-            prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member._id}" onerror="missingMemberAvatar(this)"> `,
+          title: {
             text: member.username,
+            url: `/members/${member._id}`,
             append: "'s Aviary"
           }
     }) %>
 
     <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies : true, sortFields : [{ "value" : "hatchedAt-DESC", "label" : "Hatch Date (Newest)" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
 
-    <%- include('../partials/spacer.ejs') %>
+    <%- include('../partials/pagination.ejs') %>
 
     <div id="lazyLoader" class="row" data-endpoint="/api/aviary/<%= member._id %>"></div>
 
-<%- include('../scripts/lazyloader.ejs') %>
+    <%- include('../partials/pagination.ejs') %>
+
+<%- include('../scripts/lazyloader.ejs', { paginate : currentPage }) %>
 
 <%- include('../footer.ejs') %>

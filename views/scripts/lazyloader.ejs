@@ -4,7 +4,9 @@
   var container = document.getElementById('lazyLoader');
   var endpoint = container.getAttribute('data-endpoint');
   var search = document.getElementById('search');
-  var page = 1;
+  var families = document.getElementById('family');
+  var currentPage = <%= locals.paginate || 1 %>;
+  var totalPages = 0;
   var timeout;
 
   function template (bird) {
@@ -29,9 +31,19 @@
     });
   });
 
-  function resetResults () {
+ <% if (locals.paginate) { %>
+  $('.pagination').on('click', '.page-link', function (e) {
+    resetResults(null, e.currentTarget.innerHTML);
+  });
+ <% } %>
+
+  function resetResults (event, page = 1) {
     container.innerHTML = "";
-    page = 1;
+   <% if (locals.paginate) { %>
+    document.querySelectorAll('.pagination')[1].innerHTML = '';
+   <% } %>
+    currentPage = page * 1;
+    totalPages = 1;
     updateResults();
   }
 
@@ -42,6 +54,10 @@
     var flock = $('#flock option:selected');
 
     <% if (!locals.skipParams) { %>
+      <% if (locals.paginate) { %>
+        urlParams.set('page', currentPage);
+      <% } %>
+
     $('select', '#controls').each( (i, select) => {
       var value = select.options[select.options.selectedIndex].value;
 
@@ -59,34 +75,67 @@
     $.ajax({
       url: endpoint,
       data: {
+        page: currentPage * 1,
         sort: sort.val() && sort.val().includes('-') ? [sort.val().split('-').shift(), sort.val().split('-').pop()] : [sort.val()],
-        page: page++,
         family : $('#family').is(':visible') ? $('#family').val() : "",
         flock : flock && !flock.attr('data-special') ? flock.val() : "",
-        adjectives : "<%= locals.egg ? egg.name : "" %>",
-        search : $('#search').val()
+        search : $('#search').val(),
+        <%- locals.egg ? `adjectives : "${egg.name}",` : "" %>
       },
       method: "GET",
       dataType: "json",
       success: function (data) {
-        if (data.length > 0 ) {
-          for (var i = 0, len = data.length; i < len; i++) {
-            container.innerHTML += template(data[i]);
+        totalPages = data.totalPages * 1;
+
+        if (data.results.length > 0 ) {
+          for (var result of data.results) {
+            container.innerHTML += template(result);
           }
+
+         <% if (locals.families) { %>
+          if (data.families) {
+            var sortedFamilies = {
+              active: [],
+              disabled: []
+            };
+
+            <%- JSON.stringify(families) %>.forEach( function (family) {
+              sortedFamilies[data.families.includes(family.value) ? 'active' : 'disabled'].push(family.value);
+            });
+
+            sortedFamilies = [...sortedFamilies.active, ...sortedFamilies.disabled];
+
+            for (let i = 0, len = sortedFamilies.length; i < len; i++) {
+              let option = families.querySelector(`option[value="${sortedFamilies[i]}"]`);
+              let sibling = families.querySelector(`option[value="%{sortedFamiles[i > 0 ? i - 1 : i + 1]}"]`);
+
+              option.disabled = !data.families.includes(option.value);
+
+              families.insertBefore(option, sibling);
+            };
+          }
+         <% } %>
 
           lazyLoadInstance.update();
 
+         <% if (locals.paginate) { %>
+           updatePagination();
+           container.classList.remove('loadingData');
+         <% } else { %>
           var lastElement = $('#lazyLoader > div').last();
 
           if (lastElement.is(':appeared')) {
+            currentPage++;
             updateResults();
           }
           else {
             container.classList.remove('loadingData');
             lastElement.appear().one('appear', function (event) {
+              currentPage++;
               updateResults();
             });
           }
+         <% } %>
         }
         else {
           container.classList.remove('loadingData');
@@ -97,5 +146,34 @@
         }
       }
     });
+  }
+
+  function updatePagination () {
+    var paginations = document.querySelectorAll('.pagination');
+    var content = "";
+
+    if (currentPage > 4) {
+      content += `<li class="page-item"><a class="page-link">1</a></li>`;
+    }
+
+    if (currentPage > 5) {
+      content += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+    }
+
+    for (let i = Math.max(1, currentPage - 3), len = Math.min(totalPages, currentPage + 3); i <= len; i++) {
+      content += `<li class="page-item${currentPage == i ? ' active' : ''}"><a class="page-link">${i}</a></li>`;
+    }
+
+    if (currentPage < totalPages - 4) {
+      content += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+    }
+
+    if (currentPage < totalPages - 3) {
+      content += `<li class="page-item"><a class="page-link">${totalPages}</a></li>`;
+    }
+
+    for (let pagination of paginations) {
+      pagination.innerHTML = content;
+    }
   }
 </script>

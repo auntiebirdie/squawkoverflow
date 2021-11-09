@@ -21,9 +21,7 @@ router.post('/', Middleware.isLoggedIn, async (req, res) => {
   }).then(async (id) => {
     var member = await Members.get(req.session.user.id);
 
-    if (member.settings.general?.includes('updateWishlist')) {
-      Redis.pop('wishlist', req.session.user.id, birdypet.species.speciesCode);
-    }
+    Members.addBirdyPet(req.session.user.id, birdypet.id);
 
     if (!member.settings.privacy && !member.settings.privacy?.includes('activity')) {
       Webhook.send('egg-hatchery', {

@@ -2,9 +2,13 @@
 
   <%- include('../partials/page-title.ejs', { title : { text : `${egg.name} Egg`, prepend : `<img class="me-2" style="height: 4rem;" src="/img/eggs/${egg.icon ? egg.name : 'default'}.png"><span class="text-capitalize">`, append : '</span>' }, breadcrumb : { text : "Birdypedia Egg Guide", url: '/birdypedia/eggs' } }) %>
 
+  <%- include('../partials/pagination.ejs') %>
+
   <div id="lazyLoader" class="row" data-endpoint="/api/birdypedia"></div>
 
-  <%- include('../scripts/lazyloader.ejs', { template: '../templates/birdypedia.ejs', skipParams : true }) %>
+  <%- include('../partials/pagination.ejs') %>
+
+  <%- include('../scripts/lazyloader.ejs', { template: '../templates/birdypedia.ejs', paginate: currentPage, skipParams : true }) %>
 
   <script type="text/javascript">
     $('#lazyLoader').on('click', '.wishlist-heart', function (event) {

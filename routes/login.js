@@ -1,3 +1,5 @@
+const Members = require('../helpers/members.js');
+
 const helpers = require('../helpers');
 const secrets = require('../secrets.json');
 const express = require('express');
@@ -12,18 +14,17 @@ router.get('/', (req, res) => {
       if (code.used) {
         res.redirect('/error');
       } else {
-        helpers.Redis.get('member', code.member).then((member) => {
+        Members.get(code.member).then((member) => {
           req.session.user = {
             id: member._id,
             username: member.username,
             avatar: member.avatar,
-	    theme: member.theme || "default"
+            theme: member.settings.theme || "default"
           };
 
           helpers.DB.set('KonamiCode', req.query.konami * 1, {
             used: true
           }).then(() => {
-
             res.redirect('/');
           });
         });
@@ -40,38 +41,28 @@ router.get('/', (req, res) => {
     }).then((response) => {
       if (response.access_token) {
         oauth.getUser(response.access_token).then((user) => {
-          req.session.user = {
-            id: user.id,
-            username: user.username,
-            avatar: user.avatar,
-	    theme: "default"
-          };
+          Members.get(user.id).then((member) => {
+            var data = {
+              id: user.id,
+              username: member ? member.username : user.username,
+              joinedAt: member ? member.joinedAt : Date.now(),
+              lastLogin: Date.now()
+            };
 
-          helpers.Redis.get('member', user.id).then((member) => {
-            if (member) {
-              req.session.user.username = member.username;
-              req.session.user.avatar = member.avatar;
-	      req.session.user.theme = member.theme || "default";
-
-              helpers.Redis.set('member', user.id, {
-                'lastLogin': Date.now()
-              }).then(() => {
-                res.redirect('/');
-              });
-            } else {
-              helpers.Redis.save('member', user.id, {
-                username: user.username,
-                avatar: user.avatar,
-                joinedAt: Date.now(),
-                lastLogin: Date.now()
-              }).then(() => {
-                res.redirect('/');
-              });
+            req.session.user = {
+              id: data.id,
+		    avatar: member.avatar,
+              username: data.username,
+              theme: member?.settings?.theme || "default"
             }
+
+            helpers.Redis.set('member', user.id, data).then(() => {
+              res.redirect('/');
+            });
           }).catch((err) => {
             console.error(err);
             helpers.Redis.set('member', user.id, {
-              'lastLogin': Date.now()
+              lastLogin: Date.now()
             }).then(() => {
               res.redirect('/');
             });

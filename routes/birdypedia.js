@@ -1,3 +1,4 @@
+const Cache = require('../helpers/cache.js');
 const Members = require('../helpers/members.js');
 
 const helpers = require('../helpers');
@@ -9,22 +10,20 @@ router.get('/', async (req, res) => {
 
   res.render('birdypedia', {
     families: families.sort((a, b) => a.label.localeCompare(b.label)),
+	  currentPage : (req.query.page || 1) * 1
   });
 });
 
 router.get('/eggs', async (req, res) => {
   var eggs = helpers.data('eggs');
 
-  var memberpets = req.session.user ? await helpers.MemberPets.fetch({
-    'FILTER': `@member:{${req.session.user.id}}`,
-    'RETURN': ['birdypetSpecies']
-  }).then((memberpets) => memberpets.map((memberpet) => memberpet.birdypetSpecies)) : [];
+  var eggTotals = req.session.user ? await Cache.get('eggTotals', req.session.user.id) : {};
 
   for (var egg in eggs) {
     let tmp = eggs[egg].species;
 
     if (tmp) {
-      eggs[egg] = [tmp.filter((bird) => memberpets.includes(bird)).length, tmp.length];
+      eggs[egg] = [eggTotals[egg], tmp.length];
     } else {
       console.log(eggs[egg]);
       delete eggs[egg];
@@ -43,7 +42,8 @@ router.get('/eggs/:egg', async (req, res) => {
     egg.name = req.params.egg;
 
     res.render('birdypedia/egg', {
-      egg: egg
+      egg: egg,
+	    currentPage : (req.query.page || 1) * 1
     });
   } else {
     res.redirect('/error');
@@ -52,6 +52,7 @@ router.get('/eggs/:egg', async (req, res) => {
 
 router.get('/bird/:code', async (req, res) => {
   var bird = helpers.Birds.findBy("speciesCode", req.params.code);
+  var variant = req.query.variant;
 
   if (bird) {
     var memberpets = await helpers.MemberPets.fetch({
@@ -64,8 +65,13 @@ router.get('/bird/:code', async (req, res) => {
     var birdypets = helpers.BirdyPets.findBy('speciesCode', bird.speciesCode)
       .filter((birdypet) => !birdypet.special)
       .sort(function(a, b) {
-        var aIndex = hatched.indexOf(a.id);
-        var bIndex = hatched.indexOf(b.id);
+        if (variant) {
+          var aIndex = `${a.prefix}-${a.alias}` == variant ? 1 : -1;
+          var bIndex = `${b.prefix}-${b.alias}` == variant ? 1 : -1;
+        } else {
+          var aIndex = hatched.indexOf(a.id);
+          var bIndex = hatched.indexOf(b.id);
+        }
 
         return (aIndex > -1 ? aIndex : Infinity) - (bIndex > -1 ? bIndex : Infinity);
       });

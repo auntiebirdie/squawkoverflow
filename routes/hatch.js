@@ -22,7 +22,7 @@ router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
 
   if (timeUntil == 0) {
     var eggs = helpers.data('eggs');
-    var keys = helpers.Chance.pickset(Object.keys(eggs), 5);
+    var keys = helpers.Chance.pickset(Object.keys(eggs), 6);
 
     eggs = keys.map((egg) => {
       return {

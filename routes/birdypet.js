@@ -41,6 +41,8 @@ router.get('/release/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middlew
 
 router.post('/release/:memberpet', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, (req, res, next) => {
   helpers.Redis.delete('memberpet', req.entities['memberpet']._id).then(async () => {
+    Members.removeBirdyPet(req.session.user.id, req.entities['memberpet'].birdypetId);
+
     await Redis.push('cache', 'freebirds', req.entities['memberpet'].birdypetId);
 
     res.redirect('/aviary/' + req.session.user.id);
@@ -82,7 +84,7 @@ router.get('/:memberpet', helpers.Middleware.entityExists, async (req, res) => {
     memberpet: memberpet,
     member: member,
     flocks: flocks || [],
-    allFlocks: allFlocks || [],
+    allFlocks: allFlocks?.results || [],
     otherVersions: helpers.BirdyPets.findBy("speciesCode", memberpet.speciesCode).filter((birdypet) => !birdypet.special)
   });
 });

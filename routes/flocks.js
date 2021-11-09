@@ -10,7 +10,7 @@ router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
 
   var displayOrder = 0;
 
-  for (var flock of flocks) {
+  for (var flock of flocks.results) {
     if (!flock.displayOrder || flock.displayOrder == '0') {
       displayOrder += 100;
 
@@ -26,7 +26,7 @@ router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
 
   res.render('flocks/index', {
     member: await helpers.Redis.get('member', req.session.user.id),
-    flocks: flocks
+    flocks: flocks.results
   });
 });
 
