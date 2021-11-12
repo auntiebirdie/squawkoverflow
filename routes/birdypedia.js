@@ -17,13 +17,13 @@ router.get('/', async (req, res) => {
 router.get('/eggs', async (req, res) => {
   var eggs = helpers.data('eggs');
 
-  var eggTotals = req.session.user ? await Cache.get('eggTotals', req.session.user.id) : {};
-
   for (var egg in eggs) {
     let tmp = eggs[egg].species;
 
     if (tmp) {
-      eggs[egg] = [eggTotals[egg], tmp.length];
+      let cached = req.session.user ? await Cache.get(`eggs-${egg}`, req.session.user.id, "s") : [];
+
+      eggs[egg] = [(cached.length || 0), tmp.length];
     } else {
       console.log(eggs[egg]);
       delete eggs[egg];

@@ -30,7 +30,7 @@
   <body class="bg-dark">
     <main>
       <div id="sidebarNav" class="col-2 col-md-3 col-lg-2 position-relative h-100 bg-dark" style="z-index: 9999;">
-	<button id="sidebarToggle" class="d-block d-sm-none btn btn-dark rounded-0 position-absolute" data-toggle="expand" style="right: 0; margin-right: -25px;">&rsaquo;</button>
+	<button id="sidebarToggle" class="d-block d-sm-none btn btn-outline bg-dark text-secondary rounded-0 position-absolute" data-toggle="expand" style="right: 0; margin-right: -25px;">&rsaquo;</button>
         <a href="/" class="align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
           <img src="/img/SQUAWK.png" class="d-none d-md-block p-3" alt="SQUAWK logo">
           <h1 class="d-block d-md-none fs-5 m-0 mt-4 text-center"><span class="text-chartreuse">SQ<span class="d-none d-sm-inline">UAWK</span></span>o</h1>
@@ -75,7 +75,7 @@
 	</div>
       </div>
 
-      <div class="bg-light col-10 col-md-9 col-lg-10 border-start border-secondary<% if (locals.error) { %> error-page full-image-background<% } %>">
+      <div class="bg-light col-10 col-md-9 col-lg-10 <% if (locals.error) { %> error-page full-image-background<% } %>">
       <% if (!locals.page || page != "home") { %>
         <div class="container py-5 py-sm-3 mb-5">
 	  <div class="mx-md-3 mb-5">

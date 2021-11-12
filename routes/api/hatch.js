@@ -21,6 +21,8 @@ router.post('/', Middleware.isLoggedIn, async (req, res) => {
   }).then(async (id) => {
     var member = await Members.get(req.session.user.id);
 
+    Redis.set('member', req.session.user.id, { lastHatchedAt: Date.now() });
+
     Members.addBirdyPet(req.session.user.id, birdypet.id);
 
     if (!member.settings.privacy && !member.settings.privacy?.includes('activity')) {

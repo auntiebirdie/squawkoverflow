@@ -1,3 +1,5 @@
+const Cache = require('../helpers/cache.js');
+const Datastore = require('../helpers/datastore.js');
 const Members = require('../helpers/members.js');
 
 const helpers = require('../helpers');
@@ -51,7 +53,7 @@ router.get('/', (req, res) => {
 
             req.session.user = {
               id: data.id,
-		    avatar: member.avatar,
+	      avatar: member.avatar,
               username: data.username,
               theme: member?.settings?.theme || "default"
             }

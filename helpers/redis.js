@@ -6,7 +6,7 @@ function Database() {
   let databases = {
     "MEMBERPETS": ["memberpet", "flock"],
     "MEMBERS": ["member", "wishlist"],
-    "CACHE": ["cache", "aviaryCache", "flockCache", "aviaryTotals", "flockTotals", "eggTotals"]
+    "CACHE": ["cache", "aviaryTotals", "flockTotals", "eggTotals"]
   };
 
   this.databases = {};
@@ -15,7 +15,7 @@ function Database() {
     "flock": "h",
     "member": "h",
     "wishlist": "s",
-    "cache" : "s"
+    "cache": "s"
   };
 
   for (let DB in databases) {
@@ -28,8 +28,8 @@ function Database() {
   }
 }
 
-Database.prototype.escape = function (text) {
-	return text.trim().replace(/\'s/g, "").replace(/\-/g, " ").replace(/\s/g, "* ") + "*";
+Database.prototype.escape = function(text) {
+  return text.trim().replace(/\'s/g, "").replace(/\-/g, " ").replace(/\s/g, "* ") + "*";
 }
 
 Database.prototype.get = function(kind, id, field = "") {
@@ -112,8 +112,8 @@ Database.prototype.sendCommand = function(kind, command, args) {
 Database.prototype.fetch = function(kind, args = {}) {
   return new Promise(async (resolve, reject) => {
     var output = {
-	    count: 0,
-	    results: []
+      count: 0,
+      results: []
     };
     var query = [kind];
 
@@ -150,7 +150,7 @@ Database.prototype.fetch = function(kind, args = {}) {
             console.error(err);
             noResultsLeft = true;
           } else {
-		  output.count = response[0];
+            output.count = response[0];
 
             if (args.COUNT) {
               noResultsLeft = true;

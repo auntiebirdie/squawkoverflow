@@ -111,10 +111,8 @@ router.get('/wishlist/:member', Middleware.entityExists, async (req, res) => {
 
   birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
 
-  for (var i = page, len = Math.min(page + birdPerPage, birds.length); i < len; i++) {
-    birds[i].hatched = req.session.user ? await Redis.fetchOne('memberpet', {
-      'FILTER': `@member:{${req.session.user.id}} @birdypetSpecies:{${birds[i].speciesCode}}`
-    }) : false;
+  for (var i = page, len = Math.min(page + birdsPerPage, birds.length); i < len; i++) {
+    birds[i].hatched = req.session.user ? await Cache.get(`species-${birds[i].speciesCode}`, req.session.user.id, "s") : false;
 
     birds[i].variants = BirdyPets.findBy('speciesCode', birds[i].speciesCode).filter((birdypet) => !birdypet.special);
 
@@ -176,9 +174,12 @@ router.get('/birdypedia', async (req, res) => {
 
     if (req.session.user) {
       for (var variant of birds[i].variants) {
-        variant.hatched = await Redis.fetchOne('memberpet', {
-          'FILTER': `@member:{${req.session.user.id}} @birdypetId:{${variant.id}}`
-        }) !== null;
+        await Redis.fetch('memberpet', {
+          'FILTER': `@member:{${req.session.user.id}} @birdypetId:{${variant.id}}`,
+	  'COUNT': true
+        }).then((response) => {
+		variant.hatched = response.count;
+	});
       }
 
       if (birds[i].variants.length > 0) {

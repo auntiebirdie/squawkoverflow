@@ -1,9 +1,12 @@
-const helpers = require('../helpers');
+const Cache = require('../helpers/cache.js');
+const Middleware = require('../helpers/middleware.js');
+const Redis = require('../helpers/redis.js');
+
 const express = require('express');
 const router = express.Router();
 
-router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
-  var flocks = await helpers.Redis.fetch('flock', {
+router.get('/', Middleware.isLoggedIn, async (req, res) => {
+  var flocks = await Redis.fetch('flock', {
     'FILTER': `@member:{${req.session.user.id}}`,
     'SORTBY': ["displayOrder", "ASC"]
   });
@@ -16,7 +19,7 @@ router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
 
       flock.displayOrder = displayOrder;
 
-      await helpers.Redis.set('flock', flock._id, {
+      await Redis.set('flock', flock._id, {
         displayOrder: displayOrder
       });
     } else {
@@ -25,16 +28,16 @@ router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
   }
 
   res.render('flocks/index', {
-    member: await helpers.Redis.get('member', req.session.user.id),
+    member: await Redis.get('member', req.session.user.id),
     flocks: flocks.results
   });
 });
 
-router.get('/new', helpers.Middleware.isLoggedIn, async (req, res) => {
+router.get('/new', Middleware.isLoggedIn, async (req, res) => {
   res.render('flocks/new');
 });
 
-router.post('/new', helpers.Middleware.isLoggedIn, async (req, res) => {
+router.post('/new', Middleware.isLoggedIn, async (req, res) => {
   var name = req.body.name;
   var description = req.body.description;
 
@@ -45,7 +48,7 @@ router.post('/new', helpers.Middleware.isLoggedIn, async (req, res) => {
   if (description.length > 500) {
     description = description.slice(0, 500);
   }
-  var id = await helpers.Redis.create('flock', {
+  var id = await Redis.create('flock', {
     name: name,
     description: description,
     member: req.session.user.id,
@@ -55,40 +58,34 @@ router.post('/new', helpers.Middleware.isLoggedIn, async (req, res) => {
   res.redirect(`/flocks/manage/${id}`);
 });
 
-router.get('/manage/:flock', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, async (req, res) => {
+router.get('/manage/:flock', Middleware.isLoggedIn, Middleware.entityExists, Middleware.userOwnsEntity, async (req, res) => {
   var allFamilies = require('../public/data/families.json');
   var families = new Set();
-  var member = await helpers.Redis.get('member', req.entities['flock'].member);
+  var member = await Redis.get('member', req.entities['flock'].member);
 
-  var flocks = await helpers.Redis.fetch('flock', {
-    "FILTER": `@member:{${req.entities['flock'].member}}`,
-    "SORTBY": ["name", "DESC"]
+  var flocks = await Redis.fetch('flock', {
+    "FILTER": `@member:{${req.session.user.id}}`,
+    "SORTBY": ["displayOrder", "ASC"]
   });
 
-  await helpers.Redis.fetch('memberpet', {
-    'FILTER': `@member:{${req.entities['flock'].member}}`,
-    'RETURN': ['family'],
-  }).then((response) => {
-    response.forEach((item) => {
-      var family = allFamilies.find((a) => a.value == item.family);
+  var aviary = await Cache.get('aviaryTotals', req.session.user.id);
 
-      if (family) {
-        families.add(family);
-      }
-    });
-  });
+  var families = Object.keys(aviary)
+                .filter((key) => aviary[key] > 0 && !key.startsWith('_'))
+                .map((family) => allFamilies.find((a) => a.value == family))
+                .sort((a, b) => a.value.localeCompare(b.value));
 
   res.render('flocks/manage', {
     page: "flock",
     member: member,
     flock: req.entities['flock'],
-    flocks: flocks,
-    families: [...families].sort((a, b) => a.value.localeCompare(b.value))
+    flocks: flocks.results,
+    families: families
   });
 });
 
-router.post('/manage/:flock', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, helpers.Middleware.userOwnsEntity, async (req, res) => {
-  await helpers.Redis.set('flock', req.entities['flock']._id, {
+router.post('/manage/:flock', Middleware.isLoggedIn, Middleware.entityExists, Middleware.userOwnsEntity, async (req, res) => {
+  await Redis.set('flock', req.entities['flock']._id, {
     name: req.body.name || req.entities['flock'].name,
     description: req.body.description || req.entities['flock'].description
   });
@@ -96,12 +93,12 @@ router.post('/manage/:flock', helpers.Middleware.isLoggedIn, helpers.Middleware.
   res.redirect(`/flocks/manage/${req.entities['flock']._id}`);
 });
 
-router.get('/:flock', helpers.Middleware.entityExists, async (req, res) => {
+router.get('/:flock', Middleware.entityExists, async (req, res) => {
   var allFamilies = require('../public/data/families.json');
   var families = new Set();
-  var member = await helpers.Redis.get('member', req.entities['flock'].member);
+  var member = await Redis.get('member', req.entities['flock'].member);
 
-  await helpers.Redis.fetch('memberpet', {
+  await Redis.fetch('memberpet', {
     'FILTER': `@member:{${req.entities['flock'].member}}`,
     'RETURN': ['family'],
   }).then((response) => {

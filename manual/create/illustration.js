@@ -29,9 +29,11 @@ prompt.get(fields, function(err, result) {
     process.exit(0);
   }
 
-	result.prefix = 'rspb';
-	result.alias = 'NUM';
-	result.credit = 'rspb.org.uk';
+	result.prefix = process.argv[2];
+	result.alias = process.argv[3];
+	result.credit = process.argv[4];
+
+	console.log(result);
 
   var bird = birds.findBy('speciesCode', result.code);
 

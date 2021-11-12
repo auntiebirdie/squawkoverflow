@@ -19,6 +19,11 @@
             <img src="/img/eggs/<%= egg.icon ? egg.name : "default" %>.png">
           </h3>
           <h5><%= egg.name %></h5>
+         <% if (tier.extraInsights) { %>
+          <div class="small text-muted">
+            <small><%= egg.totals[0] %>/<%= egg.totals[1] %></small>
+          </div>
+         <% } %>
         </a>
     </div>
     <% } %>
@@ -27,6 +32,9 @@
   <div class="row text-center mt-5">
     <div class="col">
       <p><small><em><a href="/faq#weird-eggs" target="_blank">What's with the weird eggs?</a></em></small></p>
+     <% if (tier.extraInsights) { %>
+      <p><small><em><a href="/faq#extra-insights" target="_blank">What do the numbers below the eggs mean?</a></em></small></p>
+     <% } %>
     </div>
   </div>
   <% } %>

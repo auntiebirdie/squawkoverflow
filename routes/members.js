@@ -25,7 +25,7 @@ router.get('/:member', helpers.Middleware.entityExists, async (req, res) => {
 
   var output = {
     page: 'member',
-    member: req.entities['member'],
+    member: await Members.get(req.entities['member']._id),
     bugs: 0,
     aviary: await helpers.Redis.fetch('memberpet', {
       "FILTER": `@member:{${req.entities['member']._id}}`,
@@ -68,7 +68,7 @@ router.get('/:member/gift', helpers.Middleware.isLoggedIn, helpers.Middleware.en
     'FILTER': `@member:{${req.session.user.id}}`,
     'RETURN': ['family'],
   }).then((response) => {
-    response.forEach((item) => {
+    response.results.forEach((item) => {
       var family = allFamilies.find((a) => a.value == item.family);
 
       if (family) {

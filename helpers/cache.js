@@ -1,16 +1,19 @@
 const secrets = require('../secrets.json');
 const Redis = require('./redis.js');
 
+const eggs = require('../public/data/eggs.json');
+
 function Cache() {}
 
-Cache.prototype.get = function(kind = 'cache', id) {
+Cache.prototype.get = function(kind, id, type = "h") {
   return new Promise((resolve, reject) => {
-    Redis.get(kind, id).then((results) => {
-	    delete results.total;
-	    delete results.expiresAt;
-
-      if (!results || (results._expiresAt && results._expiresAt <= Date.now())) {
-        resolve(this.refresh(kind, id));
+    Redis.databases["cache"][type == "h" ? "hgetall" : "smembers"](`${kind}:${id}`, (err, result) => {
+      resolve(result);
+    });
+  }).then((results) => {
+    return new Promise((resolve, reject) => {
+      if (typeof results == 'undefined' || results == null) {
+        resolve(this.refresh(kind, id, type));
       } else {
         resolve(results);
       }
@@ -18,11 +21,9 @@ Cache.prototype.get = function(kind = 'cache', id) {
   });
 }
 
-Cache.prototype.refresh = function(kind = 'cache', id) {
-  return new Promise((resolve, reject) => {
-    var data = {
-      _expiresAt: new Date().setDate(new Date().getDate() + 7)
-    };
+Cache.prototype.refresh = function(kind = 'cache', id, type) {
+  return new Promise(async (resolve, reject) => {
+    var data = type == "h" ? {} : [];
 
     switch (kind) {
       case 'aviaryTotals':
@@ -46,7 +47,6 @@ Cache.prototype.refresh = function(kind = 'cache', id) {
             filters = {
               'FILTER': `@flocks:{${id}}`
             };
-
           }
         }
 
@@ -66,13 +66,10 @@ Cache.prototype.refresh = function(kind = 'cache', id) {
         });
         break;
       case 'eggTotals':
-        var eggs = require('../public/data/eggs.json');
-
         Redis.fetch('memberpet', {
           'FILTER': `@member:{${id}}`,
           'RETURN': ['birdypetSpecies']
         }).then((response) => {
-
           for (var egg in eggs) {
             let tmp = eggs[egg].species;
 
@@ -85,12 +82,54 @@ Cache.prototype.refresh = function(kind = 'cache', id) {
         });
         break;
       default:
-        resolve(data);
-    }
-  }).then(async (data) => {
-    await Redis.save(kind, id, data);
+        if (kind.startsWith('species-')) {
+          let speciesCode = kind.split('-')[1];
 
-    return data;
+          Redis.fetch('memberpet', {
+            'FILTER': `@member:{${id}} @birdypetSpecies:{${speciesCode}}`,
+            'RETURN': [`birdypetId`]
+          }).then(async (response) => {
+            for (var memberpet of response.results) {
+              data.push(memberpet.birdypetId);
+            }
+
+            resolve(data);
+          });
+        } else if (kind.startsWith('eggs-')) {
+          let egg = kind.split('-')[1];
+          let species = eggs[egg].species;
+
+
+          for (let speciesCode of species) {
+            let tmp = await this.get(`species-${speciesCode}`, id, "s");
+
+            if (tmp.length > 0) {
+              data.push(speciesCode);
+            }
+          }
+
+          resolve(data);
+        }
+    }
+  }).then(async (results) => {
+    await Redis.databases["cache"].del(`${kind}:${id}`);
+
+    switch (type) {
+      case "h":
+        for (let key in results) {
+          await Redis.databases["cache"].hset(`${kind}:${id}`, key, results[key]);
+        }
+        break;
+      case "s":
+        if (results.length > 0) {
+          await Redis.databases["cache"].sadd(`${kind}:${id}`, results);
+        }
+        break;
+    }
+
+    await Redis.databases["cache"].sendCommand('EXPIRE', [`${kind}:${id}`, 86400]);
+
+    return results;
   });
 }
 

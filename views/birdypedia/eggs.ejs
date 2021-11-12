@@ -37,7 +37,12 @@
           <a href="/birdypedia/eggs/<%= egg %>"><%= egg %></a>
         </div>
         <div class="col-5 text-end">
-          <small class="text-light"><%= eggs[egg][0] == eggs[egg][1] ? "✔️" : "" %> (<%= eggs[egg][0] %>/<%= eggs[egg][1] %>)</small>
+          <small class="text-light">
+            <% if (eggs[egg][0] == eggs[egg][1]) { %>
+              <span class="checkmark"></span>
+            <% } %>
+            (<%= eggs[egg][0] %>/<%= eggs[egg][1] %>)
+          </small>
         </div>
       </div>
     </div>

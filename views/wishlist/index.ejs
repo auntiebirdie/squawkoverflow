@@ -3,7 +3,6 @@
     <%- include('../partials/page-title.ejs', {
           title : {
             url: `/members/${member._id}`,
-            prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member._id}" onerror="missingMemberAvatar(this)"> `,
             text: member.username,
             append: "'s Wishlist"
           }

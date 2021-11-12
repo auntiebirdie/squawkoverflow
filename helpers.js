@@ -15,35 +15,13 @@ module.exports = {
     var data = require(`./public/data/${file}.json`);
 
     return Array.isArray(data) ? [...data] : Object.assign({}, data);
-  1},
+    1
+  },
   Chance: Chance,
   DB: require('./helpers/database.js'),
   Redis: require('./helpers/redis.js'),
   Discord: {
     Webhook: require('./helpers/webhook.js')
-  },
-  MemberTiers: function(member) {
-    var tier = {
-      name: "",
-      eggTimer: 0
-    };
-
-    switch (`${member.tier}`) {
-      case "3":
-        tier.name = "Owlpha Squad";
-        tier.eggTimer = 10; // opt-in for timer
-        break;
-      case "2":
-        tier.name = "Owllpha Squad";
-        tier.eggTimer = 0;
-        break;
-      case "1":
-        tier.name = "Supporter";
-        tier.eggTimer = 0;
-        break;
-    }
-
-    return tier;
   },
   Birds: require('./helpers/birds.js'),
   BirdyPets: require('./helpers/birdypets.js'),

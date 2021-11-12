@@ -9,8 +9,11 @@
         <% for (var birdypet of birdypets) { %>
         <div class="col-md-3">
           <div class="pb-4">
-            <div class="card" style="cursor: pointer">
-              <div class="lazy birdypet bg-white"
+            <div class="h-100 card" style="cursor: pointer">
+              <a class="wishlist-heart">
+                <%= birdypet.wishlisted ? '❤️' : '' %>
+              </a>
+              <div class="bg-white lazy birdypet checkmark<%= birdypet.checkmark %>"
                    data-id="<%= birdypet.id %>"
                    data-bg="<%= birdypet.image %>"
               ></div>
