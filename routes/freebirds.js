@@ -9,29 +9,45 @@ const router = express.Router();
 
 router.get('/', Middleware.isLoggedIn, async (req, res) => {
   var freebirds = await Redis.get('cache', 'freebirds');
-  var wishlist = await Redis.get('wishlist', req.session.user.id);
+  var wishlist = await Redis.get('wishlist', req.session.user);
 
   if (freebirds.length > 0) {
     freebirds = Chance.pickset(freebirds, 20);
 
     for (var i = 0, len = freebirds.length; i < len; i++) {
-      freebirds[i] = BirdyPets.get(freebirds[i]);
-      freebirds[i].wishlisted = wishlist.includes(freebirds[i].species.speciesCode);
-      freebirds[i].checkmark = 0;
+	    let ackId = freebirds[i];
+      let birdypet = BirdyPets.get(freebirds[i]);
 
-      await Redis.fetch('memberpet', {
-        "FILTER": `@member:{${req.session.user.id}} @birdypetSpecies:{${freebirds[i].species.speciesCode}}`,
-        "RETURN": ['birdypetId', 'species']
-      }).then((response) => {
-        if (response.results.length > 0) {
-          freebirds[i].checkmark = response.results.find((result) => result.birdypetId == freebirds[i].id) ? 2 : 1;
-        }
-      });
+      if (!birdypet) {
+        birdypet = await new Promise((resolve, reject) => {
+          Redis.databases['cache'].get(`freebird:${freebirds[i]}`, (err, result) => {
+            resolve(BirdyPets.get(result));
+          });
+        });
+      }
+
+      if (birdypet) {
+        freebirds[i] = birdypet;
+        freebirds[i].ackId = ackId;
+        freebirds[i].wishlisted = wishlist.includes(freebirds[i].species.speciesCode);
+        freebirds[i].checkmark = 0;
+
+        await Redis.fetch('memberpet', {
+          "FILTER": `@member:{${req.session.user}} @birdypetSpecies:{${freebirds[i].species.speciesCode}}`,
+          "RETURN": ['birdypetId', 'species']
+        }).then((response) => {
+          if (response.results.length > 0) {
+            freebirds[i].checkmark = response.results.find((result) => result.birdypetId == freebirds[i].id) ? 2 : 1;
+          }
+        });
+      } else {
+        freebirds[i] = null;
+      }
     }
   }
 
   res.render('freebirds/index', {
-    birdypets: freebirds
+    birdypets: freebirds.filter((freebird) => freebird != null)
   });
 });
 

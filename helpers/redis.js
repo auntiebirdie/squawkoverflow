@@ -5,8 +5,8 @@ const Redis = require("redis");
 function Database() {
   let databases = {
     "MEMBERPETS": ["memberpet", "flock"],
-    "MEMBERS": ["member", "wishlist"],
-    "CACHE": ["cache", "aviaryTotals", "flockTotals", "eggTotals"]
+    "MEMBERS": ["wishlist"],
+    "CACHE": ["cache", "member"]
   };
 
   this.databases = {};

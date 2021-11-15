@@ -6,7 +6,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/mine', Middleware.isLoggedIn, (req, res, next) => {
-  res.redirect(`/aviary/${req.session.user.id}`);
+  res.redirect(`/aviary/${req.session.user}`);
 });
 
 router.get('/:member', Middleware.entityExists, async (req, res, next) => {

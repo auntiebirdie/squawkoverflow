@@ -1,4 +1,4 @@
-const secrets = require('../secrets.json');
+const Database = require('./database.js');
 const Redis = require('./redis.js');
 
 const eggs = require('../public/data/eggs.json');
@@ -7,12 +7,8 @@ function Cache() {}
 
 Cache.prototype.get = function(kind, id, type = "h") {
   return new Promise((resolve, reject) => {
-    Redis.databases["cache"][type == "h" ? "hgetall" : "smembers"](`${kind}:${id}`, (err, result) => {
-      resolve(result);
-    });
-  }).then((results) => {
-    return new Promise((resolve, reject) => {
-      if (typeof results == 'undefined' || results == null) {
+    Redis.databases["cache"][type == "h" ? "hgetall" : "smembers"](`${kind}:${id}`, (err, results) => {
+      if (err || typeof results == 'undefined' || results == null || results.length == 0) {
         resolve(this.refresh(kind, id, type));
       } else {
         resolve(results);
@@ -21,11 +17,46 @@ Cache.prototype.get = function(kind, id, type = "h") {
   });
 }
 
+Cache.prototype.add = function(kind, id, data) {
+  return new Promise((resolve, reject) => {
+    this.get(kind, id, "s").then((results) => {
+      Redis.databases['cache'].sadd(`${kind}:${id}`, data, (err, results) => {
+        resolve(results);
+      });
+    });
+  });
+}
+
 Cache.prototype.refresh = function(kind = 'cache', id, type) {
+  var expiration = 86400 // 1 day;
+
   return new Promise(async (resolve, reject) => {
-    var data = type == "h" ? {} : [];
+    var data = {};
 
     switch (kind) {
+      case 'cache':
+        if (id == 'members') {
+          Database.fetch({
+            kind: 'Member',
+            keysOnly: true
+          }).then((members) => {
+            resolve(members.map((member) => member._id));
+          });
+        }
+        break;
+      case 'member':
+        Database.get('Member', id).then((member) => {
+          if (member) {
+            if (member[Database.KEY]) {
+              delete member[Database.KEY];
+            }
+
+            resolve(member);
+          } else {
+            resolve(null);
+          }
+        });
+        break;
       case 'aviaryTotals':
       case 'flockTotals':
         var filters = {
@@ -85,6 +116,8 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
         if (kind.startsWith('species-')) {
           let speciesCode = kind.split('-')[1];
 
+          data = [];
+
           Redis.fetch('memberpet', {
             'FILTER': `@member:{${id}} @birdypetSpecies:{${speciesCode}}`,
             'RETURN': [`birdypetId`]
@@ -99,6 +132,7 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
           let egg = kind.split('-')[1];
           let species = eggs[egg].species;
 
+          data = [];
 
           for (let speciesCode of species) {
             let tmp = await this.get(`species-${speciesCode}`, id, "s");
@@ -114,20 +148,30 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
   }).then(async (results) => {
     await Redis.databases["cache"].del(`${kind}:${id}`);
 
-    switch (type) {
-      case "h":
+    switch (typeof results) {
+      case "object":
         for (let key in results) {
+          let data = results[key];
+
+          switch (typeof data) {
+            case "object":
+            case "array":
+              results[key] = JSON.stringify(data);
+          }
+
           await Redis.databases["cache"].hset(`${kind}:${id}`, key, results[key]);
         }
         break;
-      case "s":
+      case "array":
         if (results.length > 0) {
           await Redis.databases["cache"].sadd(`${kind}:${id}`, results);
         }
         break;
+      default:
+        return results;
     }
 
-    await Redis.databases["cache"].sendCommand('EXPIRE', [`${kind}:${id}`, 86400]);
+    await Redis.databases["cache"].sendCommand('EXPIRE', [`${kind}:${id}`, expiration]);
 
     return results;
   });

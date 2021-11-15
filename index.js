@@ -15,6 +15,8 @@ const session = require('express-session');
 const axios = require('axios');
 const app = express();
 
+const Members = require('./helpers/members.js');
+
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(session({
@@ -35,15 +37,14 @@ app.use(express.urlencoded({
   extended: true
 }));
 
-app.use(function(req, res, next) {
+app.use(async function(req, res, next) {
   var menu = [];
 
   if (req.session.user) {
-    res.locals.loggedInUser = req.session.user;
-
-    if (!res.locals.loggedInUser.theme) {
-      res.locals.loggedInUser.theme = "default";
-    }
+	  if (req.session.user.id) {
+		  req.session.user = req.session.user.id;
+	  }
+    res.locals.loggedInUser = await Members.get(req.session.user);
 
     menu.push({
       "icon": "🥚",
@@ -82,6 +83,10 @@ app.use(function(req, res, next) {
   });
 
   next();
+});
+
+app.get('/_ah/warmup', (req, res) => {
+	res.send("🌄🐓");
 });
 
 app.use('/', require('./routes/home.js'));

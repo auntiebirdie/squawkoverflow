@@ -5,13 +5,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  var members = await helpers.Redis.scan('member', {
-    'SORTBY': ['username']
-  }).then((members) => members.filter((member) => {
-    member = Members.format(member);
-
-    return member.lastLogin && !member.settings.privacy?.includes('profile');
-  }));
+  var members = await Members.all();
 
   res.render('members/index', {
     members: members
@@ -19,7 +13,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:member', helpers.Middleware.entityExists, async (req, res) => {
-  if (req.entities['member']._id != req.session.user?.id && req.entities['member'].settings.privacy?.includes('profile')) {
+  if (req.entities['member']._id != req.session.user && req.entities['member'].settings.privacy?.includes('profile')) {
     return res.redirect('/error');
   }
 
@@ -45,7 +39,7 @@ router.get('/:member', helpers.Middleware.entityExists, async (req, res) => {
   }
 
   if (req.session.user) {
-    output.bugs = await helpers.Redis.get('member', req.session.user.id, 'bugs') || 0;
+    output.bugs = await helpers.Redis.get('member', req.session.user, 'bugs') || 0;
   }
 
   res.render('members/member', output);
@@ -60,12 +54,12 @@ router.get('/:member/gift', helpers.Middleware.isLoggedIn, helpers.Middleware.en
   var families = new Set();
 
   var flocks = await helpers.Redis.fetch('flock', {
-    "FILTER": `@member:{${req.session.user.id}}`,
+    "FILTER": `@member:{${req.session.user}}`,
     "SORTBY": ["name", "DESC"]
   });
 
   await helpers.Redis.fetch('memberpet', {
-    'FILTER': `@member:{${req.session.user.id}}`,
+    'FILTER': `@member:{${req.session.user}}`,
     'RETURN': ['family'],
   }).then((response) => {
     response.results.forEach((item) => {

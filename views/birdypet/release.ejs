@@ -6,9 +6,7 @@
       <div class="col-md-6">
         <h4><%= userpet.nickname? `"${userpet.nickname}" (${birdypet.species.commonName})` : `${birdypet.species.commonName}   ${birdypet.label}` %></h4>
 
-        <div class="card mt-4 mb-4">
-          <img class="birdypet full border border-1 border-secondary" src="<%= birdypet.image %>">
-        </div>
+        <img class="birdypet full mt-4 mb-4" src="<%= birdypet.image %>">
       </div>
       <div class="col-md-6">
         <h4>Are you sure you want to release this bird?</h4>

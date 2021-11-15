@@ -36,18 +36,58 @@ main {
 }
 
 a {
-	color: #7C7C6C;
+	color: #5F6A10;
 	text-decoration: none;
 }
 
 a:hover {
-	color: #DDF600;
+	color: #5F6A10;
+}
+
+.card a {
+	text-decoration: none;
+}
+
+.text-light {
+        color: #aeaeae !important;
 }
 
 .btn:active, .btn:active:focus, .btn:focus,
 input:active, input:active:focus, input:focus {
         box-shadow: none !important;
 	outline: none !important;
+}
+
+.bg-primary, .btn-primary,
+.pagination .page-link {
+        background-color: #5f6a10 !important;
+}
+
+.btn-primary, .btn-outline-primary,
+.pagination .page-link {
+        border-color: #5f6a10 !important;
+}
+
+.btn-primary:hover, .btn-outline-primary:hover,
+.btn-check:active+.btn-outline-primary, .btn-check:checked+.btn-outline-primary, .btn-outline-primary.active, .btn-outline-primary:active,
+.pagination .page-link:hover, .pagination .page-link:active,
+.page-item.active .page-link {
+        background-color: #5F6A10 !important;
+        color: #DDF600;
+}
+
+.pagination .page-link {
+        color: #ffffff;
+        cursor: pointer;
+}
+
+.page-item.disabled .page-link {
+        color: #1c2005;
+        font-weight: bold;
+}
+
+.btn-outline-primary {
+        color: #DDF600;
 }
 
 img {
@@ -177,9 +217,9 @@ span.checkmark {
 
 .birdybuddy .message {
 	position: absolute;
-	top: -30px;
+	top: -50px;
 	right: 0;
-	border-radius: 10px;
+	border-radius: 10px 10px 10px 0;
 	background: rgba(255, 255, 255, .9);
         padding: 10px;
 	width: 50%;
@@ -188,7 +228,9 @@ span.checkmark {
 
 .birdybuddy .message::before {
 	content: '💬';
-	margin-right: 5px;
+	position: absolute;
+	bottom: -10px;
+	left: -10px;
 }
 
 select {

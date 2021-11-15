@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/', Middleware.isLoggedIn, async (req, res) => {
   var flocks = await Redis.fetch('flock', {
-    'FILTER': `@member:{${req.session.user.id}}`,
+    'FILTER': `@member:{${req.session.user}}`,
     'SORTBY': ["displayOrder", "ASC"]
   });
 
@@ -28,7 +28,7 @@ router.get('/', Middleware.isLoggedIn, async (req, res) => {
   }
 
   res.render('flocks/index', {
-    member: await Redis.get('member', req.session.user.id),
+    member: await Redis.get('member', req.session.user),
     flocks: flocks.results
   });
 });
@@ -51,7 +51,7 @@ router.post('/new', Middleware.isLoggedIn, async (req, res) => {
   var id = await Redis.create('flock', {
     name: name,
     description: description,
-    member: req.session.user.id,
+    member: req.session.user,
     displayOrder: 50
   });
 
@@ -60,15 +60,15 @@ router.post('/new', Middleware.isLoggedIn, async (req, res) => {
 
 router.get('/manage/:flock', Middleware.isLoggedIn, Middleware.entityExists, Middleware.userOwnsEntity, async (req, res) => {
   var allFamilies = require('../public/data/families.json');
-  var families = new Set();
+  var families = [];
   var member = await Redis.get('member', req.entities['flock'].member);
 
   var flocks = await Redis.fetch('flock', {
-    "FILTER": `@member:{${req.session.user.id}}`,
+    "FILTER": `@member:{${req.session.user}}`,
     "SORTBY": ["displayOrder", "ASC"]
   });
 
-  var aviary = await Cache.get('aviaryTotals', req.session.user.id);
+  var aviary = await Cache.get('aviaryTotals', req.session.user);
 
   var families = Object.keys(aviary)
                 .filter((key) => aviary[key] > 0 && !key.startsWith('_'))
@@ -95,27 +95,21 @@ router.post('/manage/:flock', Middleware.isLoggedIn, Middleware.entityExists, Mi
 
 router.get('/:flock', Middleware.entityExists, async (req, res) => {
   var allFamilies = require('../public/data/families.json');
-  var families = new Set();
+  var families = [];
   var member = await Redis.get('member', req.entities['flock'].member);
 
-  await Redis.fetch('memberpet', {
-    'FILTER': `@member:{${req.entities['flock'].member}}`,
-    'RETURN': ['family'],
-  }).then((response) => {
-    response.forEach((item) => {
-      var family = allFamilies.find((a) => a.value == item.family);
+  var totals = await Cache.get('flockTotals', req.entities['flock']._id);
 
-      if (family) {
-        families.add(family);
-      }
-    });
-  });
+  var families = Object.keys(totals)
+                .filter((key) => totals[key] > 0 && !key.startsWith('_'))
+                .map((family) => allFamilies.find((a) => a.value == family))
+                .sort((a, b) => a.value.localeCompare(b.value));
 
   res.render('flocks/flock', {
     page: 'flock',
     member: member,
     flock: req.entities['flock'],
-    families: [...families].sort((a, b) => a.value.localeCompare(b.value))
+    families: families
   });
 });
 

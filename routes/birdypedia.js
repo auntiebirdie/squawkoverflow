@@ -21,7 +21,7 @@ router.get('/eggs', async (req, res) => {
     let tmp = eggs[egg].species;
 
     if (tmp) {
-      let cached = req.session.user ? await Cache.get(`eggs-${egg}`, req.session.user.id, "s") : [];
+      let cached = req.session.user ? await Cache.get(`eggs-${egg}`, req.session.user, "s") : [];
 
       eggs[egg] = [(cached.length || 0), tmp.length];
     } else {
@@ -60,7 +60,7 @@ router.get('/bird/:code', async (req, res) => {
       'RETURN': ['member', 'birdypetId']
     });
 
-    var hatched = req.session.user ? memberpets.filter((memberpet) => memberpet.member == req.session.user.id).map((memberpet) => memberpet.birdypetId) : [];
+    var hatched = req.session.user ? memberpets.filter((memberpet) => memberpet.member == req.session.user).map((memberpet) => memberpet.birdypetId) : [];
 
     var birdypets = helpers.BirdyPets.findBy('speciesCode', bird.speciesCode)
       .filter((birdypet) => !birdypet.special)

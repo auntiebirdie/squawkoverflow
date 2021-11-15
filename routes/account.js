@@ -5,7 +5,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', Middleware.isLoggedIn, async (req, res) => {
-  var member = await Members.get(req.session.user.id);
+  var member = await Members.get(req.session.user);
 
   var themes = [{
       id: "default",

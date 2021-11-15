@@ -1,8 +1,8 @@
 const BirdyPets = require('../../helpers/birdypets.js');
 const Members = require('../../helpers/members.js');
 const Middleware = require('../../helpers/middleware.js');
+const Queue = require('../../helpers/queue.js');
 const Redis = require('../../helpers/redis.js');
-const Webhook = require('../../helpers/webhook.js');
 
 const express = require('express');
 const router = express.Router();
@@ -15,22 +15,22 @@ router.post('/', Middleware.isLoggedIn, async (req, res) => {
     birdypetSpecies: birdypet.speciesCode,
     species: birdypet.species.commonName,
     family: birdypet.species.family,
-    member: req.session.user.id,
+    member: req.session.user,
     flocks: "NONE",
     hatchedAt: Date.now()
   }).then(async (id) => {
-    var member = await Members.get(req.session.user.id);
+    var member = await Members.get(req.session.user);
 
-    Redis.set('member', req.session.user.id, { lastHatchedAt: Date.now() });
+    Members.set(req.session.user, { lastHatchedAt: Date.now() });
 
-    Members.addBirdyPet(req.session.user.id, birdypet.id);
+    await Members.addBirdyPet(req.session.user, birdypet.id);
 
-    if (!member.settings.privacy && !member.settings.privacy?.includes('activity')) {
-      Webhook.send('egg-hatchery', {
+    if (!member.settings.privacy || !member.settings.privacy?.includes('activity')) {
+      Queue.add('egg-hatchery', {
         adjective: req.body.adjective,
-        member: req.session.user.id,
+        member: req.session.user,
         userpet: id,
-        birdypet: birdypet
+        birdypet: birdypet.id
       });
     }
 

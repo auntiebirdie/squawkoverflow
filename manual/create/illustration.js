@@ -29,11 +29,11 @@ prompt.get(fields, function(err, result) {
     process.exit(0);
   }
 
-	result.prefix = process.argv[2];
-	result.alias = process.argv[3];
-	result.credit = process.argv[4];
+  result.prefix = process.argv[2];
+  result.alias = process.argv[3];
+  result.credit = process.argv[4];
 
-	console.log(result);
+  console.log(result);
 
   var bird = birds.findBy('speciesCode', result.code);
 
@@ -42,7 +42,7 @@ prompt.get(fields, function(err, result) {
       if (result.alias == "NUM") {
         var aliases = await DB.runQuery(DB.createQuery('Illustration').filter('prefix', '=', result.prefix));
 
-        result.alias = aliases && aliases[0].length > 0  ? aliases[0].length + 1 : 1;
+        result.alias = aliases && aliases[0].length > 0 ? aliases[0].length + 1 : 1;
       }
 
       var data = {

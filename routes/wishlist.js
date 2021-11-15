@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/mine', helpers.Middleware.isLoggedIn, (req, res, next) => {
-  res.redirect(`/wishlist/${req.session.user.id}`);
+  res.redirect(`/wishlist/${req.session.user}`);
 });
 
 router.get('/:member', helpers.Middleware.entityExists, async (req, res, next) => {

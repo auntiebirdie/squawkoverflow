@@ -19,11 +19,11 @@ router.get('/:adjective', helpers.Middleware.isLoggedIn, async (req, res) => {
     var birdypet = helpers.Chance.pickone(birdypets);
 
     if (birdypet) {
-      var wishlist = await helpers.Redis.get('wishlist', req.session.user.id) || [];
+      var wishlist = await helpers.Redis.get('wishlist', req.session.user) || [];
       var userpets = [];
 
       await helpers.Redis.fetch('memberpet', {
-        "FILTER": `@member:{${req.session.user.id}} @birdypetSpecies:{${birdypet.speciesCode}}`,
+        "FILTER": `@member:{${req.session.user}} @birdypetSpecies:{${birdypet.speciesCode}}`,
         "RETURN": ['birdypetId', 'species']
       }).then((response) => {
         for (var i = 0, len = response.results.length; i < len; i++) {
@@ -31,6 +31,8 @@ router.get('/:adjective', helpers.Middleware.isLoggedIn, async (req, res) => {
           userpets.push(response.results[i].species);
         }
       });
+
+      res.set('Cache-Control', 'no-store');
 
       return res.render('hatch/hatched', {
         adjective: adjective,

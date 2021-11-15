@@ -5,7 +5,6 @@ const MemberPets = require('../helpers/memberpets.js');
 const Members = require('../helpers/members.js');
 const Middleware = require('../helpers/middleware.js');
 const Redis = require('../helpers/redis.js');
-const Webhook = require('../helpers/webhook.js');
 
 const chance = require('chance').Chance();
 const express = require('express');
@@ -15,6 +14,9 @@ const birdsPerPage = 24;
 
 router.use('/hatch', require('./api/hatch.js'));
 router.use('/release', require('./api/release.js'));
+router.use('/wishlist', require('./api/wishlist.js'));
+router.use('/gift', require('./api/gift.js'));
+router.use('/freebirds', require('./api/freebirds.js'));
 
 router.get('/aviary/:member', Middleware.entityExists, async (req, res) => {
   var page = --req.query.page * birdsPerPage;
@@ -32,13 +34,13 @@ router.get('/aviary/:member', Middleware.entityExists, async (req, res) => {
     'SORTBY': req.query.sort,
     'LIMIT': [page, birdsPerPage]
   }).then(async (response) => {
-    var myAviary = req.session.user ? req.entities['member']._id == req.session.user.id : false;
-    var wishlist = req.session.user && !myAviary ? await Redis.get('wishlist', req.session.user.id) : [];
+    var myAviary = req.session.user ? req.entities['member']._id == req.session.user : false;
+    var wishlist = req.session.user && !myAviary ? await Redis.get('wishlist', req.session.user) : [];
     var output = [];
 
     for (var memberpet of response.results) {
       var owned = !myAviary && req.session.user ? await Redis.fetch('memberpet', {
-        'FILTER': `@member:{${req.session.user.id}} @birdypetSpecies:{${memberpet.birdypetSpecies}}`,
+        'FILTER': `@member:{${req.session.user}} @birdypetSpecies:{${memberpet.birdypetSpecies}}`,
         'RETURN': ['birdypetId']
       }).then((owned) => owned.results.map((birdypet) => birdypet.birdypetId)) : [];
 
@@ -54,74 +56,6 @@ router.get('/aviary/:member', Middleware.entityExists, async (req, res) => {
       families: Object.keys(totals).filter((key) => totals[key] > 0 && !key.startsWith('_')),
       results: output
     });
-  });
-});
-
-router.get('/gift/:member', Middleware.isLoggedIn, Middleware.entityExists, (req, res) => {
-  var page = --req.query.page * birdsPerPage;
-  var filters = [
-    `@member:{${req.session.user.id}}`,
-    req.query.family ? `@family:${req.query.family}` : '',
-    req.query.flock ? `@flocks:{${req.query.flock}}` : '',
-    req.query.search ? `@nickname|species:${Redis.escape(req.query.search)}` : ''
-  ].join(' ');
-
-  Redis.fetch('memberpet', {
-    'FILTER': filters,
-    'SORTBY': req.query.sort,
-    'LIMIT': [page, birdsPerPage]
-  }).then(async (response) => {
-    var wishlist = await Redis.get('wishlist', req.entities['member']._id);
-    var output = [];
-
-    for (var memberpet of response.results) {
-      var owned = await Redis.fetch('memberpet', {
-        'FILTER': `@member:{${req.entities['member']._id}} @birdypetSpecies:{${memberpet.birdypetSpecies}}`,
-        'RETURN': ['birdypetId']
-      }).then((owned) => owned.results.map((birdypet) => birdypet.birdypetId));
-
-      output.push({
-        ...MemberPets.format(memberpet),
-        wishlisted: wishlist.includes(memberpet.birdypetSpecies),
-        checkmark: owned.includes(memberpet.birdypetId) ? 2 : (owned.length > 0 ? 1 : 0)
-      });
-    }
-
-    res.json({
-      totalPages: Math.ceil(response.count / birdsPerPage),
-      results: output
-    });
-  });
-});
-
-router.get('/wishlist/:member', Middleware.entityExists, async (req, res) => {
-  var page = --req.query.page * birdsPerPage;
-  var birds = await Redis.get('wishlist', req.entities['member']._id).then((birds) => birds.map((bird) => Birds.findBy('speciesCode', bird))) || [];
-  var output = [];
-
-  if (req.query.family) {
-    birds = birds.filter((bird) => bird.family.toLowerCase() == req.query.family.toLowerCase());
-  }
-
-  if (req.query.search) {
-    birds = birds.filter((bird) => bird.commonName.toLowerCase().includes(req.query.search.toLowerCase()) || bird.nickname?.toLowerCase().includes(req.query.search.toLowerCase()));
-  }
-
-  var totalPages = birds.length;
-
-  birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
-
-  for (var i = page, len = Math.min(page + birdsPerPage, birds.length); i < len; i++) {
-    birds[i].hatched = req.session.user ? await Cache.get(`species-${birds[i].speciesCode}`, req.session.user.id, "s") : false;
-
-    birds[i].variants = BirdyPets.findBy('speciesCode', birds[i].speciesCode).filter((birdypet) => !birdypet.special);
-
-    output.push(birds[i]);
-  }
-
-  res.json({
-    totalPages: Math.ceil(totalPages / birdsPerPage),
-    results: output
   });
 });
 
@@ -151,7 +85,7 @@ router.get('/flocks/:flock', Middleware.entityExists, (req, res) => {
 
 router.get('/birdypedia', async (req, res) => {
   var page = --req.query.page * birdsPerPage;
-  var wishlist = req.session.user ? await Redis.get('wishlist', req.session.user.id) : [];
+  var wishlist = req.session.user ? await Redis.get('wishlist', req.session.user) : [];
   var output = [];
 
   if (req.query.family) {
@@ -175,11 +109,11 @@ router.get('/birdypedia', async (req, res) => {
     if (req.session.user) {
       for (var variant of birds[i].variants) {
         await Redis.fetch('memberpet', {
-          'FILTER': `@member:{${req.session.user.id}} @birdypetId:{${variant.id}}`,
-	  'COUNT': true
+          'FILTER': `@member:{${req.session.user}} @birdypetId:{${variant.id}}`,
+          'COUNT': true
         }).then((response) => {
-		variant.hatched = response.count;
-	});
+          variant.hatched = response.count;
+        });
       }
 
       if (birds[i].variants.length > 0) {
@@ -200,43 +134,15 @@ router.get('/birdypedia', async (req, res) => {
   });
 });
 
-router.post('/gift/:member/:memberpet', Middleware.isLoggedIn, Middleware.entityExists, (req, res, next) => {
-  Redis.set('memberpet', req.entities['memberpet']._id, {
-    "member": req.entities['member']._id,
-    "flocks": "NONE",
-    "friendship": 0
-  }).then(() => {
-    var birdypet = BirdyPets.get(req.entities['memberpet'].birdypetId);
-
-    Redis.get('member', req.session.user.id).then((member) => {
-      if (member.birdyBuddy == req.entities['memberpet']._id) {
-        Redis.set('member', member._id, {
-          birdyBuddy: null
-        });
-      }
-
-      Members.addBirdyPet(member._id, birdypet.id);
-      Members.removeBirdyPet(req.session.user.id, birdypet.id);
-
-      Webhook.send('exchange', {
-        from: req.session.user,
-        to: req.entities['member']._id,
-        userpet: req.entities['memberpet'],
-        birdypet: birdypet
-      });
-
-      res.json({
-        error: false
-      });
-    });
-  });
-});
-
 router.get('/birdypet/:memberpet/feedBug', Middleware.isLoggedIn, Middleware.entityExists, async (req, res) => {
-  var bugs = await Redis.get('member', req.session.user.id, 'bugs');
+  var bugs = res.locals.loggedInUser.bugs;
 
   if (bugs > 0) {
-    await Redis.increment('member', req.session.user.id, 'bugs', -1);
+    bugs--;
+    await Members.set(req.session.user, {
+      'bugs': bugs
+    });
+    await Redis.increment('member', req.session.user, 'bugs', -1);
 
     if (req.entities['memberpet'].friendship) {
       await Redis.increment('memberpet', req.entities['memberpet']._id, "friendship", 5);
@@ -247,7 +153,7 @@ router.get('/birdypet/:memberpet/feedBug', Middleware.isLoggedIn, Middleware.ent
     }
 
     res.json({
-      bugs: bugs - 1,
+      bugs: bugs,
       response: chance.pickone([
         "Mmm!  Tastes like... bug.",
         "Tasty!",
@@ -300,53 +206,8 @@ router.post('/flocks/:flock/:memberpet', Middleware.isLoggedIn, Middleware.entit
   });
 });
 
-router.post('/freebirds/:birdypet', Middleware.isLoggedIn, async (req, res) => {
-  var birdypet = BirdyPets.get(req.params.birdypet);
-  var freebirds = await Redis.get('cache', 'freebirds');
-
-  if (birdypet && freebirds.includes(birdypet.id)) {
-    await Redis.pop('cache', 'freebirds', birdypet.id);
-
-    Redis.create('memberpet', {
-      birdypetId: birdypet.id,
-      birdypetSpecies: birdypet.speciesCode,
-      species: birdypet.species.commonName,
-      family: birdypet.species.family,
-      member: req.session.user.id,
-      flocks: "NONE",
-      hatchedAt: Date.now()
-    }).then(async (id) => {
-      Members.addBirdyPet(req.session.user.id, birdypet.id);
-
-      res.json({
-        response: `<a href="/birdypet/${id}">${birdypet.species.commonName}</a>`
-      });
-    });
-  } else {
-    res.json({
-      error: "That bird has already found a home!"
-    });
-  }
-});
-
-router.post('/wishlist/:action/:speciescode', Middleware.isLoggedIn, async (req, res) => {
-  var bird = Birds.findBy('speciesCode', req.params.speciescode);
-
-  if (bird) {
-    Redis[req.params.action == "add" ? "push" : "pop"]('wishlist', req.session.user.id, bird.speciesCode);
-
-    res.json({
-      response: "success"
-    });
-  } else {
-    res.json({
-      error: "not found"
-    });
-  }
-});
-
 router.put('/account', Middleware.isLoggedIn, async (req, res) => {
-  var member = await Members.get(req.session.user.id);
+  var member = res.locals.loggedInUser;
   var fields = ["theme", "general", "privacy"];
   var data = member.settings;
 
@@ -354,14 +215,14 @@ router.put('/account', Middleware.isLoggedIn, async (req, res) => {
     data[key] = req.body[key];
 
     if (key == "theme") {
-      req.session.user.theme = req.body[key];
+      res.locals.loggedInUser.settings.theme = req.body[key];
     } else {
       data[key] = req.body[key].split(',');
     }
   });
 
-  Redis.set('member', req.session.user.id, {
-    settings: JSON.stringify(data)
+  Members.set(req.session.user, {
+    settings: data
   });
 
   res.json("ok");

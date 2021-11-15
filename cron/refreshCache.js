@@ -1,47 +1,36 @@
+const Cache = require('../helpers/cache.js');
+const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
-const Datastore = require('../helpers/datastore.js');
 
 const secrets = require('../secrets.json');
 
 const {
-  Client,
-  Intents
-} = require('discord.js');
+  v1
+} = require('@google-cloud/pubsub');
+const subClient = new v1.SubscriberClient();
 
-const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS]
-});
+async function refresh() {
+  const formattedSubscription = subClient.subscriptionPath(
+    process.env.GCP_PROJECT,
+    'squawkoverflow-free-birds'
+  );
 
-client.login(secrets.DISCORD.BOT_TOKEN);
+  const request = {
+    subscription: formattedSubscription,
+    maxMessages: 100
+  };
 
-client.on('error', (err) => {
-  console.error(err);
-});
+  const [response] = await subClient.pull(request);
 
-client.on('ready', async () => {
-  client.guilds.fetch("863864246835216464").then((guild) => {
-    Redis.scan('member').then(async (members) => {
-      for (var i = 0, len = members.length; i < len; i++) {
-        var memberId = members[i]._id;
-        await guild.members.fetch(memberId).then(async (member) => {
-                await Redis.save('member', memberId, {
-                        username: member.displayName,
-                        avatar: member.user.avatarURL() || "",
-                        lastLogin: members[i].lastLogin,
-                        joinedAt: member.joinedTimestamp,
-                        lastHatchedAt: members[i].lastHatchedAt || 0,
-                        tier: members[i].tier || 0,
-                        flock: members[i].flock,
-                        birdyBuddy: members[i].birdyBuddy
-                });
-        }).catch((err) => {
-          client.users.fetch(memberId).then((user) => {
-            console.log('USER', user);
-          });
-        });
-      }
+  for (let queued of response.receivedMessages) {
+    console.log(queued);
 
-      console.log("DONE!");
-    });
-  });
-});
+    Redis.databases['cache'].sadd(`cache:freebirds`, queued.ackId);
+
+    Redis.databases['cache'].set(`freebird:${queued.ackId}`, queued.message.attributes.birdypet);
+  }
+
+  process.exit(0);
+}
+
+refresh();

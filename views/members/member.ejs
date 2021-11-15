@@ -39,7 +39,7 @@ text-md-end">
       <% if (member.wishlist && !member.settings.privacy?.includes('wishlist')) { %>
         <p><a href="/wishlist/<%= member._id %>" class="btn btn-primary">❤️ View Wishlist</a></p>
       <% } %>
-      <% if (locals.loggedInUser && loggedInUser.id != member._id && !member.settings.privacy?.includes('gifts')) { %>
+      <% if (locals.loggedInUser && loggedInUser._id != member._id && !member.settings.privacy?.includes('gifts')) { %>
         <p><a href="/members/<%= member._id %>/gift" class="btn btn-primary">🎁 Send Gift</a></p>
       <% } %>
     </div>
@@ -58,11 +58,11 @@ text-md-end">
     <div class="col-md-6 text-center">
       <div class="birdybuddy mb-3">
         <img src="<%= member.birdyBuddy.image %>">
-        <span class="message" style="display: none;"></span>
+        <span class="message border border-1 border-secondary" style="display: none;"></span>
       </div>
     </div>
     <div class="col-md-6">
-      <h4><a href="/birdypet/<%= member.birdyBuddy._id %>"><%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.species.commonName %></a></h4>
+      <h4><a class="text-decoration-none" href="/birdypet/<%= member.birdyBuddy._id %>"><%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.species.commonName %></a></h4>
 
       <%- include('../partials/friendshipMeter.ejs', { friendship : member.birdyBuddy.friendship }) %>
 

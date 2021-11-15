@@ -25,8 +25,8 @@ a:hover {
 .btn-check:active+.btn-outline-primary, .btn-check:checked+.btn-outline-primary, .btn-outline-primary.active, .btn-outline-primary:active,
 .pagination .page-link:hover, .pagination .page-link:active,
 .page-item.active .page-link {
-	background-color: #DDF600 !important;
-	color: #5f6a10;
+	background-color: #5F6A10 !important;
+	color: #DDF600;
 }
 
 .pagination .page-link {
@@ -57,7 +57,7 @@ a:hover {
 }
 
 .bg-light, .btn-light {
-	background-color: #1f1f1f !important;
+	background-color: #36393f !important;
 }
 
 .btn-light, .btn-light-outline {
@@ -92,7 +92,7 @@ a:hover {
 
 .form-switch .form-check-input:checked {
 	background-color: #DDF600;
-	border-color: #DDF600;
+	border-color: #5f6a10;
 }
 
 .form-switch .form-check-input,

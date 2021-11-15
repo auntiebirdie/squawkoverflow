@@ -1,5 +1,5 @@
 const Cache = require('../helpers/cache.js');
-const Datastore = require('../helpers/datastore.js');
+const Database = require('../helpers/database.js');
 const Members = require('../helpers/members.js');
 
 const helpers = require('../helpers');
@@ -12,19 +12,16 @@ const oauth = new DiscordOauth2();
 
 router.get('/', (req, res) => {
   if (req.query.konami) {
-    helpers.DB.get('KonamiCode', req.query.konami * 1).then((code) => {
+    let konami = req.query.konami * 1;
+
+    Database.get('KonamiCode', konami).then((code) => {
       if (code.used) {
         res.redirect('/error');
       } else {
         Members.get(code.member).then((member) => {
-          req.session.user = {
-            id: member._id,
-            username: member.username,
-            avatar: member.avatar,
-            theme: member.settings.theme || "default"
-          };
+          req.session.user = member._id;
 
-          helpers.DB.set('KonamiCode', req.query.konami * 1, {
+          Database.set('KonamiCode', konami, {
             used: true
           }).then(() => {
             res.redirect('/');
@@ -43,31 +40,22 @@ router.get('/', (req, res) => {
     }).then((response) => {
       if (response.access_token) {
         oauth.getUser(response.access_token).then((user) => {
-          Members.get(user.id).then((member) => {
-            var data = {
-              id: user.id,
-              username: member ? member.username : user.username,
-              joinedAt: member ? member.joinedAt : Date.now(),
-              lastLogin: Date.now()
-            };
+          req.session.user = user.id;
 
-            req.session.user = {
-              id: data.id,
-	      avatar: member.avatar,
-              username: data.username,
-              theme: member?.settings?.theme || "default"
+          Members.get(user.id).then(async (member) => {
+            if (member) {
+              await Members.set(user.id, {
+                lastLogin: Date.now()
+              });
+            } else {
+              await Database.save('Member', user.id, {
+                username: user.username,
+                avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`,
+                joinedAt: Date.now(),
+                lastLogin: Date.now()
+              });
             }
-
-            helpers.Redis.set('member', user.id, data).then(() => {
-              res.redirect('/');
-            });
-          }).catch((err) => {
-            console.error(err);
-            helpers.Redis.set('member', user.id, {
-              lastLogin: Date.now()
-            }).then(() => {
-              res.redirect('/');
-            });
+            res.redirect('/');
           });
         });
       } else {

@@ -23,17 +23,6 @@ Webhook.prototype.send = function(channel, data) {
     });
 
     switch (channel) {
-      case "egg-hatchery":
-        pubSubClient.topic('squawkoverflow-egg-hatchery').publish(Buffer.from(""), {
-          member: `${data.member}`,
-          birdypet: `${data.birdypet.id}`,
-          adjective: `${data.adjective}`,
-          userpet: `${data.userpet}`,
-          source: "WEB"
-        }).then((response) => {
-          resolve();
-        });
-        break;
       case "exchange":
         var embeds = [
           new MessageEmbed()
@@ -44,16 +33,18 @@ Webhook.prototype.send = function(channel, data) {
           .setImage(`https://storage.googleapis.com/birdypets/${data.birdypet.species.order}/${data.birdypet.species.family}/${data.birdypet.species.scientificName.replace(' ', '%20')}/${data.birdypet.id}.${data.birdypet.filetype ? data.birdypet.filetype : "jpg"}`)
         ];
 
-        webhookClient.send({
-          content: `${data.from.username} has sent <@${data.to}> a gift!`,
-          embeds: embeds
-        }).then(() => {
-          resolve();
-        });
+        var content = `${data.from} has sent <@${data.to}> a gift!`;
         break;
       default:
         return reject();
     }
+
+    webhookClient.send({
+      content: content,
+      embeds: embeds
+    }).then(() => {
+      resolve();
+    });
   });
 };
 

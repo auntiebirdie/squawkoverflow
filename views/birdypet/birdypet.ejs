@@ -12,10 +12,17 @@
     <div class="row">
       <div class="col-md-8 pt-3">
         <div class="text-center">
-          <img id="birdy" src="<%= memberpet.image %>" class="birdypet full">
+          <span class="h-100 d-inline-block position-relative">
+           <% if (locals.loggedInUser) { %>
+            <button class="wishlist-heart btn btn-light btn-sm" data-id="<%= memberpet.species.speciesCode %>" data-action="<%= wishlisted ? 'remove' : 'add' %>" role="button">
+              <%= wishlisted ? '❤️' : '🤍' %>
+            </button>
+           <% } %>
+            <img id="birdy" src="<%= memberpet.image %>" class="birdypet full">
+          </span>
         </div>
 
-        <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
+        <% if (locals.loggedInUser && member._id == locals.loggedInUser._id) { %>
           <%- include('../partials/spacer.ejs'); %>
 
           <form id="manageBirdyPet" method="POST">
@@ -30,7 +37,7 @@
               <h5><label>Variant</label></h5>
               <select name="variant" class="form-select">
                 <% for (let otherVersion of otherVersions) { %>
-                <option value="<%= otherVersion.id %>" <%= otherVersion.id == memberpet.birdypetId ? "selected" : "" %>>
+                <option value="<%= otherVersion.id %>" data-src="<%= otherVersion.image %>" <%= otherVersion.id == memberpet.birdypetId ? "selected" : "" %>>
                   <%= otherVersion.label %>
                   <%= otherVersion.id == memberpet.birdypetId ? "[current]" : "" %>
                 </option>
@@ -74,7 +81,7 @@
           <%- include('../partials/spacer.ejs'); %>
         </div>
 
-        <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
+        <% if (locals.loggedInUser && member._id == locals.loggedInUser._id) { %>
           <div class="text-center">
             <% if (member.birdyBuddy != memberpet._id) { %>
             <p><a href="/birdypet/buddy/<%= memberpet._id %>" class="btn btn-primary">💖 Make Birdy Buddy</a></p>
@@ -89,7 +96,9 @@
         <% } %>
 
         <h6>Common Name</h6>
-        <p><a href="/birdypedia/bird/<%= memberpet.species.speciesCode %>"><%= memberpet.species.commonName %></a></p>
+        <p>
+          <a href="/birdypedia/bird/<%= memberpet.species.speciesCode %>"><%= memberpet.species.commonName %></a>
+        </p>
 
         <h6>Scientific Name</h6>
         <p><%= memberpet.species.scientificName %></p>
@@ -121,10 +130,10 @@
 
     <script type="text/javascript">
     $('select[name="variant"]').change(function() {
-        var value = this.options[this.options.selectedIndex].value;
+        var option = this.options[this.options.selectedIndex];
         var birdy = document.getElementById('birdy');
 
-        birdy.src = birdy.src.replace(/\/[^\/]+.jpg/, `\/${value}.jpg`);
+        birdy.src = option.getAttribute('data-src');
     });
     </script>
 <%- include('../footer.ejs') %>

@@ -2,13 +2,22 @@
 	background-color: #475011 !important;
 }
 
-.btn-primary, .btn-outline-primary {
-	border-color: #252520 !important;
+.bg-primary, .btn-primary,
+.pagination .page-link {
+        background-color: #5f6a10 !important;
+}
+
+.btn-primary, .btn-outline-primary,
+.pagination .page-link {
+        border-color: #5f6a10 !important;
 }
 
 .btn-primary:hover, .btn-outline-primary:hover,
-.btn-check:active+.btn-outline-primary, .btn-check:checked+.btn-outline-primary, .btn-outline-primary.active, .btn-outline-primary:active {
-	background-color: #1F1F17 !important;
+.btn-check:active+.btn-outline-primary, .btn-check:checked+.btn-outline-primary, .btn-outline-primary.active, .btn-outline-primary:active,
+.pagination .page-link:hover, .pagination .page-link:active,
+.page-item.active .page-link {
+        background-color: #5F6A10 !important;
+        color: #DDF600;
 }
 
 .btn-outline-primary {
