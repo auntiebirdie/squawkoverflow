@@ -1,3 +1,5 @@
+const Cache = require('../helpers/cache.js');
+
 const helpers = require('../helpers');
 const express = require('express');
 const router = express.Router();
@@ -19,7 +21,7 @@ router.get('/:adjective', helpers.Middleware.isLoggedIn, async (req, res) => {
     var birdypet = helpers.Chance.pickone(birdypets);
 
     if (birdypet) {
-      var wishlist = await helpers.Redis.get('wishlist', req.session.user) || [];
+      var wishlist = await Cache.get('wishlist', req.session.user) || {};
       var userpets = [];
 
       await helpers.Redis.fetch('memberpet', {
@@ -38,7 +40,7 @@ router.get('/:adjective', helpers.Middleware.isLoggedIn, async (req, res) => {
         adjective: adjective,
         birdypet: birdypet,
         userpets: userpets,
-        wishlisted: wishlist.includes(birdypet.speciesCode)
+        wishlisted: wishlist[birdypet.family] ? wishlist[birdypet.family].includes(birdypet.speciesCode) : false
       });
     } else {
       return res.redirect('/hatch');

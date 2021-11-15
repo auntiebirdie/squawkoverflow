@@ -35,7 +35,7 @@ router.get('/aviary/:member', Middleware.entityExists, async (req, res) => {
     'LIMIT': [page, birdsPerPage]
   }).then(async (response) => {
     var myAviary = req.session.user ? req.entities['member']._id == req.session.user : false;
-    var wishlist = req.session.user && !myAviary ? await Redis.get('wishlist', req.session.user) : [];
+    var wishlist = req.session.user && !myAviary ? await Cache.get('wishlist', req.session.user) : [];
     var output = [];
 
     for (var memberpet of response.results) {
@@ -46,7 +46,7 @@ router.get('/aviary/:member', Middleware.entityExists, async (req, res) => {
 
       output.push({
         ...MemberPets.format(memberpet),
-        wishlisted: wishlist.includes(memberpet.birdypetSpecies),
+        wishlisted: wishlist[memberpet.family] ? wishlist[memberpet.family].includes(memberpet.birdypetSpecies) : false,
         checkmark: owned.includes(memberpet.birdypetId) ? 2 : (owned.length > 0 ? 1 : 0)
       });
     }
@@ -85,7 +85,7 @@ router.get('/flocks/:flock', Middleware.entityExists, (req, res) => {
 
 router.get('/birdypedia', async (req, res) => {
   var page = --req.query.page * birdsPerPage;
-  var wishlist = req.session.user ? await Redis.get('wishlist', req.session.user) : [];
+  var wishlist = req.session.user ? await Cache.get('wishlist', req.session.user) : [];
   var output = [];
 
   if (req.query.family) {
@@ -103,7 +103,7 @@ router.get('/birdypedia', async (req, res) => {
   birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
 
   for (var i = page, len = Math.min(page + birdsPerPage, birds.length); i < len; i++) {
-    birds[i].wishlisted = wishlist.includes(birds[i].speciesCode);
+    birds[i].wishlisted = wishlist[birds[i].family] ? wishlist[birds[i].family].includes(birds[i].speciesCode) : false;
     birds[i].variants = BirdyPets.findBy('speciesCode', birds[i].speciesCode).filter((birdypet) => !birdypet.special);
 
     if (req.session.user) {

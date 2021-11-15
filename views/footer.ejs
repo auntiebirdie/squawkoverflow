@@ -40,6 +40,7 @@
           if (!button.style.opacity) { 
             var action = button.getAttribute('data-action');
             button.style.opacity = .5;
+            button.innerHTML = "⏳";
 
             $.ajax({
               url: `/api/wishlist/${action}/${button.getAttribute('data-id')}`,

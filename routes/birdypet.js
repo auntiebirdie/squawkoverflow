@@ -1,4 +1,5 @@
 const BirdyPets = require('../helpers/birdypets.js');
+const Cache = require('../helpers/cache.js');
 const MemberPets = require('../helpers/memberpets.js');
 const Members = require('../helpers/members.js');
 const Middleware = require('../helpers/middleware.js');
@@ -84,7 +85,7 @@ router.get('/:memberpet', Middleware.entityExists, async (req, res) => {
     flocks: flocks || [],
     allFlocks: allFlocks?.results || [],
     otherVersions: BirdyPets.findBy("speciesCode", memberpet.speciesCode).filter((birdypet) => !birdypet.special),
-	  wishlisted: req.session.user ? await Redis.get('wishlist', req.session.user).then((wishlist) => wishlist.includes(memberpet.species.speciesCode)) : false
+    wishlisted: req.session.user ? await Cache.get('wishlist', req.session.user).then((wishlist) => wishlist[memberpet.species.family] ? wishlist[memberpet.species.family].includes(memberpet.species.speciesCode) : false) : false
   });
 });
 

@@ -25,7 +25,7 @@ router.get('/:member', Middleware.isLoggedIn, Middleware.entityExists, (req, res
     'SORTBY': req.query.sort,
     'LIMIT': [page, birdsPerPage]
   }).then(async (response) => {
-    var wishlist = await Redis.get('wishlist', req.entities['member']._id);
+    var wishlist = await Cache.get('wishlist', req.entities['member']._id);
     var output = [];
 
     for (var memberpet of response.results) {
@@ -36,7 +36,7 @@ router.get('/:member', Middleware.isLoggedIn, Middleware.entityExists, (req, res
 
       output.push({
         ...MemberPets.format(memberpet),
-        wishlisted: wishlist.includes(memberpet.birdypetSpecies),
+        wishlisted: wishlist[memberpet.family] ? wishlist[memberpet.family].includes(memberpet.birdypetSpecies) : false,
         checkmark: owned.includes(memberpet.birdypetId) ? 2 : (owned.length > 0 ? 1 : 0)
       });
     }

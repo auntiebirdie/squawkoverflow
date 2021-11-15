@@ -46,15 +46,14 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
         break;
       case 'member':
         Database.get('Member', id).then((member) => {
-          if (member) {
-            if (member[Database.KEY]) {
-              delete member[Database.KEY];
-            }
+          resolve(member);
+        });
+        break;
+      case 'wishlist':
+        Database.get('Wishlist', id).then((wishlist) => {
+          delete wishlist._id;
 
-            resolve(member);
-          } else {
-            resolve(null);
-          }
+          resolve(wishlist);
         });
         break;
       case 'aviaryTotals':
@@ -147,6 +146,10 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
     }
   }).then(async (results) => {
     await Redis.databases["cache"].del(`${kind}:${id}`);
+
+    if (results[Database.KEY]) {
+      delete results[Database.KEY];
+    }
 
     switch (typeof results) {
       case "object":

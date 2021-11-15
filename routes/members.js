@@ -1,3 +1,4 @@
+const Cache = require('../helpers/cache.js');
 const Members = require('../helpers/members.js');
 
 const helpers = require('../helpers.js');
@@ -28,7 +29,7 @@ router.get('/:member', helpers.Middleware.entityExists, async (req, res) => {
     flock: {}
   };
 
-  output.member.wishlist = await helpers.Redis.get('wishlist', req.entities['member']._id).then((birds) => birds.length > 0);
+  output.member.wishlist = await Cache.get('wishlist', req.entities['member']._id).then( (results) => Object.keys(results).length > 0 );
 
   if (output.member.birdyBuddy) {
     output.member.birdyBuddy = await helpers.MemberPets.get(output.member.birdyBuddy);

@@ -15,24 +15,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/eggs', async (req, res) => {
-  var eggs = helpers.data('eggs');
-
-  for (var egg in eggs) {
-    let tmp = eggs[egg].species;
-
-    if (tmp) {
-      let cached = req.session.user ? await Cache.get(`eggs-${egg}`, req.session.user, "s") : [];
-
-      eggs[egg] = [(cached.length || 0), tmp.length];
-    } else {
-      console.log(eggs[egg]);
-      delete eggs[egg];
-    }
-  }
-
-  res.render('birdypedia/eggs', {
-    eggs: eggs
-  });
+  res.render('birdypedia/eggs');
 });
 
 router.get('/eggs/:egg', async (req, res) => {

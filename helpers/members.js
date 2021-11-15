@@ -1,3 +1,4 @@
+const Birds = require('./birds.js');
 const BirdyPets = require('./birdypets.js');
 const Cache = require('./cache.js');
 const Database = require('./database.js');
@@ -45,6 +46,22 @@ module.exports = {
 
     member.tier = tier;
     member.bugs = member.bugs ? member.bugs * 1 : 0;
+
+    member.pronouns = JSON.parse(member.pronouns);
+
+    if (Array.isArray(member.pronouns)) {
+	    let tmp = {};
+
+	    member.pronouns.forEach( (pronoun) => {
+		    let key = Object.keys(pronoun)[0];
+
+		    tmp[key] = pronoun[key] ? "yes" : "neutral";
+	    });
+
+	    console.log(tmp);
+
+	    member.pronouns = tmp;
+    }
 
     let lastMonth = new Date().setMonth(new Date().getMonth() - 1);
 
@@ -99,6 +116,10 @@ module.exports = {
             Redis.databases['cache'].sadd(`species-${birdypet.species.speciesCode}:${memberId}`, birdypet.id);
           }
 
+          if (member.settings.general?.includes('updateWishlist')) {
+            await this.updateWishlist(memberId, "remove", birdypet.species);
+          }
+
           resolve();
         });
 
@@ -126,6 +147,62 @@ module.exports = {
 
           resolve();
         });
+      });
+    });
+  },
+
+  fetchWishlist: function(memberId, family) {
+    return new Promise(async (resolve, reject) => {
+      let birds = [];
+
+      await Cache.get('wishlist', memberId).then((results) => {
+        if (family) {
+          try {
+            birds = JSON.parse(results[family]);
+          } catch (err) {}
+        } else {
+          Object.values(results).forEach((result) => {
+            try {
+              JSON.parse(result).forEach((speciesCode) => {
+                birds.push(speciesCode);
+              });
+            } catch (err) {}
+          });
+        }
+      });
+
+      birds = birds.map((speciesCode) => Birds.findBy('speciesCode', speciesCode));
+
+      resolve(birds);
+    });
+  },
+
+  updateWishlist: function(memberId, action, bird) {
+    return new Promise((resolve, reject) => {
+      Database.get('Wishlist', memberId).then(async (results) => {
+        let toUpdate = {};
+
+        if (results[bird.family]) {
+          toUpdate[bird.family] = results[bird.family];
+        } else {
+          toUpdate[bird.family] = [];
+        }
+
+        if (action == "add") {
+          toUpdate[bird.family].push(bird.speciesCode);
+        } else if (action == "remove") {
+          toUpdate[bird.family] = toUpdate[bird.family].filter((tmp) => tmp != bird.speciesCode);
+        }
+
+        if (toUpdate[bird.family].length == 0) {
+          toUpdate[bird.family] = null;
+        }
+
+        await Database.set('Wishlist', memberId, toUpdate);
+
+        await Redis.databases['cache'].del(`wishlist:${memberId}`);
+
+        resolve();
       });
     });
   }

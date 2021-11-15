@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.get('/', Middleware.isLoggedIn, async (req, res) => {
   var freebirds = await Redis.get('cache', 'freebirds');
-  var wishlist = await Redis.get('wishlist', req.session.user);
+  var wishlist = await Cache.get('wishlist', req.session.user);
 
   if (freebirds.length > 0) {
     freebirds = Chance.pickset(freebirds, 20);
@@ -29,7 +29,7 @@ router.get('/', Middleware.isLoggedIn, async (req, res) => {
       if (birdypet) {
         freebirds[i] = birdypet;
         freebirds[i].ackId = ackId;
-        freebirds[i].wishlisted = wishlist.includes(freebirds[i].species.speciesCode);
+        freebirds[i].wishlisted = wishlist[freebirds[i].species.family] ? wishlist[freebirds[i].species.family].includes(freebirds[i].species.speciesCode) : false;
         freebirds[i].checkmark = 0;
 
         await Redis.fetch('memberpet', {
