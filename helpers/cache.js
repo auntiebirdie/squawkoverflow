@@ -28,7 +28,7 @@ Cache.prototype.add = function(kind, id, data) {
 }
 
 Cache.prototype.refresh = function(kind = 'cache', id, type) {
-  var expiration = 86400 // 1 day;
+  var expiration = 604800 // 1 week;
 
   return new Promise(async (resolve, reject) => {
     var data = {};
