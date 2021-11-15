@@ -1,6 +1,6 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { breadcrumb : "BirdyPets", title : "Gifting" }) %>
+    <%- include('../partials/page-title.ejs', { breadcrumb : "BirdyPets", title : "Send a Gift" }) %>
 
     <div class="row">
       <div class="col-md-6">
@@ -12,8 +12,8 @@
           <h6><%= giftpet.birdypet.label %></h6>
         <% } %>
 
-        <div class="card mt-4 mb-4">
-          <img class="birdypet full border border-1" src="<%= giftpet.birdypet.image %>">
+        <div class="mt-4 mb-4 text-center">
+          <img class="birdypet full" src="<%= giftpet.birdypet.image %>">
         </div>
       </div>
       <div class="col-md-6">
