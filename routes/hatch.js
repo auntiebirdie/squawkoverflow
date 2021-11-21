@@ -1,56 +1,45 @@
+const API = require('../helpers/api.js');
 const Cache = require('../helpers/cache.js');
-const Members = require('../helpers/members.js');
 
-const helpers = require('../helpers');
+const helpers = require('../helpers.js');
+
 const express = require('express');
 const router = express.Router();
 
-router.get('/', helpers.Middleware.isLoggedIn, async (req, res) => {
-  var member = res.locals.loggedInUser;
-  var timeUntil = 0;
-  var aviaryFull = false;
-
-  if (member.tier.eggTimer) {
-    if (member.lastHatchedAt) {
-      var timeSinceLastHatch = (Date.now() - member.lastHatchedAt) / 60000;
-
-      if (timeSinceLastHatch < member.tier.eggTimer) {
-        timeUntil = Math.floor(member.tier.eggTimer - timeSinceLastHatch);
-      }
-    }
-  }
-
-  if (member.tier.aviaryLimit < Infinity) {
-    var aviary = await Cache.get('aviaryTotals', req.session.user);
-  }
-
-  if (timeUntil == 0 && !aviaryFull) {
-    var eggs = helpers.data('eggs');
-    var keys = helpers.Chance.pickset(Object.keys(eggs), 6);
-
-    eggs = await Promise.all(keys.map(async (egg) => {
-      let cached = await Cache.get(`eggs-${egg}`, req.session.user, "s");
-
-      return {
-        ...eggs[egg],
-        name: egg,
-        totals: [(cached.length || 0), eggs[egg].species.length]
-      }
-    }));
-
-    req.session.adjectives = keys;
-  } else {
-    var adjectives = [];
-  }
-
+router.get('/', async (req, res) => {
   res.set('Cache-Control', 'no-store');
 
-  res.render('hatch/eggs', {
-    eggs: eggs,
-    tier: member.tier,
-    timeUntil: timeUntil,
-    aviaryFull: aviaryFull
-  });
+  API.call('hatch', "GET", {
+      loggedInUser: req.session.user
+    }, res).then((response) => {
+      req.session.adjectives = response.map((egg) => egg.name);
+
+      return res.render('hatch/eggs', {
+        eggs: response
+      });
+    })
+    .catch((err) => {
+      switch (err.code) {
+        case 401:
+        case "401":
+          return res.redirect('/login');
+          break;
+        case 403:
+        case "403":
+          if (err.response.data.timeUntil > 0) {
+            return res.render('hatch/timer.ejs', {
+              timeUntil: err.response.data.timeUntil
+            });
+          } else if (err.response.data.aviaryFull) {
+            return res.render('hatch/full.ejs');
+          } else {
+            return res.redirect('/error');
+          }
+          break;
+        default:
+          return res.redirect('/error');
+      }
+    });
 });
 
 module.exports = router;

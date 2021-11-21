@@ -15,7 +15,7 @@
 
   <%- include('../scripts/lazyloader.ejs') %>
 
-  <% if (locals.loggedInUser && loggedInUser._id == member._id) { %>
+  <% if (locals.loggedInUser && loggedInUser.id == member._id) { %>
   <script>
     var loader = `
       <div class="spinner-border d-block mx-auto" role="status">

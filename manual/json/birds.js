@@ -10,7 +10,7 @@ const DB = new Datastore({
   namespace: 'squawkoverflow'
 });
 
-var output = {};
+var output = [];
 
 // Clements, J. F., T. S. Schulenberg, M. J. Iliff, S. M. Billerman, T. A. Fredericks, J. A. Gerbracht, D. Lepage, B. L. Sullivan, and C. L. Wood. 2021.
 // The eBird/Clements checklist of Birds of the World: v2021.
@@ -23,19 +23,8 @@ https.get('https://www.birds.cornell.edu/clementschecklist/wp-content/uploads/20
       if (row['CATEGORY'] == 'species') {
         var order = row['ORDER1']
         var family = row['FAMILY'].split(' ').shift();
-	      
-        if (!output[order]) {
-          output[order] = {}
-        }
 
-        if (!output[order][family]) {
-          output[order][family] = {
-            display: row['FAMILY'],
-            children: []
-          };
-        }
-
-        output[order][family].children.push({
+	      output.push({
           "commonName": row['PRIMARY_COM_NAME'],
           "scientificName": row['SCI_NAME'],
           "speciesCode": row['SPECIES_CODE'],
@@ -45,16 +34,13 @@ https.get('https://www.birds.cornell.edu/clementschecklist/wp-content/uploads/20
       }
     })
     .on('end', async () => {
-	    for (var order in output) {
-		    for (var family in output[order]) {
-			    for (var bird of output[order][family].children) {
+			    for (var bird of output) {
+				    console.log(bird);
 				    await DB.runQuery(DB.createQuery('Bird').filter('code', '=', bird.speciesCode)).then( ([results]) => {
 					    bird.adjectives = results[0].adjectives || [];
 				    });
 			    }
-		    }
-	    }
 
-      fs.writeFileSync(__dirname + '/../../public/data/birds.json', JSON.stringify(output));
+      fs.writeFileSync(__dirname + '/birds.json', JSON.stringify(output));
     });
 });

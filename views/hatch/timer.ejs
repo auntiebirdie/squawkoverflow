@@ -1,0 +1,15 @@
+<%- include('../header.ejs') %>
+
+  <%- include('../partials/page-title.ejs', { title : "Hatch Eggs" }) %>
+
+  <div class="row text-center mt-5 mb-5">
+    <h3><em>You can hatch another egg in <span id="countdown"><%= timeUntil %></span> minutes.</em></h3>
+  </div>
+
+  <div class="row text-center mt-5">
+    <div class="col">
+      <p><small><em><a href="/faq#weird-eggs" target="_blank">What's with the weird eggs?</a></em></small></p>
+    </div>
+  </div>
+
+<%- include('../footer.ejs') %>

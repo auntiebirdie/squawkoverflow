@@ -12,13 +12,13 @@
         <div class="col-sm-6 col-md-3 mb-3">
           <div class="row">
           <div class="col-3 text-center">
-            <a href="/members/<%= members[i]._id %>">
-              <img class="member-avatar" src="<%= members[i].avatar %>" data-id="<%= members[i]._id %>" onerror="missingMemberAvatar(this)">
+            <a href="/members/<%= members[i].id %>">
+              <img class="member-avatar" src="<%= members[i].avatar %>" data-id="<%= members[i].id %>" onerror="missingMemberAvatar(this)">
             </a>
           </div>
           <div class="col-8">
             <h5 class="pt-2">
-              <a class="text-decoration-none" href="/members/<%= members[i]._id %>">
+              <a class="text-decoration-none" href="/members/<%= members[i].id %>">
                 <%= members[i].username %>
               </a>
             </h5>

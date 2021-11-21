@@ -4,7 +4,7 @@
 
     <div class="row">
       <div class="col-md-6">
-        <h4><%= userpet.nickname? `"${userpet.nickname}" (${birdypet.species.commonName})` : `${birdypet.species.commonName}   ${birdypet.label}` %></h4>
+        <h4><%= memberpet.nickname? `"${memberpet.nickname}" (${birdypet.species.commonName})` : `${birdypet.species.commonName}   ${birdypet.label}` %></h4>
 
         <img class="birdypet full mt-4 mb-4" src="<%= birdypet.image %>">
       </div>
@@ -12,10 +12,34 @@
         <h4>Are you sure you want to release this bird?</h4>
 
         <p>&nbsp;</p>
-        <form id="releaseBirdyPet" method="post" class="text-center">
+
+        <div class="text-center">
           <button id="actionButton" class="btn btn-primary" type="submit">Bye-Bye Birdy!</button>
-        </form>
+        </div>
       </div>
     </div>
+
+  <script>
+      $('#actionButton').on('click', function (e) {
+        var button = e.currentTarget;
+
+        if (!button.style.opacity) { 
+          button.style.opacity = .5;
+
+              $.ajax({
+                cache: false,
+                url: `/api/release`,
+                data: {
+                  memberpet : '<%= memberpet._id %>'
+                },
+                dataType: "json",
+                method: "POST",
+                success: function(data) {
+                  window.location.href = '/aviary/<%= loggedInUser.id %>';
+                }
+              });
+        }
+      }); 
+  </script>
 
 <%- include('../footer.ejs') %>

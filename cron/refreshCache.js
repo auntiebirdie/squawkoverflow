@@ -11,7 +11,7 @@ const subClient = new v1.SubscriberClient();
 
 async function refresh() {
   const formattedSubscription = subClient.subscriptionPath(
-    process.env.GCP_PROJECT,
+	  'bot-central',
     'squawkoverflow-free-birds'
   );
 

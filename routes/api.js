@@ -1,8 +1,10 @@
+const API = require('../helpers/api.js');
+
 const Birds = require('../helpers/birds.js');
 const BirdyPets = require('../helpers/birdypets.js');
 const Cache = require('../helpers/cache.js');
-const MemberPets = require('../helpers/memberpets.js');
 const Members = require('../helpers/members.js');
+const MemberPets = require('../helpers/memberpets.js');
 const Middleware = require('../helpers/middleware.js');
 const Redis = require('../helpers/redis.js');
 
@@ -10,13 +12,18 @@ const chance = require('chance').Chance();
 const express = require('express');
 const router = express.Router();
 
+const {
+  GoogleAuth
+} = require('google-auth-library');
+
+const auth = new GoogleAuth();
+
 const birdsPerPage = 24;
 
-router.use('/hatch', require('./api/hatch.js'));
-router.use('/release', require('./api/release.js'));
+//router.use('/hatch', require('./api/hatch.js'));
+
 router.use('/wishlist', require('./api/wishlist.js'));
 router.use('/gift', require('./api/gift.js'));
-router.use('/freebirds', require('./api/freebirds.js'));
 
 router.get('/aviary/:member', Middleware.entityExists, async (req, res) => {
   var page = --req.query.page * birdsPerPage;
@@ -226,6 +233,19 @@ router.put('/account', Middleware.isLoggedIn, async (req, res) => {
   });
 
   res.json("ok");
+});
+
+
+router.all('/*', async (req, res) => {
+  let data = (req.method == "GET" ? req.query : req.body) || {};
+
+  data.loggedInUser = req.session.user;
+
+  API.call(req.path.match(/\/?(\b[A-Za-z]+\b)/)[1], req.method, data).then((response) => {
+    res.json(response);
+  }).catch((err) => {
+	  console.log(err);
+  });
 });
 
 module.exports = router;

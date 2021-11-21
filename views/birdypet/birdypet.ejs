@@ -22,7 +22,7 @@
           </span>
         </div>
 
-        <% if (locals.loggedInUser && member._id == locals.loggedInUser._id) { %>
+        <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
           <%- include('../partials/spacer.ejs'); %>
 
           <form id="manageBirdyPet" method="POST">
@@ -81,7 +81,7 @@
           <%- include('../partials/spacer.ejs'); %>
         </div>
 
-        <% if (locals.loggedInUser && member._id == locals.loggedInUser._id) { %>
+        <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
           <div class="text-center">
             <% if (member.birdyBuddy != memberpet._id) { %>
             <p><a href="/birdypet/buddy/<%= memberpet._id %>" class="btn btn-primary">💖 Make Birdy Buddy</a></p>

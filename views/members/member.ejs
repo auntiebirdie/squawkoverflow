@@ -4,43 +4,43 @@
 
   <div class="row">
     <div class="col-sm-6 col-md-2 text-center mb-3">
-      <img class="member-avatar" src="<%= member.avatar %>" data-id="<%= member._id %>" onerror="missingMemberAvatar(this)">
+      <img class="member-avatar" src="<%= member.avatar %>" data-id="<%= member.id %>" onerror="missingMemberAvatar(this)">
     </div>
     <div class="col-sm-6 col-md-4 text-center text-md-start mb-3">
       <h4>
-        <% if (aviary.count == 0) { %>
+        <% if (member.aviaryTotal <= 0) { %>
           Aspiring
-        <% } else if (aviary.count < 10) { %>
+        <% } else if (member.aviaryTotal < 10) { %>
           Beginner
-        <% } else if (aviary.count < 100) { %>
+        <% } else if (member.aviaryTotal < 100) { %>
           Novice
-        <% } else if (aviary.count < 500) { %>
+        <% } else if (member.aviaryTotal < 500) { %>
           Dedicated
-        <% } else if (aviary.count < 1000) { %>
+        <% } else if (member.aviaryTotal < 1000) { %>
           Greater
-        <% } else if (aviary.count < 5000) { %>
+        <% } else if (member.aviaryTotal < 5000) { %>
           Superb
-        <% } else if (aviary.count < 10000) { %>
+        <% } else if (member.aviaryTotal < 10000) { %>
           Penultimate
-        <% } else { %>
+        <% } else if (member.aviaryTotal > 10000) { %>
           Ultimate
         <% } %>
 
         <%= member.tier.name %>
       </h4>
-      <p><%= aviary.count.toLocaleString("en-US") %> birds collected</p>
+      <p><%= member.aviaryTotal.toLocaleString("en-US") %> birds collected</p>
 
       <h5>Joined</h5>
       <p><%= new Date(member.joinedAt * 1).toLocaleString('en-US', { dateStyle: "long" }) %></p>
     </div>
     <div class="col-md-6 text-center  
 text-md-end">
-        <p><a href="/aviary/<%= member._id %>" class="btn btn-primary">🐦 View Aviary</a></p>
-      <% if (member.wishlist && !member.settings.privacy?.includes('wishlist')) { %>
-        <p><a href="/wishlist/<%= member._id %>" class="btn btn-primary">❤️ View Wishlist</a></p>
+        <p><a href="/aviary/<%= member.id %>" class="btn btn-primary">🐦 View Aviary</a></p>
+      <% if (member.hasWishlist && !member.settings.privacy?.includes('wishlist')) { %>
+        <p><a href="/wishlist/<%= member.id %>" class="btn btn-primary">❤️ View Wishlist</a></p>
       <% } %>
-      <% if (locals.loggedInUser && loggedInUser._id != member._id && !member.settings.privacy?.includes('gifts')) { %>
-        <p><a href="/members/<%= member._id %>/gift" class="btn btn-primary">🎁 Send Gift</a></p>
+      <% if (locals.loggedInUser && loggedInUser.id != member.id && !member.settings.privacy?.includes('gifts')) { %>
+        <p><a href="/members/<%= member.id %>/gift" class="btn btn-primary">🎁 Send Gift</a></p>
       <% } %>
     </div>
   </div>
@@ -62,7 +62,7 @@ text-md-end">
       </div>
     </div>
     <div class="col-md-6">
-      <h4><a class="text-decoration-none" href="/birdypet/<%= member.birdyBuddy._id %>"><%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.species.commonName %></a></h4>
+      <h4><a class="text-decoration-none" href="/birdypet/<%= member.birdyBuddy.id %>"><%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.species.commonName %></a></h4>
 
       <%- include('../partials/friendshipMeter.ejs', { friendship : member.birdyBuddy.friendship }) %>
 
@@ -75,11 +75,11 @@ text-md-end">
         </div>
         <% } %>
 
-        <% if (locals.loggedInUser && bugs > 0) { %>
+        <% if (locals.loggedInUser && loggedInUser.bugs > 0) { %>
            <% if (member.birdyBuddy.friendship >= 100) { %>
-             <p><em>You have <%= bugs %> bug<%= bugs != 1 ? "s" : "" %>, but <%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.species.commonName %> is full!</em></p>
+             <p><em>You have <%= loggedInUser.bugs %> bug<%= loggedInUser.bugs != 1 ? "s" : "" %>, but <%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.species.commonName %> is full!</em></p>
            <% } else { %>
-             <p><button id="feedBug" class="btn btn-primary" role="button" data-birdypet="<%= member.birdyBuddy._id %>">🐛 Feed a Bug (you have <span><%= bugs %></span>)</button></p>
+             <p><button id="feedBug" class="btn btn-primary" role="button" data-birdypet="<%= member.birdyBuddy.id %>">🐛 Feed a Bug (you have <span><%= loggedInUser.bugs %></span>)</button></p>
            <% } %>
         <% } %>
       </div>
@@ -92,7 +92,7 @@ text-md-end">
 
     <h4 class="mb-5"><%= member.flock.name %></h4>
 
-    <div id="lazyLoader" class="row" data-endpoint="/api/flocks/<%= member.flock._id %>"></div>
+    <div id="lazyLoader" class="row" data-endpoint="/api/flocks/<%= member.flock.id %>"></div>
 
     <%- include('../scripts/lazyloader.ejs') %>
   <% } %>
@@ -101,12 +101,19 @@ text-md-end">
     var message = $('.birdybuddy .message');
 
     $('#feedBug').on('click', function (event) {
-        var button = this;
+      var button = this;
+
+      if (!button.style.opacity) {
+        button.style.opacity = .5;
 
         $.ajax({
           cache: false,
-          url: `/api/birdypet/${this.getAttribute('data-birdypet')}/feedBug`,
+          url: `/api/nomnomnom`,
+          method: 'POST',
           dataType: "json",
+          data: {
+            memberpet: "<%= member.birdyBuddy.id %>"
+          },
           success: function(data) {
             if (!data.error) {
               message.text(data.response).show();
@@ -115,6 +122,9 @@ text-md-end">
               if (data.bugs == 0) {
                 button.disabled = true;
               }
+              else {
+                button.style.opacity = null;
+              }
             }
             else {
               button.innerText = data.error;
@@ -122,6 +132,7 @@ text-md-end">
             }
           }
         });
+      }
     });
   </script>
 

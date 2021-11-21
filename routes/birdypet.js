@@ -6,45 +6,36 @@ const Middleware = require('../helpers/middleware.js');
 const Queue = require('../helpers/queue.js');
 const Redis = require('../helpers/redis.js');
 
+const API = require('../helpers/api.js');
+
 const express = require('express');
 const router = express.Router();
 
 router.get('/buddy/:memberpet', Middleware.isLoggedIn, Middleware.entityExists, Middleware.userOwnsEntity, (req, res) => {
-  Members.set(req.session.user, { birdyBuddy: req.entities['memberpet']._id }).then( () => {
+  Members.set(req.session.user, {
+    birdyBuddy: req.entities['memberpet']._id
+  }).then(() => {
     res.redirect(`/birdypet/${req.entities['memberpet']._id}`);
   });
 });
 
 router.get('/gift/:memberpet', Middleware.isLoggedIn, Middleware.entityExists, Middleware.userOwnsEntity, async (req, res) => {
-	var members = await Members.all();
+  var members = await Members.all();
 
-    res.render('birdypet/gift', {
-      giftpet: {
-        userpet: req.entities['memberpet'],
-        birdypet: BirdyPets.fetch(req.entities['memberpet'].birdypetId)
-      },
-      members: members.filter((member) => !member.settings.privacy?.includes('gifts')),
-      selectedMember: req.query.member ? req.query.member : null
+  res.render('birdypet/gift', {
+    giftpet: {
+      userpet: req.entities['memberpet'],
+      birdypet: BirdyPets.fetch(req.entities['memberpet'].birdypetId)
+    },
+    members: members.filter((member) => !member.settings.privacy?.includes('gifts')),
+    selectedMember: req.query.member ? req.query.member : null
   });
 });
 
 router.get('/release/:memberpet', Middleware.isLoggedIn, Middleware.entityExists, Middleware.userOwnsEntity, (req, res) => {
   res.render('birdypet/release', {
-    userpet: req.entities['memberpet'],
+    memberpet: req.entities['memberpet'],
     birdypet: BirdyPets.fetch(req.entities['memberpet'].birdypetId)
-  });
-});
-
-router.post('/release/:memberpet', Middleware.isLoggedIn, Middleware.entityExists, Middleware.userOwnsEntity, (req, res, next) => {
-  Redis.delete('memberpet', req.entities['memberpet']._id).then(async () => {
-    await Members.removeBirdyPet(req.session.user, req.entities['memberpet'].birdypetId);
-
-    await Queue.add('free-birds', {
-	    'member' : req.session.user,
-	    'birdypet' : req.entities['memberpet'].birdypetId
-    });
-
-    res.redirect('/aviary/' + req.session.user);
   });
 });
 

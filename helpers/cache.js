@@ -147,7 +147,7 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
   }).then(async (results) => {
     await Redis.databases["cache"].del(`${kind}:${id}`);
 
-    if (results[Database.KEY]) {
+    if (results && results[Database.KEY]) {
       delete results[Database.KEY];
     }
 

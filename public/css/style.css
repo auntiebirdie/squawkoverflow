@@ -268,26 +268,55 @@ select {
 }
 
 .loadingData {
-	opacity: 0.5;
 	position: relative;
+	transform: translateZ(0);
+}
+
+.loadingData > * {
+	opacity: 0.5;
 }
 
 .loadingData::after {
-	content: ' ';
+	content: "⏳";
 	position: fixed;
-	left: 55%;
+	left: 45%;
+	top: 25%;
 	display: inline-block;
-	width: 2rem;
-	height: 2rem;
-	border: .25em solid currentColor;
-	border-right-color: transparent;
-	border-radius: 50%;
-        animation: spinner-border .75s linear infinite;
+	text-align: center;
+	width: 2em;
+	height: 2em;
+	font-size: 1.5em;
+	line-height: 2em;
+	background: rgba(255, 255, 255, .5);
+	border-radius: 100px;
+        animation: loadingData 1s ease-in-out infinite;
 }
 
 .card.loadingData::after {
 	position: absolute;
 	top: 6rem;
+}
+
+@keyframes loadingData {
+  40% {
+	  transform: rotate(-30deg);
+  }
+
+  45% {
+	  transform: rotate(35deg);
+  }
+
+  50% {
+	  transform: rotate(-30deg);
+  }
+
+  55% {
+	  transform: rotate(-35deg);
+  }
+
+  60% {
+	  transform: rotate(0);
+  }
 }
 
 // X-Small devices (portrait phones, less than 576px)

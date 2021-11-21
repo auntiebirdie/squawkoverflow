@@ -47,20 +47,22 @@ module.exports = {
     member.tier = tier;
     member.bugs = member.bugs ? member.bugs * 1 : 0;
 
-    member.pronouns = JSON.parse(member.pronouns);
+    try {
+      member.pronouns = JSON.parse(member.pronouns);
+    } catch (err) {
+      member.pronouns = {};
+    }
 
     if (Array.isArray(member.pronouns)) {
-	    let tmp = {};
+      let tmp = {};
 
-	    member.pronouns.forEach( (pronoun) => {
-		    let key = Object.keys(pronoun)[0];
+      member.pronouns.forEach((pronoun) => {
+        let key = Object.keys(pronoun)[0];
 
-		    tmp[key] = pronoun[key] ? "yes" : "neutral";
-	    });
+        tmp[key] = pronoun[key] ? "yes" : "neutral";
+      });
 
-	    console.log(tmp);
-
-	    member.pronouns = tmp;
+      member.pronouns = tmp;
     }
 
     let lastMonth = new Date().setMonth(new Date().getMonth() - 1);

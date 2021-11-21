@@ -60,9 +60,9 @@
 		  <span class="d-none d-sm-inline-block"><%= loggedInUser.username %></span>
           </a>
           <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-            <li><a class="dropdown-item" href="/members/<%= loggedInUser._id %>">Profile</a></li>
-            <li><a class="dropdown-item" href="/aviary/<%= loggedInUser._id %>">My Aviary</a></li>
-            <li><a class="dropdown-item" href="/wishlist/<%= loggedInUser._id %>">My Wishlist</a></li>
+            <li><a class="dropdown-item" href="/members/<%= loggedInUser.id %>">Profile</a></li>
+            <li><a class="dropdown-item" href="/aviary/<%= loggedInUser.id %>">My Aviary</a></li>
+            <li><a class="dropdown-item" href="/wishlist/<%= loggedInUser.id %>">My Wishlist</a></li>
             <li><a class="dropdown-item" href="/flocks">Manage Flocks</a></li>
 	    <li><a class="dropdown-item" href="/account">Settings</a></li>
             <li><hr class="dropdown-divider"></li>

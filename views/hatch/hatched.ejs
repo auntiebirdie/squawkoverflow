@@ -14,12 +14,12 @@
           <%= birdypet.label %>
         </h6>
         <h6>
-          <%= wishlisted ? "❤️" : "" %>
-          <%- userpets.includes(birdypet.species.commonName) ? "<div class=\"small\"><span class=\"checkmark\"></span> <em>You have this species</em></div>" : "" %>
-          <%- userpets.includes(birdypet.id) ? "<div class=\"small\"><span class=\"checkmark\"></span> <em>You have this variant</em></div>" : "" %>
+          <%- birdypet.wishlisted ? "<div class=\"small\">❤️ <em>This bird is on your wishlist!</em></div>" : "" %>
+          <%- birdypet.owned.includes(birdypet.species.speciesCode) ? "<div class=\"small\"><span class=\"checkmark\"></span> <em>You have this species</em></div>" : "" %>
+          <%- birdypet.owned.includes(birdypet.id) ? "<div class=\"small\"><span class=\"checkmark\"></span> <em>You have this variant</em></div>" : "" %>
         </h6>
 
-        <div id="actions" data-birdypet="<%= birdypet.id %>" class="mt-5">
+        <div id="actions" class="mt-5 text-center">
           <button data-action="keep" class="btn btn-lg btn-primary mb-3">❤️&nbsp;Keep</button>
           &nbsp;
           <button data-action="release" class="btn btn-lg btn-primary mb-3">👋&nbsp;Release</button>
@@ -29,41 +29,48 @@
 
     <script>
       var container = document.getElementById('actions');
-      var birdypetId = container.getAttribute('data-birdypet');
 
       $(container).on('click', 'button', function (e) {
         var button = e.currentTarget;
 
-        switch (button.getAttribute('data-action')) {
-          case "keep":
-            $.ajax({
-              cache: false,
-              url: `/api/hatch`,
-              data: {
-                birdypetId : birdypetId,
-                adjective : "<%= adjective %>"
-              },
-              dataType: "json",
-              method: "POST",
-              success: function(data) {
-                container.innerHTML = `<a class="btn btn-lg btn-primary mb-3" href="/birdypet/${data.memberpet}">🐣 View BirdyPet</a>&nbsp;<a class="btn btn-lg btn-primary mb-3" href="/hatch">🥚 Hatch Another Egg</a>`;
-              }
-            });
-            break;
-          case "release":
-            $.ajax({
-              cache: false,
-              url: `/api/release`,
-              data: {
-                birdypetId : birdypetId
-              },
-              dataType: "json",
-              method: "POST",
-              success: function(data) {
-                window.location.href = '/hatch';
-              }
-            });
-            break;
+        if (!button.style.opacity) { 
+          var action = button.getAttribute('data-action');
+
+          container.classList.add('loadingData');
+          container.innerHTML = "";
+
+          switch (button.getAttribute('data-action')) {
+            case "keep":
+              $.ajax({
+                cache: false,
+                url: `/api/collect`,
+                data: {
+                  birdypet : "<%=  birdypet.id %>",
+                  adjective : "<%= adjective %>"
+                },
+                dataType: "json",
+                method: "POST",
+                success: function(data) {
+                  container.classList.remove('loadingData');
+                  container.innerHTML = `<a class="btn btn-lg btn-primary mb-3" href="/birdypet/${data}">🐣 View BirdyPet</a>&nbsp;<a class="btn btn-lg btn-primary mb-3" href="/hatch">🥚 Hatch Another Egg</a>`;
+                }
+              });
+              break;
+            case "release":
+              $.ajax({
+                cache: false,
+                url: `/api/release`,
+                data: {
+                  birdypet : "<%= birdypet.id %>"
+                },
+                dataType: "json",
+                method: "POST",
+                success: function(data) {
+                  window.location.href = '/hatch';
+                }
+              });
+              break;
+          }
         }
       }); 
     </script>
