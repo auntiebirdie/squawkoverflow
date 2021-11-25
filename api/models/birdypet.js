@@ -12,6 +12,7 @@ class BirdyPet {
     let bird = birds.find((bird) => bird.speciesCode == birdypet.speciesCode);
 
     this.image = `https://storage.googleapis.com/birdypets/${bird.order}/${bird.family}/${bird.scientificName.replace(/\s/, '%20')}/${birdypet.id}.${birdypet.filetype ? birdypet.filetype : "jpg"}`;
+	  this.label = birdypet.label;
     this.special = birdypet.special || false;
     this.species = bird;
 

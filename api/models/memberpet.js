@@ -13,6 +13,14 @@ class MemberPet {
     return new Promise((resolve, reject) => {
       let birdypet = new BirdyPet(data.birdypet);
 
+	    this.birdypetId = birdypet.id;
+	    this.birdypetSpecies = birdypet.species.speciesCode;
+	    this.species = birdypet.species.commonName;
+	    this.family = birdypet.species.family;
+	    this.member = data.member;
+	    this.hatchedAt = Date.now();
+
+
       if (birdypet) {
         Redis.create('memberpet', {
           birdypetId: birdypet.id,
@@ -35,10 +43,8 @@ class MemberPet {
 
   fetch(params) {
     return new Promise((resolve, reject) => {
-      Cache.get('memberpet', this.id).then(async (memberpet) => {
-        if (!memberpet) {
-          resolve(null);
-        } else {
+      Redis.get('memberpet', this.id).then((memberpet) => {
+	      console.log(memberpet);
           let birdypet = new BirdyPet(memberpet.birdypetId);
 
           this.member = memberpet.member;
@@ -48,10 +54,10 @@ class MemberPet {
           this.friendship = (memberpet.friendship || 0) * 1;
 
           this.image = birdypet.image;
+	      this.label = birdypet.label;
           this.species = birdypet.species;
 
           resolve(this);
-        }
       });
     });
   }

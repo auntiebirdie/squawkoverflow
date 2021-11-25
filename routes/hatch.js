@@ -14,11 +14,12 @@ router.get('/', async (req, res) => {
     }, res).then((response) => {
       req.session.adjectives = response.map((egg) => egg.name);
 
-      return res.render('hatch/eggs', {
+      return res.render('hatch/index', {
         eggs: response
       });
     })
     .catch((err) => {
+	    console.log(err.response);
       switch (err.code) {
         case 401:
         case "401":

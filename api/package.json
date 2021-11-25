@@ -11,8 +11,6 @@
   "dependencies": {
     "@google-cloud/datastore": "^6.6.2",
     "@google-cloud/pubsub": "^2.18.2",
-    "@google-cloud/trace-agent": "^5.1.6",
-    "chance": "^1.1.8",
     "redis": "^3.1.2",
     "short-uuid": "^4.2.0"
   }

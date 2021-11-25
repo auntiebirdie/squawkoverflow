@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
       let member = new Member(req.query.loggedInUser);
 
       await member.fetch();
-
+/*
       if (member.tier.eggTimer && member.lastHatchedAt) {
         let timeSinceLastHatch = (Date.now() - member.lastHatchedAt) / 60000;
 
@@ -30,12 +30,13 @@ module.exports = async (req, res) => {
           });
         }
       }
+      */
 
       var eggs = require('../data/eggs.json');
       var keys = Object.keys(eggs).sort(() => .5 - Math.random()).slice(0, 6);
 
       eggs = await Promise.all(keys.map(async (egg) => {
-        let cached = await Cache.get(`eggs-${egg}`, member.id, "s");
+        let cached = member.tier?.extraInsights ? await Cache.get(`eggs-${egg}`, member.id, "s") : [];
 
         return {
           ...eggs[egg],

@@ -99,7 +99,6 @@ app.get('/_ah/warmup', (req, res) => {
 
 app.use('/', require('./routes/home.js'));
 app.use('/hatch', require('./routes/hatch.js'));
-app.use('/hatched', require('./routes/hatched.js'));
 app.use('/birdypet', require('./routes/birdypet.js'));
 app.use('/aviary', require('./routes/aviary.js'));
 app.use('/wishlist', require('./routes/wishlist.js'));

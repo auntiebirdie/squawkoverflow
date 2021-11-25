@@ -20,68 +20,71 @@
         <h4>Who is the lucky person to receive this gift?</h4>
         <h6>&nbsp;</h6>
 
-        <select id="memberList" class="form-select">
-          <option></option>
-        <% for (var member of members) { %>
-          <option data-avatar="<%= member.avatar %>" data-username="<%= member.username %>" value="<%= member._id %>">
-            <%= member.username %>
-          </option>
-        <% } %>
-        </select>
+        <div>
+          <select id="memberList" class="form-select">
+            <option></option>
+          <% for (var member of members) { %>
+            <option data-avatar="<%= member.avatar %>" data-username="<%= member.username %>" value="<%= member._id %>">
+              <%= member.username %>
+            </option>
+          <% } %>
+          </select>
 
-        <div id="memberDisplay" class="my-5"></div>
+          <div id="memberDisplay" class="my-5"></div>
 
-        <div class="text-center">
-          <button id="actionButton" class="btn btn-primary" type="button" disabled>Send Gift!</button>
+          <div class="text-center">
+            <button id="actionButton" class="btn btn-primary" type="button" disabled>Send Gift!</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@2.3.7/dist/latest/bootstrap-autocomplete.min.js"></script>
-    <script type="text/javascript">
-      var actionButton = $('#actionButton');
-      var memberDisplay = $('#memberDisplay');
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@2.3.7/dist/latest/bootstrap-autocomplete.min.js"></script>
+  <script type="text/javascript">
+    var actionButton = $('#actionButton');
+    var memberDisplay = $('#memberDisplay');
 
-      $('#memberList').on('change', function () {
-        var option = this.options[this.options.selectedIndex];
-        var memberId = option.value;
+    $('#memberList').on('change', function () {
+      var option = this.options[this.options.selectedIndex];
+      var memberId = option.value;
 
-        if (memberId) {
-          memberDisplay.html(`<h3><img src="${option.getAttribute('data-avatar')}" class="member-avatar" width="75" data-id="${memberId}" onerror="missingMemberAvatar(this)"> ${option.getAttribute('data-username')}</h3>`);
-          actionButton.attr('disabled', false);
-        }
-        else {
-          memberDisplay.html("");
-          actionButton.attr('disabled', true);
-        }
-      });
+      if (memberId) {
+        memberDisplay.html(`<h3><img src="${option.getAttribute('data-avatar')}" class="member-avatar" width="75" data-id="${memberId}" onerror="missingMemberAvatar(this)"> ${option.getAttribute('data-username')}</h3>`);
+        actionButton.attr('disabled', false);
+      }
+      else {
+        memberDisplay.html("");
+        actionButton.attr('disabled', true);
+      }
+    });
 
-      actionButton.on('click', function (event) {
-    var button = event.target;
+    actionButton.on('click', function (event) {
+      var button = event.target;
 
-      if (!button.style.opacity) { 
-        button.style.opacity = .5;
+      if (!button.disabled) { 
+        button.parentNode.parentNode.classList.add('loadingData'); 
+        button.disabled = true;
 
         var member = $('#memberList').val();
 
         $.ajax({
-          url: `/api/gift/${member}/<%= giftpet.userpet._id %>`,
-          method: 'post',
+          url: '/api/gift',
+          data: {
+            member: member,
+            memberpet: '<%= giftpet.userpet._id %>'
+          },
+          method: 'POST',
           dataType: "json",
-          success: function(data) {
-            button.style.opacity = null;
-
-            if (!data.error) {
-              window.history.back();
-            }
+          success: function() {
+            window.location.replace('/birdypet/<%= giftpet.userpet._id %>');
           }
         });
       }
-      });
+    });
 
-      <% if (locals.selectedMember) { %>
-        $('#memberList').val("<%= selectedMember %>").trigger('change');
-      <% } %>
-    </script>
+    <% if (locals.selectedMember) { %>
+      $('#memberList').val("<%= selectedMember %>").trigger('change');
+    <% } %>
+  </script>
 
 <%- include('../footer.ejs') %>

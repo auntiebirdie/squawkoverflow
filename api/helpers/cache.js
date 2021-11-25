@@ -58,17 +58,24 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
         break;
       case 'memberpet':
         Redis.get('memberpet', id).then((birdypet) => {
-		console.log(birdypet);
-
-		if (birdypet._id) {
-          delete birdypet._id;
-		}
+          if (birdypet._id) {
+            delete birdypet._id;
+          }
 
           resolve(birdypet);
         });
         break;
+      case 'flock':
+        Redis.get('flock', id).then((flock) => {
+          if (flock._id) {
+            delete flock._id;
+          }
+
+          resolve(flock);
+        });
+        break;
       case 'aviaryTotals':
-      case 'flockTotals':
+      case '/flockTotals':
         var filters = {
           'RETURN': ['family']
         };

@@ -1,7 +1,10 @@
 const Cache = require('../helpers/cache.js');
 const Database = require('../helpers/database.js');
-const MemberPet = require('./memberpet.js');
 const Redis = require('../helpers/redis.js');
+
+const BirdyPet = require('./birdypet.js');
+const Flock = require('./flock.js');
+const MemberPet = require('./memberpet.js');
 
 class Member {
   constructor(id) {
@@ -99,6 +102,11 @@ class Member {
               this.birdyBuddy = new MemberPet(member.birdyBuddy);
               await this.birdyBuddy.fetch();
             }
+
+		  if (member.flock) {
+			  this.flock = new Flock(member.flock);
+			  await this.flock.fetch();
+		  }
           }
 
           resolve(this);
@@ -114,7 +122,10 @@ class Member {
     ]);
   }
 
-  updateWishlist(bird, action) {
+  updateWishlist(speciesCode, action) {
+    let birds = require('../data/birds.json');
+    let bird = birds.find((bird) => bird.speciesCode == speciesCode);
+
     return new Promise(async (resolve, reject) => {
       Database.get('Wishlist', this.id).then(async (results) => {
         let toUpdate = {};

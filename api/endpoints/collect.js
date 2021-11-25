@@ -28,7 +28,7 @@ module.exports = async (req, res) => {
     await member.fetch();
 
     if (member.settings.general?.includes('updateWishlist')) {
-      member.updateWishlist(req.body.birdypet, "remove");
+      member.updateWishlist(memberpet.birdypetSpecies, "remove");
     }
 
     if (req.body.adjective) {

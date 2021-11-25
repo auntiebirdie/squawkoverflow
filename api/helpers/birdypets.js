@@ -1,5 +1,4 @@
 const Birds = require('./birds.js');
-const Chance = require('chance').Chance();
 const birdypets = require('../data/birdypets.json');
 
 module.exports = {
@@ -19,7 +18,7 @@ module.exports = {
     }
   },
   random: function(num = 1) {
-    return Chance.pickset(birdypets.filter( (birdypet) => !birdypet.special ), num).map((birdypet) => this.format(birdypet));
+    return birdypets.filter( (birdypet) => !birdypet.special ).sort(() => .5 - Math.random()).slice(0, num).map((birdypet) => this.format(birdypet));
   },
   get: function(id) {
     return this.format(birdypets.find((birdypet) => birdypet.id == id));

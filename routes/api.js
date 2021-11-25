@@ -20,9 +20,6 @@ const auth = new GoogleAuth();
 
 const birdsPerPage = 24;
 
-//router.use('/hatch', require('./api/hatch.js'));
-
-router.use('/wishlist', require('./api/wishlist.js'));
 router.use('/gift', require('./api/gift.js'));
 
 router.get('/aviary/:member', Middleware.entityExists, async (req, res) => {

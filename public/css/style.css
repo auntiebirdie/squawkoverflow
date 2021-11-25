@@ -279,8 +279,11 @@ select {
 .loadingData::after {
 	content: "⏳";
 	position: fixed;
-	left: 45%;
-	top: 25%;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	margin: auto;
 	display: inline-block;
 	text-align: center;
 	width: 2em;

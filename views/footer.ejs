@@ -43,8 +43,11 @@
             button.innerHTML = "⏳";
 
             $.ajax({
-              url: `/api/wishlist/${action}/${button.getAttribute('data-id')}`,
-              method: 'post',
+              url: '/api/wishlist',
+              data: {
+                speciesCode: button.getAttribute('data-id')
+              },
+              method: action == "add" ? "POST" : "DELETE",
               dataType: "json",
               success: function(data) {
                 button.style.opacity = null;

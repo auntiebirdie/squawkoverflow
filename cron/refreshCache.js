@@ -11,7 +11,7 @@ const subClient = new v1.SubscriberClient();
 
 async function refresh() {
   const formattedSubscription = subClient.subscriptionPath(
-	  'bot-central',
+    'bot-central',
     'squawkoverflow-free-birds'
   );
 
@@ -23,11 +23,16 @@ async function refresh() {
   const [response] = await subClient.pull(request);
 
   for (let queued of response.receivedMessages) {
-    console.log(queued);
+	  console.log(queued);
 
-    Redis.databases['cache'].sadd(`cache:freebirds`, queued.ackId);
-
-    Redis.databases['cache'].set(`freebird:${queued.ackId}`, queued.message.attributes.birdypet);
+    await Promise.all([
+      new Promise((resolve, reject) => {
+        Redis.databases['cache'].sadd(`cache:freebirds`, queued.ackId, resolve);
+      }),
+      new Promise((resolve, reject) => {
+        Redis.databases['cache'].set(`freebird:${queued.ackId}`, queued.message.attributes.birdypet, resolve);
+      })
+    ]);
   }
 
   process.exit(0);

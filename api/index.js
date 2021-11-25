@@ -1,5 +1,3 @@
-require('@google-cloud/trace-agent').start();
-
 exports.api = (req, res) => {
   try {
     let route = req.path.match(/\/?(\b[A-Za-z]+\b)/);

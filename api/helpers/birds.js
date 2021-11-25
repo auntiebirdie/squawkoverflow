@@ -1,11 +1,10 @@
-const Chance = require('chance').Chance();
 const birds = require('../data/birds.json');
 
 module.exports = {
   random: function(key, value) {
     var matchingBirds = this.fetch(key, value);
 
-    return matchingBirds.length > 0 ? Chance.pickone(matchingBirds) : Chance.pickone(this.all());
+    return (matchingBirds.length > 0 ? matchingBirds : this.all()).sort(() => .5 - Math.random())[0];
   },
   fetch: function(key, value) {
     var matchingBirds = [];
