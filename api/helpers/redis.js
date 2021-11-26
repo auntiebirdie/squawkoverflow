@@ -49,12 +49,7 @@ Database.prototype.get = function(kind, id, field = "") {
               return resolve();
             }
 
-            resolve({
-              ...result,
-              ...{
-                _id: id
-              }
-            });
+            resolve(result);
           });
         }
     }

@@ -1,0 +1,107 @@
+<%- include('../header.ejs') %>
+
+  <%- include ('../partials/page-title.ejs', { title : "Account Settings" }) %>
+
+  <h3>
+    Theme
+  </h3>
+
+  <div class="p-3 m-3 mb-5">
+      <div class="btn-group" role="group">
+        <% for (var theme of themes) { %>
+        <input type="radio" class="btn-check" name="theme" value="<%= theme.id %>" id="theme_<%= theme.id %>" autocomplete="off" <%= loggedInUser.settings.theme == theme.id ? "checked" : "" %>>
+        <label class="btn btn-outline-primary" for="theme_<%= theme.id %>"><%= theme.icon %> <%= theme.name %></label>
+        <% } %>
+      </div>
+  </div>
+
+  <h3>
+    General
+  </h3>
+
+  <div class="p-3 m-3 mb-5">
+    <div class="form-check form-switch mt-3">
+      <input type="checkbox" class="form-check-input" name="general" value="updateWishlist" id="general_updateWishlist" <%= loggedInUser.settings.general?.includes('updateWishlist') ? "checked" : "" %>>
+      <label class="form-check-label" for="updateWishlist">Remove newly obtained birds from my wishlist automatically</label>
+    </div>
+  </div>
+
+  <h3>
+    Privacy
+  </h3>
+
+  <div class="p-3 m-3 mb-5">
+    <div class="form-check form-switch mb-3">
+      <input type="checkbox" class="form-check-input" name="privacy" value="activity" id="privacy_activity" <%= loggedInUser.settings.privacy?.includes('activity') ? "checked" : "" %>>
+      <label class="form-check-label" for="privacy_activity">Don't post my on-site activity to the Discord server</label>
+    </div>
+
+    <div class="form-check form-switch mb-3">
+      <input type="checkbox" class="form-check-input" name="privacy" value="profile" id="privacy_profile" <%= loggedInUser.settings.privacy?.includes('profile') ? "checked" : "" %>>
+      <label class="form-check-label" for="privacy_profile">Don't allow other members to see my profile</label>
+    </div>
+
+    <div class="form-check form-switch mb-3">
+      <input type="checkbox" class="form-check-input" name="privacy" value="gifts" id="privacy_gifts" <%= loggedInUser.settings.privacy?.includes('gifts') ? "checked" : "" %>>
+      <label class="form-check-label" for="privacy_gifts">Don't allow other members to send me gifts</label>
+    </div>
+
+    <div class="form-check form-switch mb-3">
+      <input type="checkbox" class="form-check-input" name="privacy" value="wishlist" id="privacy_wishlist" <%= loggedInUser.settings.privacy?.includes('wishlist') ? "checked" : "" %>>
+      <label class="form-check-label" for="privacy_wishlist">Don't allow other members to see my wishlist</label>
+    </div>
+  </div>
+
+
+  <script type="text/javascript">
+    $(document).ready( function () {
+      $('input').on('change', function (e) {
+        var input = this;
+
+        if (!input.classList.contains('loadingData')) {
+          var settings = {};
+          var type = input.type;
+          var key = input.name;
+          var value = input.value;
+
+          input.classList.add('loadingData');
+
+          switch (type) {
+            case 'radio':
+              settings[key] = value;
+              break;
+            case 'checkbox':
+              let tmp = [];
+
+              $(`input[name="${key}"]:checked`).each(function (index, input) {
+                tmp.push(input.value);
+              });
+
+              settings[key] = tmp.join(',');
+              break;
+          }
+
+          $.ajax({
+            cache: false,
+            url: '/api/member',
+            data: JSON.stringify({
+              settings: settings
+            }),
+            dataType: 'json',
+            contentType: 'application/json',
+            method: 'PUT',
+            success: function(data) {
+              if (key == 'theme') {
+                window.location.reload();
+              }
+              else {
+                input.classList.remove('loadingData');
+              }
+            }
+          });
+        }
+      });
+    });
+  </script>
+
+<%- include('../footer.ejs') %>

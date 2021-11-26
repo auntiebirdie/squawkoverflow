@@ -40,7 +40,7 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
             kind: 'Member',
             keysOnly: true
           }).then((members) => {
-            resolve(members.map((member) => member._id));
+            resolve(members.map( (member) => member[Database.KEY].name ));
           });
         }
         break;
@@ -51,26 +51,20 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
         break;
       case 'wishlist':
         Database.get('Wishlist', id).then((wishlist) => {
-          delete wishlist._id;
+          if (wishlist && wishlist._id) {
+            delete wishlist._id;
+          }
 
           resolve(wishlist);
         });
         break;
       case 'memberpet':
         Redis.get('memberpet', id).then((birdypet) => {
-          if (birdypet._id) {
-            delete birdypet._id;
-          }
-
           resolve(birdypet);
         });
         break;
       case 'flock':
         Redis.get('flock', id).then((flock) => {
-          if (flock._id) {
-            delete flock._id;
-          }
-
           resolve(flock);
         });
         break;

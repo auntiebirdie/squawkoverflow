@@ -69,12 +69,13 @@
 
         $.ajax({
           url: '/api/gift',
-          data: {
+          data: JSON.stringify({
             member: member,
             memberpet: '<%= giftpet.userpet._id %>'
-          },
+          }),
           method: 'POST',
           dataType: "json",
+          contentType: 'application/json',
           success: function() {
             window.location.replace('/birdypet/<%= giftpet.userpet._id %>');
           }

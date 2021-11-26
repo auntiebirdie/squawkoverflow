@@ -295,9 +295,8 @@ select {
         animation: loadingData 1s ease-in-out infinite;
 }
 
-.card.loadingData::after {
-	position: absolute;
-	top: 6rem;
+input.loadingData::after {
+	font-size: 1em;
 }
 
 @keyframes loadingData {

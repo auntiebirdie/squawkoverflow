@@ -1,11 +1,12 @@
-let endpoint = require('./endpoints/gift.js');
+let endpoint = require('./endpoints/member.js');
 
 endpoint({
-  method: "POST",
+  method: "PUT",
   body: {
-	  member: '121294882861088771',
-	  memberpet: 'gye6o2tymuorzocrNxAomf',
-      loggedInUser: '121294882861088771'
+      loggedInUser: '121294882861088771',
+	  settings: {
+		  privacy: "activity"
+	  }
   }
 }, {
   json: (input) => input,

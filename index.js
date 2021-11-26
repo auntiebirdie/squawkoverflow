@@ -19,6 +19,7 @@ const API = require('./helpers/api.js');
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
+app.use(express.json());
 app.use(session({
   store: new DatastoreStore({
     kind: 'Session',
@@ -32,9 +33,6 @@ app.use(session({
   secret: 'birds are just government drones',
   resave: true,
   saveUninitialized: false
-}));
-app.use(express.urlencoded({
-  extended: true
 }));
 
 app.use(async function(req, res, next) {
@@ -107,7 +105,7 @@ app.use('/freebirds', require('./routes/freebirds.js'));
 app.use('/birdypedia', require('./routes/birdypedia.js'));
 app.use('/members', require('./routes/members.js'));
 app.use('/login', require('./routes/login.js'));
-app.use('/account', require('./routes/account.js'));
+app.use('/settings', require('./routes/settings.js'));
 app.use('/faq', require('./routes/faq.js'));
 app.use('/api', require('./routes/api.js'));
 

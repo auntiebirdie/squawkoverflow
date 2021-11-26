@@ -44,12 +44,13 @@
         $.ajax({
           cache: false,
           url: `/api/collect`,
-          data: {
+          data: JSON.stringify({
             birdypet: `${image.getAttribute('data-birdypet')}`,
             freebird: `${image.getAttribute('data-id')}`
-          },
-          dataType: "json",
-          method: "POST",
+          }),
+          dataType: 'json',
+          contentType: 'application/json',
+          method: 'POST',
           success: function(data) {
             image.removeAttribute('data-id');
             image.parentNode.classList.remove('loadingData');

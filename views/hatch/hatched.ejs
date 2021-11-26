@@ -44,11 +44,12 @@
               $.ajax({
                 cache: false,
                 url: `/api/collect`,
-                data: {
+                data: JSON.stringify({
                   birdypet : "<%=  birdypet.id %>",
                   adjective : "<%= adjective %>"
-                },
+                }),
                 dataType: "json",
+                contentType: 'application/json',
                 method: "POST",
                 success: function(data) {
                   container.classList.remove('loadingData');
@@ -60,10 +61,11 @@
               $.ajax({
                 cache: false,
                 url: `/api/release`,
-                data: {
+                data: JSON.stringify({
                   birdypet : "<%= birdypet.id %>"
-                },
+                }),
                 dataType: "json",
+                contentType: 'application/json',
                 method: "POST",
                 success: function(data) {
                   window.location.href = '/hatch';

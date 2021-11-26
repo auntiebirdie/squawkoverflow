@@ -138,43 +138,6 @@ router.get('/birdypedia', async (req, res) => {
   });
 });
 
-router.get('/birdypet/:memberpet/feedBug', Middleware.isLoggedIn, Middleware.entityExists, async (req, res) => {
-  var bugs = res.locals.loggedInUser.bugs;
-
-  if (bugs > 0) {
-    bugs--;
-    await Members.set(req.session.user, {
-      'bugs': bugs
-    });
-    await Redis.increment('member', req.session.user, 'bugs', -1);
-
-    if (req.entities['memberpet'].friendship) {
-      await Redis.increment('memberpet', req.entities['memberpet']._id, "friendship", 5);
-    } else {
-      await Redis.set('memberpet', req.entities['memberpet']._id, {
-        friendship: 5
-      });
-    }
-
-    res.json({
-      bugs: bugs,
-      response: chance.pickone([
-        "Mmm!  Tastes like... bug.",
-        "Tasty!",
-        "Thanks!",
-        "More?",
-        "Oooh, that one was still wiggling.",
-        "Yum!",
-        "Another one!!"
-      ])
-    });
-  } else {
-    res.json({
-      error: "You don't have any more bugs!"
-    });
-  }
-});
-
 router.put('/flocks/:flock', Middleware.isLoggedIn, Middleware.entityExists, Middleware.userOwnsEntity, (req, res) => {
   Redis.set('flock', req.entities['flock']._id, {
     name: req.body.name || req.entities['flock'].name,
@@ -209,29 +172,6 @@ router.post('/flocks/:flock/:memberpet', Middleware.isLoggedIn, Middleware.entit
     });
   });
 });
-
-router.put('/account', Middleware.isLoggedIn, async (req, res) => {
-  var member = res.locals.loggedInUser;
-  var fields = ["theme", "general", "privacy"];
-  var data = member.settings;
-
-  Object.keys(req.body).filter((val) => fields.includes(val)).forEach((key) => {
-    data[key] = req.body[key];
-
-    if (key == "theme") {
-      res.locals.loggedInUser.settings.theme = req.body[key];
-    } else {
-      data[key] = req.body[key].split(',');
-    }
-  });
-
-  Members.set(req.session.user, {
-    settings: data
-  });
-
-  res.json("ok");
-});
-
 
 router.all('/*', async (req, res) => {
   let data = (req.method == "GET" ? req.query : req.body) || {};

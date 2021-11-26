@@ -12,7 +12,7 @@
 
     <%- include('../partials/pagination.ejs') %>
 
-    <div id="lazyLoader" class="row" data-endpoint="/api/wishlist/<%= member._id %>"></div>
+    <div id="lazyLoader" class="row" data-endpoint="/api/wishlist" data-params='{"id":"<%= member._id  %>"}'></div>
 
     <%- include('../partials/pagination.ejs') %>
 

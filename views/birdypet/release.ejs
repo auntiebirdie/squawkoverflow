@@ -1,12 +1,10 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { breadcrumb : "BirdyPets", title : "Release" }) %>
+    <%- include('../partials/page-title.ejs', { breadcrumb : "Release", title : memberpet.nickname? `${memberpet.nickname} (${memberpet.species.commonName})` : `${memberpet.species.commonName}   ${memberpet.label}` }) %>
 
     <div class="row">
       <div class="col-md-6">
-        <h4><%= memberpet.nickname? `"${memberpet.nickname}" (${birdypet.species.commonName})` : `${birdypet.species.commonName}   ${birdypet.label}` %></h4>
-
-        <img class="birdypet full mt-4 mb-4" src="<%= birdypet.image %>">
+        <img class="birdypet full mt-4 mb-4" src="<%= memberpet.image %>">
       </div>
       <div class="col-md-6">
         <h4>Are you sure you want to release this bird?</h4>
@@ -23,17 +21,19 @@
       $('#actionButton').on('click', function (e) {
         var button = e.currentTarget;
 
-        if (!button.style.opacity) { 
-          button.style.opacity = .5;
+        if (!button.disabled) { 
+          button.setAttribute('disabled', true);
+          button.parentNode.classList.add('loadingData');
 
               $.ajax({
                 cache: false,
                 url: `/api/release`,
-                data: {
-                  memberpet : '<%= memberpet._id %>'
-                },
+                data: JSON.stringify({
+                  memberpet : '<%= memberpet.id %>'
+                }),
                 dataType: "json",
                 method: "POST",
+                contentType: 'application/json',
                 success: function(data) {
                   window.location.href = '/aviary/<%= loggedInUser.id %>';
                 }

@@ -69,10 +69,11 @@
       $.ajax({
         cache: false,
         url: `/api/hatch`,
-        data: {
+        data: JSON.stringify({
           egg : egg
-        },
+        }),
         dataType: "json",
+        contentType: 'application/json',
         method: "POST",
         success: function(data) {
           birdypet = data.id;
@@ -126,11 +127,12 @@
             $.ajax({
               cache: false,
               url: `/api/collect`,
-              data: {
+              data: JSON.stringify({
                 birdypet : birdypet,
                 adjective : egg
-              },
+              }),
               dataType: "json",
+              contentType: 'application/json',
               method: "POST",
               success: function(data) {
                 actions.classList.remove('loadingData');
@@ -142,10 +144,11 @@
             $.ajax({
               cache: false,
               url: `/api/release`,
-              data: {
+              data: JSON.stringify({
                 birdypet : birdypet
-              },
+              }),
               dataType: "json",
+              contentType: 'application/json',
               method: "POST",
               success: function(data) {
                 window.location.reload();

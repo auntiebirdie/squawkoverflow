@@ -4,7 +4,7 @@
           title : memberpet.nickname ? memberpet.nickname : memberpet.species.commonName,
           breadcrumb: {
             text: `${member.username}`,
-            url: `/members/${member._id}`,
+            url: `/members/${member.id}`,
             prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member._id}" onerror="missingMemberAvatar(this)"> `
           }
     }) %>
@@ -83,13 +83,13 @@
 
         <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
           <div class="text-center">
-            <% if (member.birdyBuddy != memberpet._id) { %>
-            <p><a href="/birdypet/buddy/<%= memberpet._id %>" class="btn btn-primary">💖 Make Birdy Buddy</a></p>
+            <% if (member.birdyBuddy != memberpet.id) { %>
+            <p><a id="makeBirdyBuddy" class="btn btn-primary">💖 Make Birdy Buddy</a></p>
             <% } else {  %>
             <%- include('../partials/friendshipMeter.ejs', { friendship : memberpet.friendship || 0 }) %>
             <% } %>
-            <p><a href="/birdypet/gift/<%= memberpet._id %>" class="btn btn-primary">🎁 Gift to Someone</a></p>
-            <p><a href="/birdypet/release/<%= memberpet._id %>" class="btn btn-primary">👋 Release Bird</a></p>
+            <p><a href="/birdypet/gift/<%= memberpet.id %>" class="btn btn-primary">🎁 Gift to Someone</a></p>
+            <p><a href="/birdypet/release/<%= memberpet.id %>" class="btn btn-primary">👋 Release Bird</a></p>
           </div>
 
           <%- include('../partials/spacer.ejs'); %>
@@ -129,11 +129,63 @@
     </div>
 
     <script type="text/javascript">
-    $('select[name="variant"]').change(function() {
+      $('select[name="variant"]').change(function() {
         var option = this.options[this.options.selectedIndex];
         var birdy = document.getElementById('birdy');
 
         birdy.src = option.getAttribute('data-src');
-    });
+      });
+
+     <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
+      $('#makeBirdyBuddy').on('click', function () {
+        $.ajax({
+            cache: false,
+            url: '/api/member',
+            data: JSON.stringify({ birdyBuddy : "<%= memberpet.id %>" }),
+            dataType: 'json',
+            contentType: 'application/json',
+            method: 'PUT',
+            success: function(data) {
+              window.location.reload();
+            }
+        });
+      });
+
+      var form = document.getElementById('manageBirdyPet');
+
+      form.onsubmit = function (e) {
+        e.preventDefault();
+
+        if (!form.classList.contains('loadingData')) {
+          form.classList.add('loadingData');
+
+          var data = {
+            memberpet: "<%= memberpet.id %>",
+            flocks: []
+          }
+
+          $(form).serializeArray().map( function (datum) {
+            if (datum.name == "flocks[]") {
+              data['flocks'].push(datum.value);
+            }
+            else {
+              data[datum.name] = datum.value;
+            }
+          });
+
+          $.ajax({
+            cache: false,
+            url: '/api/memberpet',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json',
+            method: 'PUT',
+            success: function(data) {
+              window.location.reload();
+            }
+          });
+        }
+      }
+     <% } %>
     </script>
 <%- include('../footer.ejs') %>

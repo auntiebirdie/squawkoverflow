@@ -44,11 +44,12 @@
 
             $.ajax({
               url: '/api/wishlist',
-              data: {
+              data: JSON.stringify({
                 speciesCode: button.getAttribute('data-id')
-              },
+              }),
               method: action == "add" ? "POST" : "DELETE",
               dataType: "json",
+              contentType: 'application/json',
               success: function(data) {
                 button.style.opacity = null;
 

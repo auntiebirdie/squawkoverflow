@@ -1,3 +1,5 @@
+const MemberPet = require('../models/memberpet.js');
+
 const {
   PubSub
 } = require('@google-cloud/pubsub');
@@ -20,9 +22,9 @@ module.exports = async (req, res) => {
       return res.sendStatus(404);
     }
   } else if (req.body.memberpet) {
-    const Redis = require('../helpers/redis.js');
-
-    let memberpet = await Redis.get('memberpet', req.body.memberpet);
+    let memberpet = new MemberPet(req.body.memberpet);
+	  
+    await memberpet.fetch();
 
     if (!memberpet) {
       return res.sendStatus(404);
@@ -30,11 +32,11 @@ module.exports = async (req, res) => {
       return res.sendStatus(401);
     }
 
-    await Redis.delete('memberpet', memberpet._id);
-
     birdypet = {
       id: memberpet.birdypetId
     };
+
+    await memberpet.delete();
   }
 
   if (birdypet) {

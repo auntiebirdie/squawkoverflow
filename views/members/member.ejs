@@ -97,6 +97,7 @@ text-md-end">
     <%- include('../scripts/lazyloader.ejs') %>
   <% } %>
 
+ <% if (member.birdyBuddy) { %>
   <script type="text/javascript">
     var message = $('.birdybuddy .message');
 
@@ -111,9 +112,10 @@ text-md-end">
           url: `/api/nomnomnom`,
           method: 'POST',
           dataType: "json",
-          data: {
+          contentType: 'application/json',
+          data: JSON.stringify({
             memberpet: "<%= member.birdyBuddy.id %>"
-          },
+          }),
           success: function(data) {
             if (!data.error) {
               message.text(data.response).show();
@@ -135,5 +137,6 @@ text-md-end">
       }
     });
   </script>
+ <% } %>
 
 <%- include('../footer.ejs') %>

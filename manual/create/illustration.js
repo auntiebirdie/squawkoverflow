@@ -32,8 +32,7 @@ prompt.get(fields, function(err, result) {
   result.prefix = process.argv[2];
   result.alias = process.argv[3];
   result.credit = process.argv[4];
-
-  console.log(result);
+  result.special = process.argv[5];
 
   var bird = birds.findBy('speciesCode', result.code);
 
@@ -52,10 +51,12 @@ prompt.get(fields, function(err, result) {
         source: result.source,
         speciesCode: result.code,
         credit: result.credit,
-        special: result.special == 'true',
+        special: result.special == 'special',
         filetype: result.filetype ? result.filetype : result.url.split('.').pop(),
         label: result.label
       };
+
+	    console.log(data);
 
       if (illustration.length > 0) {
         var key = illustration[0][DB.KEY];
