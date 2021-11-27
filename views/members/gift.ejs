@@ -4,8 +4,12 @@
 
     <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies : true, sortFields : [{ "value" : "hatchedAt-DESC", "label" : "Hatch Date (Newest)" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
 
-    <div id="lazyLoader" class="row" data-endpoint="/api/gift/<%= member._id %>"></div>
+    <%- include('../partials/pagination.ejs') %>
 
-<%- include('../scripts/lazyloader.ejs', { template: '../templates/gift.ejs' }) %>
+    <div id="lazyLoader" class="row" data-endpoint="/api/gift" data-params='{"member":"<%= member.id  %>"}'></div>
+
+    <%- include('../partials/pagination.ejs') %>
+
+    <%- include('../scripts/lazyloader.ejs', { template: '../templates/gift.ejs', paginate: currentPage }) %>
 
 <%- include('../footer.ejs') %>

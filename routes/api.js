@@ -20,8 +20,6 @@ const auth = new GoogleAuth();
 
 const birdsPerPage = 24;
 
-router.use('/gift', require('./api/gift.js'));
-
 router.get('/aviary/:member', Middleware.entityExists, async (req, res) => {
   var page = --req.query.page * birdsPerPage;
   var filters = [
@@ -35,7 +33,7 @@ router.get('/aviary/:member', Middleware.entityExists, async (req, res) => {
 
   Redis.fetch('memberpet', {
     'FILTER': filters,
-    'SORTBY': req.query.sort,
+    'SORTBY': JSON.parse(req.query.sort),
     'LIMIT': [page, birdsPerPage]
   }).then(async (response) => {
     var myAviary = req.session.user ? req.entities['member']._id == req.session.user : false;
@@ -73,7 +71,7 @@ router.get('/flocks/:flock', Middleware.entityExists, (req, res) => {
 
   Redis.fetch('memberpet', {
     'FILTER': filters,
-    'SORTBY': req.query.sort,
+    'SORTBY': JSON.parse(req.query.sort),
     'LIMIT': [page, birdsPerPage]
   }).then((response) => {
     var output = response.results.map((memberpet) => {

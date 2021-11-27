@@ -1,6 +1,8 @@
 const Cache = require('../helpers/cache.js');
 const Members = require('../helpers/members.js');
+
 const API = require('../helpers/api.js');
+const Redis = require('../helpers/redis.js');
 
 const helpers = require('../helpers.js');
 const express = require('express');
@@ -31,37 +33,42 @@ router.get('/:member', async (req, res) => {
   });
 });
 
-router.get('/:member/gift', helpers.Middleware.isLoggedIn, helpers.Middleware.entityExists, async (req, res) => {
-  if (req.entities['member'].settings.privacy?.includes('gifts')) {
-    return res.redirect('/error');
-  }
+router.get('/:member/gift', helpers.Middleware.isLoggedIn, async (req, res) => {
+  API.call('member', 'GET', {
+    id: req.params.member
+  }).then(async (member) => {
+    if (member.settings.privacy?.includes('gifts')) {
+      return res.redirect('/error');
+    }
 
-  var allFamilies = require('../public/data/families.json');
-  var families = new Set();
+    var allFamilies = require('../public/data/families.json');
+    var families = new Set();
 
-  var flocks = await helpers.Redis.fetch('flock', {
-    "FILTER": `@member:{${req.session.user}}`,
-    "SORTBY": ["name", "DESC"]
-  });
-
-  await helpers.Redis.fetch('memberpet', {
-    'FILTER': `@member:{${req.session.user}}`,
-    'RETURN': ['family'],
-  }).then((response) => {
-    response.results.forEach((item) => {
-      var family = allFamilies.find((a) => a.value == item.family);
-
-      if (family) {
-        families.add(family);
-      }
+    var flocks = await Redis.fetch('flock', {
+      "FILTER": `@member:{${req.session.user}}`,
+      "SORTBY": ["name", "DESC"]
     });
-  });
 
-  res.render('members/gift', {
-    page: 'gift',
-    member: req.entities['member'],
-    flocks: flocks,
-    families: [...families].sort((a, b) => a.value.localeCompare(b.value))
+    await Redis.fetch('memberpet', {
+      'FILTER': `@member:{${req.session.user}}`,
+      'RETURN': ['family'],
+    }).then((response) => {
+      response.results.forEach((item) => {
+        var family = allFamilies.find((a) => a.value == item.family);
+
+        if (family) {
+          families.add(family);
+        }
+      });
+    });
+
+    res.render('members/gift', {
+      page: 'gift',
+      member: member,
+      flocks: flocks,
+      families: [...families].sort((a, b) => a.value.localeCompare(b.value)),
+      currentPage : (req.query.page || 1) * 1
+    });
   });
 });
 

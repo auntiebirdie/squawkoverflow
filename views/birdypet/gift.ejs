@@ -4,16 +4,16 @@
 
     <div class="row">
       <div class="col-md-6">
-        <% if (giftpet.userpet.nickname) { %>
-          <h4><%= giftpet.userpet.nickname %></h4>
-          <h6><%= giftpet.birdypet.species.commonName %></h6>
+        <% if (memberpet.nickname) { %>
+          <h4><%= memberpet.nickname %></h4>
+          <h6><%= memberpet.species.commonName %></h6>
         <% } else { %>
-          <h4><%= giftpet.birdypet.species.commonName %></h4>
-          <h6><%= giftpet.birdypet.label %></h6>
+          <h4><%= memberpet.species.commonName %></h4>
+          <h6><%= memberpet.label %></h6>
         <% } %>
 
         <div class="mt-4 mb-4 text-center">
-          <img class="birdypet full" src="<%= giftpet.birdypet.image %>">
+          <img class="birdypet full" src="<%= memberpet.image %>">
         </div>
       </div>
       <div class="col-md-6">
@@ -71,13 +71,13 @@
           url: '/api/gift',
           data: JSON.stringify({
             member: member,
-            memberpet: '<%= giftpet.userpet._id %>'
+            memberpet: '<%= memberpet.id %>'
           }),
           method: 'POST',
           dataType: "json",
           contentType: 'application/json',
           success: function() {
-            window.location.replace('/birdypet/<%= giftpet.userpet._id %>');
+            window.location.replace('/birdypet/<%= memberpet.id %>');
           }
         });
       }

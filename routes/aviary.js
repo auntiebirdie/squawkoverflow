@@ -20,21 +20,20 @@ router.get('/:member', Middleware.entityExists, async (req, res, next) => {
   var aviary = await Cache.get('aviaryTotals', req.entities['member']._id);
 
   if (aviary) {
-  var families = Object.keys(aviary)
-		.filter( (key) => aviary[key] > 0 && !key.startsWith('_'))
-		.map((family) => allFamilies.find((a) => a.value == family))
-		.sort((a, b) => a.value.localeCompare(b.value));
+    var families = Object.keys(aviary)
+      .filter((key) => aviary[key] > 0 && !key.startsWith('_'))
+      .map((family) => allFamilies.find((a) => a.value == family))
+      .sort((a, b) => a.value.localeCompare(b.value));
+  } else {
+    families = [];
   }
-	else {
-		families = [];
-	}
 
   res.render('aviary/index', {
     page: 'aviary',
     member: req.entities['member'],
     flocks: flocks.results,
     families: families,
-    currentPage : (req.query.page || 1) * 1
+    currentPage: (req.query.page || 1) * 1
   });
 });
 

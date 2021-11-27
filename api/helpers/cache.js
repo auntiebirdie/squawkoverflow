@@ -7,7 +7,7 @@ function Cache() {}
 
 Cache.prototype.get = function(kind, id, type = "h") {
   return new Promise((resolve, reject) => {
-    Redis.databases["cache"][type == "h" ? "hgetall" : "smembers"](`${kind}:${id}`, (err, results) => {
+    Redis.connect("cache")[type == "h" ? "hgetall" : "smembers"](`${kind}:${id}`, (err, results) => {
       if (err || typeof results == 'undefined' || results == null || results.length == 0) {
         resolve(this.refresh(kind, id, type));
       } else {
@@ -20,7 +20,7 @@ Cache.prototype.get = function(kind, id, type = "h") {
 Cache.prototype.add = function(kind, id, data) {
   return new Promise((resolve, reject) => {
     this.get(kind, id, "s").then((results) => {
-      Redis.databases['cache'].sadd(`${kind}:${id}`, data, (err, results) => {
+      Redis.connect('cache').sadd(`${kind}:${id}`, data, (err, results) => {
         resolve(results);
       });
     });
@@ -157,7 +157,7 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
         }
     }
   }).then(async (results) => {
-    await Redis.databases["cache"].del(`${kind}:${id}`);
+    await Redis.connect("cache").del(`${kind}:${id}`);
 
     if (results && results[Database.KEY]) {
       delete results[Database.KEY];
@@ -174,19 +174,19 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
               results[key] = JSON.stringify(data);
           }
 
-          await Redis.databases["cache"].hset(`${kind}:${id}`, key, results[key]);
+          await Redis.connect("cache").hset(`${kind}:${id}`, key, results[key]);
         }
         break;
       case "array":
         if (results.length > 0) {
-          await Redis.databases["cache"].sadd(`${kind}:${id}`, results);
+          await Redis.connect("cache").sadd(`${kind}:${id}`, results);
         }
         break;
       default:
         return results;
     }
 
-    await Redis.databases["cache"].sendCommand('EXPIRE', [`${kind}:${id}`, expiration]);
+    await Redis.connect("cache").sendCommand('EXPIRE', [`${kind}:${id}`, expiration]);
 
     return results;
   });

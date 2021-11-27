@@ -11,25 +11,24 @@ const API = require('../helpers/api.js');
 const express = require('express');
 const router = express.Router();
 
-router.get('/buddy/:memberpet', Middleware.isLoggedIn, Middleware.entityExists, Middleware.userOwnsEntity, (req, res) => {
-  Members.set(req.session.user, {
-    birdyBuddy: req.entities['memberpet']._id
-  }).then(() => {
-    res.redirect(`/birdypet/${req.entities['memberpet']._id}`);
+router.get('/:memberpet/gift', Middleware.isLoggedIn, async (req, res) => {
+  let members = await API.call('members', 'GET', {
+    privacy: "gifts"
   });
-});
 
-router.get('/gift/:memberpet', Middleware.isLoggedIn, Middleware.entityExists, Middleware.userOwnsEntity, async (req, res) => {
-  var members = await Members.all();
-
-  res.render('birdypet/gift', {
-    giftpet: {
-      userpet: req.entities['memberpet'],
-      birdypet: BirdyPets.fetch(req.entities['memberpet'].birdypetId)
-    },
-    members: members.filter((member) => !member.settings.privacy?.includes('gifts')),
-    selectedMember: req.query.member ? req.query.member : null
+  let memberpet = await API.call('memberpet', 'GET', {
+    id: req.params.memberpet
   });
+
+  if (memberpet.member == req.session.user) {
+    res.render('birdypet/gift', {
+      memberpet: memberpet,
+      members: members,
+      selectedMember: req.query.member ? req.query.member : null
+    });
+  } else {
+    res.redirect(`/birdypet/${req.params.memberpet}`);
+  }
 });
 
 router.get('/release/:memberpet', (req, res) => {

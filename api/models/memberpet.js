@@ -4,9 +4,10 @@ const Redis = require('../helpers/redis.js');
 const BirdyPet = require('./birdypet.js');
 
 class MemberPet {
+	static schema = {};
+
   constructor(id) {
     this.id = id;
-    this.schema = {};
   }
 
   create(data) {

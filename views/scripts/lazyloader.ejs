@@ -40,7 +40,7 @@
   function resetResults (event, page = 1) {
     container.innerHTML = "";
    <% if (locals.paginate) { %>
-    document.querySelectorAll('.pagination')[1].innerHTML = '';
+    document.querySelectorAll('.pagination')[1].style.visibility = 'hidden';
    <% } %>
     currentPage = page * 1;
     totalPages = 1;
@@ -76,7 +76,7 @@
       url: endpoint,
       data: Object.assign({
         page: currentPage * 1,
-        sort: sort.val() && sort.val().includes('-') ? [sort.val().split('-').shift(), sort.val().split('-').pop()] : [sort.val()],
+        sort: JSON.stringify(sort.val() && sort.val().includes('-') ? [sort.val().split('-').shift(), sort.val().split('-').pop()] : [sort.val()]),
         family : $('#family').is(':visible') ? $('#family').val() : "",
         flock : flock && !flock.attr('data-special') ? flock.val() : "",
         search : $('#search').val(),
@@ -176,6 +176,7 @@
 
     for (let pagination of paginations) {
       pagination.innerHTML = content;
+      pagination.style.visibility = 'visible';
     }
   }
 </script>

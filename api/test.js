@@ -1,15 +1,12 @@
-let endpoint = require('./endpoints/member.js');
+let endpoint = require('./endpoints/members.js');
 
 endpoint({
-  method: "PUT",
-  body: {
-      loggedInUser: '121294882861088771',
-	  settings: {
-		  privacy: "activity"
-	  }
+  method: "GET",
+  query: {
+	  privacy: "gifts"
   }
 }, {
-  json: (input) => input,
+  json: console.log,
   sendStatus: console.log,
 	status: (code) => {
 		console.log(code);
@@ -18,9 +15,4 @@ endpoint({
 			json: console.log
 		};
 	}
-}).then((output) => {
-
-  console.log(output);
-
-  process.exit(0);
-});
+}).then(() => process.exit(0));
