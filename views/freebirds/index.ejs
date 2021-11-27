@@ -4,34 +4,12 @@
 
     <p>Look out!  There are birds on the loose!!  They've been released and are running around stealing things for their nests.  Do you have space in your aviary for any of them?</p>
 
-    <div class="row">
-      <% if (birdypets.length > 0) { %>
-        <% for (var birdypet of birdypets) { %>
-        <div class="col-md-3">
-          <div class="pb-4">
-            <div class="h-100 card" style="cursor: pointer">
-              <a class="wishlist-heart">
-                <%= birdypet.wishlisted ? '❤️' : '' %>
-              </a>
-              <div class="bg-white lazy birdypet checkmark<%= birdypet.checkmark %>"
-                   data-id="<%= birdypet.ackId %>"
-                   data-birdypet="<%= birdypet.id %>"
-                   data-bg="<%= birdypet.image %>"
-              ></div>
-              <h3 class="mt-3 text-center"><%= birdypet.species.commonName %></h3>
-              <h6 class="mb-3 text-center"><%= birdypet.label %></h6>
-            </div>
-          </div>
-        </div>
-        <% } %>
-      <% } else { %>
-        <p><em>There are no recently released birds... maybe it's time to <a href="/hatch">hatch some of your own?</a></em></p>
-      <% } %>
-    </div>
+    <div id="lazyLoader" class="row mt-5" data-endpoint="/api/freebirds"></div>
 
-  <% if (locals.loggedInUser) { %>
+    <%- include('../scripts/lazyloader.ejs', { template: '../templates/freebird.ejs', paginate: 1, skipParams: true }) %>
+
   <script>
-    $('.row').on('click', '.card', function () {
+    $('#lazyLoader').on('click', '.card', function () {
       var image = this.querySelector('.birdypet');
       var h3 = this.querySelector('h3');
       var h6 = this.querySelector('h6');
@@ -54,6 +32,7 @@
           success: function(data) {
             image.removeAttribute('data-id');
             image.parentNode.classList.remove('loadingData');
+            image.style.opacity = .5;
 
             if (data.error) {
               h6.innerHTML = data.error;
@@ -66,6 +45,5 @@
       }
     });
   </script>
-  <% } %>
 
 <%- include('../footer.ejs') %>

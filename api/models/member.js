@@ -4,20 +4,22 @@ const Redis = require('../helpers/redis.js');
 
 const Birds = require('../collections/birds.js');
 const BirdyPet = require('./birdypet.js');
+const Flocks = require('../collections/flocks.js');
 const Flock = require('./flock.js');
 const MemberPet = require('./memberpet.js');
 
 class Member {
+  static schema = {
+    username: String,
+    avatar: String,
+    tier: Number,
+    bugs: Number,
+    settings: Object,
+    pronouns: Object
+  };
+
   constructor(id) {
     this.id = id;
-    this.schema = {
-      username: String,
-      avatar: String,
-      tier: Number,
-      bugs: Number,
-      settings: Object,
-      pronouns: Object
-    };
   }
 
   fetch(params = {}) {
@@ -95,8 +97,8 @@ class Member {
           this.joinedAt = member.joinedAt;
           this.lastHatchedAt = member.lastHatchedAt;
 
-          if (params.full) {
-            this.aviaryTotal = await Cache.get('aviaryTotals', this.id).then((results) => results._total);
+          if (params.profile) {
+            this.aviary = await Cache.get('aviaryTotals', this.id);
             this.hasWishlist = await Cache.get('wishlist', this.id).then((results) => results ? Object.keys(results).length > 0 : false);
 
             if (member.birdyBuddy) {
@@ -110,6 +112,28 @@ class Member {
             }
           }
 
+          if (params.flocks) {
+            this.flocks = new Flocks();
+            await this.flocks.all(this.id);
+          }
+
+          if (params.families) {
+            if (!this.aviary) {
+              this.aviary = await Cache.get('aviaryTotals', this.id);
+            }
+
+		  let allFamilies = require('../data/families.json');
+
+            try {
+              var families = Object.keys(this.aviary)
+                .filter((key) => aviary[key] > 0 && !key.startsWith('_'))
+                .map((family) => allFamilies.find((a) => a.value == family))
+                .sort((a, b) => a.value.localeCompare(b.value));
+            } catch (err) {
+              this.families = [];
+            }
+          }
+
           resolve(this);
         }
       });
@@ -118,73 +142,73 @@ class Member {
 
   set(data) {
     return new Promise(async (resolve, reject) => {
-        await Database.set('Member', this.id, data);
-        await Cache.refresh('member', this.id);
+      await Database.set('Member', this.id, data);
+      await Cache.refresh('member', this.id);
 
-          resolve();
-        });
-    }
-
-    fetchWishlist(family = null) {
-      return new Promise(async (resolve, reject) => {
-        let birds = [];
-
-        await Cache.get('wishlist', this.id).then((results) => {
-          if (family) {
-            try {
-              birds = JSON.parse(results[family]);
-            } catch (err) {}
-          } else {
-            Object.values(results).forEach((result) => {
-              try {
-                JSON.parse(result).forEach((speciesCode) => {
-                  birds.push(speciesCode);
-                });
-              } catch (err) {}
-            });
-          }
-        });
-
-        birds = birds.map((speciesCode) => Birds.findBy('speciesCode', speciesCode));
-
-        resolve(birds);
-      });
-    }
-
-    updateWishlist(speciesCode, action) {
-      let birds = require('../data/birds.json');
-      let bird = birds.find((bird) => bird.speciesCode == speciesCode);
-
-      return new Promise(async (resolve, reject) => {
-        Database.get('Wishlist', this.id).then(async (results) => {
-          let toUpdate = {};
-
-          if (results[bird.family]) {
-            toUpdate[bird.family] = results[bird.family];
-          } else {
-            toUpdate[bird.family] = [];
-          }
-
-          if (action == "add") {
-            if (!toUpdate[bird.family].includes(bird.speciesCode)) {
-              toUpdate[bird.family].push(bird.speciesCode);
-            }
-          } else if (action == "remove") {
-            toUpdate[bird.family] = toUpdate[bird.family].filter((tmp) => tmp != bird.speciesCode);
-          }
-
-          if (toUpdate[bird.family].length == 0) {
-            toUpdate[bird.family] = null;
-          }
-
-          await Database.set('Wishlist', this.id, toUpdate);
-
-          await Redis.databases['cache'].del(`wishlist:${this.id}`);
-
-          resolve();
-        });
-      });
-    }
+      resolve();
+    });
   }
 
-  module.exports = Member;
+  fetchWishlist(family = null) {
+    return new Promise(async (resolve, reject) => {
+      let birds = [];
+
+      await Cache.get('wishlist', this.id).then((results) => {
+        if (family) {
+          try {
+            birds = JSON.parse(results[family]);
+          } catch (err) {}
+        } else {
+          Object.values(results).forEach((result) => {
+            try {
+              JSON.parse(result).forEach((speciesCode) => {
+                birds.push(speciesCode);
+              });
+            } catch (err) {}
+          });
+        }
+      });
+
+      birds = birds.map((speciesCode) => Birds.findBy('speciesCode', speciesCode));
+
+      resolve(birds);
+    });
+  }
+
+  updateWishlist(speciesCode, action) {
+    let birds = require('../data/birds.json');
+    let bird = birds.find((bird) => bird.speciesCode == speciesCode);
+
+    return new Promise(async (resolve, reject) => {
+      Database.get('Wishlist', this.id).then(async (results) => {
+        let toUpdate = {};
+
+        if (results[bird.family]) {
+          toUpdate[bird.family] = results[bird.family];
+        } else {
+          toUpdate[bird.family] = [];
+        }
+
+        if (action == "add") {
+          if (!toUpdate[bird.family].includes(bird.speciesCode)) {
+            toUpdate[bird.family].push(bird.speciesCode);
+          }
+        } else if (action == "remove") {
+          toUpdate[bird.family] = toUpdate[bird.family].filter((tmp) => tmp != bird.speciesCode);
+        }
+
+        if (toUpdate[bird.family].length == 0) {
+          toUpdate[bird.family] = null;
+        }
+
+        await Database.set('Wishlist', this.id, toUpdate);
+
+        await Redis.connect('cache').del(`wishlist:${this.id}`);
+
+        resolve();
+      });
+    });
+  }
+}
+
+module.exports = Member;

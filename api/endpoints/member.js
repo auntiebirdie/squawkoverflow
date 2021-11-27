@@ -5,9 +5,7 @@ module.exports = async (req, res) => {
     case "GET":
       var member = new Member(req.query.id);
 
-      await member.fetch({
-        full: req.query.full ? true : false
-      });
+      await member.fetch(req.query);
 
       return res.json(member);
       break;
@@ -15,7 +13,7 @@ module.exports = async (req, res) => {
       var member = new Member(req.body.loggedInUser);
 
       await member.fetch({
-        full: true
+        profile: true
       });
 
       var fields = ["theme", "general", "privacy"];

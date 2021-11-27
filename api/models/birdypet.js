@@ -12,7 +12,7 @@ class BirdyPet {
     let bird = birds.find((bird) => bird.speciesCode == birdypet.speciesCode);
 
     this.image = `https://storage.googleapis.com/birdypets/${bird.order}/${bird.family}/${bird.scientificName.replace(/\s/, '%20')}/${birdypet.id}.${birdypet.filetype ? birdypet.filetype : "jpg"}`;
-	  this.label = birdypet.label;
+    this.label = birdypet.label;
     this.special = birdypet.special || false;
     this.species = bird;
 
@@ -24,19 +24,19 @@ class BirdyPet {
       let wishlist = await Cache.get('wishlist', memberId) || {};
 
       this.wishlisted = wishlist[this.species.family] ? wishlist[this.species.family].includes(this.species.speciesCode) : false;
-      this.owned = [];
+      this.owned = 0;
 
       await Redis.fetch('memberpet', {
         "FILTER": `@member:{${memberId}} @birdypetSpecies:{${this.species.speciesCode}}`,
-        "RETURN": ['birdypetId', 'birdypetSpecies']
+        "COUNT": true
       }).then((response) => {
-        for (let i = 0, len = response.results.length; i < len; i++) {
-          this.owned.push(response.results[i].birdypetId);
-          this.owned.push(response.results[i].birdypetSpecies);
-        }
+        this.owned = response.count
       });
 
-      resolve();
+      resolve({
+        wishlisted: this.wishlisted,
+        owned: this.owned
+      });
     });
   }
 }

@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
 
       await Redis.fetch('memberpet', {
         'FILTER': filters,
-        'SORTBY': JSON.parse(req.query.sort || []),
+        'SORTBY': req.query.sort ? JSON.parse(req.query.sort) : null,
         'LIMIT': [offset, birdsPerPage]
       }).then(async (response) => {
         var wishlist = await Cache.get('wishlist', req.query.member);
@@ -30,18 +30,9 @@ module.exports = async (req, res) => {
         for (var result of response.results) {
           var memberpet = new MemberPet(result._id);
 
-          await memberpet.fetch();
+          await memberpet.fetch({ fetchMemberData: req.query.member });
 
-          var owned = await Redis.fetch('memberpet', {
-            'FILTER': `@member:{${req.query.member}} @birdypetSpecies:{${memberpet.birdypetSpecies}}`,
-            'RETURN': ['birdypetId']
-          }).then((owned) => owned.results.map((birdypet) => birdypet.birdypetId));
-
-          output.push({
-            ...memberpet,
-            wishlisted: wishlist[memberpet.family] ? wishlist[memberpet.family].includes(memberpet.birdypetSpecies) : false,
-            checkmark: owned.includes(memberpet.birdypetId) ? 2 : (owned.length > 0 ? 1 : 0)
-          });
+		output.push(memberpet);
         }
 
         res.json({

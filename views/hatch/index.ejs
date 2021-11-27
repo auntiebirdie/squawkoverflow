@@ -95,12 +95,11 @@
             text += `<div class="small">❤️ <em>This bird is on your wishlist</em></div>"`;
           }
 
-          if (data.owned.includes(data.species.speciesCode)) {
-            text += `<div class="small"><span class="checkmark"></span> <em>You have this species</em></div>`;
+          if (data.owned > 1) {
+            text += `<div class="small"><span class="checkmark"></span><span class="checkmark"></span> <em>You have more than one of this species</em></div>`;
           }
-
-          if (data.owned.includes(data.id)) {
-            text += `<div class="small"><span class="checkmark"></span> <em>You have this variant</em></div>`;
+          else if (data.owned == 1) {
+            text += `<div class="small"><span class="checkmark"></span> <em>You have this species</em></div>`;
           }
 
           h6.innerHTML = text;

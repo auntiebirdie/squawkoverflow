@@ -4,7 +4,7 @@ const Redis = require('../helpers/redis.js');
 const BirdyPet = require('./birdypet.js');
 
 class MemberPet {
-	static schema = {};
+  static schema = {};
 
   constructor(id) {
     this.id = id;
@@ -42,9 +42,9 @@ class MemberPet {
     });
   }
 
-  fetch(params) {
+  fetch(params = {}) {
     return new Promise((resolve, reject) => {
-      Redis.get('memberpet', this.id).then((memberpet) => {
+      Redis.get('memberpet', this.id).then(async (memberpet) => {
         if (memberpet) {
           let birdypet = new BirdyPet(memberpet.birdypetId);
 
@@ -64,6 +64,10 @@ class MemberPet {
 
           this.hatchedAt = memberpet.hatchedAt;
 
+          if (params.fetchMemberData) {
+            this.memberData = await birdypet.fetchMemberData(params.fetchMemberData);
+          }
+
           resolve(this);
         } else {
           resolve(null);
@@ -82,7 +86,7 @@ class MemberPet {
   delete() {
     return Promise.all([
       Redis.delete('memberpet', this.id),
-      Redis.databases["cache"].del(`memberpet:${this.id}`)
+      Redis.connect("cache").del(`memberpet:${this.id}`)
     ]);
   }
 }

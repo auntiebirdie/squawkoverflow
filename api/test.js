@@ -1,9 +1,10 @@
-let endpoint = require('./endpoints/members.js');
+let endpoint = require('./endpoints/gift.js');
 
 endpoint({
   method: "GET",
   query: {
-	  privacy: "gifts"
+	  member: "607651573010530314",
+	  loggedInUser: "121294882861088771"
   }
 }, {
   json: console.log,

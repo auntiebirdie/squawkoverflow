@@ -1,30 +1,22 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { breadcrumb : "BirdyPets", title : "Send a Gift" }) %>
+    <%- include('../partials/page-title.ejs', { breadcrumb : "Send a Gift", title : memberpet.nickname ? `${memberpet.nickname} (${memberpet.species.commonName})` : `${memberpet.species.commonName} ${memberpet.label}` }) %>
 
     <div class="row">
       <div class="col-md-6">
-        <% if (memberpet.nickname) { %>
-          <h4><%= memberpet.nickname %></h4>
-          <h6><%= memberpet.species.commonName %></h6>
-        <% } else { %>
-          <h4><%= memberpet.species.commonName %></h4>
-          <h6><%= memberpet.label %></h6>
-        <% } %>
-
-        <div class="mt-4 mb-4 text-center">
+        <div class="mb-4 text-center">
           <img class="birdypet full" src="<%= memberpet.image %>">
         </div>
       </div>
       <div class="col-md-6">
-        <h4>Who is the lucky person to receive this gift?</h4>
+        <h4>Who is the lucky person to receive this bird?</h4>
         <h6>&nbsp;</h6>
 
         <div>
           <select id="memberList" class="form-select">
             <option></option>
           <% for (var member of members) { %>
-            <option data-avatar="<%= member.avatar %>" data-username="<%= member.username %>" value="<%= member._id %>">
+            <option data-avatar="<%= member.avatar %>" data-username="<%= member.username %>" value="<%= member.id %>">
               <%= member.username %>
             </option>
           <% } %>

@@ -125,7 +125,7 @@ Database.prototype.fetch = function(kind, args = {}) {
       query.push('RETURN', args.RETURN.length, ...args.RETURN);
     }
 
-    if (args.SORTBY) {
+    if (args.SORTBY && args.SORTBY[0] != null) {
       query.push('SORTBY', ...args.SORTBY);
     }
 

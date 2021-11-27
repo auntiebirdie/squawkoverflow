@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
 router.get('/:member', async (req, res) => {
   API.call('member', "GET", {
     id: req.params.member,
-    full: true
+    profile: true
   }).then(async (member) => {
 
     if (member.id != req.session.user && member.settings.privacy?.includes('profile')) {

@@ -88,7 +88,7 @@
             <% } else {  %>
             <%- include('../partials/friendshipMeter.ejs', { friendship : memberpet.friendship || 0 }) %>
             <% } %>
-            <p><a href="/birdypet/gift/<%= memberpet.id %>" class="btn btn-primary">🎁 Gift to Someone</a></p>
+            <p><a href="/birdypet/<%= memberpet.id %>/gift" class="btn btn-primary">🎁 Gift to Someone</a></p>
             <p><a href="/birdypet/release/<%= memberpet.id %>" class="btn btn-primary">👋 Release Bird</a></p>
           </div>
 
