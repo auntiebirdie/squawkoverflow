@@ -134,6 +134,10 @@ class Member {
             }
           }
 
+		if (params.fetch?.includes('wishlist')) {
+			this.wishlist = await Cache.get('wishlist', this.id);
+		}
+
           if (this.aviary) {
             this.aviary = this.aviary._total;
           }

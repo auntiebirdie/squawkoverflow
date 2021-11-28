@@ -15,16 +15,20 @@ exports.call = (endpoint, method = "GET", data = {}, res) => {
       method: method,
     };
 
-    if (method == "GET") {
+    if (method == "GET" || method == "HEAD") {
       options.params = data;
     } else {
       options.data = data;
     }
 
     client.request(options).then((response) => {
-      resolve(response.data);
+      if (method == "HEAD") {
+        resolve(response.headers.squawk ? JSON.parse(response.headers.squawk) : null);
+      } else {
+        resolve(response.data);
+      }
     }).catch((err) => {
-        reject(err);
+      reject(err);
     });
   });
 }

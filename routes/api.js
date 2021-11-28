@@ -172,7 +172,7 @@ router.post('/flocks/:flock/:memberpet', Middleware.isLoggedIn, Middleware.entit
 });
 
 router.all('/*', async (req, res) => {
-  let data = (req.method == "GET" ? req.query : req.body) || {};
+  let data = (req.method == "GET" || req.method == "HEAD" ? req.query : req.body) || {};
 
   data.loggedInUser = req.session.user;
 

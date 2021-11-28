@@ -1,12 +1,9 @@
-let endpoint = require('./endpoints/memberpet.js');
+let endpoint = require('./endpoints/wishlist.js');
 
 endpoint({
-  method: "GET",
+  method: "HEAD",
   query: {
-	  id: "wTqoBzydHsBmYUKoEaExFu",
-	  loggedInUser: "121294882861088771",
-	  member: "121294882861088771",
-	  fetch: ['memberData', 'variants']
+	  id: "121294882861088771"
   }
 }, {
   json: console.log,
