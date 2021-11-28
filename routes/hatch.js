@@ -1,7 +1,4 @@
 const API = require('../helpers/api.js');
-const Cache = require('../helpers/cache.js');
-
-const helpers = require('../helpers.js');
 
 const express = require('express');
 const router = express.Router();
@@ -19,7 +16,6 @@ router.get('/', async (req, res) => {
       });
     })
     .catch((err) => {
-	    console.log(err.response);
       switch (err.code) {
         case 401:
         case "401":

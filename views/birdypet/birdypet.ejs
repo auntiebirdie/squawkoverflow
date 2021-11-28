@@ -1,28 +1,29 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', {
-          title : memberpet.nickname ? memberpet.nickname : memberpet.species.commonName,
-          breadcrumb: {
-            text: `${member.username}`,
-            url: `/members/${member.id}`,
-            prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member._id}" onerror="missingMemberAvatar(this)"> `
-          }
-    }) %>
+  <%- include('../partials/page-title.ejs', {
+        title : memberpet.nickname ? memberpet.nickname : memberpet.species.commonName,
+        breadcrumb: {
+          text: `${member.username}`,
+          url: `/members/${member.id}`,
+          prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member.id}" onerror="missingMemberAvatar(this)"> `
+        }
+    })
+  %>
 
     <div class="row">
       <div class="col-md-8 pt-3">
         <div class="text-center">
           <span class="h-100 d-inline-block position-relative">
            <% if (locals.loggedInUser) { %>
-            <button class="wishlist-heart btn btn-light btn-sm" data-id="<%= memberpet.species.speciesCode %>" data-action="<%= wishlisted ? 'remove' : 'add' %>" role="button">
-              <%= wishlisted ? '❤️' : '🤍' %>
+            <button class="wishlist-heart btn btn-light btn-sm" data-id="<%= memberpet.species.speciesCode %>" data-action="<%= memberpet.memberData.wishlisted ? 'remove' : 'add' %>" role="button">
+              <%= memberpet.memberData.wishlisted ? '❤️' : '🤍' %>
             </button>
            <% } %>
             <img id="birdy" src="<%= memberpet.image %>" class="birdypet full">
           </span>
         </div>
 
-        <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
+        <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
           <%- include('../partials/spacer.ejs'); %>
 
           <form id="manageBirdyPet" method="POST">
@@ -33,10 +34,10 @@
               <input id="nickname" type="text" name="nickname" class="form-control" value="<%= memberpet.nickname %>" style="width: 100%">
             </div>
             <div class="col-12 col-md-4 mb-3">
-            <% if (!memberpet.special && otherVersions.length > 1) { %>
+            <% if (!memberpet.special && memberpet.variants.length > 1) { %>
               <h5><label>Variant</label></h5>
               <select name="variant" class="form-select">
-                <% for (let otherVersion of otherVersions) { %>
+                <% for (let otherVersion of memberpet.variants) { %>
                 <option value="<%= otherVersion.id %>" data-src="<%= otherVersion.image %>" <%= otherVersion.id == memberpet.birdypetId ? "selected" : "" %>>
                   <%= otherVersion.label %>
                   <%= otherVersion.id == memberpet.birdypetId ? "[current]" : "" %>
@@ -52,9 +53,9 @@
             <textarea name="description" maxlength="500" class="form-control" style="height: 150px; width: 100%;"><%= memberpet.description %></textarea>
           </div>
 
-          <% if (locals.allFlocks) { %>
+          <% if (member.flocks) { %>
             <h5 class="mb-4"><label>Flocks</label> <a href="/flocks"><small>(manage)</small></a></h5>
-            <% for (var flock of allFlocks) { %>
+            <% for (var flock of member.flocks) { %>
             <p>
               <label>
                 <input type="checkbox" name="flocks[]" class="form-check-input" value="<%= flock._id%>" <%= memberpet.flocks && (memberpet.flocks.includes(flock._id) || memberpet.flocks.includes(`${flock._id}`)) ? "checked" : ""%>>
@@ -81,7 +82,7 @@
           <%- include('../partials/spacer.ejs'); %>
         </div>
 
-        <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
+        <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
           <div class="text-center">
             <% if (member.birdyBuddy != memberpet.id) { %>
             <p><a id="makeBirdyBuddy" class="btn btn-primary">💖 Make Birdy Buddy</a></p>
@@ -117,11 +118,13 @@
         <h6>Hatch Date</h6>
         <p><%= new Date(memberpet.hatchedAt * 1).toLocaleString('en-US', { dateStyle: "long" }) %></p>
 
-        <% if (flocks.length > 0) { %>
+        <% if (memberpet.flocks.length > 0) { %>
         <h6>Flocks</h6>
         <p>
-        <% for (var flock of flocks) { %>
+        <% for (var flock of member.flocks) { %>
+          <% if (memberpet.flocks.includes(flock._id)) { %>
           <a href="/flocks/<%= flock._id %>"><%= flock.name %></a><br>
+          <% } %>
         <% } %>
         </p>
         <% } %>
@@ -136,7 +139,7 @@
         birdy.src = option.getAttribute('data-src');
       });
 
-     <% if (locals.loggedInUser && member._id == locals.loggedInUser.id) { %>
+     <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
       $('#makeBirdyBuddy').on('click', function () {
         $.ajax({
             cache: false,

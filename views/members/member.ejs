@@ -8,27 +8,27 @@
     </div>
     <div class="col-sm-6 col-md-4 text-center text-md-start mb-3">
       <h4>
-        <% if (member.aviary._total <= 0) { %>
+        <% if (member.aviary <= 0) { %>
           Aspiring
-        <% } else if (member.aviary._total < 10) { %>
+        <% } else if (member.aviary < 10) { %>
           Beginner
-        <% } else if (member.aviary._total < 100) { %>
+        <% } else if (member.aviary < 100) { %>
           Novice
-        <% } else if (member.aviary._total < 500) { %>
+        <% } else if (member.aviary < 500) { %>
           Dedicated
-        <% } else if (member.aviary._total < 1000) { %>
+        <% } else if (member.aviary < 1000) { %>
           Greater
-        <% } else if (member.aviary._total < 5000) { %>
+        <% } else if (member.aviary < 5000) { %>
           Superb
-        <% } else if (member.aviary._total < 10000) { %>
+        <% } else if (member.aviary < 10000) { %>
           Penultimate
-        <% } else if (member.aviary._total > 10000) { %>
+        <% } else if (member.aviary > 10000) { %>
           Ultimate
         <% } %>
 
         <%= member.tier.name %>
       </h4>
-      <p><%= member.aviary._total.toLocaleString("en-US") %> birds collected</p>
+      <p><%= (member.aviary * 1).toLocaleString("en-US") %> birds collected</p>
 
       <h5>Joined</h5>
       <p><%= new Date(member.joinedAt * 1).toLocaleString('en-US', { dateStyle: "long" }) %></p>

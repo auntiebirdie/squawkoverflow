@@ -15,9 +15,4 @@ router.get('/logout', (req, res) => {
   });
 });
 
-/* legacy redirect */
-router.get('/birdypets/mine', (req, res) => {
-  res.redirect(`/aviary/${req.session.user}`);
-});
-
 module.exports = router;

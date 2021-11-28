@@ -1,21 +1,30 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', {
-          title: {
-            text: member.username,
-            url: `/members/${member._id}`,
-            append: "'s Aviary"
-          }
-    }) %>
+  <%- include('../partials/page-title.ejs', {
+      title: {
+        text: member.username,
+        url: `/members/${member._id}`,
+        append: "'s Aviary"
+      }
+    })
+  %>
 
-    <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies : true, sortFields : [{ "value" : "hatchedAt-DESC", "label" : "Hatch Date (Newest)" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
+  <%- include('../partials/filter-search-sort.ejs', {
+      includeAllFamilies : true,
+      sortFields : [
+        { "value" : "hatchedAt-DESC", "label" : "Hatch Date (Newest)" },
+        { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, 
+        { "value" : "species", "label" : "Species" }
+      ]
+    })
+  %>
 
-    <%- include('../partials/pagination.ejs') %>
+  <%- include('../partials/pagination.ejs') %>
 
-    <div id="lazyLoader" class="row" data-endpoint="/api/aviary/<%= member._id %>"></div>
+  <div id="lazyLoader" class="row" data-endpoint="/api/aviary/<%= member.id %>"></div>
 
-    <%- include('../partials/pagination.ejs') %>
+  <%- include('../partials/pagination.ejs') %>
 
-<%- include('../scripts/lazyloader.ejs', { paginate : currentPage }) %>
+  <%- include('../scripts/lazyloader.ejs', { paginate : currentPage }) %>
 
 <%- include('../footer.ejs') %>

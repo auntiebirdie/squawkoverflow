@@ -11,7 +11,7 @@ class Flocks {
         "FILTER": `@member:{${member}}`,
         "SORTBY": ["displayOrder", "ASC"]
       }).then( (flocks) => {
-	      return flocks.results;
+	      resolve(flocks.results);
       });
     });
   }

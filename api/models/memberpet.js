@@ -64,8 +64,12 @@ class MemberPet {
 
           this.hatchedAt = memberpet.hatchedAt;
 
-          if (params.fetchMemberData) {
-            this.memberData = await birdypet.fetchMemberData(params.fetchMemberData);
+          if (params.fetchMemberData || params.fetch?.includes('memberData')) {
+            this.memberData = await birdypet.fetchMemberData(params.member);
+          }
+
+          if (params.fetch?.includes('variants')) {
+            this.variants = [];
           }
 
           resolve(this);

@@ -113,8 +113,8 @@ class Member {
           }
 
           if (params.flocks) {
-            this.flocks = new Flocks();
-            await this.flocks.all(this.id);
+            let flocks = new Flocks();
+            this.flocks = await flocks.all(this.id);
           }
 
           if (params.families) {
@@ -122,16 +122,20 @@ class Member {
               this.aviary = await Cache.get('aviaryTotals', this.id);
             }
 
-		  let allFamilies = require('../data/families.json');
+            let allFamilies = require('../data/families.json');
 
             try {
-              var families = Object.keys(this.aviary)
-                .filter((key) => aviary[key] > 0 && !key.startsWith('_'))
+              this.families = Object.keys(this.aviary)
+                .filter((key) => this.aviary[key] > 0 && !key.startsWith('_'))
                 .map((family) => allFamilies.find((a) => a.value == family))
                 .sort((a, b) => a.value.localeCompare(b.value));
             } catch (err) {
               this.families = [];
             }
+          }
+
+          if (this.aviary) {
+            this.aviary = this.aviary._total;
           }
 
           resolve(this);

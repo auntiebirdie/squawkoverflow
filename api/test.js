@@ -1,10 +1,12 @@
-let endpoint = require('./endpoints/gift.js');
+let endpoint = require('./endpoints/memberpet.js');
 
 endpoint({
   method: "GET",
   query: {
-	  member: "607651573010530314",
-	  loggedInUser: "121294882861088771"
+	  id: "wTqoBzydHsBmYUKoEaExFu",
+	  loggedInUser: "121294882861088771",
+	  member: "121294882861088771",
+	  fetch: ['memberData', 'variants']
   }
 }, {
   json: console.log,

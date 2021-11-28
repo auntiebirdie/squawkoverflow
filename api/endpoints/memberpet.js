@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
     case "GET":
       var memberpet = new MemberPet(req.query.id);
 
-      await memberpet.fetch();
+      await memberpet.fetch(req.query);
 
       res.json(memberpet);
       break;
