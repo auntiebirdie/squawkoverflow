@@ -6,25 +6,17 @@ var birdsPerPage = 24;
 
 module.exports = async (req, res) => {
   let member = new Member(req.body?.loggedInUser || req.query?.id);
-  let birds = [];
 
   switch (req.method) {
     case "HEAD":
-      birds = await member.fetchWishlist();
       let families = [];
 
       let allFamilies = require('../data/families.json');
 
-      try {
-        for (var bird of birds) {
-          if (!families.includes(bird.family)) {
-            families.push(bird.family);
-          }
-        }
+      families = await Cache.get('wishlist', req.query.id);
 
-        families = families.map((family) => allFamilies.find((a) => a.value == family))
-          .sort((a, b) => a.value.localeCompare(b.value));
-      } catch (err) {}
+      families = Object.keys(families).map((family) => allFamilies.find((a) => a.value == family))
+        .sort((a, b) => a.value.localeCompare(b.value));
 
       res.setHeader('SQUAWK', JSON.stringify(families));
 
@@ -33,7 +25,7 @@ module.exports = async (req, res) => {
     case "GET":
       let page = (--req.query.page || 0) * birdsPerPage;
 
-      birds = await member.fetchWishlist(req.query.family);
+      let birds = await member.fetchWishlist(req.query.family);
 
       let output = [];
 

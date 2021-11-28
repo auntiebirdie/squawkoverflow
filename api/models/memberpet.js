@@ -1,7 +1,7 @@
 const Cache = require('../helpers/cache.js');
 const Redis = require('../helpers/redis.js');
 
-const BirdyPet = require('./birdypet.js');
+const BirdyPets = require('../collections/birdypets.js');
 
 class MemberPet {
   static schema = {};
@@ -46,7 +46,7 @@ class MemberPet {
     return new Promise((resolve, reject) => {
       Redis.get('memberpet', this.id).then(async (memberpet) => {
         if (memberpet) {
-          let birdypet = new BirdyPet(memberpet.birdypetId);
+          let birdypet = BirdyPets.get(memberpet.birdypetId);
 
           this.member = memberpet.member;
           this.nickname = memberpet.nickname || "";
@@ -69,7 +69,7 @@ class MemberPet {
           }
 
           if (params.fetch?.includes('variants')) {
-            this.variants = [];
+            this.variants = BirdyPets.findBy('speciesCode', birdypet.species.speciesCode);
           }
 
           resolve(this);

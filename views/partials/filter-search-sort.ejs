@@ -6,7 +6,7 @@
           <h4>Flock</h4>
           <select id="flock" class="form-select">
             <option value="">[ALL]</option>
-            <% if (locals.loggedInUser && member._id == loggedInUser.id) { %>
+            <% if (locals.loggedInUser && member.id == loggedInUser.id) { %>
               <option value="NONE">[FLOCKLESS]</option>
             <% } %>
             <% for (var flock of flocks) { %>
