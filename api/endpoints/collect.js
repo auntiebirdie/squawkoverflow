@@ -45,9 +45,6 @@ module.exports = async (req, res) => {
         });
       }
     } else if (req.body.freebird) {
-      Redis.connect('cache').del(`freebird:${req.body.freebird}`);
-      await Redis.pop('cache', 'freebirds', req.body.freebird);
-
       const formattedSubscription = subClient.subscriptionPath(
         'squawkoverflow',
         'free-birds'

@@ -40,7 +40,7 @@ module.exports = async (req, res) => {
   }
 
   if (birdypet) {
-    pubSubClient.topic(`squawkoverflow-free-birds`).publish(Buffer.from(""), {
+    await pubSubClient.topic(`free-birds`).publish(Buffer.from(""), {
       member: req.body.loggedInUser,
       birdypet: birdypet.id,
       source: "WEB"
