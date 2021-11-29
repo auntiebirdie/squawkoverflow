@@ -6,7 +6,6 @@ class Flocks {
   }
 
   get(id) {
-	  console.log('GET', id);
     let Flock = new this.model(id);
 
     return Flock.fetch();
@@ -15,7 +14,6 @@ class Flocks {
   all(member) {
     return new Promise((resolve, reject) => {
       Cache.get('flocks', member, 's').then((ids) => {
-	      console.log(ids);
         Promise.all(ids.map((id) => this.get(id))).then((flocks) => {
           resolve(flocks.sort((a, b) => a.displayOrder - b.displayOrder));
         });

@@ -76,7 +76,7 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
         });
         break;
       case 'flock':
-        Database.get('flock', id).then((flock) => {
+        Database.get('Flock', id).then((flock) => {
           resolve(flock);
         });
         break;
