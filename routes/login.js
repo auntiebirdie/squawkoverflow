@@ -1,4 +1,4 @@
-const Cache = require('../helpers/cache.js');
+const API = require('../helpers/api.js');
 const Database = require('../helpers/database.js');
 const Members = require('../helpers/members.js');
 
@@ -18,14 +18,12 @@ router.get('/', (req, res) => {
       if (code.used) {
         res.redirect('/error');
       } else {
-        Members.get(code.member).then((member) => {
-          req.session.user = member._id;
+        req.session.user = code.member;
 
-          Database.set('KonamiCode', konami, {
-            used: true
-          }).then(() => {
-            res.redirect('/');
-          });
+        Database.set('KonamiCode', konami, {
+          used: true
+        }).then(() => {
+          res.redirect('/');
         });
       }
     });

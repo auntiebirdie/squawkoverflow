@@ -17,7 +17,7 @@
             <meta property="og:description" content="<% if (memberpet.description) { %><%= memberpet.description %> <% } else { %><%= member.username %>'s <%= memberpet.species.commonName %><% } %>">
             <meta property="og:image" content="<%= memberpet.image %>">
             <meta property="og:type" content="article">
-            <meta property="article:author" content="https://squawkoverflow.com/members/<%= member._id %>">
+            <meta property="article:author" content="https://squawkoverflow.com/members/<%= member.id %>">
             <meta property="twitter:card" content="summary_large_image">
             <meta property="twitter:image" content="<%= memberpet.image %>">
         <% } else if (locals.page && page == 'birdypedia/bird') { %>
