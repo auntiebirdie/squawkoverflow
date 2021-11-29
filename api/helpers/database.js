@@ -18,7 +18,7 @@ Database.prototype.key = function(kind, id = null) {
 Database.prototype.get = function(kind, id) {
   return new Promise((resolve, reject) => {
     datastore.get(this.key(kind, id)).then(([result]) => {
-      return resolve(addResultID(result));
+      return resolve(result);
     });
   });
 }
@@ -35,8 +35,6 @@ Database.prototype.set = function(kind, id, data) {
             delete entity[datum];
           }
         }
-
-        delete entity._id;
 
         datastore.save({
           key: entity[Datastore.KEY],
@@ -75,7 +73,6 @@ Database.prototype.create = function(kind, data, uniqueField = false) {
 Database.prototype.save = function(kind, id, data) {
   return new Promise((resolve, reject) => {
     var key = this.key(kind, id);
-    delete data._id;
 
     datastore.save({
       key: key,
@@ -124,7 +121,7 @@ Database.prototype.fetch = function({
     }
 
     datastore.runQuery(query).then(([results]) => {
-      return resolve(results.map(addResultID));
+      return resolve(results);
     });
   });
 }
@@ -139,14 +136,6 @@ Database.prototype.fetchOne = function(args) {
     });
 
   });
-}
-
-function addResultID(result) {
-  if (result) {
-    result._id = result[Datastore.KEY].id * 1 || result[Datastore.KEY].name;
-  }
-
-  return result;
 }
 
 module.exports = new Database();

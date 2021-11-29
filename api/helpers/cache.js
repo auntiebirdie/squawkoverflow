@@ -44,6 +44,18 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
           });
         }
         break;
+      case 'flocks':
+        Database.fetch({
+          kind: 'Flock',
+          filters: [
+            ['member', '=', id]
+          ],
+          order: ['displayOrder', 'ASC'],
+          keysOnly: true
+        }).then((flocks) => {
+          resolve(flocks.map((flock) => flock[Database.KEY].name));
+        });
+        break;
       case 'member':
         Database.get('Member', id).then((member) => {
           resolve(member);
@@ -64,7 +76,7 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
         });
         break;
       case 'flock':
-        Redis.get('flock', id).then((flock) => {
+        Database.get('flock', id).then((flock) => {
           resolve(flock);
         });
         break;

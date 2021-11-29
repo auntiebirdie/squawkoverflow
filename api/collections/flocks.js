@@ -1,23 +1,24 @@
-const Redis = require('../helpers/redis.js');
+const Cache = require('../helpers/cache.js');
 
 class Flocks {
   constructor() {
     this.model = require('../models/flock.js');
   }
 
-  get(id, data = {}) {
-    let Flock = new this.model(id, data);
+  get(id) {
+	  console.log('GET', id);
+    let Flock = new this.model(id);
 
-    return Flock;
+    return Flock.fetch();
   }
 
   all(member) {
     return new Promise((resolve, reject) => {
-      Redis.fetch('flock', {
-        "FILTER": `@member:{${member}}`,
-        "SORTBY": ["displayOrder", "ASC"]
-      }).then((response) => {
-        resolve(response.results.map((flock) => this.get(flock._id, flock)));
+      Cache.get('flocks', member, 's').then((ids) => {
+	      console.log(ids);
+        Promise.all(ids.map((id) => this.get(id))).then((flocks) => {
+          resolve(flocks.sort((a, b) => a.displayOrder - b.displayOrder));
+        });
       });
     });
   }

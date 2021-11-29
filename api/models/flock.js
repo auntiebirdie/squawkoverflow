@@ -1,5 +1,5 @@
 const Cache = require('../helpers/cache.js');
-const Redis = require('../helpers/redis.js');
+const Database = require('../helpers/database.js');
 
 class Flock {
   static schema = {
@@ -8,19 +8,13 @@ class Flock {
     displayOrder: Number
   }
 
-  constructor(id, data = {}) {
+  constructor(id) {
     this.id = id;
-
-    for (let key in data) {
-      if (typeof this.constructor.schema[key] != "undefined") {
-        this[key] = data[key];
-      }
-    }
   }
 
   create(data) {
     return new Promise((resolve, reject) => {
-      Redis.create('flock', {
+      Database.create('flock', {
         name: data.name,
         description: data.description,
         displayOrder: 100,
@@ -64,7 +58,7 @@ class Flock {
         }
       }
 
-      await Redis.set('flock', this.id, data);
+      await Database.set('Flock', this.id, data);
       await Cache.refresh('flock', this.id);
 
       resolve();
