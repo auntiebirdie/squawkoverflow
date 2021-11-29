@@ -45,19 +45,19 @@ class Member {
               tier.name = "Owlpha Squad";
               tier.eggTimer = 10; // opt-in for timer
               tier.aviaryLimit = Infinity;
-              tier.extraInsights = true;
+              tier.extraInsights = false;
               break;
             case "100":
               tier.name = "Owlpha Squad";
               tier.eggTimer = 0;
               tier.aviaryLimit = Infinity;
-              tier.extraInsights = true;
+              tier.extraInsights = false;
               break;
             case "3":
               tier.name = "Bird Fanatic";
               tier.eggTimer = 0;
               tier.aviaryLimit = Infinity;
-              tier.extraInsights = true;
+              tier.extraInsights = false;
               break;
             case "2":
               tier.name = "Bird Collector";
