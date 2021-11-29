@@ -9,8 +9,8 @@ module.exports = async (req, res) => {
   switch (req.method) {
     case "GET":
       const formattedSubscription = subClient.subscriptionPath(
-        'bot-central',
-        'squawkoverflow-free-birds'
+        'squawkoverflow',
+        'free-birds'
       );
 
       const request = {

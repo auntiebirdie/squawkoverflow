@@ -49,8 +49,8 @@ module.exports = async (req, res) => {
       await Redis.pop('cache', 'freebirds', req.body.freebird);
 
       const formattedSubscription = subClient.subscriptionPath(
-        'bot-central',
-        'squawkoverflow-free-birds'
+        'squawkoverflow',
+        'free-birds'
       );
 
       const ackRequest = {
