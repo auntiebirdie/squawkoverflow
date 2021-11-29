@@ -9,13 +9,15 @@ router.get('/', async (req, res) => {
   var families = require('../public/data/families.json');
 
   res.render('birdypedia', {
-    families: families.sort((a, b) => a.label.localeCompare(b.label)),
-	  currentPage : (req.query.page || 1) * 1
+    families: families.map( (family) => family.value ),
+    currentPage: (req.query.page || 1) * 1
   });
 });
 
 router.get('/eggs', async (req, res) => {
-  res.render('birdypedia/eggs');
+  res.render('birdypedia/eggs', {
+    eggs: require('../public/data/eggs.json')
+  });
 });
 
 router.get('/eggs/:egg', async (req, res) => {
@@ -26,7 +28,7 @@ router.get('/eggs/:egg', async (req, res) => {
 
     res.render('birdypedia/egg', {
       egg: egg,
-	    currentPage : (req.query.page || 1) * 1
+      currentPage: (req.query.page || 1) * 1
     });
   } else {
     res.redirect('/error');

@@ -3,19 +3,19 @@
     <%- include('../partials/page-title.ejs', {
           title : flock.name,
           breadcrumb: {
-            text: `${member.username}'s Flock`,
-            url: `/members/${member._id}`,
-            prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member._id}" onerror="missingMemberAvatar(this)"> `
+            text: `${member.username}`,
+            url: `/members/${member.id}`,
+            prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member.id}" onerror="missingMemberAvatar(this)"> `
           }
     }) %>
 
     <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies: true, sortFields : [{ "value" : "hatchedAt-DESC", "label" : "Hatch Date (Newest)" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
 
-    <div id="lazyLoader" class="row" data-endpoint="/api/flocks/<%= flock._id %>"></div>
+    <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"flock":"<%= flock.id %>","member":"<%= member.id %>"}'></div>
 
   <%- include('../scripts/lazyloader.ejs') %>
 
-  <% if (locals.loggedInUser && loggedInUser.id == member._id) { %>
+  <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>
   <script>
     var loader = `
       <div class="spinner-border d-block mx-auto" role="status">
@@ -32,7 +32,7 @@
 
         $.ajax({
           cache: false,
-          url: `/api/flocks/<%= flock._id %>/${image.getAttribute('data-id')}`,
+          url: `/api/flocks/<%= flock.id %>/${image.getAttribute('data-id')}`,
           dataType: "json",
           method: "POST",
           success: function(data) {

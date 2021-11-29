@@ -40,7 +40,7 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
             kind: 'Member',
             keysOnly: true
           }).then((members) => {
-            resolve(members.map( (member) => member[Database.KEY].name ));
+            resolve(members.map((member) => member[Database.KEY].name));
           });
         }
         break;
@@ -69,7 +69,7 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
         });
         break;
       case 'aviaryTotals':
-      case '/flockTotals':
+      case 'flockTotals':
         var filters = {
           'RETURN': ['family']
         };
@@ -154,6 +154,8 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
           }
 
           resolve(data);
+        } else {
+          resolve(null);
         }
     }
   }).then(async (results) => {

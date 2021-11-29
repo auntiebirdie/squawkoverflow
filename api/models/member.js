@@ -112,31 +112,33 @@ class Member {
             }
           }
 
-          if (params.flocks) {
-            let flocks = new Flocks();
-            this.flocks = await flocks.all(this.id);
+          if (params.include?.includes('birdyBuddy')) {
+            if (!this.birdyBuddy) {
+              this.birdyBuddy = new MemberPet(member.birdyBuddy);
+              await this.birdyBuddy.fetch();
+            }
           }
 
-          if (params.families) {
+          if (params.flocks || params.include?.includes('flocks')) {
+            this.flocks = await Flocks.all(this.id);
+          }
+
+          if (params.families || params.include?.includes('families')) {
             if (!this.aviary) {
               this.aviary = await Cache.get('aviaryTotals', this.id);
             }
 
-            let allFamilies = require('../data/families.json');
-
             try {
               this.families = Object.keys(this.aviary)
-                .filter((key) => this.aviary[key] > 0 && !key.startsWith('_'))
-                .map((family) => allFamilies.find((a) => a.value == family))
-                .sort((a, b) => a.value.localeCompare(b.value));
+                .filter((key) => this.aviary[key] > 0 && !key.startsWith('_'));
             } catch (err) {
               this.families = [];
             }
           }
 
-		if (params.fetch?.includes('wishlist')) {
-			this.wishlist = await Cache.get('wishlist', this.id);
-		}
+          if (params.fetch?.includes('wishlist') || params.include?.includes('wishlist')) {
+            this.wishlist = await Cache.get('wishlist', this.id);
+          }
 
           if (this.aviary) {
             this.aviary = this.aviary._total;

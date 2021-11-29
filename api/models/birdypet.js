@@ -1,3 +1,4 @@
+const BirdyPets = require('../collections/birdypets.js');
 const Cache = require('../helpers/cache.js');
 const Redis = require('../helpers/redis.js');
 

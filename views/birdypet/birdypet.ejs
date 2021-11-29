@@ -58,7 +58,7 @@
             <% for (var flock of member.flocks) { %>
             <p>
               <label>
-                <input type="checkbox" name="flocks[]" class="form-check-input" value="<%= flock._id%>" <%= memberpet.flocks && (memberpet.flocks.includes(flock._id) || memberpet.flocks.includes(`${flock._id}`)) ? "checked" : ""%>>
+                <input type="checkbox" name="flocks[]" class="form-check-input" value="<%= flock.id%>" <%= memberpet.flocks && (memberpet.flocks.includes(flock.id) || memberpet.flocks.includes(`${flock.id}`)) ? "checked" : ""%>>
                 &nbsp;
                 <%= flock.name %>
               </label>
@@ -84,7 +84,7 @@
 
         <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
           <div class="text-center">
-            <% if (member.birdyBuddy != memberpet.id) { %>
+            <% if (member.birdyBuddy.id != memberpet.id) { %>
             <p><a id="makeBirdyBuddy" class="btn btn-primary">💖 Make Birdy Buddy</a></p>
             <% } else {  %>
             <%- include('../partials/friendshipMeter.ejs', { friendship : memberpet.friendship || 0 }) %>
@@ -122,8 +122,8 @@
         <h6>Flocks</h6>
         <p>
         <% for (var flock of member.flocks) { %>
-          <% if (memberpet.flocks.includes(flock._id)) { %>
-          <a href="/flocks/<%= flock._id %>"><%= flock.name %></a><br>
+          <% if (memberpet.flocks.includes(flock.id)) { %>
+          <a href="/flocks/<%= flock.id %>"><%= flock.name %></a><br>
           <% } %>
         <% } %>
         </p>

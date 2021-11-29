@@ -1,4 +1,8 @@
 exports.api = (req, res) => {
+  if (req.query?.sort && req.query.sort == "[null]") {
+    delete req.query.sort;
+  }
+
   console.info(req.method, req.path, JSON.stringify(req.query || req.body));
 
   try {

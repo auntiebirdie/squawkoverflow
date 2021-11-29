@@ -1,371 +1,95 @@
 [
   {
-    "value": "Struthionidae",
-    "label": "Struthionidae (Ostriches)"
+    "value": "Acanthisittidae",
+    "label": "Acanthisittidae (New Zealand Wrens)"
   },
   {
-    "value": "Rheidae",
-    "label": "Rheidae (Rheas)"
-  },
-  {
-    "value": "Tinamidae",
-    "label": "Tinamidae (Tinamous)"
-  },
-  {
-    "value": "Casuariidae",
-    "label": "Casuariidae (Cassowaries and Emu)"
-  },
-  {
-    "value": "Apterygidae",
-    "label": "Apterygidae (Kiwis)"
-  },
-  {
-    "value": "Anhimidae",
-    "label": "Anhimidae (Screamers)"
-  },
-  {
-    "value": "Anseranatidae",
-    "label": "Anseranatidae (Magpie Goose)"
-  },
-  {
-    "value": "Anatidae",
-    "label": "Anatidae (Ducks, Geese, and Waterfowl)"
-  },
-  {
-    "value": "Megapodiidae",
-    "label": "Megapodiidae (Megapodes)"
-  },
-  {
-    "value": "Cracidae",
-    "label": "Cracidae (Guans, Chachalacas, and Curassows)"
-  },
-  {
-    "value": "Numididae",
-    "label": "Numididae (Guineafowl)"
-  },
-  {
-    "value": "Odontophoridae",
-    "label": "Odontophoridae (New World Quail)"
-  },
-  {
-    "value": "Phasianidae",
-    "label": "Phasianidae (Pheasants, Grouse, and Allies)"
-  },
-  {
-    "value": "Phoenicopteridae",
-    "label": "Phoenicopteridae (Flamingos)"
-  },
-  {
-    "value": "Podicipedidae",
-    "label": "Podicipedidae (Grebes)"
-  },
-  {
-    "value": "Columbidae",
-    "label": "Columbidae (Pigeons and Doves)"
-  },
-  {
-    "value": "Mesitornithidae",
-    "label": "Mesitornithidae (Mesites)"
-  },
-  {
-    "value": "Pteroclidae",
-    "label": "Pteroclidae (Sandgrouse)"
-  },
-  {
-    "value": "Otididae",
-    "label": "Otididae (Bustards)"
-  },
-  {
-    "value": "Musophagidae",
-    "label": "Musophagidae (Turacos)"
-  },
-  {
-    "value": "Cuculidae",
-    "label": "Cuculidae (Cuckoos)"
-  },
-  {
-    "value": "Podargidae",
-    "label": "Podargidae (Frogmouths)"
-  },
-  {
-    "value": "Caprimulgidae",
-    "label": "Caprimulgidae (Nightjars and Allies)"
-  },
-  {
-    "value": "Nyctibiidae",
-    "label": "Nyctibiidae (Potoos)"
-  },
-  {
-    "value": "Steatornithidae",
-    "label": "Steatornithidae (Oilbird)"
-  },
-  {
-    "value": "Aegothelidae",
-    "label": "Aegothelidae (Owlet-nightjars)"
-  },
-  {
-    "value": "Apodidae",
-    "label": "Apodidae (Swifts)"
-  },
-  {
-    "value": "Hemiprocnidae",
-    "label": "Hemiprocnidae (Treeswifts)"
-  },
-  {
-    "value": "Trochilidae",
-    "label": "Trochilidae (Hummingbirds)"
-  },
-  {
-    "value": "Opisthocomidae",
-    "label": "Opisthocomidae (Hoatzin)"
-  },
-  {
-    "value": "Sarothruridae",
-    "label": "Sarothruridae (Flufftails)"
-  },
-  {
-    "value": "Rallidae",
-    "label": "Rallidae (Rails, Gallinules, and Coots)"
-  },
-  {
-    "value": "Heliornithidae",
-    "label": "Heliornithidae (Finfoots)"
-  },
-  {
-    "value": "Aramidae",
-    "label": "Aramidae (Limpkin)"
-  },
-  {
-    "value": "Psophiidae",
-    "label": "Psophiidae (Trumpeters)"
-  },
-  {
-    "value": "Gruidae",
-    "label": "Gruidae (Cranes)"
-  },
-  {
-    "value": "Chionidae",
-    "label": "Chionidae (Sheathbills)"
-  },
-  {
-    "value": "Pluvianellidae",
-    "label": "Pluvianellidae (Magellanic Plover)"
-  },
-  {
-    "value": "Burhinidae",
-    "label": "Burhinidae (Thick-knees)"
-  },
-  {
-    "value": "Pluvianidae",
-    "label": "Pluvianidae (Egyptian Plover)"
-  },
-  {
-    "value": "Recurvirostridae",
-    "label": "Recurvirostridae (Stilts and Avocets)"
-  },
-  {
-    "value": "Ibidorhynchidae",
-    "label": "Ibidorhynchidae (Ibisbill)"
-  },
-  {
-    "value": "Haematopodidae",
-    "label": "Haematopodidae (Oystercatchers)"
-  },
-  {
-    "value": "Charadriidae",
-    "label": "Charadriidae (Plovers and Lapwings)"
-  },
-  {
-    "value": "Pedionomidae",
-    "label": "Pedionomidae (Plains-wanderer)"
-  },
-  {
-    "value": "Thinocoridae",
-    "label": "Thinocoridae (Seedsnipes)"
-  },
-  {
-    "value": "Rostratulidae",
-    "label": "Rostratulidae (Painted-Snipes)"
-  },
-  {
-    "value": "Jacanidae",
-    "label": "Jacanidae (Jacanas)"
-  },
-  {
-    "value": "Scolopacidae",
-    "label": "Scolopacidae (Sandpipers and Allies)"
-  },
-  {
-    "value": "Turnicidae",
-    "label": "Turnicidae (Buttonquail)"
-  },
-  {
-    "value": "Dromadidae",
-    "label": "Dromadidae (Crab-Plover)"
-  },
-  {
-    "value": "Glareolidae",
-    "label": "Glareolidae (Pratincoles and Coursers)"
-  },
-  {
-    "value": "Stercorariidae",
-    "label": "Stercorariidae (Skuas and Jaegers)"
-  },
-  {
-    "value": "Alcidae",
-    "label": "Alcidae (Auks, Murres, and Puffins)"
-  },
-  {
-    "value": "Laridae",
-    "label": "Laridae (Gulls, Terns, and Skimmers)"
-  },
-  {
-    "value": "Rhynochetidae",
-    "label": "Rhynochetidae (Kagu)"
-  },
-  {
-    "value": "Eurypygidae",
-    "label": "Eurypygidae (Sunbittern)"
-  },
-  {
-    "value": "Phaethontidae",
-    "label": "Phaethontidae (Tropicbirds)"
-  },
-  {
-    "value": "Gaviidae",
-    "label": "Gaviidae (Loons)"
-  },
-  {
-    "value": "Spheniscidae",
-    "label": "Spheniscidae (Penguins)"
-  },
-  {
-    "value": "Diomedeidae",
-    "label": "Diomedeidae (Albatrosses)"
-  },
-  {
-    "value": "Oceanitidae",
-    "label": "Oceanitidae (Southern Storm-Petrels)"
-  },
-  {
-    "value": "Hydrobatidae",
-    "label": "Hydrobatidae (Northern Storm-Petrels)"
-  },
-  {
-    "value": "Procellariidae",
-    "label": "Procellariidae (Shearwaters and Petrels)"
-  },
-  {
-    "value": "Ciconiidae",
-    "label": "Ciconiidae (Storks)"
-  },
-  {
-    "value": "Fregatidae",
-    "label": "Fregatidae (Frigatebirds)"
-  },
-  {
-    "value": "Sulidae",
-    "label": "Sulidae (Boobies and Gannets)"
-  },
-  {
-    "value": "Anhingidae",
-    "label": "Anhingidae (Anhingas)"
-  },
-  {
-    "value": "Phalacrocoracidae",
-    "label": "Phalacrocoracidae (Cormorants and Shags)"
-  },
-  {
-    "value": "Pelecanidae",
-    "label": "Pelecanidae (Pelicans)"
-  },
-  {
-    "value": "Balaenicipitidae",
-    "label": "Balaenicipitidae (Shoebill)"
-  },
-  {
-    "value": "Scopidae",
-    "label": "Scopidae (Hamerkop)"
-  },
-  {
-    "value": "Ardeidae",
-    "label": "Ardeidae (Herons, Egrets, and Bitterns)"
-  },
-  {
-    "value": "Threskiornithidae",
-    "label": "Threskiornithidae (Ibises and Spoonbills)"
-  },
-  {
-    "value": "Cathartidae",
-    "label": "Cathartidae (New World Vultures)"
-  },
-  {
-    "value": "Sagittariidae",
-    "label": "Sagittariidae (Secretarybird)"
-  },
-  {
-    "value": "Pandionidae",
-    "label": "Pandionidae (Osprey)"
+    "value": "Acanthizidae",
+    "label": "Acanthizidae (Thornbills and Allies)"
   },
   {
     "value": "Accipitridae",
     "label": "Accipitridae (Hawks, Eagles, and Kites)"
   },
   {
-    "value": "Tytonidae",
-    "label": "Tytonidae (Barn-Owls)"
+    "value": "Acrocephalidae",
+    "label": "Acrocephalidae (Reed Warblers and Allies)"
   },
   {
-    "value": "Strigidae",
-    "label": "Strigidae (Owls)"
+    "value": "Aegithalidae",
+    "label": "Aegithalidae (Long-tailed Tits)"
   },
   {
-    "value": "Coliidae",
-    "label": "Coliidae (Mousebirds)"
+    "value": "Aegithinidae",
+    "label": "Aegithinidae (Ioras)"
   },
   {
-    "value": "Leptosomidae",
-    "label": "Leptosomidae (Cuckoo-roller)"
+    "value": "Aegothelidae",
+    "label": "Aegothelidae (Owlet-nightjars)"
   },
   {
-    "value": "Trogonidae",
-    "label": "Trogonidae (Trogons)"
-  },
-  {
-    "value": "Upupidae",
-    "label": "Upupidae (Hoopoes)"
-  },
-  {
-    "value": "Phoeniculidae",
-    "label": "Phoeniculidae (Woodhoopoes and Scimitarbills)"
-  },
-  {
-    "value": "Bucorvidae",
-    "label": "Bucorvidae (Ground-Hornbills)"
-  },
-  {
-    "value": "Bucerotidae",
-    "label": "Bucerotidae (Hornbills)"
-  },
-  {
-    "value": "Todidae",
-    "label": "Todidae (Todies)"
-  },
-  {
-    "value": "Momotidae",
-    "label": "Momotidae (Motmots)"
+    "value": "Alaudidae",
+    "label": "Alaudidae (Larks)"
   },
   {
     "value": "Alcedinidae",
     "label": "Alcedinidae (Kingfishers)"
   },
   {
-    "value": "Meropidae",
-    "label": "Meropidae (Bee-eaters)"
+    "value": "Alcidae",
+    "label": "Alcidae (Auks, Murres, and Puffins)"
   },
   {
-    "value": "Coraciidae",
-    "label": "Coraciidae (Rollers)"
+    "value": "Anatidae",
+    "label": "Anatidae (Ducks, Geese, and Waterfowl)"
+  },
+  {
+    "value": "Anhimidae",
+    "label": "Anhimidae (Screamers)"
+  },
+  {
+    "value": "Anhingidae",
+    "label": "Anhingidae (Anhingas)"
+  },
+  {
+    "value": "Anseranatidae",
+    "label": "Anseranatidae (Magpie Goose)"
+  },
+  {
+    "value": "Apodidae",
+    "label": "Apodidae (Swifts)"
+  },
+  {
+    "value": "Apterygidae",
+    "label": "Apterygidae (Kiwis)"
+  },
+  {
+    "value": "Aramidae",
+    "label": "Aramidae (Limpkin)"
+  },
+  {
+    "value": "Ardeidae",
+    "label": "Ardeidae (Herons, Egrets, and Bitterns)"
+  },
+  {
+    "value": "Artamidae",
+    "label": "Artamidae (Woodswallows, Bellmagpies, and Allies)"
+  },
+  {
+    "value": "Atrichornithidae",
+    "label": "Atrichornithidae (Scrub-birds)"
+  },
+  {
+    "value": "Balaenicipitidae",
+    "label": "Balaenicipitidae (Shoebill)"
+  },
+  {
+    "value": "Bernieridae",
+    "label": "Bernieridae (Malagasy Warblers)"
+  },
+  {
+    "value": "Bombycillidae",
+    "label": "Bombycillidae (Waxwings)"
   },
   {
     "value": "Brachypteraciidae",
@@ -376,492 +100,272 @@
     "label": "Bucconidae (Puffbirds)"
   },
   {
-    "value": "Galbulidae",
-    "label": "Galbulidae (Jacamars)"
+    "value": "Bucerotidae",
+    "label": "Bucerotidae (Hornbills)"
   },
   {
-    "value": "Lybiidae",
-    "label": "Lybiidae (African Barbets)"
-  },
-  {
-    "value": "Megalaimidae",
-    "label": "Megalaimidae (Asian Barbets)"
-  },
-  {
-    "value": "Capitonidae",
-    "label": "Capitonidae (New World Barbets)"
-  },
-  {
-    "value": "Semnornithidae",
-    "label": "Semnornithidae (Toucan-Barbets)"
-  },
-  {
-    "value": "Ramphastidae",
-    "label": "Ramphastidae (Toucans)"
-  },
-  {
-    "value": "Indicatoridae",
-    "label": "Indicatoridae (Honeyguides)"
-  },
-  {
-    "value": "Picidae",
-    "label": "Picidae (Woodpeckers)"
-  },
-  {
-    "value": "Cariamidae",
-    "label": "Cariamidae (Seriemas)"
-  },
-  {
-    "value": "Falconidae",
-    "label": "Falconidae (Falcons and Caracaras)"
-  },
-  {
-    "value": "Strigopidae",
-    "label": "Strigopidae (New Zealand Parrots)"
-  },
-  {
-    "value": "Cacatuidae",
-    "label": "Cacatuidae (Cockatoos)"
-  },
-  {
-    "value": "Psittaculidae",
-    "label": "Psittaculidae (Old World Parrots)"
-  },
-  {
-    "value": "Psittacidae",
-    "label": "Psittacidae (New World and African Parrots)"
-  },
-  {
-    "value": "Acanthisittidae",
-    "label": "Acanthisittidae (New Zealand Wrens)"
-  },
-  {
-    "value": "Calyptomenidae",
-    "label": "Calyptomenidae (African and Green Broadbills)"
-  },
-  {
-    "value": "Eurylaimidae",
-    "label": "Eurylaimidae (Asian and Grauer's Broadbills)"
-  },
-  {
-    "value": "Sapayoidae",
-    "label": "Sapayoidae (Sapayoa)"
-  },
-  {
-    "value": "Philepittidae",
-    "label": "Philepittidae (Asities)"
-  },
-  {
-    "value": "Pittidae",
-    "label": "Pittidae (Pittas)"
-  },
-  {
-    "value": "Thamnophilidae",
-    "label": "Thamnophilidae (Typical Antbirds)"
-  },
-  {
-    "value": "Melanopareiidae",
-    "label": "Melanopareiidae (Crescentchests)"
-  },
-  {
-    "value": "Conopophagidae",
-    "label": "Conopophagidae (Gnateaters)"
-  },
-  {
-    "value": "Grallariidae",
-    "label": "Grallariidae (Antpittas)"
-  },
-  {
-    "value": "Rhinocryptidae",
-    "label": "Rhinocryptidae (Tapaculos)"
-  },
-  {
-    "value": "Formicariidae",
-    "label": "Formicariidae (Antthrushes)"
-  },
-  {
-    "value": "Furnariidae",
-    "label": "Furnariidae (Ovenbirds and Woodcreepers)"
-  },
-  {
-    "value": "Pipridae",
-    "label": "Pipridae (Manakins)"
-  },
-  {
-    "value": "Cotingidae",
-    "label": "Cotingidae (Cotingas)"
-  },
-  {
-    "value": "Tityridae",
-    "label": "Tityridae (Tityras and Allies)"
-  },
-  {
-    "value": "Oxyruncidae",
-    "label": "Oxyruncidae (Sharpbill, Royal Flycatcher, and Allies)"
-  },
-  {
-    "value": "Tyrannidae",
-    "label": "Tyrannidae (Tyrant Flycatchers)"
-  },
-  {
-    "value": "Menuridae",
-    "label": "Menuridae (Lyrebirds)"
-  },
-  {
-    "value": "Atrichornithidae",
-    "label": "Atrichornithidae (Scrub-birds)"
-  },
-  {
-    "value": "Ptilonorhynchidae",
-    "label": "Ptilonorhynchidae (Bowerbirds)"
-  },
-  {
-    "value": "Climacteridae",
-    "label": "Climacteridae (Australasian Treecreepers)"
-  },
-  {
-    "value": "Maluridae",
-    "label": "Maluridae (Fairywrens)"
-  },
-  {
-    "value": "Meliphagidae",
-    "label": "Meliphagidae (Honeyeaters)"
-  },
-  {
-    "value": "Dasyornithidae",
-    "label": "Dasyornithidae (Bristlebirds)"
-  },
-  {
-    "value": "Pardalotidae",
-    "label": "Pardalotidae (Pardalotes)"
-  },
-  {
-    "value": "Acanthizidae",
-    "label": "Acanthizidae (Thornbills and Allies)"
-  },
-  {
-    "value": "Pomatostomidae",
-    "label": "Pomatostomidae (Pseudo-Babblers)"
-  },
-  {
-    "value": "Orthonychidae",
-    "label": "Orthonychidae (Logrunners)"
-  },
-  {
-    "value": "Cinclosomatidae",
-    "label": "Cinclosomatidae (Quail-thrushes and Jewel-babblers)"
-  },
-  {
-    "value": "Campephagidae",
-    "label": "Campephagidae (Cuckooshrikes)"
-  },
-  {
-    "value": "Mohouidae",
-    "label": "Mohouidae (Whiteheads)"
-  },
-  {
-    "value": "Neosittidae",
-    "label": "Neosittidae (Sittellas)"
-  },
-  {
-    "value": "Psophodidae",
-    "label": "Psophodidae (Whipbirds and Wedgebills)"
-  },
-  {
-    "value": "Eulacestomatidae",
-    "label": "Eulacestomatidae (Ploughbill)"
-  },
-  {
-    "value": "Oreoicidae",
-    "label": "Oreoicidae (Australo-Papuan Bellbirds)"
-  },
-  {
-    "value": "Falcunculidae",
-    "label": "Falcunculidae (Shrike-tit)"
-  },
-  {
-    "value": "Paramythiidae",
-    "label": "Paramythiidae (Tit Berrypecker and Crested Berrypecker)"
-  },
-  {
-    "value": "Vireonidae",
-    "label": "Vireonidae (Vireos, Shrike-Babblers, and Erpornis)"
-  },
-  {
-    "value": "Pachycephalidae",
-    "label": "Pachycephalidae (Whistlers and Allies)"
-  },
-  {
-    "value": "Oriolidae",
-    "label": "Oriolidae (Old World Orioles)"
-  },
-  {
-    "value": "Machaerirhynchidae",
-    "label": "Machaerirhynchidae (Boatbills)"
-  },
-  {
-    "value": "Artamidae",
-    "label": "Artamidae (Woodswallows, Bellmagpies, and Allies)"
-  },
-  {
-    "value": "Rhagologidae",
-    "label": "Rhagologidae (Mottled Berryhunter)"
-  },
-  {
-    "value": "Platysteiridae",
-    "label": "Platysteiridae (Wattle-eyes and Batises)"
-  },
-  {
-    "value": "Vangidae",
-    "label": "Vangidae (Vangas, Helmetshrikes, and Allies)"
-  },
-  {
-    "value": "Pityriasidae",
-    "label": "Pityriasidae (Bristlehead)"
-  },
-  {
-    "value": "Aegithinidae",
-    "label": "Aegithinidae (Ioras)"
-  },
-  {
-    "value": "Malaconotidae",
-    "label": "Malaconotidae (Bushshrikes and Allies)"
-  },
-  {
-    "value": "Rhipiduridae",
-    "label": "Rhipiduridae (Fantails)"
-  },
-  {
-    "value": "Dicruridae",
-    "label": "Dicruridae (Drongos)"
-  },
-  {
-    "value": "Paradisaeidae",
-    "label": "Paradisaeidae (Birds-of-Paradise)"
-  },
-  {
-    "value": "Ifritidae",
-    "label": "Ifritidae (Ifrita)"
-  },
-  {
-    "value": "Monarchidae",
-    "label": "Monarchidae (Monarch Flycatchers)"
-  },
-  {
-    "value": "Corcoracidae",
-    "label": "Corcoracidae (White-winged Chough and Apostlebird)"
-  },
-  {
-    "value": "Melampittidae",
-    "label": "Melampittidae (Melampittas)"
-  },
-  {
-    "value": "Platylophidae",
-    "label": "Platylophidae (Crested Shrikejay)"
-  },
-  {
-    "value": "Laniidae",
-    "label": "Laniidae (Shrikes)"
-  },
-  {
-    "value": "Corvidae",
-    "label": "Corvidae (Crows, Jays, and Magpies)"
-  },
-  {
-    "value": "Cnemophilidae",
-    "label": "Cnemophilidae (Satinbirds)"
-  },
-  {
-    "value": "Melanocharitidae",
-    "label": "Melanocharitidae (Berrypeckers and Longbills)"
-  },
-  {
-    "value": "Callaeidae",
-    "label": "Callaeidae (Wattlebirds)"
-  },
-  {
-    "value": "Notiomystidae",
-    "label": "Notiomystidae (Stitchbird)"
-  },
-  {
-    "value": "Petroicidae",
-    "label": "Petroicidae (Australasian Robins)"
-  },
-  {
-    "value": "Picathartidae",
-    "label": "Picathartidae (Rockfowl)"
-  },
-  {
-    "value": "Chaetopidae",
-    "label": "Chaetopidae (Rockjumpers)"
-  },
-  {
-    "value": "Eupetidae",
-    "label": "Eupetidae (Rail-babbler)"
-  },
-  {
-    "value": "Hyliotidae",
-    "label": "Hyliotidae (Hyliotas)"
-  },
-  {
-    "value": "Stenostiridae",
-    "label": "Stenostiridae (Fairy Flycatchers)"
-  },
-  {
-    "value": "Paridae",
-    "label": "Paridae (Tits, Chickadees, and Titmice)"
-  },
-  {
-    "value": "Remizidae",
-    "label": "Remizidae (Penduline-Tits)"
-  },
-  {
-    "value": "Alaudidae",
-    "label": "Alaudidae (Larks)"
-  },
-  {
-    "value": "Panuridae",
-    "label": "Panuridae (Bearded Reedling)"
-  },
-  {
-    "value": "Nicatoridae",
-    "label": "Nicatoridae (Nicators)"
-  },
-  {
-    "value": "Macrosphenidae",
-    "label": "Macrosphenidae (African Warblers)"
-  },
-  {
-    "value": "Cisticolidae",
-    "label": "Cisticolidae (Cisticolas and Allies)"
-  },
-  {
-    "value": "Acrocephalidae",
-    "label": "Acrocephalidae (Reed Warblers and Allies)"
-  },
-  {
-    "value": "Locustellidae",
-    "label": "Locustellidae (Grassbirds and Allies)"
-  },
-  {
-    "value": "Donacobiidae",
-    "label": "Donacobiidae (Donacobius)"
-  },
-  {
-    "value": "Bernieridae",
-    "label": "Bernieridae (Malagasy Warblers)"
-  },
-  {
-    "value": "Pnoepygidae",
-    "label": "Pnoepygidae (Cupwings)"
-  },
-  {
-    "value": "Hirundinidae",
-    "label": "Hirundinidae (Swallows)"
-  },
-  {
-    "value": "Pycnonotidae",
-    "label": "Pycnonotidae (Bulbuls)"
-  },
-  {
-    "value": "Phylloscopidae",
-    "label": "Phylloscopidae (Leaf Warblers)"
-  },
-  {
-    "value": "Scotocercidae",
-    "label": "Scotocercidae (Bush Warblers and Allies)"
-  },
-  {
-    "value": "Aegithalidae",
-    "label": "Aegithalidae (Long-tailed Tits)"
-  },
-  {
-    "value": "Sylviidae",
-    "label": "Sylviidae (Sylviid Warblers, Parrotbills, and Allies)"
-  },
-  {
-    "value": "Zosteropidae",
-    "label": "Zosteropidae (White-eyes, Yuhinas, and Allies)"
-  },
-  {
-    "value": "Timaliidae",
-    "label": "Timaliidae (Tree-Babblers, Scimitar-Babblers, and Allies)"
-  },
-  {
-    "value": "Pellorneidae",
-    "label": "Pellorneidae (Ground Babblers and Allies)"
-  },
-  {
-    "value": "Leiothrichidae",
-    "label": "Leiothrichidae (Laughingthrushes and Allies)"
-  },
-  {
-    "value": "Regulidae",
-    "label": "Regulidae (Kinglets)"
-  },
-  {
-    "value": "Tichodromidae",
-    "label": "Tichodromidae (Wallcreeper)"
-  },
-  {
-    "value": "Sittidae",
-    "label": "Sittidae (Nuthatches)"
-  },
-  {
-    "value": "Certhiidae",
-    "label": "Certhiidae (Treecreepers)"
-  },
-  {
-    "value": "Polioptilidae",
-    "label": "Polioptilidae (Gnatcatchers)"
-  },
-  {
-    "value": "Troglodytidae",
-    "label": "Troglodytidae (Wrens)"
-  },
-  {
-    "value": "Elachuridae",
-    "label": "Elachuridae (Spotted Elachura)"
-  },
-  {
-    "value": "Cinclidae",
-    "label": "Cinclidae (Dippers)"
+    "value": "Bucorvidae",
+    "label": "Bucorvidae (Ground-Hornbills)"
   },
   {
     "value": "Buphagidae",
     "label": "Buphagidae (Oxpeckers)"
   },
   {
-    "value": "Sturnidae",
-    "label": "Sturnidae (Starlings)"
+    "value": "Burhinidae",
+    "label": "Burhinidae (Thick-knees)"
   },
   {
-    "value": "Mimidae",
-    "label": "Mimidae (Mockingbirds and Thrashers)"
+    "value": "Cacatuidae",
+    "label": "Cacatuidae (Cockatoos)"
   },
   {
-    "value": "Turdidae",
-    "label": "Turdidae (Thrushes and Allies)"
+    "value": "Calcariidae",
+    "label": "Calcariidae (Longspurs and Snow Buntings)"
   },
   {
-    "value": "Muscicapidae",
-    "label": "Muscicapidae (Old World Flycatchers)"
+    "value": "Callaeidae",
+    "label": "Callaeidae (Wattlebirds)"
   },
   {
-    "value": "Bombycillidae",
-    "label": "Bombycillidae (Waxwings)"
+    "value": "Calyptomenidae",
+    "label": "Calyptomenidae (African and Green Broadbills)"
   },
   {
-    "value": "Mohoidae",
-    "label": "Mohoidae (Hawaiian Honeyeaters)"
+    "value": "Calyptophilidae",
+    "label": "Calyptophilidae (Chat-Tanagers)"
   },
   {
-    "value": "Ptiliogonatidae",
-    "label": "Ptiliogonatidae (Silky-flycatchers)"
+    "value": "Campephagidae",
+    "label": "Campephagidae (Cuckooshrikes)"
+  },
+  {
+    "value": "Capitonidae",
+    "label": "Capitonidae (New World Barbets)"
+  },
+  {
+    "value": "Caprimulgidae",
+    "label": "Caprimulgidae (Nightjars and Allies)"
+  },
+  {
+    "value": "Cardinalidae",
+    "label": "Cardinalidae (Cardinals and Allies)"
+  },
+  {
+    "value": "Cariamidae",
+    "label": "Cariamidae (Seriemas)"
+  },
+  {
+    "value": "Casuariidae",
+    "label": "Casuariidae (Cassowaries and Emu)"
+  },
+  {
+    "value": "Cathartidae",
+    "label": "Cathartidae (New World Vultures)"
+  },
+  {
+    "value": "Certhiidae",
+    "label": "Certhiidae (Treecreepers)"
+  },
+  {
+    "value": "Chaetopidae",
+    "label": "Chaetopidae (Rockjumpers)"
+  },
+  {
+    "value": "Charadriidae",
+    "label": "Charadriidae (Plovers and Lapwings)"
+  },
+  {
+    "value": "Chionidae",
+    "label": "Chionidae (Sheathbills)"
+  },
+  {
+    "value": "Chloropseidae",
+    "label": "Chloropseidae (Leafbirds)"
+  },
+  {
+    "value": "Ciconiidae",
+    "label": "Ciconiidae (Storks)"
+  },
+  {
+    "value": "Cinclidae",
+    "label": "Cinclidae (Dippers)"
+  },
+  {
+    "value": "Cinclosomatidae",
+    "label": "Cinclosomatidae (Quail-thrushes and Jewel-babblers)"
+  },
+  {
+    "value": "Cisticolidae",
+    "label": "Cisticolidae (Cisticolas and Allies)"
+  },
+  {
+    "value": "Climacteridae",
+    "label": "Climacteridae (Australasian Treecreepers)"
+  },
+  {
+    "value": "Cnemophilidae",
+    "label": "Cnemophilidae (Satinbirds)"
+  },
+  {
+    "value": "Coliidae",
+    "label": "Coliidae (Mousebirds)"
+  },
+  {
+    "value": "Columbidae",
+    "label": "Columbidae (Pigeons and Doves)"
+  },
+  {
+    "value": "Conopophagidae",
+    "label": "Conopophagidae (Gnateaters)"
+  },
+  {
+    "value": "Coraciidae",
+    "label": "Coraciidae (Rollers)"
+  },
+  {
+    "value": "Corcoracidae",
+    "label": "Corcoracidae (White-winged Chough and Apostlebird)"
+  },
+  {
+    "value": "Corvidae",
+    "label": "Corvidae (Crows, Jays, and Magpies)"
+  },
+  {
+    "value": "Cotingidae",
+    "label": "Cotingidae (Cotingas)"
+  },
+  {
+    "value": "Cracidae",
+    "label": "Cracidae (Guans, Chachalacas, and Curassows)"
+  },
+  {
+    "value": "Cuculidae",
+    "label": "Cuculidae (Cuckoos)"
+  },
+  {
+    "value": "Dasyornithidae",
+    "label": "Dasyornithidae (Bristlebirds)"
+  },
+  {
+    "value": "Dicaeidae",
+    "label": "Dicaeidae (Flowerpeckers)"
+  },
+  {
+    "value": "Dicruridae",
+    "label": "Dicruridae (Drongos)"
+  },
+  {
+    "value": "Diomedeidae",
+    "label": "Diomedeidae (Albatrosses)"
+  },
+  {
+    "value": "Donacobiidae",
+    "label": "Donacobiidae (Donacobius)"
+  },
+  {
+    "value": "Dromadidae",
+    "label": "Dromadidae (Crab-Plover)"
   },
   {
     "value": "Dulidae",
     "label": "Dulidae (Palmchat)"
+  },
+  {
+    "value": "Elachuridae",
+    "label": "Elachuridae (Spotted Elachura)"
+  },
+  {
+    "value": "Emberizidae",
+    "label": "Emberizidae (Old World Buntings)"
+  },
+  {
+    "value": "Estrildidae",
+    "label": "Estrildidae (Waxbills and Allies)"
+  },
+  {
+    "value": "Eulacestomatidae",
+    "label": "Eulacestomatidae (Ploughbill)"
+  },
+  {
+    "value": "Eupetidae",
+    "label": "Eupetidae (Rail-babbler)"
+  },
+  {
+    "value": "Eurylaimidae",
+    "label": "Eurylaimidae (Asian and Grauer's Broadbills)"
+  },
+  {
+    "value": "Eurypygidae",
+    "label": "Eurypygidae (Sunbittern)"
+  },
+  {
+    "value": "Falconidae",
+    "label": "Falconidae (Falcons and Caracaras)"
+  },
+  {
+    "value": "Falcunculidae",
+    "label": "Falcunculidae (Shrike-tit)"
+  },
+  {
+    "value": "Formicariidae",
+    "label": "Formicariidae (Antthrushes)"
+  },
+  {
+    "value": "Fregatidae",
+    "label": "Fregatidae (Frigatebirds)"
+  },
+  {
+    "value": "Fringillidae",
+    "label": "Fringillidae (Finches, Euphonias, and Allies)"
+  },
+  {
+    "value": "Furnariidae",
+    "label": "Furnariidae (Ovenbirds and Woodcreepers)"
+  },
+  {
+    "value": "Galbulidae",
+    "label": "Galbulidae (Jacamars)"
+  },
+  {
+    "value": "Gaviidae",
+    "label": "Gaviidae (Loons)"
+  },
+  {
+    "value": "Glareolidae",
+    "label": "Glareolidae (Pratincoles and Coursers)"
+  },
+  {
+    "value": "Grallariidae",
+    "label": "Grallariidae (Antpittas)"
+  },
+  {
+    "value": "Gruidae",
+    "label": "Gruidae (Cranes)"
+  },
+  {
+    "value": "Haematopodidae",
+    "label": "Haematopodidae (Oystercatchers)"
+  },
+  {
+    "value": "Heliornithidae",
+    "label": "Heliornithidae (Finfoots)"
+  },
+  {
+    "value": "Hemiprocnidae",
+    "label": "Hemiprocnidae (Treeswifts)"
+  },
+  {
+    "value": "Hirundinidae",
+    "label": "Hirundinidae (Swallows)"
+  },
+  {
+    "value": "Hydrobatidae",
+    "label": "Hydrobatidae (Northern Storm-Petrels)"
+  },
+  {
+    "value": "Hyliotidae",
+    "label": "Hyliotidae (Hyliotas)"
   },
   {
     "value": "Hylocitreidae",
@@ -872,127 +376,623 @@
     "label": "Hypocoliidae (Hypocolius)"
   },
   {
-    "value": "Promeropidae",
-    "label": "Promeropidae (Sugarbirds)"
-  },
-  {
-    "value": "Modulatricidae",
-    "label": "Modulatricidae (Dapple-throat and Allies)"
-  },
-  {
-    "value": "Dicaeidae",
-    "label": "Dicaeidae (Flowerpeckers)"
-  },
-  {
-    "value": "Nectariniidae",
-    "label": "Nectariniidae (Sunbirds and Spiderhunters)"
-  },
-  {
-    "value": "Irenidae",
-    "label": "Irenidae (Fairy-bluebirds)"
-  },
-  {
-    "value": "Chloropseidae",
-    "label": "Chloropseidae (Leafbirds)"
-  },
-  {
-    "value": "Peucedramidae",
-    "label": "Peucedramidae (Olive Warbler)"
-  },
-  {
-    "value": "Urocynchramidae",
-    "label": "Urocynchramidae (Przevalski's Pinktail)"
-  },
-  {
-    "value": "Ploceidae",
-    "label": "Ploceidae (Weavers and Allies)"
-  },
-  {
-    "value": "Estrildidae",
-    "label": "Estrildidae (Waxbills and Allies)"
-  },
-  {
-    "value": "Viduidae",
-    "label": "Viduidae (Indigobirds)"
-  },
-  {
-    "value": "Prunellidae",
-    "label": "Prunellidae (Accentors)"
-  },
-  {
-    "value": "Passeridae",
-    "label": "Passeridae (Old World Sparrows)"
-  },
-  {
-    "value": "Motacillidae",
-    "label": "Motacillidae (Wagtails and Pipits)"
-  },
-  {
-    "value": "Fringillidae",
-    "label": "Fringillidae (Finches, Euphonias, and Allies)"
-  },
-  {
-    "value": "Calcariidae",
-    "label": "Calcariidae (Longspurs and Snow Buntings)"
-  },
-  {
-    "value": "Rhodinocichlidae",
-    "label": "Rhodinocichlidae (Thrush-Tanager)"
-  },
-  {
-    "value": "Emberizidae",
-    "label": "Emberizidae (Old World Buntings)"
-  },
-  {
-    "value": "Passerellidae",
-    "label": "Passerellidae (New World Sparrows)"
-  },
-  {
-    "value": "Calyptophilidae",
-    "label": "Calyptophilidae (Chat-Tanagers)"
-  },
-  {
-    "value": "Phaenicophilidae",
-    "label": "Phaenicophilidae (Hispaniolan Tanagers)"
-  },
-  {
-    "value": "Nesospingidae",
-    "label": "Nesospingidae (Puerto Rican Tanager)"
-  },
-  {
-    "value": "Spindalidae",
-    "label": "Spindalidae (Spindalises)"
-  },
-  {
-    "value": "Zeledoniidae",
-    "label": "Zeledoniidae (Wrenthrush)"
-  },
-  {
-    "value": "Teretistridae",
-    "label": "Teretistridae (Cuban Warblers)"
-  },
-  {
-    "value": "Icteriidae",
-    "label": "Icteriidae (Yellow-breasted Chat)"
+    "value": "Ibidorhynchidae",
+    "label": "Ibidorhynchidae (Ibisbill)"
   },
   {
     "value": "Icteridae",
     "label": "Icteridae (Troupials and Allies)"
   },
   {
-    "value": "Parulidae",
-    "label": "Parulidae (New World Warblers)"
+    "value": "Icteriidae",
+    "label": "Icteriidae (Yellow-breasted Chat)"
+  },
+  {
+    "value": "Ifritidae",
+    "label": "Ifritidae (Ifrita)"
+  },
+  {
+    "value": "Indicatoridae",
+    "label": "Indicatoridae (Honeyguides)"
+  },
+  {
+    "value": "Irenidae",
+    "label": "Irenidae (Fairy-bluebirds)"
+  },
+  {
+    "value": "Jacanidae",
+    "label": "Jacanidae (Jacanas)"
+  },
+  {
+    "value": "Laniidae",
+    "label": "Laniidae (Shrikes)"
+  },
+  {
+    "value": "Laridae",
+    "label": "Laridae (Gulls, Terns, and Skimmers)"
+  },
+  {
+    "value": "Leiothrichidae",
+    "label": "Leiothrichidae (Laughingthrushes and Allies)"
+  },
+  {
+    "value": "Leptosomidae",
+    "label": "Leptosomidae (Cuckoo-roller)"
+  },
+  {
+    "value": "Locustellidae",
+    "label": "Locustellidae (Grassbirds and Allies)"
+  },
+  {
+    "value": "Lybiidae",
+    "label": "Lybiidae (African Barbets)"
+  },
+  {
+    "value": "Machaerirhynchidae",
+    "label": "Machaerirhynchidae (Boatbills)"
+  },
+  {
+    "value": "Macrosphenidae",
+    "label": "Macrosphenidae (African Warblers)"
+  },
+  {
+    "value": "Malaconotidae",
+    "label": "Malaconotidae (Bushshrikes and Allies)"
+  },
+  {
+    "value": "Maluridae",
+    "label": "Maluridae (Fairywrens)"
+  },
+  {
+    "value": "Megalaimidae",
+    "label": "Megalaimidae (Asian Barbets)"
+  },
+  {
+    "value": "Megapodiidae",
+    "label": "Megapodiidae (Megapodes)"
+  },
+  {
+    "value": "Melampittidae",
+    "label": "Melampittidae (Melampittas)"
+  },
+  {
+    "value": "Melanocharitidae",
+    "label": "Melanocharitidae (Berrypeckers and Longbills)"
+  },
+  {
+    "value": "Melanopareiidae",
+    "label": "Melanopareiidae (Crescentchests)"
+  },
+  {
+    "value": "Meliphagidae",
+    "label": "Meliphagidae (Honeyeaters)"
+  },
+  {
+    "value": "Menuridae",
+    "label": "Menuridae (Lyrebirds)"
+  },
+  {
+    "value": "Meropidae",
+    "label": "Meropidae (Bee-eaters)"
+  },
+  {
+    "value": "Mesitornithidae",
+    "label": "Mesitornithidae (Mesites)"
+  },
+  {
+    "value": "Mimidae",
+    "label": "Mimidae (Mockingbirds and Thrashers)"
   },
   {
     "value": "Mitrospingidae",
     "label": "Mitrospingidae (Mitrospingid Tanagers)"
   },
   {
-    "value": "Cardinalidae",
-    "label": "Cardinalidae (Cardinals and Allies)"
+    "value": "Modulatricidae",
+    "label": "Modulatricidae (Dapple-throat and Allies)"
+  },
+  {
+    "value": "Mohoidae",
+    "label": "Mohoidae (Hawaiian Honeyeaters)"
+  },
+  {
+    "value": "Mohouidae",
+    "label": "Mohouidae (Whiteheads)"
+  },
+  {
+    "value": "Momotidae",
+    "label": "Momotidae (Motmots)"
+  },
+  {
+    "value": "Monarchidae",
+    "label": "Monarchidae (Monarch Flycatchers)"
+  },
+  {
+    "value": "Motacillidae",
+    "label": "Motacillidae (Wagtails and Pipits)"
+  },
+  {
+    "value": "Muscicapidae",
+    "label": "Muscicapidae (Old World Flycatchers)"
+  },
+  {
+    "value": "Musophagidae",
+    "label": "Musophagidae (Turacos)"
+  },
+  {
+    "value": "Nectariniidae",
+    "label": "Nectariniidae (Sunbirds and Spiderhunters)"
+  },
+  {
+    "value": "Neosittidae",
+    "label": "Neosittidae (Sittellas)"
+  },
+  {
+    "value": "Nesospingidae",
+    "label": "Nesospingidae (Puerto Rican Tanager)"
+  },
+  {
+    "value": "Nicatoridae",
+    "label": "Nicatoridae (Nicators)"
+  },
+  {
+    "value": "Notiomystidae",
+    "label": "Notiomystidae (Stitchbird)"
+  },
+  {
+    "value": "Numididae",
+    "label": "Numididae (Guineafowl)"
+  },
+  {
+    "value": "Nyctibiidae",
+    "label": "Nyctibiidae (Potoos)"
+  },
+  {
+    "value": "Oceanitidae",
+    "label": "Oceanitidae (Southern Storm-Petrels)"
+  },
+  {
+    "value": "Odontophoridae",
+    "label": "Odontophoridae (New World Quail)"
+  },
+  {
+    "value": "Opisthocomidae",
+    "label": "Opisthocomidae (Hoatzin)"
+  },
+  {
+    "value": "Oreoicidae",
+    "label": "Oreoicidae (Australo-Papuan Bellbirds)"
+  },
+  {
+    "value": "Oriolidae",
+    "label": "Oriolidae (Old World Orioles)"
+  },
+  {
+    "value": "Orthonychidae",
+    "label": "Orthonychidae (Logrunners)"
+  },
+  {
+    "value": "Otididae",
+    "label": "Otididae (Bustards)"
+  },
+  {
+    "value": "Oxyruncidae",
+    "label": "Oxyruncidae (Sharpbill, Royal Flycatcher, and Allies)"
+  },
+  {
+    "value": "Pachycephalidae",
+    "label": "Pachycephalidae (Whistlers and Allies)"
+  },
+  {
+    "value": "Pandionidae",
+    "label": "Pandionidae (Osprey)"
+  },
+  {
+    "value": "Panuridae",
+    "label": "Panuridae (Bearded Reedling)"
+  },
+  {
+    "value": "Paradisaeidae",
+    "label": "Paradisaeidae (Birds-of-Paradise)"
+  },
+  {
+    "value": "Paramythiidae",
+    "label": "Paramythiidae (Tit Berrypecker and Crested Berrypecker)"
+  },
+  {
+    "value": "Pardalotidae",
+    "label": "Pardalotidae (Pardalotes)"
+  },
+  {
+    "value": "Paridae",
+    "label": "Paridae (Tits, Chickadees, and Titmice)"
+  },
+  {
+    "value": "Parulidae",
+    "label": "Parulidae (New World Warblers)"
+  },
+  {
+    "value": "Passerellidae",
+    "label": "Passerellidae (New World Sparrows)"
+  },
+  {
+    "value": "Passeridae",
+    "label": "Passeridae (Old World Sparrows)"
+  },
+  {
+    "value": "Pedionomidae",
+    "label": "Pedionomidae (Plains-wanderer)"
+  },
+  {
+    "value": "Pelecanidae",
+    "label": "Pelecanidae (Pelicans)"
+  },
+  {
+    "value": "Pellorneidae",
+    "label": "Pellorneidae (Ground Babblers and Allies)"
+  },
+  {
+    "value": "Petroicidae",
+    "label": "Petroicidae (Australasian Robins)"
+  },
+  {
+    "value": "Peucedramidae",
+    "label": "Peucedramidae (Olive Warbler)"
+  },
+  {
+    "value": "Phaenicophilidae",
+    "label": "Phaenicophilidae (Hispaniolan Tanagers)"
+  },
+  {
+    "value": "Phaethontidae",
+    "label": "Phaethontidae (Tropicbirds)"
+  },
+  {
+    "value": "Phalacrocoracidae",
+    "label": "Phalacrocoracidae (Cormorants and Shags)"
+  },
+  {
+    "value": "Phasianidae",
+    "label": "Phasianidae (Pheasants, Grouse, and Allies)"
+  },
+  {
+    "value": "Philepittidae",
+    "label": "Philepittidae (Asities)"
+  },
+  {
+    "value": "Phoenicopteridae",
+    "label": "Phoenicopteridae (Flamingos)"
+  },
+  {
+    "value": "Phoeniculidae",
+    "label": "Phoeniculidae (Woodhoopoes and Scimitarbills)"
+  },
+  {
+    "value": "Phylloscopidae",
+    "label": "Phylloscopidae (Leaf Warblers)"
+  },
+  {
+    "value": "Picathartidae",
+    "label": "Picathartidae (Rockfowl)"
+  },
+  {
+    "value": "Picidae",
+    "label": "Picidae (Woodpeckers)"
+  },
+  {
+    "value": "Pipridae",
+    "label": "Pipridae (Manakins)"
+  },
+  {
+    "value": "Pittidae",
+    "label": "Pittidae (Pittas)"
+  },
+  {
+    "value": "Pityriasidae",
+    "label": "Pityriasidae (Bristlehead)"
+  },
+  {
+    "value": "Platylophidae",
+    "label": "Platylophidae (Crested Shrikejay)"
+  },
+  {
+    "value": "Platysteiridae",
+    "label": "Platysteiridae (Wattle-eyes and Batises)"
+  },
+  {
+    "value": "Ploceidae",
+    "label": "Ploceidae (Weavers and Allies)"
+  },
+  {
+    "value": "Pluvianellidae",
+    "label": "Pluvianellidae (Magellanic Plover)"
+  },
+  {
+    "value": "Pluvianidae",
+    "label": "Pluvianidae (Egyptian Plover)"
+  },
+  {
+    "value": "Pnoepygidae",
+    "label": "Pnoepygidae (Cupwings)"
+  },
+  {
+    "value": "Podargidae",
+    "label": "Podargidae (Frogmouths)"
+  },
+  {
+    "value": "Podicipedidae",
+    "label": "Podicipedidae (Grebes)"
+  },
+  {
+    "value": "Polioptilidae",
+    "label": "Polioptilidae (Gnatcatchers)"
+  },
+  {
+    "value": "Pomatostomidae",
+    "label": "Pomatostomidae (Pseudo-Babblers)"
+  },
+  {
+    "value": "Procellariidae",
+    "label": "Procellariidae (Shearwaters and Petrels)"
+  },
+  {
+    "value": "Promeropidae",
+    "label": "Promeropidae (Sugarbirds)"
+  },
+  {
+    "value": "Prunellidae",
+    "label": "Prunellidae (Accentors)"
+  },
+  {
+    "value": "Psittacidae",
+    "label": "Psittacidae (New World and African Parrots)"
+  },
+  {
+    "value": "Psittaculidae",
+    "label": "Psittaculidae (Old World Parrots)"
+  },
+  {
+    "value": "Psophiidae",
+    "label": "Psophiidae (Trumpeters)"
+  },
+  {
+    "value": "Psophodidae",
+    "label": "Psophodidae (Whipbirds and Wedgebills)"
+  },
+  {
+    "value": "Pteroclidae",
+    "label": "Pteroclidae (Sandgrouse)"
+  },
+  {
+    "value": "Ptiliogonatidae",
+    "label": "Ptiliogonatidae (Silky-flycatchers)"
+  },
+  {
+    "value": "Ptilonorhynchidae",
+    "label": "Ptilonorhynchidae (Bowerbirds)"
+  },
+  {
+    "value": "Pycnonotidae",
+    "label": "Pycnonotidae (Bulbuls)"
+  },
+  {
+    "value": "Rallidae",
+    "label": "Rallidae (Rails, Gallinules, and Coots)"
+  },
+  {
+    "value": "Ramphastidae",
+    "label": "Ramphastidae (Toucans)"
+  },
+  {
+    "value": "Recurvirostridae",
+    "label": "Recurvirostridae (Stilts and Avocets)"
+  },
+  {
+    "value": "Regulidae",
+    "label": "Regulidae (Kinglets)"
+  },
+  {
+    "value": "Remizidae",
+    "label": "Remizidae (Penduline-Tits)"
+  },
+  {
+    "value": "Rhagologidae",
+    "label": "Rhagologidae (Mottled Berryhunter)"
+  },
+  {
+    "value": "Rheidae",
+    "label": "Rheidae (Rheas)"
+  },
+  {
+    "value": "Rhinocryptidae",
+    "label": "Rhinocryptidae (Tapaculos)"
+  },
+  {
+    "value": "Rhipiduridae",
+    "label": "Rhipiduridae (Fantails)"
+  },
+  {
+    "value": "Rhodinocichlidae",
+    "label": "Rhodinocichlidae (Thrush-Tanager)"
+  },
+  {
+    "value": "Rhynochetidae",
+    "label": "Rhynochetidae (Kagu)"
+  },
+  {
+    "value": "Rostratulidae",
+    "label": "Rostratulidae (Painted-Snipes)"
+  },
+  {
+    "value": "Sagittariidae",
+    "label": "Sagittariidae (Secretarybird)"
+  },
+  {
+    "value": "Sapayoidae",
+    "label": "Sapayoidae (Sapayoa)"
+  },
+  {
+    "value": "Sarothruridae",
+    "label": "Sarothruridae (Flufftails)"
+  },
+  {
+    "value": "Scolopacidae",
+    "label": "Scolopacidae (Sandpipers and Allies)"
+  },
+  {
+    "value": "Scopidae",
+    "label": "Scopidae (Hamerkop)"
+  },
+  {
+    "value": "Scotocercidae",
+    "label": "Scotocercidae (Bush Warblers and Allies)"
+  },
+  {
+    "value": "Semnornithidae",
+    "label": "Semnornithidae (Toucan-Barbets)"
+  },
+  {
+    "value": "Sittidae",
+    "label": "Sittidae (Nuthatches)"
+  },
+  {
+    "value": "Spheniscidae",
+    "label": "Spheniscidae (Penguins)"
+  },
+  {
+    "value": "Spindalidae",
+    "label": "Spindalidae (Spindalises)"
+  },
+  {
+    "value": "Steatornithidae",
+    "label": "Steatornithidae (Oilbird)"
+  },
+  {
+    "value": "Stenostiridae",
+    "label": "Stenostiridae (Fairy Flycatchers)"
+  },
+  {
+    "value": "Stercorariidae",
+    "label": "Stercorariidae (Skuas and Jaegers)"
+  },
+  {
+    "value": "Strigidae",
+    "label": "Strigidae (Owls)"
+  },
+  {
+    "value": "Strigopidae",
+    "label": "Strigopidae (New Zealand Parrots)"
+  },
+  {
+    "value": "Struthionidae",
+    "label": "Struthionidae (Ostriches)"
+  },
+  {
+    "value": "Sturnidae",
+    "label": "Sturnidae (Starlings)"
+  },
+  {
+    "value": "Sulidae",
+    "label": "Sulidae (Boobies and Gannets)"
+  },
+  {
+    "value": "Sylviidae",
+    "label": "Sylviidae (Sylviid Warblers, Parrotbills, and Allies)"
+  },
+  {
+    "value": "Teretistridae",
+    "label": "Teretistridae (Cuban Warblers)"
+  },
+  {
+    "value": "Thamnophilidae",
+    "label": "Thamnophilidae (Typical Antbirds)"
+  },
+  {
+    "value": "Thinocoridae",
+    "label": "Thinocoridae (Seedsnipes)"
   },
   {
     "value": "Thraupidae",
     "label": "Thraupidae (Tanagers and Allies)"
+  },
+  {
+    "value": "Threskiornithidae",
+    "label": "Threskiornithidae (Ibises and Spoonbills)"
+  },
+  {
+    "value": "Tichodromidae",
+    "label": "Tichodromidae (Wallcreeper)"
+  },
+  {
+    "value": "Timaliidae",
+    "label": "Timaliidae (Tree-Babblers, Scimitar-Babblers, and Allies)"
+  },
+  {
+    "value": "Tinamidae",
+    "label": "Tinamidae (Tinamous)"
+  },
+  {
+    "value": "Tityridae",
+    "label": "Tityridae (Tityras and Allies)"
+  },
+  {
+    "value": "Todidae",
+    "label": "Todidae (Todies)"
+  },
+  {
+    "value": "Trochilidae",
+    "label": "Trochilidae (Hummingbirds)"
+  },
+  {
+    "value": "Troglodytidae",
+    "label": "Troglodytidae (Wrens)"
+  },
+  {
+    "value": "Trogonidae",
+    "label": "Trogonidae (Trogons)"
+  },
+  {
+    "value": "Turdidae",
+    "label": "Turdidae (Thrushes and Allies)"
+  },
+  {
+    "value": "Turnicidae",
+    "label": "Turnicidae (Buttonquail)"
+  },
+  {
+    "value": "Tyrannidae",
+    "label": "Tyrannidae (Tyrant Flycatchers)"
+  },
+  {
+    "value": "Tytonidae",
+    "label": "Tytonidae (Barn-Owls)"
+  },
+  {
+    "value": "Upupidae",
+    "label": "Upupidae (Hoopoes)"
+  },
+  {
+    "value": "Urocynchramidae",
+    "label": "Urocynchramidae (Przevalski's Pinktail)"
+  },
+  {
+    "value": "Vangidae",
+    "label": "Vangidae (Vangas, Helmetshrikes, and Allies)"
+  },
+  {
+    "value": "Viduidae",
+    "label": "Viduidae (Indigobirds)"
+  },
+  {
+    "value": "Vireonidae",
+    "label": "Vireonidae (Vireos, Shrike-Babblers, and Erpornis)"
+  },
+  {
+    "value": "Zeledoniidae",
+    "label": "Zeledoniidae (Wrenthrush)"
+  },
+  {
+    "value": "Zosteropidae",
+    "label": "Zosteropidae (White-eyes, Yuhinas, and Allies)"
   }
 ]

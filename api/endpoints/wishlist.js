@@ -9,14 +9,9 @@ module.exports = async (req, res) => {
 
   switch (req.method) {
     case "HEAD":
-      let families = [];
-
-      let allFamilies = require('../data/families.json');
-
-      families = await Cache.get('wishlist', req.query.id);
-
-      families = Object.keys(families).map((family) => allFamilies.find((a) => a.value == family))
-        .sort((a, b) => a.value.localeCompare(b.value));
+      let families = await Cache.get('wishlist', req.query.id).then( (results) => {
+	      return Object.keys(results);
+      });
 
       res.setHeader('SQUAWK', JSON.stringify(families));
 
@@ -40,7 +35,7 @@ module.exports = async (req, res) => {
       for (let i = page, len = Math.min(page + birdsPerPage, birds.length); i < len; i++) {
         birds[i].hatched = req.query.loggedInUser ? await Cache.get(`species-${birds[i].speciesCode}`, req.query.loggedInUser, "s").then((response) => response.length > 0) : false;
 
-        birds[i].variants = BirdyPets.findBy('speciesCode', birds[i].speciesCode).filter((birdypet) => !birdypet.special).map((variant) => {
+        birds[i].variants = new BirdyPets('speciesCode', birds[i].speciesCode).filter((birdypet) => !birdypet.special).map((variant) => {
           return {
             id: variant.id,
             image: variant.image,

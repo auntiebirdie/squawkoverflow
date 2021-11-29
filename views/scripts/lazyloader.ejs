@@ -101,8 +101,8 @@
               disabled: []
             };
 
-            <%- JSON.stringify(families) %>.forEach( function (family) {
-              sortedFamilies[data.families.includes(family.value) ? 'active' : 'disabled'].push(family.value);
+            <%- JSON.stringify(families.sort()) %>.forEach( function (family) {
+              sortedFamilies[data.families.includes(family) ? 'active' : 'disabled'].push(family);
             });
 
             sortedFamilies = [...sortedFamilies.active, ...sortedFamilies.disabled];

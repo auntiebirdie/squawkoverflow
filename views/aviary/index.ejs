@@ -3,7 +3,7 @@
   <%- include('../partials/page-title.ejs', {
       title: {
         text: member.username,
-        url: `/members/${member._id}`,
+        url: `/members/${member.id}`,
         append: "'s Aviary"
       }
     })
@@ -21,7 +21,7 @@
 
   <%- include('../partials/pagination.ejs') %>
 
-  <div id="lazyLoader" class="row" data-endpoint="/api/aviary/<%= member.id %>"></div>
+  <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"member":"<%= member.id %>"}'></div>
 
   <%- include('../partials/pagination.ejs') %>
 

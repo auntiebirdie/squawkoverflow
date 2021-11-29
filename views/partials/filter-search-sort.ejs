@@ -1,3 +1,5 @@
+    <% var allFamilies = JSON.parse(include('../../public/data/families.json')); %>
+
     <div id="controls" class="row border-bottom border-secondary border-1 pb-2 mx-1 mb-5">
       <div class="col-md-6">
         <div class="row">
@@ -10,7 +12,7 @@
               <option value="NONE">[FLOCKLESS]</option>
             <% } %>
             <% for (var flock of flocks) { %>
-              <option value="<%= flock._id %>" <%= locals.selectedFlock && selectedFlock == flock._id ? "selected" : "" %>>
+              <option value="<%= flock.id %>" <%= locals.selectedFlock && selectedFlock == flock.id ? "selected" : "" %>>
                 <%= flock.name %>
               </option>
             <% } %>
@@ -24,10 +26,12 @@
             <% if (locals.includeAllFamilies) { %>
               <option value="">[ALL]</option>
             <% } %>
-            <% for (var family of families) { %>
+            <% for (var family of allFamilies) { %>
+             <% if (families.includes(family.value)) { %>
               <option value="<%= family.value %>" <%= locals.selectedFamily && selectedFamily.toLowerCase() == family.value.toLowerCase() ? "selected" : "" %>>
                 <%= family.label %>
               </option>
+             <% } %>
             <% } %>
           </select>
         </div>

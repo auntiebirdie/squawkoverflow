@@ -180,8 +180,8 @@ span.checkmark {
 	display: inline-block;
 	background-size: contain;
 	background-image: url('/img/checkmark.png');
-	height: 20px;
-	width: 20px;
+	height: 25px;
+	width: 25px;
 	vertical-align: middle;
 }
 
@@ -190,8 +190,8 @@ span.checkmark {
 	position: absolute;
 	bottom: 0;
 	right: 0;
-	height: 20px;
-	width: 20px;
+	height: 25px;
+	width: 25px;
 	background-image: url('/img/checkmark.png');
 	background-size: contain;
 }
@@ -277,7 +277,7 @@ select {
 }
 
 .loadingData::after {
-	content: "⏳";
+	content: " ";
 	position: fixed;
 	top: 0;
 	bottom: 0;
@@ -286,13 +286,15 @@ select {
 	margin: auto;
 	display: inline-block;
 	text-align: center;
-	width: 2em;
-	height: 2em;
-	font-size: 1.5em;
-	line-height: 2em;
-	background: rgba(255, 255, 255, .5);
+	width: 3.25em;
+	height: 3.25em;
+	background-color: rgba(155, 155, 155, .5);
+	background-image: url('/img/eggtime.png');
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: contain;
 	border-radius: 100px;
-        animation: loadingData 1s ease-in-out infinite;
+        animation: loadingData 2s ease-in-out infinite;
 }
 
 input.loadingData::after {

@@ -2,6 +2,7 @@ const Cache = require('../helpers/cache.js');
 const Redis = require('../helpers/redis.js');
 
 const BirdyPets = require('../collections/birdypets.js');
+const BirdyPet = require('./birdypet.js');
 
 class MemberPet {
   static schema = {};
@@ -46,7 +47,7 @@ class MemberPet {
     return new Promise((resolve, reject) => {
       Redis.get('memberpet', this.id).then(async (memberpet) => {
         if (memberpet) {
-          let birdypet = BirdyPets.get(memberpet.birdypetId);
+          let birdypet = new BirdyPet(memberpet.birdypetId);
 
           this.member = memberpet.member;
           this.nickname = memberpet.nickname || "";
@@ -64,12 +65,12 @@ class MemberPet {
 
           this.hatchedAt = memberpet.hatchedAt;
 
-          if (params.fetchMemberData || params.fetch?.includes('memberData')) {
+          if (params.fetchMemberData || params.fetch?.includes('memberData') || params.include?.includes('memberData')) {
             this.memberData = await birdypet.fetchMemberData(params.member);
           }
 
-          if (params.fetch?.includes('variants')) {
-            this.variants = BirdyPets.findBy('speciesCode', birdypet.species.speciesCode);
+          if (params.fetch?.includes('variants') || params.include?.includes('memberData')) {
+            this.variants = new BirdyPets('speciesCode', birdypet.species.speciesCode);
           }
 
           resolve(this);
@@ -81,10 +82,12 @@ class MemberPet {
   }
 
   set(data) {
-    return Promise.all([
-      Redis.set('memberpet', this.id, data),
-      Cache.refresh('memberpet', this.id)
-    ]);
+    return new Promise(async (resolve, reject) => {
+      await Redis.set('memberpet', this.id, data);
+      await Cache.refresh('member', this.id);
+
+      resolve();
+    });
   }
 
   delete() {

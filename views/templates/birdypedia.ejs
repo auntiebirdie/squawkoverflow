@@ -2,20 +2,20 @@
   <div class="w-100 pb-4">
     <div class="h-100 card">
       <% if (locals.loggedInUser) { %>
-        <button class="wishlist-heart btn btn-light btn-sm" data-id="${bird.speciesCode}" data-action="${bird.wishlisted ? 'remove' : 'add'}" role="button">
+        <button class="wishlist-heart btn btn-light btn-sm" data-id="${bird[0].speciesCode}" data-action="${bird[0].wishlisted ? 'remove' : 'add'}" role="button">
           ${bird.wishlisted ? '❤️' : '🤍'}
         </button>
       <% } %>
       <div class="h100">
-        <div class="bg-white lazy birdypet ${bird.variants[0].hatched ? "hatched" : "unhatched"}"
-               data-bg="${bird.variants[0].image}"
+        <div class="bg-white lazy birdypet ${bird[0].hatched ? "hatched" : "unhatched"}"
+               data-bg="${bird[0].image}"
         ></div>
         <h6 class="p-1 bg-white birdypets text-center d-none d-sm-block">
-          ${bird.variants.length > 1 ? bird.variants.map(function (variant) { return '<div class="lazy birdypet mini ' + (variant.hatched ? "hatched" : "unhatched") + '" data-bg="' + variant.image + '"></div>'; }).join("") : '<div class="birdypet mini disabled"></div>'}
+          ${bird.length > 1 ? bird.map(function (variant) { return '<div class="lazy birdypet mini ' + (variant.hatched ? "hatched" : "unhatched") + '" data-bg="' + variant.image + '"></div>'; }).join("") : '<div class="birdypet mini disabled"></div>'}
         </h6>
        </div>
        <div class="card-body">
-        <h3 class="text-center"><a href="/birdypedia/bird/${bird.speciesCode}">${bird.commonName}</a></h3> 
+        <h3 class="text-center"><a href="/birdypedia/bird/${bird[0].speciesCode}">${bird[0].commonName}</a></h3> 
       </div>
     </div>
   </div>

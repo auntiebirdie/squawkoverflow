@@ -4,14 +4,49 @@
           title : 'New Flock'
     }) %>
 
-    <form method="POST">
+    <div>
       <h5><label>Name</label></h5>
-      <input type="text" name="name" class="form-control mb-3" style="width: 100%">
+      <input type="text" id="flockName" class="form-control mb-3" style="width: 100%">
 
       <h5><label>Description</label></h5>
-      <textarea name="description" maxlength="500" class="form-control mb-3" style="height: 150px; width: 100%;"></textarea>
+      <textarea if="flockDescription" maxlength="500" class="form-control mb-3" style="height: 150px; width: 100%;"></textarea>
 
-      <button class="btn btn-primary" type="submit">Save Changes</button>
-    </form>
+      <button id="actionButton" class="btn btn-primary" type="button">Create</button>
+    </div>
+
+  <script>
+    $('#actionButton').on('click', function (e) {
+      var container = e.currentTarget.parentNode;
+
+      if (!container.classList.contains('loadingData')) {
+        toggleFields(container, true);
+
+        $.ajax({
+          cache: false,
+          url: `/api/flock`,
+          data: JSON.stringify({
+           name: $('#flockName').val(),
+           description: $('#flockDescription').val()
+          }),
+          dataType: "json",
+          method: "POST",
+          contentType: 'application/json',
+          success: function(data) {
+            window.location.replace(`/flocks/${data}/manage`);
+          }
+        });
+      }
+    });
+
+    function toggleFields (container, disabled) {
+      container.classList[disabled ? 'add' : 'remove']('loadingData');
+
+      container.querySelector('input').disabled = disabled;
+      container.querySelector('textarea').disabled = disabled;
+      container.querySelectorAll('button').forEach( function (button) {
+        button.disabled = disabled;
+      });
+    }
+  </script>
 
 <%- include('../footer.ejs') %>

@@ -1,8 +1,14 @@
-const Cache = require('../helpers/cache.js');
 const Redis = require('../helpers/redis.js');
 
 class Flocks {
   constructor() {
+    this.model = require('../models/flock.js');
+  }
+
+  get(id, data = {}) {
+    let Flock = new this.model(id, data);
+
+    return Flock;
   }
 
   all(member) {
@@ -10,11 +16,11 @@ class Flocks {
       Redis.fetch('flock', {
         "FILTER": `@member:{${member}}`,
         "SORTBY": ["displayOrder", "ASC"]
-      }).then( (flocks) => {
-	      resolve(flocks.results);
+      }).then((response) => {
+        resolve(response.results.map((flock) => this.get(flock._id, flock)));
       });
     });
   }
 }
 
-module.exports = Flocks;
+module.exports = new Flocks;

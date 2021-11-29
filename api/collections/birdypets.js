@@ -1,15 +1,7 @@
 class BirdyPets {
-  constructor() {
+  constructor(key, value) {
     this.model = require('../models/birdypet.js');
-  }
 
-  get(id) {
-    let BirdyPet = new this.model(id);
-
-    return BirdyPet;
-  }
-
-  findBy (key, value) {
     var birdypets = require('../data/birdypets.json');
     var keys = key.split('.');
 
@@ -25,6 +17,12 @@ class BirdyPets {
       }
     }).map((birdypet) => this.get(birdypet.id));
   }
+
+  get(id) {
+    let BirdyPet = new this.model(id);
+
+    return BirdyPet;
+  }
 }
 
-module.exports = new BirdyPets;
+module.exports = BirdyPets;

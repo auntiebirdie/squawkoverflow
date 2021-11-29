@@ -92,7 +92,7 @@ text-md-end">
 
     <h4 class="mb-5"><%= member.flock.name %></h4>
 
-    <div id="lazyLoader" class="row" data-endpoint="/api/flocks/<%= member.flock.id %>"></div>
+    <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"member":"<%= member.id %>","flock":"<%= member.flock.id %>"}'></div>
 
     <%- include('../scripts/lazyloader.ejs') %>
   <% } %>

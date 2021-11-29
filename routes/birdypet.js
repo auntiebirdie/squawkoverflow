@@ -44,7 +44,7 @@ router.get('/:memberpet', async (req, res) => {
 
   let member = await API.call('member', 'GET', {
     id: memberpet.member,
-    flocks: true
+	  include: ['flocks', 'birdyBuddy']
   });
 
   res.render('birdypet/birdypet', {

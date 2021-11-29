@@ -1,35 +1,16 @@
-const Cache = require('../helpers/cache.js');
+const API = require('../helpers/api.js');
 const Middleware = require('../helpers/middleware.js');
-const Redis = require('../helpers/redis.js');
 
 const express = require('express');
 const router = express.Router();
 
 router.get('/', Middleware.isLoggedIn, async (req, res) => {
-  var flocks = await Redis.fetch('flock', {
-    'FILTER': `@member:{${req.session.user}}`,
-    'SORTBY': ["displayOrder", "ASC"]
+  let flocks = await API.call('flocks', 'GET', {
+    id: req.session.user
   });
 
-  var displayOrder = 0;
-
-  for (var flock of flocks.results) {
-    if (!flock.displayOrder || flock.displayOrder == '0') {
-      displayOrder += 100;
-
-      flock.displayOrder = displayOrder;
-
-      await Redis.set('flock', flock._id, {
-        displayOrder: displayOrder
-      });
-    } else {
-      displayOrder = flock.displayOrder;
-    }
-  }
-
   res.render('flocks/index', {
-    member: await Redis.get('member', req.session.user),
-    flocks: flocks.results
+    flocks: flocks
   });
 });
 
@@ -37,79 +18,44 @@ router.get('/new', Middleware.isLoggedIn, async (req, res) => {
   res.render('flocks/new');
 });
 
-router.post('/new', Middleware.isLoggedIn, async (req, res) => {
-  var name = req.body.name;
-  var description = req.body.description;
-
-  if (name.length > 50) {
-    name = name.slice(0, 50);
-  }
-
-  if (description.length > 500) {
-    description = description.slice(0, 500);
-  }
-  var id = await Redis.create('flock', {
-    name: name,
-    description: description,
-    member: req.session.user,
-    displayOrder: 50
+router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
+  var flock = await API.call('flock', 'GET', {
+    id: req.params.flock
   });
 
-  res.redirect(`/flocks/manage/${id}`);
-});
+  if (flock.member != req.session.user) {
+    return res.redirect('/flocks');
+  }
 
-router.get('/manage/:flock', Middleware.isLoggedIn, Middleware.entityExists, Middleware.userOwnsEntity, async (req, res) => {
-  var allFamilies = require('../public/data/families.json');
-  var families = [];
-  var member = await Redis.get('member', req.entities['flock'].member);
-
-  var flocks = await Redis.fetch('flock', {
-    "FILTER": `@member:{${req.session.user}}`,
-    "SORTBY": ["displayOrder", "ASC"]
+  var member = await API.call('member', 'GET', {
+    id: req.session.user,
+    include: ['families', 'flocks']
   });
-
-  var aviary = await Cache.get('aviaryTotals', req.session.user);
-
-  var families = Object.keys(aviary)
-                .filter((key) => aviary[key] > 0 && !key.startsWith('_'))
-                .map((family) => allFamilies.find((a) => a.value == family))
-                .sort((a, b) => a.value.localeCompare(b.value));
 
   res.render('flocks/manage', {
-    page: "flock",
+    page: "manageFlock",
     member: member,
-    flock: req.entities['flock'],
-    flocks: flocks.results,
-    families: families
+    flock: flock,
+    flocks: member.flocks,
+    families: member.families
   });
 });
 
-router.post('/manage/:flock', Middleware.isLoggedIn, Middleware.entityExists, Middleware.userOwnsEntity, async (req, res) => {
-  await Redis.set('flock', req.entities['flock']._id, {
-    name: req.body.name || req.entities['flock'].name,
-    description: req.body.description || req.entities['flock'].description
+router.get('/:flock', async (req, res) => {
+  let flock = await API.call('flock', 'GET', {
+    id: req.params.flock,
+    include: ['families']
   });
 
-  res.redirect(`/flocks/manage/${req.entities['flock']._id}`);
-});
-
-router.get('/:flock', Middleware.entityExists, async (req, res) => {
-  var allFamilies = require('../public/data/families.json');
-  var families = [];
-  var member = await Redis.get('member', req.entities['flock'].member);
-
-  var totals = await Cache.get('flockTotals', req.entities['flock']._id);
-
-  var families = Object.keys(totals)
-                .filter((key) => totals[key] > 0 && !key.startsWith('_'))
-                .map((family) => allFamilies.find((a) => a.value == family))
-                .sort((a, b) => a.value.localeCompare(b.value));
+  let member = await API.call('member', 'GET', {
+    id: flock.member
+  });
 
   res.render('flocks/flock', {
     page: 'flock',
     member: member,
-    flock: req.entities['flock'],
-    families: families
+    flock: flock,
+    families: flock.families
   });
 });
 
