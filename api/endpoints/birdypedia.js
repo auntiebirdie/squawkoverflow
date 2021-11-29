@@ -23,9 +23,7 @@ module.exports = async (req, res) => {
   birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
 
   for (var i = page, len = Math.min(page + birdsPerPage, birds.length); i < len; i++) {
-    let birdypets = new BirdyPets();
-
-	  birdypets = birdypets.findBy('speciesCode', birds[i].speciesCode).filter((birdypet) => !birdypet.special);
+    let birdypets = new BirdyPets('speciesCode', birds[i].speciesCode).filter((birdypet) => !birdypet.special);
 
     if (req.query.loggedInUser) {
       birdypets.forEach((birdypet) => promises.push(birdypet.fetchMemberData(req.query.loggedInUser)));

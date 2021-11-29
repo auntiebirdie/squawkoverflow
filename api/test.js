@@ -1,7 +1,7 @@
-let endpoint = require('./endpoints/aviary.js');
+let endpoint = require('./endpoints/birdypedia.js');
 
 endpoint({
-  method: "POST",
+  method: "GET",
 	//body: { "loggedInUser" : "121294882861088771", "egg": "black" }
 	query: {"page":"1","sort":"[\"hatchedAt\",\"DESC\"]","family":"","flock":"t4MVaJVuFvck2wZbPHMmBg","search":"","member":"121294882861088771","loggedInUser":"121294882861088771"}
   //body: {"name":"test","description":"this is a test","member":"121294882861088771","loggedInUser":"121294882861088771"}
