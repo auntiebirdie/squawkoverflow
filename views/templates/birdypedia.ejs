@@ -2,7 +2,7 @@
   <div class="w-100 pb-4">
     <div class="h-100 card">
       <% if (locals.loggedInUser) { %>
-        <button class="wishlist-heart btn btn-light btn-sm" data-id="${bird[0].speciesCode}" data-action="${bird[0].wishlisted ? 'remove' : 'add'}" role="button">
+        <button class="wishlist-heart btn btn-light btn-sm" data-id="${bird[0].species.speciesCode}" data-action="${bird[0].wishlisted ? 'remove' : 'add'}" role="button">
           ${bird.wishlisted ? '❤️' : '🤍'}
         </button>
       <% } %>
@@ -15,7 +15,7 @@
         </h6>
        </div>
        <div class="card-body">
-        <h3 class="text-center"><a href="/birdypedia/bird/${bird[0].speciesCode}">${bird[0].commonName}</a></h3> 
+        <h3 class="text-center"><a href="/birdypedia/bird/${bird[0].species.speciesCode}">${bird[0].species.commonName}</a></h3> 
       </div>
     </div>
   </div>
