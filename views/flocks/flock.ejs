@@ -1,50 +1,29 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', {
-          title : flock.name,
-          breadcrumb: {
-            text: `${member.username}`,
-            url: `/members/${member.id}`,
-            prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member.id}" onerror="missingMemberAvatar(this)"> `
-          }
-    }) %>
+  <%- include('../partials/page-title.ejs', {
+        title : flock.name,
+        breadcrumb: {
+          text: `${member.username}`,
+          url: `/members/${member.id}`,
+          prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member.id}" onerror="missingMemberAvatar(this)"> `
+        }
+      }
+    )
+  %>
 
-    <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies: true, sortFields : [{ "value" : "hatchedAt-DESC", "label" : "Hatch Date (Newest)" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
+  <%- include('../partials/filter-search-sort.ejs', {
+        includeAllFamilies: true,
+        sortFields : [
+          { "value" : "hatchedAt-DESC", "label" : "Hatch Date (Newest)" },
+          { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" },
+          { "value" : "species", "label" : "Species" }
+        ]
+      }
+    )
+  %>
 
-    <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"flock":"<%= flock.id %>","member":"<%= member.id %>"}'></div>
+  <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"flock":"<%= flock.id %>","member":"<%= member.id %>"}'></div>
 
   <%- include('../scripts/lazyloader.ejs') %>
-
-  <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>
-  <script>
-    var loader = `
-      <div class="spinner-border d-block mx-auto" role="status">
-        <span class="visually-hidden">Saving...</span>
-      </div>
-    `;
-
-    $('#lazyLoader').on('click', '.card', function () {
-      var image = this.querySelector('.birdypet');
-
-      if (!image.style.opacity) {
-        image.style.opacity = .5;
-        image.innerHTML = loader;
-
-        $.ajax({
-          cache: false,
-          url: `/api/flocks/<%= flock.id %>/${image.getAttribute('data-id')}`,
-          dataType: "json",
-          method: "POST",
-          success: function(data) {
-            image.style.opacity = null;
-            image.innerHTML = "";
-
-            $(image.parentNode)[`${data.action}Class`]('border-chartreuse');
-          }
-        });
-      }
-    });
-  </script>
-  <% } %>
 
 <%- include('../footer.ejs') %>
