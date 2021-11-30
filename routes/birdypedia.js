@@ -1,7 +1,8 @@
+const Birds = require('../helpers/birds.js');
+const BirdyPets = require('../helpers/birdypets.js');
 const Cache = require('../helpers/cache.js');
 const Members = require('../helpers/members.js');
 
-const helpers = require('../helpers');
 const express = require('express');
 const router = express.Router();
 
@@ -21,7 +22,7 @@ router.get('/eggs', async (req, res) => {
 });
 
 router.get('/eggs/:egg', async (req, res) => {
-  var egg = helpers.data('eggs')[req.params.egg];
+  var egg = require('../public/data/eggs.json')[req.params.egg];
 
   if (egg) {
     egg.name = req.params.egg;
@@ -36,18 +37,18 @@ router.get('/eggs/:egg', async (req, res) => {
 });
 
 router.get('/bird/:code', async (req, res) => {
-  var bird = helpers.Birds.findBy("speciesCode", req.params.code);
+  var bird = Birds.findBy("speciesCode", req.params.code);
   var variant = req.query.variant;
 
   if (bird) {
-    var memberpets = await helpers.MemberPets.fetch({
+    var memberpets = await MemberPets.fetch({
       'FILTER': `@birdypetSpecies:{${bird.speciesCode}}`,
       'RETURN': ['member', 'birdypetId']
     });
 
     var hatched = req.session.user ? memberpets.filter((memberpet) => memberpet.member == req.session.user).map((memberpet) => memberpet.birdypetId) : [];
 
-    var birdypets = helpers.BirdyPets.findBy('speciesCode', bird.speciesCode)
+    var birdypets = BirdyPets.findBy('speciesCode', bird.speciesCode)
       .filter((birdypet) => !birdypet.special)
       .sort(function(a, b) {
         if (variant) {
