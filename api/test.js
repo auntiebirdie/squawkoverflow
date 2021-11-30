@@ -1,9 +1,9 @@
-let endpoint = require('./endpoints/collect.js');
+let endpoint = require('./endpoints/freebirds.js');
 
 endpoint({
-  method: "POST",
+  method: "GET",
   body: {
-	  "freebird" : "oKoinKEyXb6EFdHGRPxTW7",
+	  "limit" : 24,
 	  "loggedInUser" : "121294882861088771"
   }
 }, {
