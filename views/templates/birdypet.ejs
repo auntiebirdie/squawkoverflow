@@ -3,15 +3,15 @@
     <div class="h-100 card <% if (locals.loggedInUser && locals.page && page == 'manageFlock' && loggedInUser.id == member.id) { %>${bird.flocks.includes('<%= flock.id %>') ? 'border-chartreuse' : 'border-secondary border-dashed'}<% } %>">
       <% if (locals.page && page == 'gift') { %>
         <button class="wishlist-heart btn btn-light btn-sm" role="button">
-          ${bird.wishlisted ? '❤️' : '🤍'}
+          ${bird.memberData.wishlisted ? '❤️' : '🤍'}
         </button>
       <% } else { %>
         <a class="wishlist-heart">
-          ${bird.wishlisted ? '❤️' : ''}
+          ${bird.memberData.wishlisted ? '❤️' : ''}
         </a>
       <% } %>
       <div>
-        <div class="bg-white lazy birdypet checkmark${bird.checkmark}"
+        <div class="bg-white lazy birdypet checkmark${bird.memberData.owned == 2 ? 2 : bird.memberData.owned}"
              data-id="${bird.id}"
              data-bg="${bird.image}"
         ></div>
