@@ -3,14 +3,6 @@ const MemberPet = require('../models/memberpet.js');
 
 const Redis = require('../helpers/redis.js');
 
-const {
-  PubSub,
-  v1
-} = require('@google-cloud/pubsub');
-
-const pubSubClient = new PubSub();
-const subClient = new v1.SubscriberClient();
-
 module.exports = async (req, res) => {
   if (!req.body.loggedInUser) {
     return res.sendStatus(401);
@@ -18,9 +10,16 @@ module.exports = async (req, res) => {
 
   let memberpet = new MemberPet();
   let member = new Member(req.body.loggedInUser);
+  let birdypet = null;
+
+  if (req.body.freebird) {
+    birdypet = await Redis.get('freebird', req.body.freebird);
+  } else {
+    birdypet = req.body.birdypet;
+  }
 
   await memberpet.create({
-    birdypet: req.body.birdypet,
+    birdypet: birdypet,
     member: member.id
   });
 
@@ -45,17 +44,7 @@ module.exports = async (req, res) => {
         });
       }
     } else if (req.body.freebird) {
-      const formattedSubscription = subClient.subscriptionPath(
-        'squawkoverflow',
-        'free-birds'
-      );
-
-      const ackRequest = {
-        subscription: formattedSubscription,
-        ackIds: [req.body.freebird]
-      };
-
-      await subClient.acknowledge(ackRequest);
+      await Redis.delete('freebird', req.body.freebird);
     }
 
     return res.status(200).json(memberpet.id);

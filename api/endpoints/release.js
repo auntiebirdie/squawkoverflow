@@ -1,10 +1,5 @@
 const MemberPet = require('../models/memberpet.js');
-
-const {
-  PubSub
-} = require('@google-cloud/pubsub');
-
-const pubSubClient = new PubSub();
+const Redis = require('../helpers/redis.js');
 
 module.exports = async (req, res) => {
   if (!req.body.loggedInUser) {
@@ -40,13 +35,9 @@ module.exports = async (req, res) => {
   }
 
   if (birdypet) {
-    await pubSubClient.topic(`free-birds`).publish(Buffer.from(""), {
-      member: req.body.loggedInUser,
-      birdypet: birdypet.id,
-      source: "WEB"
-    }).then(() => {
-      return res.sendStatus(200);
-    });
+    await Redis.create('freebird', birdypet.id);
+
+    return res.sendStatus(200);
   } else {
     return res.sendStatus(400);
   }

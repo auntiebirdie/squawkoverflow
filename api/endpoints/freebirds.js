@@ -1,52 +1,29 @@
-const {
-  v1
-} = require('@google-cloud/pubsub');
-const subClient = new v1.SubscriberClient();
-
 const BirdyPet = require('../models/birdypet.js');
+const Redis = require('../helpers/redis.js');
 
 module.exports = async (req, res) => {
   switch (req.method) {
     case "GET":
-      const formattedSubscription = subClient.subscriptionPath(
-        'squawkoverflow',
-        'free-birds'
-      );
+      let data = [];
+      let freebirds = awiat Redis.scan('freebird', {
+        KEYSONLY: true
+      });
 
-      const limit = req.query?.limit || 24;
+      if (freebirds.length > 0) {
+        freebirds.sort(() => .5 - Math.random());
 
-      const request = {
-        subscription: formattedSubscription,
-        maxMessages: limit
-      };
+        for (let i = 0, len = req.query?.limit || 24; i < len; i++) {
+          let birdypet = new BirdyPet(await Redis.get(`freebird:${freebirds[i]}`));
 
-      var data = [];
-      let ackIds = [];
-      let tries = 0;
-
-      do {
-        const [response] = await subClient.pull(request);
-
-        for (let queued of response.receivedMessages) {
-          if (ackIds.indexOf(queued.ackId) === -1) {
-            let birdypet = new BirdyPet(queued.message.attributes.birdypet);
-
-            if (req.query?.loggedInUser) {
-              await birdypet.fetchMemberData(req.query.loggedInUser);
-            }
-
-            birdypet.ackId = queued.ackId;
-
-            data.push(birdypet);
-            ackIds.push(queued.ackId);
-
-            if (data.length == limit) {
-              break;
-            }
+          if (req.query?.loggedInUser) {
+            await birdypet.fetchMemberData(req.query.loggedInUser);
           }
+
+          birdypet.freebirdId = freebirds[i];
+
+          data.push(birdypet);
         }
       }
-      while (data.length < limit && tries++ < 5)
 
       return res.json({
         totalPages: 0,

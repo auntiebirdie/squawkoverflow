@@ -1,11 +1,10 @@
-let endpoint = require('./endpoints/memberpet.js');
+let endpoint = require('./endpoints/collect.js');
 
 endpoint({
-  method: "PUT",
+  method: "POST",
   body: {
-    "memberpet": "neY9B2nbW5PUDuSrCEVq56",
-    "loggedInUser": "121294882861088771",
-    "flock": "t4MVaJVuFvck2wZbPHMmBg"
+	  "freebird" : "oKoinKEyXb6EFdHGRPxTW7",
+	  "loggedInUser" : "121294882861088771"
   }
 }, {
   json: console.log,

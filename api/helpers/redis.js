@@ -7,14 +7,16 @@ function Database() {
     "memberpet": "MEMBERPETS",
     "flock": "MEMBERPETS",
     "cache": "CACHE",
-    "member": "CACHE"
+    "member": "CACHE",
+    "freebird": "FREEBIRDS"
   };
 
   this.dataTypes = {
     "memberpet": "h",
     "flock": "h",
     "member": "h",
-    "cache": "s"
+    "cache": "s",
+    "freebird": "kv"
   };
 
   this.connections = {};
@@ -43,6 +45,11 @@ Database.prototype.get = function(kind, id, field = "") {
           resolve(result);
         });
         break;
+      case "kv":
+        this.connect(kind).get(`${kind}:${id}`, (err, result) => {
+          resolve(result);
+        });
+        break;
       default:
         if (field != "") {
           this.connect(kind).hget(`${kind}:${id}`, field, (err, result) => {
@@ -63,14 +70,23 @@ Database.prototype.get = function(kind, id, field = "") {
 
 Database.prototype.set = function(kind, id, data) {
   return new Promise(async (resolve, reject) => {
-    for (var datum in data) {
-      await new Promise((resolve, reject) => {
-        if (data[datum] !== null && data[datum] !== undefined) {
-          this.connect(kind).hset(`${kind}:${id}`, datum, data[datum], resolve);
-        } else {
-          this.connect(kind).hdel(`${kind}:${id}`, datum, resolve);
+    switch (this.dataTypes[kind]) {
+      case "kv":
+        await new Promise((resolve, reject) => {
+          console.log(kind, id, data);
+          this.connect(kind).set(`${kind}:${id}`, data, resolve);
+        });
+        break;
+      default:
+        for (var datum in data) {
+          await new Promise((resolve, reject) => {
+            if (data[datum] !== null && data[datum] !== undefined) {
+              this.connect(kind).hset(`${kind}:${id}`, datum, data[datum], resolve);
+            } else {
+              this.connect(kind).hdel(`${kind}:${id}`, datum, resolve);
+            }
+          });
         }
-      });
     }
 
     resolve();
