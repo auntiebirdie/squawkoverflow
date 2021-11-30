@@ -22,9 +22,9 @@
             <meta property="twitter:image" content="<%= memberpet.image %>">
         <% } else if (locals.page && page == 'birdypedia/bird') { %>
             <meta property="og:title" content="<%= bird.commonName %>">
-            <meta property="og:image" content="<%= birdypets[0].image %>">
+            <meta property="og:image" content="<%= bird.variants[0].image %>">
             <meta property="twitter:card" content="summary_large_image">
-            <meta property="twitter:image" content="<%= birdypets[0].image %>">
+            <meta property="twitter:image" content="<%= bird.variants[0].image %>">
         <% } else { %>
             <meta property="og:title" content="the ultimate bird collecting game">
             <meta property="og:description" content="🥚 hatch | ❤️ collect | 🤝 connect">
