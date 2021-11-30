@@ -14,6 +14,8 @@ class BirdyPet {
 
     this.image = `https://storage.googleapis.com/squawkoverflow/${bird.order}/${bird.family}/${bird.scientificName.replace(/\s/, '%20')}/${birdypet.id}.${birdypet.filetype ? birdypet.filetype : "jpg"}`;
     this.label = birdypet.label;
+    this.credit = birdypet.credit;
+    this.source = birdypet.source;
     this.special = birdypet.special || false;
     this.species = bird;
 
