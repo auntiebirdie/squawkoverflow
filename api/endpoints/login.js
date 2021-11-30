@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
   if (req.body.konami) {
     let konami = req.body.konami * 1;
 
-    Database.get('KonamiCode', konami).then((code) => {
+    await Database.get('KonamiCode', konami).then((code) => {
       if (code.used) {
         return res.sendStatus(400);
       } else {
@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
       }
     });
   } else if (req.body.code) {
-    oauth.tokenRequest({
+    await oauth.tokenRequest({
       clientId: secrets.DISCORD.CLIENT_ID,
       clientSecret: secrets.DISCORD.CLIENT_SECRET,
       redirectUri: "https://squawkoverflow.com/login",
