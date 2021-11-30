@@ -52,7 +52,7 @@ module.exports = async (req, res) => {
           });
         });
       } else {
-        console.log(response);
+        console.error(response);
         return res.sendStatus(400);
       }
     }).catch((err) => {

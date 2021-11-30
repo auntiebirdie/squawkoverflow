@@ -73,7 +73,6 @@ Database.prototype.set = function(kind, id, data) {
     switch (this.dataTypes[kind]) {
       case "kv":
         await new Promise((resolve, reject) => {
-          console.log(kind, id, data);
           this.connect(kind).set(`${kind}:${id}`, data, resolve);
         });
         break;
