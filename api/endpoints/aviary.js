@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
 
       await memberpet.fetch({
         include: req.query.loggedInUser ? ['memberData'] : null,
-        member: req.query.loggedInUser
+        member: req.query.memberData ? req.query.memberData : req.query.loggedInUser
       });
 
       output.push(memberpet);
