@@ -3,9 +3,9 @@ let endpoint = require('./endpoints/memberpet.js');
 endpoint({
   method: "PUT",
   body: {
-    "memberpet": "gcARZVmQ56CDUm5nGP75Fr",
+    "memberpet": "neY9B2nbW5PUDuSrCEVq56",
     "loggedInUser": "121294882861088771",
-    "flock": "wPsEX84KKQbhe7un3L3vvw"
+    "flock": "t4MVaJVuFvck2wZbPHMmBg"
   }
 }, {
   json: console.log,

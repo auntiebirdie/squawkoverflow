@@ -63,9 +63,9 @@ module.exports = async (req, res) => {
       await memberpet.fetch();
 
       if (memberpet.member == member.id) {
-        let nickname = req.body.nickname || memberpet.nickname;
+        let nickname = req.body.nickname || memberpet.nickname || "";
         let variant = req.body.variant || memberpet.birdypetId;
-        let description = req.body.description || memberpet.description;
+        let description = req.body.description || memberpet.description || "";
         let flocks = req.body.flocks || memberpet.flocks || [];
 
         if (nickname.length > 50) {
