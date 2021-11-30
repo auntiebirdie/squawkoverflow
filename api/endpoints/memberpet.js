@@ -77,13 +77,13 @@ module.exports = async (req, res) => {
         }
 
         if (req.body.flock) {
-          let action = req.body.action == 'add' ? 'add' : 'delete';
+          let index = flocks.indexOf(req.body.flock);
 
-          flocks = new Set(flocks);
-
-          flocks[action](req.body.flock);
-
-          flocks = [...flocks];
+          if (index !== -1) {
+            flocks = flocks.filter( (flock) => flock != req.body.flock);
+          } else {
+            flocks.push(req.body.flock);
+          }
         }
 
         await memberpet.set({
