@@ -8,7 +8,7 @@ const secrets = require('../secrets.json');
 
 module.exports = async (req, res) => {
   if (req.body.konami) {
-    let konami = req.query.konami * 1;
+    let konami = req.body.konami * 1;
 
     Database.get('KonamiCode', konami).then((code) => {
       if (code.used) {

@@ -34,9 +34,7 @@ class Member {
         }).then(() => {
           resolve(id);
         });
-      } else {
-        reject();
-      }
+  });
     }
 
     fetch(params = {}) {
