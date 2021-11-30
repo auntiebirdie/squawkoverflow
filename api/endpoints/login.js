@@ -34,13 +34,13 @@ module.exports = async (req, res) => {
         oauth.getUser(response.access_token).then((user) => {
           let member = new Member(user.id);
 
-          Member.fetch().then(async (member) => {
+          member.fetch().then(async (member) => {
             if (member) {
-              await Member.set({
+              await member.set({
                 lastLogin: Date.now()
               });
             } else {
-              await Member.create({
+              await member.create({
                 username: user.username,
                 avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`,
                 joinedAt: Date.now(),
