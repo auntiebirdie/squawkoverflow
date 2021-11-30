@@ -10,8 +10,8 @@ module.exports = async (req, res) => {
   }
 
   variants.forEach( (variant) => delete variant.species );
-
-	bird.variants = variants;
+ 
+  bird.variants = variants;
 
   res.json(bird);
 }

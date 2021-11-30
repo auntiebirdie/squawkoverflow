@@ -13,6 +13,9 @@ class BirdyPet {
     let bird = birds.find((bird) => bird.speciesCode == birdypet.speciesCode);
 
     this.image = `https://storage.googleapis.com/squawkoverflow/${bird.order}/${bird.family}/${bird.scientificName.replace(/\s/, '%20')}/${birdypet.id}.${birdypet.filetype ? birdypet.filetype : "jpg"}`;
+
+    this.prefix = birdypet.prefix;
+    this.alias = birdypet.alias;
     this.label = birdypet.label;
     this.credit = birdypet.credit;
     this.source = birdypet.source;
