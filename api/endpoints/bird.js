@@ -9,7 +9,9 @@ module.exports = async (req, res) => {
     await Promise.all(variants.map((variant) => variant.fetchMemberData(req.query.loggedInUser)));
   }
 
-  bird.variants = variants;
+  variants.forEach( (variant) => delete variant.species );
+
+	bird.variants = variants;
 
   res.json(bird);
 }
