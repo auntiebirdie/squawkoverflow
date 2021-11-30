@@ -9,13 +9,17 @@ const {
   DatastoreStore
 } = require('@google-cloud/connect-datastore');
 
-const secrets = require('./secrets.json');
 const express = require('express');
 const session = require('express-session');
-const axios = require('axios');
 const app = express();
 
 const API = require('./helpers/api.js');
+
+app.get('/_ah/warmup', (req, res) => {
+  API.call('ping').then(() => {
+    res.send("🌄🐓");
+  });
+});
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -36,18 +40,19 @@ app.use(session({
 }));
 
 app.use(async function(req, res, next) {
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+
   var menu = [];
 
   if (req.session.user) {
-    if (req.session.user.id) {
-      req.session.user = req.session.user.id;
-    }
 
     res.locals.loggedInUser = await API.call('member', 'GET', {
       id: req.session.user
-    }).catch( (err) => {
-	    console.log(err);
-	    return null;
+    }).catch((err) => {
+      console.log(err);
+      return null;
     });
 
     menu.push({
@@ -87,12 +92,6 @@ app.use(async function(req, res, next) {
   });
 
   next();
-});
-
-app.get('/_ah/warmup', (req, res) => {
-  API.call('ping').then(() => {
-    res.send("🌄🐓");
-  });
 });
 
 app.use('/', require('./routes/home.js'));
