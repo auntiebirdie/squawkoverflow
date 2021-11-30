@@ -47,9 +47,14 @@
 
           $.ajax({
             cache: false,
-            url: `/api/flocks/<%= flock.id %>/${image.getAttribute('data-id')}`,
-            dataType: "json",
-            method: "POST",
+            url: '/api/memberpet',
+            data: JSON.stringify({
+              memberpet: image.getAttribute('data-id'),
+              flock: "<%= flock.id %>"
+            }),
+            dataType: 'json',
+            method: 'PUT',
+            contentType: 'application/json',
             success: function(data) {
               image.style.opacity = null;
               image.innerHTML = "";
