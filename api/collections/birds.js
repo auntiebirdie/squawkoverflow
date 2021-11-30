@@ -22,7 +22,7 @@ class Birds {
 
     for (let bird of birds) {
       if (bird[key] && bird[key] != "" && bird[key].length > 0) {
-        isMatch = Array.isArray(bird[key]) ? bird[key].map((val) => val.toLowerCase()).includes(value) : bird[key].toLowerCase() == value;
+        let isMatch = Array.isArray(bird[key]) ? bird[key].map((val) => val.toLowerCase()).includes(value) : bird[key].toLowerCase() == value;
 
         if (isMatch) {
           matchingBirds.push(bird);
