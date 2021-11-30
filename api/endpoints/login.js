@@ -34,8 +34,7 @@ module.exports = async (req, res) => {
         oauth.getUser(response.access_token).then((user) => {
           let member = new Member(user.id);
 
-
-          Member.get().then(async (member) => {
+          Member.fetch().then(async (member) => {
             if (member) {
               await Member.set({
                 lastLogin: Date.now()
