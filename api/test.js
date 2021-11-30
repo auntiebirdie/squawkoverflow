@@ -1,10 +1,10 @@
-let endpoint = require('./endpoints/freebirds.js');
+let endpoint = require('./endpoints/bird.js');
 
 endpoint({
   method: "GET",
-  body: {
-	  "limit" : 24,
-	  "loggedInUser" : "121294882861088771"
+  query: {
+	  speciesCode: 'abbbab1',
+	  loggedInUser: '121294882861088771'
   }
 }, {
   json: console.log,
