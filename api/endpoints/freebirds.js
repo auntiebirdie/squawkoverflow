@@ -13,30 +13,44 @@ module.exports = async (req, res) => {
         'free-birds'
       );
 
+      const limit = req.query?.limit || 24;
+
       const request = {
         subscription: formattedSubscription,
-        maxMessages: req.query.limit || 24
+        maxMessages: limit
       };
 
-      const [response] = await subClient.pull(request);
-
       var data = [];
+      let ackIds = [];
+      let tries = 0;
 
-      for (let queued of response.receivedMessages) {
-        let birdypet = new BirdyPet(queued.message.attributes.birdypet);
+      do {
+        const [response] = await subClient.pull(request);
 
-	if (req.query.loggedInUser) {
-          await birdypet.fetchMemberData(req.query.loggedInUser);
-	}
+        for (let queued of response.receivedMessages) {
+          if (ackIds.indexOf(queued.ackId) === -1) {
+            let birdypet = new BirdyPet(queued.message.attributes.birdypet);
 
-        birdypet.ackId = queued.ackId;
+            if (req.query?.loggedInUser) {
+              await birdypet.fetchMemberData(req.query.loggedInUser);
+            }
 
-        data.push(birdypet);
+            birdypet.ackId = queued.ackId;
+
+            data.push(birdypet);
+            ackIds.push(queued.ackId);
+
+            if (data.length == limit) {
+              break;
+            }
+          }
+        }
       }
+      while (data.length < limit && tries++ < 5)
 
       return res.json({
-	      totalPages: 0,
-	      results: data
+        totalPages: 0,
+        results: data
       });
       break;
     default:
