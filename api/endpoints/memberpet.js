@@ -63,10 +63,10 @@ module.exports = async (req, res) => {
       await memberpet.fetch();
 
       if (memberpet.member == member.id) {
-        let nickname = req.body.nickname;
+        let nickname = req.body.nickname || memberpet.nickname;
         let variant = req.body.variant || memberpet.birdypetId;
-        let description = req.body.description;
-        let flocks = req.body.flocks || ["NONE"];
+        let description = req.body.description || memberpet.description;
+        let flocks = req.body.flocks || memberpet.flocks || [];
 
         if (nickname.length > 50) {
           nickname = nickname.slice(0, 50);
@@ -76,11 +76,21 @@ module.exports = async (req, res) => {
           description = description.slice(0, 500);
         }
 
+        if (req.body.flock) {
+          let action = req.body.action == 'add' ? 'add' : 'delete';
+
+          flocks = new Set(flocks);
+
+          flocks[action](req.body.flock);
+
+          flocks = [...flocks];
+        }
+
         await memberpet.set({
           nickname: nickname,
           description: description,
           birdypetId: variant,
-          flocks: flocks.map((flock) => flock).join(',')
+          flocks: flocks.join(',')
         });
 
         return res.sendStatus(200);
