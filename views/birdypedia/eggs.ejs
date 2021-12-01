@@ -24,9 +24,9 @@
   <% var header = ""; %>
 
   <div>
-  <% for (var egg in eggs) { %>
-    <% if (header != egg[0]) { %>
-      <% header = egg[0] %>
+  <% for (var egg of eggs) { %>
+    <% if (header != egg.name[0]) { %>
+      <% header = egg.name[0] %>
       </div>
       <h3 class="sticky-top bg-secondary text-white py-1 px-2"><%= header.toUpperCase() %></h3>
       <div class="row mb-3">
@@ -34,14 +34,18 @@
     <div class="col-12 col-md-4">
       <div class="row">
         <div class="col-5 offset-1">
-          <a href="/birdypedia/eggs/<%= egg %>"><%= egg %></a>
+          <a href="/birdypedia/eggs/<%= egg.name %>"><%= egg.name %></a>
         </div>
         <div class="col-5 text-end">
           <small class="text-light">
-            <% if (eggs[egg][0] == eggs[egg][1]) { %>
-              <span class="checkmark"></span>
+            <% if (locals.loggedInUser) { %>
+              <% if (egg.memberTotal == egg.speciesTotal) { %>
+                <span class="checkmark"></span>
+              <% } %>
+              (<%= egg.memberTotal %>/<%= egg.speciesTotal %>)
+            <% } else { %>
+              (<%= egg.speciesTotal %>)
             <% } %>
-            (<%= eggs[egg][0] %>/<%= eggs[egg][1] %>)
           </small>
         </div>
       </div>

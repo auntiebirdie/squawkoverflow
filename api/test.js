@@ -1,9 +1,8 @@
-let endpoint = require('./endpoints/bird.js');
+let endpoint = require('./endpoints/eggs.js');
 
 endpoint({
   method: "GET",
   query: {
-	  speciesCode: 'abbbab1',
 	  loggedInUser: '121294882861088771'
   }
 }, {

@@ -18,8 +18,10 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/eggs', async (req, res) => {
-  res.render('birdypedia/eggs', {
-    eggs: require('../public/data/eggs.json')
+  API.call('eggs', 'GET').then((eggs) => {
+    res.render('birdypedia/eggs', {
+      eggs: eggs
+    });
   });
 });
 
