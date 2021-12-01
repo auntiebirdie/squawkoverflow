@@ -18,7 +18,9 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/eggs', async (req, res) => {
-  API.call('eggs', 'GET').then((eggs) => {
+  API.call('eggs', 'GET'{
+    loggedInUser: req.session.user
+  }).then((eggs) => {
     res.render('birdypedia/eggs', {
       eggs: eggs
     });
