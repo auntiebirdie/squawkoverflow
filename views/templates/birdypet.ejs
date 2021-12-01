@@ -11,7 +11,7 @@
         </a>
       <% } %>
       <div>
-        <div class="bg-white lazy birdypet checkmark${bird.memberData.owned == 2 ? 2 : bird.memberData.owned}"
+        <div class="bg-white lazy birdypet <% if ((locals.page && page != 'aviary') || (loggedInUser.id != member.id)) { %>checkmark${bird.memberData.owned == 2 ? 2 : bird.memberData.owned}<% } %>"
              data-id="${bird.id}"
              data-bg="${bird.image}"
         ></div>
