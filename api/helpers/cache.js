@@ -50,7 +50,6 @@ Cache.prototype.refresh = function(kind = 'cache', id, type) {
           filters: [
             ['member', '=', id]
           ],
-          order: ['displayOrder', 'ASC'],
           keysOnly: true
         }).then((flocks) => {
           resolve(flocks.map((flock) => flock[Database.KEY].name));

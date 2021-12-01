@@ -1,9 +1,9 @@
-let endpoint = require('./endpoints/eggs.js');
+let endpoint = require('./endpoints/flocks.js');
 
 endpoint({
   method: "GET",
   query: {
-	  loggedInUser: '121294882861088771'
+	  id: '121294882861088771'
   }
 }, {
   json: console.log,
