@@ -1,10 +1,8 @@
-let endpoint = require('./endpoints/flocks.js');
+let endpoint = require('./endpoints/collect.js');
 
 endpoint({
-  method: "GET",
-  query: {
-	  id: '121294882861088771'
-  }
+  method: "POST",
+	body: {"loggedInUser":"121294882861088771","birdypet":"8LtjQNpVxz83FWy6uEwQpX","adjective":"precious"}
 }, {
   json: console.log,
   sendStatus: console.log,

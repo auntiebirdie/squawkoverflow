@@ -34,7 +34,7 @@ module.exports = async (req, res) => {
           }
 
             if (req.body.adjective) {
-              promsies.push(member.set({
+              promises.push(member.set({
                 lastHatchedAt: Date.now()
               }));
 
