@@ -17,7 +17,7 @@ class Counters {
   }
 
   refresh(...args) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       let promises = [];
 
       switch (args[0]) {
@@ -28,7 +28,7 @@ class Counters {
             promises.push(this.get('species', args[1], species));
           }
 
-          Promise.all(promises).then((responses) => {
+          await Promise.all(promises).then((responses) => {
             let value = 0;
 
             for (var response of responses) {
@@ -36,7 +36,6 @@ class Counters {
                 value++;
               }
             }
-
             resolve(value);
           });
 
@@ -49,10 +48,12 @@ class Counters {
             resolve(response.count * 1);
           });
           break;
+	      default:
+		      reject();
       }
     }).then(async (value) => {
       await Redis.connect('cache').set(args.join(':'), value);
-      await Redis.connect("cache").sendCommand('EXPIRE', [args.join(':'), 604800]);
+      await Redis.connect('cache').sendCommand('EXPIRE', [args.join(':'), 604800]);
 
       return value;
     });
