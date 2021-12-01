@@ -2,7 +2,7 @@ const BirdyPet = require('../models/birdypet.js');
 const Member = require('../models/member.js');
 const MemberPet = require('../models/memberpet.js');
 
-const Counters = require('../helpres/counters.js');
+const Counters = require('../helpers/counters.js');
 const Redis = require('../helpers/redis.js');
 
 module.exports = async (req, res) => {
