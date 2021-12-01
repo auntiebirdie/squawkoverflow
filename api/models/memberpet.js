@@ -15,13 +15,21 @@ class MemberPet {
     return new Promise((resolve, reject) => {
       let birdypet = new BirdyPet(data.birdypet);
 
+      this.member = data.member;
+      this.nickname = data.nickname || "";
+      this.description = data.description;
+      this.flocks = "NONE";
+      this.friendship = 0;
+
+      this.image = birdypet.image;
+      this.label = birdypet.label;
+      this.special = birdypet.special;
+      this.species = birdypet.species;
+
       this.birdypetId = birdypet.id;
       this.birdypetSpecies = birdypet.species.speciesCode;
-      this.species = birdypet.species.commonName;
-      this.family = birdypet.species.family;
-      this.member = data.member;
-      this.hatchedAt = Date.now();
 
+      this.hatchedAt = Date.now();
 
       if (birdypet) {
         Redis.create('memberpet', {

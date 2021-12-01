@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
             }
 
             await Promise.all(promises).then(() => {
-              return res.status(200).json(memberpet.id);
+              return res.status(200).json(memberpet);
             });
           }
           else {
