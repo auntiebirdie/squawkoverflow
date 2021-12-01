@@ -32,7 +32,9 @@ class Counters {
             let value = 0;
 
             for (var response of responses) {
-              value += response * 1;
+              if (response * 1 > 0) {
+                value++;
+              }
             }
 
             resolve(value);

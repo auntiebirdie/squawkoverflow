@@ -56,6 +56,12 @@ class Member {
           };
 
           switch (`${member.tier}`) {
+            case "1205":
+              tier.name = "Auntie Birdie";
+              tier.eggTimer = 0;
+              tier.aviaryLimit = Infinity;
+              tier.extraInsights = true;
+              break;
             case "101":
               tier.name = "Owlpha Squad";
               tier.eggTimer = 10; // opt-in for timer
