@@ -2,6 +2,7 @@ const Member = require('../models/member.js');
 const MemberPet = require('../models/memberpet.js');
 
 const Cache = require('../helpers/cache.js');
+const Counters = require('../helpers/counters.js');
 const Webhook = require('../helpers/webhook.js');
 const Redis = require('../helpers/redis.js');
 
@@ -56,7 +57,9 @@ module.exports = async (req, res) => {
       if (memberpet.member == fromMember.id) {
         await Promise.all([
           fromMember.fetch(),
-          toMember.fetch()
+          toMember.fetch(),
+          Counters.increment(1, 'species', toMember.id, memberpet.species.speciesCode)
+          Counters.increment(-1, 'species', fromMember.id, memberpet.species.speciesCode)
         ]);
 
         if (toMember.settings.general?.includes('updateWishlist')) {

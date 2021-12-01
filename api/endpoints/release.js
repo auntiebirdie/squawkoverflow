@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
     }
   } else if (req.body.memberpet) {
     let memberpet = new MemberPet(req.body.memberpet);
-	  
+
     await memberpet.fetch();
 
     if (!memberpet) {
@@ -32,6 +32,8 @@ module.exports = async (req, res) => {
     };
 
     await memberpet.delete();
+
+    await Counters.increment(-1, 'species', member.id, memberpet.species.speciesCode);
   }
 
   if (birdypet) {
