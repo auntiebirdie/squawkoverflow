@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
     await oauth.tokenRequest({
       clientId: secrets.DISCORD.CLIENT_ID,
       clientSecret: secrets.DISCORD.CLIENT_SECRET,
-      redirectUri: req.get('Referrer') + '/login',
+      redirectUri: 'https://squawkoverflow.com/login',
       code: req.body.code,
       scope: 'identify',
       grantType: 'authorization_code'
