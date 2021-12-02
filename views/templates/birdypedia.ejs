@@ -7,7 +7,7 @@
         </button>
       <% } %>
       <div class="h100">
-        <div class="bg-white lazy birdypet ${bird[0].hatched ? "hatched" : "unhatched"}"
+        <div class="bg-white lazy birdypet ${bird[0].owned > 0 ? "hatched" : "unhatched"}"
                data-bg="${bird[0].image}"
         ></div>
         <h6 class="p-1 bg-white birdypets text-center d-none d-sm-block">
