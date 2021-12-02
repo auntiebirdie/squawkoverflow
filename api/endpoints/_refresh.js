@@ -7,9 +7,7 @@ const Members = require('../collections/members.js');
 module.exports = async (req, res) => {
   // confirm this came from cloud scheduler
   return new Promise((resolve, reject) => {
-    let members = new Members();
-
-    members.all().then(async (members) => {
+    Members.all().then(async (members) => {
       var birds = require('../data/birds.json');
       var eggs = require('../data/eggs.json');
 

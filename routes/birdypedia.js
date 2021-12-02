@@ -52,8 +52,7 @@ router.get('/bird/:code', async (req, res) => {
 
       res.render('birdypedia/bird', {
         page: 'birdypedia/bird',
-        bird: bird,
-        members: []
+        bird: bird
       });
     } else {
       res.redirect('/birdypedia');

@@ -22,4 +22,4 @@ class Members {
   }
 }
 
-module.exports = Members;
+module.exports = new Members;

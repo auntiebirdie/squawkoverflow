@@ -46,8 +46,8 @@
 
   <h4 class="mb-3">Who has one?</h4>
 
-  <% if (members.length > 0) { %>
-    <% for (var i = 0, len = members.length; i < len; i++) { %>
+  <% if (bird.members?.length > 0) { %>
+    <% for (var i = 0, len = bird.members.length; i < len; i++) { %>
       <% if (i % 4 === 0) { %>
         <% if (i > 0) { %>
           </div>
@@ -57,14 +57,14 @@
         <div class="col-md-3 mb-3">
           <div class="row">
           <div class="col-3 text-center">
-            <a href="/aviary/<%= members[i].id %>?search=<%= bird.commonName %>">
-              <img class="member-avatar" src="<%= members[i].avatar %>" data-id="<%= members[i].id %>" onerror="missingMemberAvatar(this)">
+            <a href="/aviary/<%= bird.members[i].id %>?search=<%= bird.commonName %>">
+              <img class="member-avatar" src="<%= bird.members[i].avatar %>" data-id="<%= bird.members[i].id %>" onerror="missingMemberAvatar(this)">
             </a>
           </div>
           <div class="col-8 mb-3">
             <h5 class="pt-2">
-              <a href="/aviary/<%= members[i].id %>?search=<%= bird.commonName %>">
-                <%= members[i].username %>
+              <a href="/aviary/<%= bird.members[i].id %>?search=<%= bird.commonName %>">
+                <%= bird.members[i].username %>
               </a>
             </h5>
           </div>
