@@ -11,7 +11,7 @@ module.exports = (req, res) => {
 
       promises.push(
         member.set({
-          bugs: (member.bugs * 1) + (req.body.bugs * 1)
+          bugs: (member.bugs * 1) + ((req.body.bugs || 1) * 1)
         })
       );
     }
