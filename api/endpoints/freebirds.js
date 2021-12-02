@@ -13,15 +13,20 @@ module.exports = async (req, res) => {
         freebirds.sort(() => .5 - Math.random());
 
         for (let i = 0, len = req.query?.limit || 24; i < len; i++) {
-          let birdypet = new BirdyPet(await Redis.get('freebird', freebirds[i]));
+          try {
+            let birdypet = new BirdyPet(await Redis.get('freebird', freebirds[i]));
 
-          if (req.query?.loggedInUser) {
-            await birdypet.fetchMemberData(req.query.loggedInUser);
+            if (req.query?.loggedInUser) {
+              await birdypet.fetchMemberData(req.query.loggedInUser);
+            }
+
+            birdypet.freebirdId = freebirds[i];
+
+            data.push(birdypet);
+          } catch (err) {
+            console.err(freebirds[i], err);
+            len++;
           }
-
-          birdypet.freebirdId = freebirds[i];
-
-          data.push(birdypet);
         }
       }
 
