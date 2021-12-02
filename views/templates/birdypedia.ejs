@@ -11,7 +11,7 @@
                data-bg="${bird[0].image}"
         ></div>
         <h6 class="p-1 bg-white birdypets text-center d-none d-sm-block">
-          ${bird.length > 1 ? bird.map(function (variant) { return '<div class="lazy birdypet mini ' + (variant.hatched ? "hatched" : "unhatched") + '" data-bg="' + variant.image + '"></div>'; }).join("") : '<div class="birdypet mini disabled"></div>'}
+          ${bird.length > 1 ? bird.map(function (variant) { return '<div class="lazy birdypet mini ' + (variant.owned > 0 ? "hatched" : "unhatched") + '" data-bg="' + variant.image + '"></div>'; }).join("") : '<div class="birdypet mini disabled"></div>'}
         </h6>
        </div>
        <div class="card-body">
