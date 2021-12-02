@@ -22,10 +22,11 @@ module.exports = async (req, res) => {
       }
     });
   } else if (req.body.code) {
+	  console.log(req.get('Referrer'));
     await oauth.tokenRequest({
       clientId: secrets.DISCORD.CLIENT_ID,
       clientSecret: secrets.DISCORD.CLIENT_SECRET,
-      redirectUri: "https://squawkoverflow.com/login",
+      redirectUri: req.get('Referrer') + '/login',
       code: req.body.code,
       scope: 'identify',
       grantType: 'authorization_code'
