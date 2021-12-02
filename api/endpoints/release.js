@@ -1,3 +1,4 @@
+const Counters = require('../helpers/counters.js');
 const MemberPet = require('../models/memberpet.js');
 const Redis = require('../helpers/redis.js');
 
