@@ -33,8 +33,7 @@ module.exports = async (req, res) => {
     };
 
     await memberpet.delete();
-
-    await Counters.increment(-1, 'species', member.id, memberpet.species.speciesCode);
+    await Counters.increment(-1, 'species', member.member, memberpet.species.speciesCode);
   }
 
   if (birdypet) {
