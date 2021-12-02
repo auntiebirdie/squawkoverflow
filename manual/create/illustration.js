@@ -14,7 +14,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const prompt = require('prompt');
 const storage = new Storage();
-const bucket = storage.bucket('birdypets');
+const bucket = storage.bucket('squawkoverflow');
 const Jimp = require('jimp');
 const uuid = require('short-uuid');
 
