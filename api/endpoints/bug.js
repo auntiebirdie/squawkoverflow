@@ -1,9 +1,9 @@
 const Member = require('../models/member.js');
 
-module.exports = async (req, res) => {
+module.exports = (req, res) => {
   let promises = [];
 
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     for (let id of req.body.members) {
       let member = new Member(id);
 
