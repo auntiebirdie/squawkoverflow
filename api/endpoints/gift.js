@@ -58,7 +58,7 @@ module.exports = async (req, res) => {
         await Promise.all([
           fromMember.fetch(),
           toMember.fetch(),
-          Counters.increment(1, 'species', toMember.id, memberpet.species.speciesCode)
+          Counters.increment(1, 'species', toMember.id, memberpet.species.speciesCode),
           Counters.increment(-1, 'species', fromMember.id, memberpet.species.speciesCode)
         ]);
 
