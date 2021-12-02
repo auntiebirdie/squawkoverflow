@@ -6,13 +6,13 @@ module.exports = async (req, res) => {
     case "GET":
       let data = [];
       let freebirds = await Redis.scan('freebird', {
-        KEYSONLY: true
+	      KEYSONLY: true
       });
 
       if (freebirds.length > 0) {
         freebirds.sort(() => .5 - Math.random());
 
-        for (let i = 0, len = req.query?.limit || 24; i < len; i++) {
+        for (let i = 0, len = Math.min(freebirds.length, req.query?.limit || 24); i < len; i++) {
           try {
             let birdypet = new BirdyPet(await Redis.get('freebird', freebirds[i]));
 
@@ -24,8 +24,7 @@ module.exports = async (req, res) => {
 
             data.push(birdypet);
           } catch (err) {
-            console.err(freebirds[i], err);
-            len++;
+            console.error(freebirds[i], err);
           }
         }
       }
