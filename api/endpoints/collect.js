@@ -54,7 +54,7 @@ module.exports = async (req, res) => {
       }
 
       await Promise.all(promises).then(() => {
-        return res.status(200).json(memberpet);
+        return res.json(memberpet);
       });
     } else {
       return res.sendStatus(404);
