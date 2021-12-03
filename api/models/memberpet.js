@@ -78,7 +78,7 @@ class MemberPet {
           }
 
           if (params.fetch?.includes('variants') || params.include?.includes('memberData')) {
-            this.variants = new BirdyPets('speciesCode', birdypet.species.speciesCode);
+            this.variants = BirdyPets('speciesCode', birdypet.species.speciesCode);
           }
 
           resolve(this);

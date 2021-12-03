@@ -6,8 +6,13 @@ class BirdyPet {
   constructor(id) {
     this.id = id;
 
-    let birdypets = require('../data/birdypets.json');
-    let birdypet = birdypets.find((birdypet) => birdypet.id == this.id);
+    let birdypets = BirdyPets('speciesCode', this.id);
+
+    if (birdypets.length == 0) {
+      return null;
+    }
+
+    let birdypet = birdypets[0];
 
     let birds = require('../data/birds.json');
 
@@ -24,6 +29,7 @@ class BirdyPet {
       this.special = birdypet.special || false;
       this.species = bird;
     } catch (err) {
+      console.error(err);
       return null;
     }
 

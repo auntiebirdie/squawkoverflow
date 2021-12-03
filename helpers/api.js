@@ -4,31 +4,54 @@ const {
 
 const auth = new GoogleAuth();
 
-exports.call = (endpoint, method = "GET", data = {}, res) => {
+exports.call = (endpoint, method = "GET", data = {}) => {
   return new Promise(async (resolve, reject) => {
-    const apiPath = 'https://us-central1-squawkoverflow.cloudfunctions.net/api';
-    const client = await auth.getIdTokenClient(apiPath);
-    const url = `${apiPath}/${endpoint}`;
+    if (process.env.DEV) {
+      let req = {
+        method: method
+      };
 
-    const options = {
-      url,
-      method: method,
-    };
-
-    if (method == "GET" || method == "HEAD") {
-      options.params = data;
-    } else {
-      options.data = data;
-    }
-
-    client.request(options).then((response) => {
-      if (method == "HEAD") {
-        resolve(response.headers.squawk ? JSON.parse(response.headers.squawk) : null);
+      if (method == 'GET' || method == 'HEAD') {
+        req.query = data;
       } else {
-        resolve(response.data);
+        req.body = data;
       }
-    }).catch((err) => {
-      reject(err);
-    });
+
+      let res = {
+        sendStatus: console.log,
+        json: resolve,
+        status: function(code) {
+          console.log(code);
+          return this;
+        }
+      };
+
+      require(`../api/endpoints/${endpoint}.js`)(req, res);
+    } else {
+      const apiPath = 'https://us-central1-squawkoverflow.cloudfunctions.net/api';
+      const client = await auth.getIdTokenClient(apiPath);
+      const url = `${apiPath}/${endpoint}`;
+
+      const options = {
+        url,
+        method: method,
+      };
+
+      if (method == "GET" || method == "HEAD") {
+        options.params = data;
+      } else {
+        options.data = data;
+      }
+
+      client.request(options).then((response) => {
+        if (method == "HEAD") {
+          resolve(response.headers.squawk ? JSON.parse(response.headers.squawk) : null);
+        } else {
+          resolve(response.data);
+        }
+      }).catch((err) => {
+        reject(err);
+      });
+    }
   });
 }

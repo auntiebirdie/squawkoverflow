@@ -1,12 +1,16 @@
-const endpoint = require('./endpoints/freebirds.js');
+const endpoint = require('./endpoints/collect.js');
 
 endpoint({
-	method: 'GET',
-	query: {
-		loggedInUser: '121294882861088771',
-		speciesCode: 'abbbab1',
-		include: ['members']
-	}
+	method: 'POST',
+	headers: [],
+	body: {"egg":"outer","loggedInUser":"121294882861088771"}
 }, {
-	json: console.log
+	send: console.log,
+	json: console.log,
+	sendStatus: console.log,
+	status: function (code) {
+		console.log(code);
+
+		return this;
+	}
 });
