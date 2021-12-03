@@ -63,7 +63,7 @@ router.get('/', async (req, res) => {
 	  slug: 'extra-insights',
 	  question: 'What are the extra insights available to Bird Fanatics?',
 	  answer: `
-            <p>Supporting our Patreon at the $10 level gives you extra insights... but that does that mean, exactly?</p>
+            <p>Supporting our Patreon at the $10 level gives you extra insights... but what does that mean, exactly?</p>
 
 	    <ul>
 	      <li>When hatching eggs, you will see a #x/#y text below the egg. This indicates how many species can hatch from the egg (#y) and how many of them you have in your aviary (#x).</li>
