@@ -6,33 +6,44 @@ module.exports = async (req, res) => {
     case "GET":
       let data = [];
       let freebirds = await Redis.scan('freebird', {
-	      KEYSONLY: true
+        KEYSONLY: true
       });
 
       if (freebirds.length > 0) {
+        let ids = [];
+        let limit = req.query?.limit || 24;
+
         freebirds.sort(() => .5 - Math.random());
 
-        for (let i = 0, len = Math.min(freebirds.length, req.query?.limit || 24); i < len; i++) {
+        for (let i = 0, len = freebirds.length; i < len; i++) {
           try {
             let birdypet = new BirdyPet(await Redis.get('freebird', freebirds[i]));
 
-            if (req.query?.loggedInUser) {
-              await birdypet.fetchMemberData(req.query.loggedInUser);
+            if (!ids.includes(birdypet.id)) {
+              if (req.query?.loggedInUser) {
+                await birdypet.fetchMemberData(req.query.loggedInUser);
+              }
+
+              birdypet.freebirdId = freebirds[i];
+
+              ids.push(birdypet.id);
+              data.push(birdypet);
+
+              if (data.length == limit) {
+                break;
+              }
             }
-
-            birdypet.freebirdId = freebirds[i];
-
-            data.push(birdypet);
           } catch (err) {
             console.error(freebirds[i], err);
           }
         }
       }
 
-      return res.json({
+      res.json({
         totalPages: 0,
         results: data
       });
+
       break;
     default:
       return res.sendStatus(405);
