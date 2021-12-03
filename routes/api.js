@@ -5,12 +5,18 @@ const router = express.Router();
 
 router.all('/*', async (req, res) => {
   let data = (req.method == "GET" || req.method == "HEAD" ? req.query : req.body) || {};
+  let endpoint = req.path.match(/\/?(\b[A-Za-z]+\b)/)[1];
 
   data.loggedInUser = req.session.user;
 
-  API.call(req.path.match(/\/?(\b[A-Za-z]+\b)/)[1], req.method, data).then((response) => {
+  API.call(endpoint, req.method, data).then((response) => {
+    if (req.method == 'POST' || req.method == 'PUT') {
+      delete req.session.loggedInUser;
+    }
+
     res.json(response);
   }).catch((err) => {
+    console.error(err);
     res.json(err.status);
   });
 });
