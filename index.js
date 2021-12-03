@@ -57,45 +57,44 @@ app.use(async function(req, res, next) {
     }
 
     res.locals.loggedInUser = req.session.loggedInUser;
+
+    menu.push({
+      "icon": "🥚",
+      "label": "Hatch Eggs",
+      "href": "/hatch"
+    }, {
+      "icon": "🐣",
+      "label": "Free Birds",
+      "href": `/freebirds`
+    });
   }
 
   menu.push({
-    "icon": "🥚",
-    "label": "Hatch Eggs",
-    "href": "/hatch"
+    "icon": "📚",
+    "label": "Birdypedia",
+    "href": "/birdypedia"
   }, {
-    "icon": "🐣",
-    "label": "Free Birds",
-    "href": `/freebirds`
+    "icon": "👥",
+    "label": "Members",
+    "href": "/members"
+  }, {
+    "icon": "💬",
+    "label": "Discord",
+    "href": "https://discord.com/invite/h87wansdg2",
+    "newWindow": true
+  }, {
+    "icon": "❔",
+    "label": "FAQ",
+    "href": "/faq"
   });
-}
 
-menu.push({
-  "icon": "📚",
-  "label": "Birdypedia",
-  "href": "/birdypedia"
-}, {
-  "icon": "👥",
-  "label": "Members",
-  "href": "/members"
-}, {
-  "icon": "💬",
-  "label": "Discord",
-  "href": "https://discord.com/invite/h87wansdg2",
-  "newWindow": true
-}, {
-  "icon": "❔",
-  "label": "FAQ",
-  "href": "/faq"
-});
+  res.locals.siteMenu = menu.map((item) => {
+    item.active = req.url.startsWith(item.href);
 
-res.locals.siteMenu = menu.map((item) => {
-  item.active = req.url.startsWith(item.href);
+    return item;
+  });
 
-  return item;
-});
-
-next();
+  next();
 });
 
 app.use('/', require('./routes/home.js'));
