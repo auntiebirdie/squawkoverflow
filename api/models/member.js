@@ -32,7 +32,7 @@ class Member {
         joinedAt: Date.now(),
         lastLogin: Date.now()
       }).then(() => {
-        resolve(id);
+        resolve();
       });
     });
   }

@@ -40,7 +40,6 @@ module.exports = async (req, res) => {
                 lastLogin: Date.now()
               });
             } else {
-              console.log(user);
               await member.create({
                 id: user.id,
                 username: user.username,
