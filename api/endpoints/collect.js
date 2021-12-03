@@ -16,7 +16,7 @@ const subClient = new v1.SubscriberClient();
 module.exports = (req, res) => {
     return new Promise(async (resolve, reject) => {
       if (!req.body.loggedInUser) {
-        resolve(res.sendStatus(401));
+        resolve(res.status(401).send());
       }
 
       let memberpet = new MemberPet();
@@ -66,10 +66,10 @@ module.exports = (req, res) => {
             resolve(res.json(memberpet));
           });
         } else {
-          resolve(res.sendStatus(404));
+          resolve(res.status(404).send());
         }
       } else {
-        resolve(res.sendStatus(404));
+        resolve(res.status(404).send());
       }
     }).catch( (err) => {
 	    console.error("uwu crash");
