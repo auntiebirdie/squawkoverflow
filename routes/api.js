@@ -11,7 +11,7 @@ router.all('/*', async (req, res) => {
   API.call(req.path.match(/\/?(\b[A-Za-z]+\b)/)[1], req.method, data).then((response) => {
     res.json(response);
   }).catch((err) => {
-	  console.log(err);
+    res.json(err.status);
   });
 });
 
