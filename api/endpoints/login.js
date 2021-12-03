@@ -40,7 +40,9 @@ module.exports = async (req, res) => {
                 lastLogin: Date.now()
               });
             } else {
+              console.log(user);
               await member.create({
+                id: user.id,
                 username: user.username,
                 avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`,
                 joinedAt: Date.now(),
