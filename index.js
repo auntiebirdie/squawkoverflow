@@ -47,51 +47,55 @@ app.use(async function(req, res, next) {
   var menu = [];
 
   if (req.session.user) {
+    if (!req.session.loggedInUser) {
+      req.session.loggedInUser = await API.call('member', 'GET', {
+        id: req.session.user
+      }).catch((err) => {
+        console.log(err);
+        return null;
+      });
+    }
 
-    res.locals.loggedInUser = await API.call('member', 'GET', {
-      id: req.session.user
-    }).catch((err) => {
-      console.log(err);
-      return null;
-    });
-
-    menu.push({
-      "icon": "🥚",
-      "label": "Hatch Eggs",
-      "href": "/hatch"
-    }, {
-      "icon": "🐣",
-      "label": "Free Birds",
-      "href": `/freebirds`
-    });
+    res.locals.loggedInUser = req.session.loggedInUser;
   }
 
   menu.push({
-    "icon": "📚",
-    "label": "Birdypedia",
-    "href": "/birdypedia"
+    "icon": "🥚",
+    "label": "Hatch Eggs",
+    "href": "/hatch"
   }, {
-    "icon": "👥",
-    "label": "Members",
-    "href": "/members"
-  }, {
-    "icon": "💬",
-    "label": "Discord",
-    "href": "https://discord.com/invite/h87wansdg2",
-    "newWindow": true
-  }, {
-    "icon": "❔",
-    "label": "FAQ",
-    "href": "/faq"
+    "icon": "🐣",
+    "label": "Free Birds",
+    "href": `/freebirds`
   });
+}
 
-  res.locals.siteMenu = menu.map((item) => {
-    item.active = req.url.startsWith(item.href);
+menu.push({
+  "icon": "📚",
+  "label": "Birdypedia",
+  "href": "/birdypedia"
+}, {
+  "icon": "👥",
+  "label": "Members",
+  "href": "/members"
+}, {
+  "icon": "💬",
+  "label": "Discord",
+  "href": "https://discord.com/invite/h87wansdg2",
+  "newWindow": true
+}, {
+  "icon": "❔",
+  "label": "FAQ",
+  "href": "/faq"
+});
 
-    return item;
-  });
+res.locals.siteMenu = menu.map((item) => {
+  item.active = req.url.startsWith(item.href);
 
-  next();
+  return item;
+});
+
+next();
 });
 
 app.use('/', require('./routes/home.js'));
