@@ -10,7 +10,12 @@ class BirdyPet {
     let birdypet = birdypets.find((birdypet) => birdypet.id == this.id);
 
     let birds = require('../data/birds.json');
-    let bird = birds.find((bird) => bird.speciesCode == birdypet.speciesCode);
+
+    try {
+      let bird = birds.find((bird) => bird.speciesCode == birdypet.speciesCode);
+    } catch (err) {
+      return null;
+    }
 
     this.image = `https://storage.googleapis.com/squawkoverflow/${bird.order}/${bird.family}/${bird.scientificName.replace(/\s/, '%20')}/${birdypet.id}.${birdypet.filetype ? birdypet.filetype : "jpg"}`;
 
