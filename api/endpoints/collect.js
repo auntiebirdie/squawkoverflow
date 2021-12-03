@@ -5,6 +5,14 @@ const MemberPet = require('../models/memberpet.js');
 const Counters = require('../helpers/counters.js');
 const Redis = require('../helpers/redis.js');
 
+const {
+  PubSub,
+  v1
+} = require('@google-cloud/pubsub');
+
+const pubSubClient = new PubSub();
+const subClient = new v1.SubscriberClient();
+
 module.exports = (req, res) => {
     return new Promise(async (resolve, reject) => {
       if (!req.body.loggedInUser) {
