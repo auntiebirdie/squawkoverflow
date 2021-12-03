@@ -43,7 +43,7 @@ module.exports = (req, res) => {
             }));
 
             if (!member.settings.privacy?.includes('activity') && req.headers['x-forwarded-for']) {
-              promises.push(pubSubClient.topic(`squawkoverflow-egg-hatchery`).publish(Buffer.from(""), {
+              promises.push(pubSubClient.topic(`egg-hatchery`).publish(Buffer.from(""), {
                 member: req.body.loggedInUser,
                 adjective: req.body.adjective,
                 birdypet: req.body.birdypet,
