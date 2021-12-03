@@ -26,7 +26,7 @@ class Member {
     return new Promise((resolve, reject) => {
       Database.create('Member', {
         username: data.username,
-        avatar: `https://cdn.discordapp.com/avatars/${this.id}/${dataavatar}.webp`,
+        avatar: `https://cdn.discordapp.com/avatars/${this.id}/${data.avatar}.webp`,
         tier: 0,
         bugs: 0,
         joinedAt: Date.now(),
