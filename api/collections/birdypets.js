@@ -28,4 +28,4 @@ class BirdyPets {
   }
 }
 
-module.exports = new BirdyPets;
+module.exports = BirdyPets;

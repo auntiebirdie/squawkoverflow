@@ -5,7 +5,7 @@ const Members = require('../collections/members.js');
 
 module.exports = async (req, res) => {
   var bird = Birds.findBy('speciesCode', req.query.speciesCode);
-  var variants = await BirdyPets('speciesCode', req.query.speciesCode);
+  var variants = new BirdyPets('speciesCode', req.query.speciesCode);
 
   if (req.query.loggedInUser) {
     await Promise.all(variants.map((variant) => variant.fetchMemberData(req.query.loggedInUser)));

@@ -6,7 +6,7 @@ class BirdyPet {
   constructor(id) {
     this.id = id;
 
-    let birdypets = BirdyPets('speciesCode', this.id);
+    let birdypets = new BirdyPets('speciesCode', this.id);
 
     if (birdypets.length == 0) {
       return null;
