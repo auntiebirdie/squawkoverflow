@@ -3,6 +3,8 @@ class BirdyPets {
     this.model = require('../models/birdypet.js');
 
     var birdypets = require('../data/birdypets.json');
+
+    if (key) {
     var keys = key.split('.');
 
     return birdypets.filter((birdypet) => {
@@ -16,6 +18,7 @@ class BirdyPets {
         return false;
       }
     }).map((birdypet) => this.get(birdypet.id));
+    }
   }
 
   get(id) {
