@@ -4,14 +4,7 @@ const MemberPet = require('../models/memberpet.js');
 
 const Counters = require('../helpers/counters.js');
 const Redis = require('../helpers/redis.js');
-
-const {
-  PubSub,
-  v1
-} = require('@google-cloud/pubsub');
-
-const pubSubClient = new PubSub();
-const subClient = new v1.SubscriberClient();
+const Webhook = require('../helpers/webhook.js');
 
 module.exports = (req, res) => {
     return new Promise(async (resolve, reject) => {
@@ -51,12 +44,17 @@ module.exports = (req, res) => {
             }));
 
             if (!member.settings.privacy?.includes('activity') && req.headers['x-forwarded-for']) {
-              promises.push(pubSubClient.topic(`egg-hatchery`).publish(Buffer.from(""), {
-                member: req.body.loggedInUser,
-                adjective: req.body.adjective,
-                birdypet: req.body.birdypet,
-                userpet: memberpet.id
-              }));
+              await Webhook('egg-hatchery', {
+                content: " ",
+                embeds: [{
+                  title: birdypet.species.commonName,
+                  description: `<@${member.id}> hatched the ${req.body.adjective} egg!`,
+                  url: `https://squawkoverflow.com/birdypet/${memberpet.id}`,
+                  image: {
+                    url: birdypet.image
+                  }
+                }]
+              });
             }
           } else if (req.body.freebird) {
             promises.push(Redis.delete('freebird', req.body.freebird));
