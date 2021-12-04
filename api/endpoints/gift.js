@@ -20,7 +20,11 @@ module.exports = async (req, res) => {
         req.query.search ? `@nickname|species:${Redis.escape(req.query.search)}` : ''
       ].join(' ');
 
-      await Redis.fetch('memberpet', {
+      await Database.fetch({
+	      kind: 'MemberPet',
+	      filters: [
+	      ]
+	      'memberpet', {
         'FILTER': filters,
         'SORTBY': req.query.sort ? JSON.parse(req.query.sort) : null,
         'LIMIT': [offset, birdsPerPage]

@@ -1,17 +1,19 @@
 const Database = require('./database.js');
 const Redis = require('./redis.js');
 
-const BirdyPet = require('../models/birdypet.js');
+function Search() {}
 
-const eggs = require('../data/eggs.json');
+Search.prototype.get = function(args) {
+  let hash = [
+	  args.family,
+	  args.flock,
+	  args.sort
+  ];
 
-function Cache() {}
-
-Cache.prototype.get = function(kind, id, type = "h") {
   return new Promise((resolve, reject) => {
-    Redis.connect("cache")[type == "h" ? "hgetall" : "smembers"](`${kind}:${id}`, (err, results) => {
+    Redis.connect("search").smembers(`${kind}:${id}`, (err, results) => {
       if (err || typeof results == 'undefined' || results == null || results.length == 0) {
-        resolve(this.refresh(kind, id, type));
+        resolve(this.refresh(kind, id));
       } else {
         resolve(results);
       }
@@ -19,17 +21,7 @@ Cache.prototype.get = function(kind, id, type = "h") {
   });
 }
 
-Cache.prototype.add = function(kind, id, data) {
-  return new Promise((resolve, reject) => {
-    this.get(kind, id, "s").then((results) => {
-      Redis.connect('cache').sadd(`${kind}:${id}`, data, (err, results) => {
-        resolve(results);
-      });
-    });
-  });
-}
-
-Cache.prototype.refresh = function(kind = 'cache', id, type) {
+Search.prototype.refresh = function(kind = 'cache', id, type) {
   var expiration = 604800 // 1 week;
 
   return new Promise(async (resolve, reject) => {

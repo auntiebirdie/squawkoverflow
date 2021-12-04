@@ -1,4 +1,3 @@
-const BirdyPets = require('../collections/birdypets.js');
 const Cache = require('../helpers/cache.js');
 const Redis = require('../helpers/redis.js');
 
@@ -6,13 +5,12 @@ class BirdyPet {
   constructor(id) {
     this.id = id;
 
-    let birdypets = BirdyPets('speciesCode', this.id);
-
     if (birdypets.length == 0) {
       return null;
     }
 
-    let birdypet = birdypets[0];
+    let birdypets = require('../data/birdypets.json');
+    let birdypet = birdypets.find((birdypet) => birdypet.id == this.id);
 
     let birds = require('../data/birds.json');
 

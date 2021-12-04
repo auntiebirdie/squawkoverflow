@@ -1,4 +1,5 @@
 const Cache = require('../helpers/cache.js');
+const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
 
 const BirdyPets = require('../collections/birdypets.js');
@@ -32,7 +33,7 @@ class MemberPet {
       this.hatchedAt = Date.now();
 
       if (birdypet) {
-        Redis.create('memberpet', {
+        Database.create('memberpet', {
           birdypetId: birdypet.id,
           birdypetSpecies: birdypet.species.speciesCode,
           species: birdypet.species.commonName,
@@ -53,7 +54,7 @@ class MemberPet {
 
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
-      Redis.get('memberpet', this.id).then(async (memberpet) => {
+      Database.get('memberpet', this.id).then(async (memberpet) => {
         if (memberpet) {
           let birdypet = new BirdyPet(memberpet.birdypetId);
 
@@ -91,8 +92,8 @@ class MemberPet {
 
   set(data) {
     return new Promise(async (resolve, reject) => {
-      await Redis.set('memberpet', this.id, data);
-      await Cache.refresh('member', this.id);
+      await Database.set('Memberpet', this.id, data);
+      await Cache.refresh('memberpet', this.id);
 
       resolve();
     });
@@ -100,7 +101,7 @@ class MemberPet {
 
   delete() {
     return Promise.all([
-      Redis.delete('memberpet', this.id),
+      Database.delete('Memberpet', this.id),
       Redis.connect("cache").del(`memberpet:${this.id}`)
     ]);
   }

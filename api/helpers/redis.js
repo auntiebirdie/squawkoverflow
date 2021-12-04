@@ -4,8 +4,8 @@ const Redis = require("redis");
 
 function Database() {
   this.databases = {
-    "memberpet": "MEMBERPETS",
-    "flock": "MEMBERPETS",
+    "memberpet": "CACHE",
+    "flock": "CACHE",
     "cache": "CACHE",
     "member": "CACHE",
     "freebird": "FREEBIRDS"

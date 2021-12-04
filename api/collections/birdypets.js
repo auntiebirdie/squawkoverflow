@@ -2,6 +2,7 @@ class BirdyPets {
   constructor(key, value) {
     this.model = require('../models/birdypet.js');
 
+	  if (key) {
     var birdypets = require('../data/birdypets.json');
     var keys = key.split('.');
 
@@ -16,6 +17,7 @@ class BirdyPets {
         return false;
       }
     }).map((birdypet) => this.get(birdypet.id));
+	  }
   }
 
   get(id) {
