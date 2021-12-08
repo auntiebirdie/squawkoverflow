@@ -43,6 +43,10 @@ module.exports = (req, res) => {
         }));
 
         if (!member.settings.privacy?.includes('activity') && req.headers && req.headers['x-forwarded-for']) {
+		illustration = new Illustration(illustration);
+
+		await illustration.fetch();
+
           await Webhook('egg-hatchery', {
             content: " ",
             embeds: [{
