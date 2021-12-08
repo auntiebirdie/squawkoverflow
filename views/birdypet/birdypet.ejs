@@ -1,7 +1,7 @@
 <%- include('../header.ejs') %>
 
   <%- include('../partials/page-title.ejs', {
-        title : memberpet.nickname ? memberpet.nickname : memberpet.species.commonName,
+        title : memberpet.nickname ? memberpet.nickname : memberpet.species,
         breadcrumb: {
           text: `${member.username}`,
           url: `/members/${member.id}`,
@@ -15,7 +15,7 @@
         <div class="text-center">
           <span class="h-100 d-inline-block position-relative">
            <% if (locals.loggedInUser) { %>
-            <button class="wishlist-heart btn btn-light btn-sm" data-id="<%= memberpet.species.speciesCode %>" data-action="<%= memberpet.memberData.wishlisted ? 'remove' : 'add' %>" role="button">
+            <button class="wishlist-heart btn btn-light btn-sm" data-id="<%= memberpet.speciesCode %>" data-action="<%= memberpet.memberData.wishlisted ? 'remove' : 'add' %>" role="button">
               <%= memberpet.memberData.wishlisted ? '❤️' : '🤍' %>
             </button>
            <% } %>
@@ -98,17 +98,17 @@
 
         <h6>Common Name</h6>
         <p>
-          <a href="/birdypedia/bird/<%= memberpet.species.speciesCode %>"><%= memberpet.species.commonName %></a>
+          <a href="/birdypedia/bird/<%= memberpet.speciesCode %>"><%= memberpet.species %></a>
         </p>
 
         <h6>Scientific Name</h6>
-        <p><%= memberpet.species.scientificName %></p>
+        <p><%= memberpet.scientificName %></p>
 
         <h6>Family</h6>
-        <p><a href="/birdypedia?family=<%= memberpet.species.family %>"><%= memberpet.species.family %></a></p>
+        <p><a href="/birdypedia?family=<%= memberpet.family %>"><%= memberpet.family %></a></p>
 
         <h6>Order</h6>
-        <p><%= memberpet.species.order %></p>
+        <p><%= memberpet.order %></p>
 
         <% if (memberpet.label) { %>
         <h6>Variant</h6>

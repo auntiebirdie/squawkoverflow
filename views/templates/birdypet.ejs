@@ -11,14 +11,14 @@
         </a>
       <% } %>
       <div>
-        <div class="bg-white lazy birdypet <% if ((locals.page && page != 'aviary') || (loggedInUser.id != member.id)) { %>checkmark${bird.memberData.owned == 2 ? 2 : bird.memberData.owned}<% } %>"
+        <div class="bg-white lazy birdypet <% if ((locals.page && page != 'aviary') || (locals.loggedInUser && loggedInUser.id != member.id)) { %>checkmark${bird.memberData.owned == 2 ? 2 : bird.memberData.owned}<% } %>"
              data-id="${bird.id}"
              data-bg="${bird.image}"
         ></div>
       </div>
       <div class="card-body">
-        <h3 class="text-center"><a href="/birdypet/${bird.id}">${bird.nickname ? bird.nickname : bird.species.commonName}</a></h3> 
-        <h6 class="text-center">${bird.nickname ? bird.species.commonName : bird.label}</h6>
+        <h3 class="text-center"><a href="/birdypet/${bird.id}">${bird.nickname ? bird.nickname : bird.species}</a></h3> 
+        <h6 class="text-center">${bird.nickname ? bird.species : bird.label}</h6>
       </div>
     </div>
   </div>

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "deploy": "gcloud app deploy --version squawkoverflow",
-    "update-indexes": "gcloud datastore indexes create db/index.yaml"
+    "update-indexes": "gcloud datastore indexes create db/index.yaml",
+    "dev": "DEV=true node --trace-warnings index.js"
   },
   "author": "",
   "license": "ISC",
@@ -31,5 +32,8 @@
     "redis": "^3.1.2",
     "short-uuid": "^4.2.0",
     "shorter": "^0.3.1"
+  },
+  "devDependencies": {
+    "trace-unhandled": "^2.0.1"
   }
 }

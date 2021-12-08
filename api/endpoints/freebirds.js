@@ -5,9 +5,7 @@ module.exports = async (req, res) => {
   switch (req.method) {
     case "GET":
       let data = [];
-      let freebirds = await Redis.scan('freebird', {
-        KEYSONLY: true
-      });
+      let freebirds = await Redis.scan('freebird');
 
       if (freebirds.length > 0) {
         let ids = [];
@@ -17,14 +15,15 @@ module.exports = async (req, res) => {
 
         for (let i = 0, len = freebirds.length; i < len; i++) {
           try {
-            let birdypet = new BirdyPet(await Redis.get('freebird', freebirds[i]));
+	    let key = freebirds[i].split(':').pop();
+            let birdypet = new BirdyPet(await Redis.get('freebird', key));
 
             if (!ids.includes(birdypet.id)) {
               if (req.query?.loggedInUser) {
                 await birdypet.fetchMemberData(req.query.loggedInUser);
               }
 
-              birdypet.freebirdId = freebirds[i];
+              birdypet.freebirdId = key;
 
               ids.push(birdypet.id);
               data.push(birdypet);
@@ -34,7 +33,7 @@ module.exports = async (req, res) => {
               }
             }
           } catch (err) {
-            console.error(freebirds[i], err);
+            console.error(key, err);
           }
         }
       }

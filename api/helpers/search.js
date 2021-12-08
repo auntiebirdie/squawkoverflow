@@ -1,212 +1,164 @@
 const Database = require('./database.js');
 const Redis = require('./redis.js');
 
-function Search() {}
+const ObjectHash = require('object-hash');
+const ObjectSorter = require('sort-objects-array');
 
-Search.prototype.get = function(args) {
-  let hash = [
-	  args.family,
-	  args.flock,
-	  args.sort
-  ];
+class Search {
+  get(kind, args) {
+    this.model = require(`../models/${kind.toLowerCase()}.js`);
+    this.identifier = kind == 'Bird' ? 'bird' : query.member;
 
-  return new Promise((resolve, reject) => {
-    Redis.connect("search").smembers(`${kind}:${id}`, (err, results) => {
-      if (err || typeof results == 'undefined' || results == null || results.length == 0) {
-        resolve(this.refresh(kind, id));
+    return new Promise((resolve, reject) => {
+      var query = {
+        member: args.member,
+        flock: args.flock,
+        family: args.family,
+        sort: args.sort,
+        search: args.search,
+      };
+
+      var hash = ObjectHash(query);
+
+      Redis.connect('cache').smembers(`search:${this.identifier}:${hash}`, (err, values) => {
+        if (err || values.length == 0) {
+          resolve(this.refresh(kind, hash, query));
+        } else {
+          resolve(values);
+        }
+      });
+    }).then((results) => {
+      if (args.page) {
+        let start = (args.page - 1) * 24;
+        let totalPages = Math.ceil(results.length / 24);
+        let promises = [];
+
+        results = results.slice(start, start + 24).map((result) => {
+          let model = new this.model(result);
+
+          promises.push(model.fetch({
+            include: ['memberData'],
+            member: args.member
+          }));
+
+          return model;
+        });
+
+        return Promise.all(promises).then(() => {
+          return {
+            totalPages,
+            results
+          };
+        });
       } else {
-        resolve(results);
+        return results;
       }
     });
-  });
-}
+  }
 
-Search.prototype.refresh = function(kind = 'cache', id, type) {
-  var expiration = 604800 // 1 week;
-
-  return new Promise(async (resolve, reject) => {
-    var data = {};
-
-    switch (kind) {
-      case 'cache':
-        if (id == 'members') {
-          Database.fetch({
-            kind: 'Member',
-            keysOnly: true
-          }).then((members) => {
-            resolve(members.map((member) => member[Database.KEY].name));
-          });
-        }
-        break;
-      case 'flocks':
-        Database.fetch({
-          kind: 'Flock',
-          filters: [
-            ['member', '=', id]
-          ],
-          keysOnly: true
-        }).then((flocks) => {
-          resolve(flocks.map((flock) => flock[Database.KEY].name));
-        });
-        break;
-      case 'member':
-        Database.get('Member', id).then((member) => {
-          resolve(member);
-        });
-        break;
-      case 'wishlist':
-        Database.get('Wishlist', id).then((wishlist) => {
-          if (wishlist && wishlist._id) {
-            delete wishlist._id;
-          }
-
-          resolve(wishlist);
-        });
-        break;
-      case 'memberpet':
-        Database.get('MemberPet', id).then((birdypet) => {
-          resolve(birdypet);
-        });
-        break;
-      case 'flock':
-        Database.get('Flock', id).then((flock) => {
-          resolve(flock);
-        });
-        break;
-      case 'aviaryTotals':
-      case 'flockTotals':
+  refresh(kind, hash, query) {
+    return new Promise(async (resolve, reject) => {
+      if (query.search) {
+        await this.get(kind, {
+          member: query.member,
+          family: query.family,
+          flocks: query.flock,
+          sort: query.sort
+        }).then((results) => resolve);
+      } else {
         var filters = [];
 
-        if (kind == 'aviaryTotals') {
-          filters.push(['member', '=', id]);
-        } else if (kind == 'flockTotals') {
-          if (id.startsWith('NONE-')) {
-            let tmp = id.split('-');
-
-            filters.push(['member', '=', tmp[1]]);
-            filters.push(['flocks', '=', 'NONE']);
-          } else {
-            filters.push(['flocks', '=', id]);
-          }
+        if (kind == 'Bird') {
+          filters.push(['type', '=', 'species']);
+        } else if (query.member) {
+          filters.push(['member', '=', query.member]);
         }
 
-        Database.fetch({
-          kind: 'MemberPet',
-          filters: filters
-        }).then((response) => {
-          data._total = 0;
+        if (query.family) {
+          filters.push(['family', '=', query.family]);
+        }
 
-          for (var memberpet of response.results) {
-		  let birdypet = new BirdyPet(memberpet.birdypetId);
+        if (query.flock) {
+          filters.push(['flocks', '=', query.flock]);
+        }
 
-            if (!data[birdypet.species.family]) {
-              data[birdypet.species.family] = 0;
-            }
+        await Database.fetch({
+          kind: kind,
+          filters: filters,
+          keysOnly: true
+        }).then(async (results) => {
+          results = results.map((result) => result[Database.KEY].name);
 
-            data._total++;
-            data[birdypet.species.family]++;
+          resolve(results);
+        });
+      }
+    }).then(async (results) => {
+      if (query.search || (query.sort && query.sort != '[]')) {
+        var start = 0;
+        var end = results.length;
+        var sort = [];
+
+        try {
+          sort = typeof query.sort == "string" ? JSON.parse(query.sort) : query.sort;
+        } catch (err) {
+          console.debug(err);
+        }
+
+        do {
+          let promises = [];
+
+          for (let i = start, len = Math.min(start + 250, end); i < len; i++, start++) {
+            results[i] = new this.model(results[i]);
+
+            promises.push(results[i].fetch({
+              fields: [sort[0]]
+            }));
           }
 
-          resolve(data);
-        });
-        break;
-      case 'eggTotals':
-        Database.fetch({
-		kind: 'MemberPet',
-		filters: [
-			['member', '=', id]
-		]
-        }).then((response) => {
-          for (var egg in eggs) {
-            let tmp = eggs[egg].species;
+          await Promise.all(promises);
 
-            if (tmp) {
-              data[egg] = response.results.filter((memberpet) => {
-		      let birdypet = new BirdyPet(memberpet.birdypetId);
-		      
-		      return tmp.includes(memberpet.birdypetSpecies);
-	      }).length;
-            }
-          }
+          promises = [];
+        }
+        while (start < end)
 
-          resolve(data);
-        });
-        break;
-      default:
-        if (kind.startsWith('species-')) {
-          let speciesCode = kind.split('-')[1];
 
-          data = [];
+        if (query.search) {
+          let search = new RegExp(query.search);
 
-		Database.fetch({
-			kind: 'MemberPet',
-			filters: [
-				['member', '=', id]
-			]
-		}).then(async (response) => {
-			let birdypet = new BirdyPet(memberpet.birdypetId);
+          results.filter((result) => search.test([result.nickname, result.bird?.name, result.name].filter((text) => typeof text !== "undefined").join(' ')));
+        } else if (query.sort != '[]') {
+          let sort = typeof query.sort == "string" ? JSON.parse(query.sort) : query.sort;
 
-            for (var memberpet of response.results) {
-		    if (birdypet.species.speciesCode = speciesCode) {
-              data.push(memberpet.birdypetId);
-		    }
-            }
-
-            resolve(data);
+          results = ObjectSorter(results, sort[0], {
+            order: (sort[1] ? sort[1].toLowerCase() : 'asc'),
+            caseinsensitive: true
           });
-        } else if (kind.startsWith('eggs-')) {
-          let egg = kind.split('-')[1];
-          let species = eggs[egg].species;
-
-          data = [];
-
-          for (let speciesCode of species) {
-            let tmp = await this.get(`species-${speciesCode}`, id, "s");
-
-            if (tmp.length > 0) {
-              data.push(speciesCode);
-            }
-          }
-
-          resolve(data);
-        } else {
-          resolve(null);
         }
-    }
-  }).then(async (results) => {
-    await Redis.connect("cache").del(`${kind}:${id}`);
 
-    if (results && results[Database.KEY]) {
-      delete results[Database.KEY];
-    }
-
-    switch (typeof results) {
-      case "object":
-        for (let key in results) {
-          let data = results[key];
-
-          switch (typeof data) {
-            case "object":
-            case "array":
-              results[key] = JSON.stringify(data);
-          }
-
-          await Redis.connect("cache").hset(`${kind}:${id}`, key, results[key]);
-        }
-        break;
-      case "array":
-        if (results.length > 0) {
-          await Redis.connect("cache").sadd(`${kind}:${id}`, results);
-        }
-        break;
-      default:
+        return results.map((result) => result.id);
+      } else {
         return results;
-    }
+      }
+    }).then((results) => {
+      Redis.connect('cache').del(`search:${this.identifier}:${hash}`);
+      Redis.connect('cache').sadd(`search:${this.identifier}:${hash}`, results);
+      Redis.connect('cache').sendCommand('EXPIRE', [`search:${this.identifier}:${hash}`, 86400]);
 
-    await Redis.connect("cache").sendCommand('EXPIRE', [`${kind}:${id}`, expiration]);
+      return results;
+    });
+  }
 
-    return results;
-  });
+  invalidate(identifier) {
+    return new Promise((resolve, reject) => {
+      Redis.scan('cache', `search:${identifier}`).then((results) => {
+        for (let result of results) {
+          Redis.connect('cache').del(result);
+        }
+
+        resolve();
+      });
+    });
+  }
 }
 
-module.exports = new Cache();
+module.exports = new Search;

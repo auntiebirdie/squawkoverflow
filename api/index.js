@@ -3,8 +3,6 @@ exports.api = (req, res) => {
     delete req.query.sort;
   }
 
-  console.info(req.method, req.path, JSON.stringify(req.method == "GET" || req.method == "HEAD" ? req.query : req.body));
-
   try {
     let route = req.path.match(/\/?(\b[A-Za-z]+\b)/);
 

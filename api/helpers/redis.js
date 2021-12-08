@@ -23,7 +23,7 @@ function Database() {
 }
 
 Database.prototype.connect = function(database) {
-  let DB = this.databases[database];
+  let DB = process.env.DEV ? 'DEV' : this.databases[database];
 
   if (!this.connections[DB]) {
     this.connections[DB] = Redis.createClient(secrets.REDIS[DB].PORT, secrets.REDIS[DB].HOST);
@@ -215,15 +215,15 @@ Database.prototype.fetchOne = function(kind, args) {
   });
 }
 
-Database.prototype.scan = async function(kind, args = {}) {
+Database.prototype.scan = async function(kind, key = null) {
   return new Promise(async (resolve, reject) => {
     var noResultsLeft = false;
-    var cursor = args.CURSOR || 0;
+    var cursor = 0;
     var output = [];
 
     do {
       await new Promise((resolve, reject) => {
-        this.connect(kind).scan(cursor, 'MATCH', `${kind}:*`, async (err, response) => {
+        this.connect(kind).scan(cursor, 'MATCH', `${key || kind}:*`, async (err, response) => {
           if (err) {
             console.error(err);
             noResultsLeft = true;
@@ -237,17 +237,7 @@ Database.prototype.scan = async function(kind, args = {}) {
             var results = response[1];
 
             for (var i = 0, len = results.length; i < len; i++) {
-              if (!args.LIMIT || output.length < args.LIMIT) {
-                var key = results[i].split(':').pop();
-
-                if (args.KEYSONLY) {
-                  output.push(key);
-                } else {
-                  await this.get(kind, key).then((data) => {
-                    output.push(data);
-                  });
-                }
-              }
+              output.push(results[i]);
             }
           }
 
@@ -255,25 +245,9 @@ Database.prototype.scan = async function(kind, args = {}) {
         });
       });
     }
-    while (!noResultsLeft && (!args.LIMIT || output.length < args.LIMIT));
+    while (!noResultsLeft)
 
     resolve(output);
-  }).then((output) => {
-    if (args.SORTBY) {
-      output.sort((a, b) => {
-        try {
-          if (args.SORTBY[1] == "DESC") {
-            return b[args.SORTBY[0]].localeCompare(a[args.SORTBY[0]]);
-          } else {
-            return a[args.SORTBY[0]].localeCompare(b[args.SORTBY[0]]);
-          }
-        } catch (err) {
-          return 0;
-        }
-      });
-    }
-
-    return output;
   });
 }
 

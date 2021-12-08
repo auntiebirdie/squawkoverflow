@@ -13,8 +13,8 @@
         </a>
       </div>
       <div class="card-body align-top">
-        <h3 class="text-center"><a href="/birdypet/${bird.id}/gift?member=<%= member.id %>">${bird.nickname ? bird.nickname : bird.species.commonName}</a></h3> 
-        <h6 class="text-center">${bird.nickname ? bird.species.commonName : (bird.label ? bird.label : '&nbsp;')}</h6>
+        <h3 class="text-center"><a href="/birdypet/${bird.id}/gift?member=<%= member.id %>">${bird.nickname ? bird.nickname : bird.species}</a></h3> 
+        <h6 class="text-center">${bird.nickname ? bird.commonName : (bird.label ? bird.label : '&nbsp;')}</h6>
       </div>
     </div>
   </div>

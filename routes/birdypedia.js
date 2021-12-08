@@ -1,10 +1,5 @@
 const API = require('../helpers/api.js');
 
-const Birds = require('../helpers/birds.js');
-const BirdyPets = require('../helpers/birdypets.js');
-const Cache = require('../helpers/cache.js');
-const Members = require('../helpers/members.js');
-
 const express = require('express');
 const router = express.Router();
 
@@ -44,6 +39,7 @@ router.get('/eggs/:egg', async (req, res) => {
 
 router.get('/bird/:code', async (req, res) => {
   API.call('bird', 'GET', {
+	  loggedInUser: req.session.user,
     speciesCode: req.params.code,
     include: ['members']
   }).then((bird) => {

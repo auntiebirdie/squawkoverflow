@@ -2,26 +2,32 @@ const Birds = require('../../helpers/birds.js');
 const Database = require('../../helpers/database.js');
 const Redis = require('../../helpers/redis.js');
 
-Redis.scan('memberpet').then( async (results) => {
-	var started = false;
+Database.fetch({
+  kind: 'Member',
+  keysOnly: true
+}).then(async (members) => {
+  for (var member of members) {
+    await Redis.fetch('memberpet', {
+      FILTER: `@member:{${member[Database.KEY].name}}`
+    }).then(async (response) => {
+      for (var result of response.results) {
+        console.log(`Saving ${result._id}`);
 
-	for (var result of results) {
-		if (result._id == "vS5rCuWHof5H78iibzrB7h") {
-			started = true;
-		}
+        await Database.save('MemberPet', result._id, {
+          birdypetId: result.birdypetId,
+          member: result.member,
+          nickname: result.nickname,
+          description: result.description,
+          family: result.family,
+          species: result.species,
+          speciesCode: result.birdypetSpecies,
+          flocks: result.flocks == "NONE" || !result.flocks ? [] : result.flocks.split(','),
+          friendship: result.friendship,
+	  hatchedAt: result.hatchedAt
+        });
+      }
+    });
+  }
 
-		if (started) {
-		console.log(`Saving ${result._id}`);
-		await Database.save('MemberPet', result._id, {
-			birdypetId: result.birdypetId,
-			member: result.member,
-			nickname: result.nickname,
-			description: result.description,
-			flocks: result.flocks == "NONE" || !result.flocks ? [] : result.flocks.split(','),
-			friendship: result.friendship
-		});
-		}
-	}
-
-	process.exit(0);
+  process.exit(0);
 });

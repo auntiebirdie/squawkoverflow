@@ -5,10 +5,12 @@ const Members = require('../collections/members.js');
 
 module.exports = async (req, res) => {
   var bird = Birds.findBy('speciesCode', req.query.speciesCode);
-  var variants = await BirdyPets('speciesCode', req.query.speciesCode);
+  var variants = BirdyPets.fetch('speciesCode', req.query.speciesCode);
 
   if (req.query.loggedInUser) {
     await Promise.all(variants.map((variant) => variant.fetchMemberData(req.query.loggedInUser)));
+
+	  variants.sort( (a, b) => b.hatched - a.hatched );
   }
 
   if (req.query.include?.includes('members')) {

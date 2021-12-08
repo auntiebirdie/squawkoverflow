@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
 
       do {
         var bird = species.sort(() => .5 - Math.random())[0];
-        var birdypets = BirdyPets('speciesCode', bird).filter((birdypet) => !birdypet.special);
+        var birdypets = BirdyPets.fetch('speciesCode', bird).filter((birdypet) => !birdypet.special);
       }
       while (birdypets.length == 0);
 

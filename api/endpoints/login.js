@@ -14,11 +14,13 @@ module.exports = async (req, res) => {
       if (code.used) {
         return res.sendStatus(400);
       } else {
+	      /*
         Database.set('KonamiCode', konami, {
           used: true
         }).then(() => {
+	*/
           return res.json(code.member);
-        });
+        //});
       }
     });
   } else if (req.body.code) {

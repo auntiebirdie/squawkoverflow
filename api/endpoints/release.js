@@ -1,3 +1,4 @@
+const BirdyPet = require('../models/birdypet.js');
 const Counters = require('../helpers/counters.js');
 const MemberPet = require('../models/memberpet.js');
 const Redis = require('../helpers/redis.js');
@@ -10,13 +11,7 @@ module.exports = async (req, res) => {
   let birdypet = null;
 
   if (req.body.birdypet) {
-    let birdypets = require('../data/birdypets.json');
-
-    birdypet = birdypets.find((birdypet) => birdypet.id == req.body.birdypet);
-
-    if (!birdypet) {
-      return res.sendStatus(404);
-    }
+    birdypet = new BirdyPet(req.body.birdypet);
   } else if (req.body.memberpet) {
     let memberpet = new MemberPet(req.body.memberpet);
 
@@ -33,11 +28,11 @@ module.exports = async (req, res) => {
     };
 
     await memberpet.delete();
-    await Counters.increment(-1, 'species', memberpet.member, memberpet.species.speciesCode);
+    await Counters.increment(-1, 'birdypets', memberpet.member, memberpet.birdypetId);
   }
 
   if (birdypet) {
-    await Redis.create('freebird', birdypet.id);
+    Redis.create('freebird', birdypet.id);
 
     return res.sendStatus(200);
   } else {

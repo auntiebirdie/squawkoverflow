@@ -82,8 +82,8 @@
           hatched.querySelector('img').setAttribute('src', data.image);
 
           var h3 = hatched.querySelector('h3').querySelector('a');
-          h3.setAttribute('href', `/birdypedia/bird/${data.species.speciesCode}`);
-          h3.innerHTML = data.species.commonName;
+          h3.setAttribute('href', `/birdypedia/bird/${data.speciesCode}`);
+          h3.innerHTML = data.species;
 
           var h5 = hatched.querySelector('h5');
           // add label to returned data

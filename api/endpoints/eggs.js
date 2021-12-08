@@ -1,17 +1,27 @@
-const Cache = require('../helpers/cache.js');
+const Counters = require('../helpers/counters.js');
 
-module.exports = async (req, res) => {
-  let totals = req.query.loggedInUser ? await Cache.get('eggTotals', req.query.loggedInUser, "s") : {};
+module.exports = (req, res) => {
+  let promises = [];
 
   let eggs = Object.entries(require('../data/eggs.json')).map(([egg, data]) => {
-    let memberData = null;
+    let promise = req.query.loggedInUser ? Counters.get('eggs', req.query.loggedInUser, egg) : 0;
+
+    promises.push(promise);
 
     return {
       name: egg,
       speciesTotal: data.species.length,
-      memberTotal: totals[egg] || 0
+      memberTotal: promise
     }
   });
 
-  res.json(eggs);
+  Promise.allSettled(promises).then((results) => {
+    eggs.forEach((egg) => {
+      egg.memberTotal.then((value) => {
+        egg.memberTotal = value;
+      });
+    });
+
+    res.json(eggs);
+  });
 };

@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
         await member.fetch();
 
         if (member.settings.general?.includes('updateWishlist')) {
-          member.updateWishlist(memberpet.birdypetSpecies, "remove");
+          member.updateWishlist(memberpet.speciesCode, "remove");
         }
 
         if (req.body.adjective) {
@@ -90,7 +90,7 @@ module.exports = async (req, res) => {
           nickname: nickname,
           description: description,
           birdypetId: variant,
-          flocks: flocks.join(',')
+          flocks: flocks
         });
 
         return res.sendStatus(200);

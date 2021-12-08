@@ -4,7 +4,6 @@
   var container = document.getElementById('lazyLoader');
   var endpoint = container.getAttribute('data-endpoint');
   var search = document.getElementById('search');
-  var families = document.getElementById('family');
   var currentPage = <%= locals.paginate || 1 %>;
   var totalPages = 0;
   var timeout;
@@ -94,30 +93,6 @@
             container.innerHTML += template(result);
           }
 
-         <% if (locals.families) { %>
-          if (data.families) {
-            var sortedFamilies = {
-              active: [],
-              disabled: []
-            };
-
-            <%- JSON.stringify(families.sort()) %>.forEach( function (family) {
-              sortedFamilies[data.families.includes(family) ? 'active' : 'disabled'].push(family);
-            });
-
-            sortedFamilies = [...sortedFamilies.active, ...sortedFamilies.disabled];
-
-            for (let i = 0, len = sortedFamilies.length; i < len; i++) {
-              let option = families.querySelector(`option[value="${sortedFamilies[i]}"]`);
-              let sibling = families.querySelector(`option[value="%{sortedFamiles[i > 0 ? i - 1 : i + 1]}"]`);
-
-              option.disabled = !data.families.includes(option.value);
-
-              families.insertBefore(option, sibling);
-            };
-          }
-         <% } %>
-
           lazyLoadInstance.update();
 
          <% if (locals.paginate) { %>
@@ -154,23 +129,23 @@
     var paginations = document.querySelectorAll('.pagination');
     var content = "";
 
-    if (currentPage > 4) {
+    if (currentPage > 3) {
       content += `<li class="page-item"><a class="page-link">1</a></li>`;
     }
 
-    if (currentPage > 5) {
+    if (currentPage > 4) {
       content += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
     }
 
-    for (let i = Math.max(1, currentPage - 3), len = Math.min(totalPages, currentPage + 3); i <= len; i++) {
+    for (let i = Math.max(1, currentPage - 2), len = Math.min(totalPages, currentPage + 2); i <= len; i++) {
       content += `<li class="page-item${currentPage == i ? ' active' : ''}"><a class="page-link">${i}</a></li>`;
     }
 
-    if (currentPage < totalPages - 4) {
+    if (currentPage < totalPages - 3) {
       content += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
     }
 
-    if (currentPage < totalPages - 3) {
+    if (currentPage < totalPages - 2) {
       content += `<li class="page-item"><a class="page-link">${totalPages}</a></li>`;
     }
 

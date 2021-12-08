@@ -210,7 +210,7 @@ class Member {
     let birds = require('../data/birds.json');
     let bird = birds.find((bird) => bird.speciesCode == speciesCode);
 
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       Database.get('Wishlist', this.id).then(async (results) => {
         let toUpdate = {};
 
@@ -233,7 +233,6 @@ class Member {
         }
 
         await Database.set('Wishlist', this.id, toUpdate);
-
         await Redis.connect('cache').del(`wishlist:${this.id}`);
 
         resolve();

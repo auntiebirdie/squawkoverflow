@@ -6,7 +6,7 @@
       <div class="col-md-8 mb-3">
         <div class="text-center">
           <div class="d-inline-block position-relative">
-            <img id="birdy" class="bg-white birdypet full border border-1 <%= bird.variants[0].owned > 0 ? "hatched" : "unhatched" %>" src="<%= bird.variants[0].image %>">
+            <img id="birdy" class="bg-white birdypet full border border-1 <%= bird.variants[0].hatched ? "hatched" : "unhatched" %>" src="<%= bird.variants[0].image %>">
             <a class="attribution bg-light" href="<%= bird.variants[0].source %>" target="_blank">&copy; <%= bird.variants[0].credit %></a>
           </div>
         </div>
@@ -26,8 +26,8 @@
           <div id="birdDisplay">
           <% for (var variant of bird.variants) { %>
             <p>
-              <div class="bg-white border border-1 birdypet mini <%= variant.owned > 0 ? "hatched" : "unhatched" %>" data-id="<%= `${variant.prefix}-${variant.alias}` %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" style="background-image: url('<%= variant.image %>');"></div>
-              <%= variant.label %> <%- variant.owned > 0 ? "<span class=\"checkmark\"></span>" : "" %>
+              <div class="bg-white border border-1 birdypet mini <%= variant.hatched ? "hatched" : "unhatched" %>" data-id="<%= `${variant.prefix}-${variant.alias}` %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" style="background-image: url('<%= variant.image %>');"></div>
+              <%= variant.label %> <%- variant.hatched ? "<span class=\"checkmark\"></span>" : "" %>
             </p>
           <% } %>
           </div>

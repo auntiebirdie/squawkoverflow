@@ -1,8 +1,8 @@
 const BirdyPets = require('../collections/birdypets.js');
 const Cache = require('../helpers/cache.js');
+const Counters = require('../helpers/counters.js');
 const Member = require('../models/member.js');
-
-var birdsPerPage = 24;
+const Search = require('../helpers/search.js');
 
 module.exports = async (req, res) => {
   let member = new Member(req.body?.loggedInUser || req.query?.id);
@@ -33,9 +33,9 @@ module.exports = async (req, res) => {
       birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
 
       for (let i = page, len = Math.min(page + birdsPerPage, birds.length); i < len; i++) {
-        birds[i].hatched = req.query.loggedInUser ? await Cache.get(`species-${birds[i].speciesCode}`, req.query.loggedInUser, "s").then((response) => response.length > 0) : false;
+        birds[i].hatched = req.query.loggedInUser ? await Counters.get('species', req.query.loggedInUser. birds[i].speciesCode) > 0 : false;
 
-        birds[i].variants = BirdyPets('speciesCode', birds[i].speciesCode).filter((birdypet) => !birdypet.special).map((variant) => {
+        birds[i].variants = BirdyPets.fetch('speciesCode', birds[i].speciesCode).filter((birdypet) => !birdypet.special).map((variant) => {
           return {
             id: variant.id,
             image: variant.image,

@@ -13,8 +13,8 @@
             <meta property="profile:first_name" content="<%= member.username %>">
             <meta property="profile:last_name" content="">
         <% } else if (locals.memberpet && locals.member) { %>
-            <meta property="og:title" content="<%= memberpet.nickname ? memberpet.nickname : memberpet.species.commonName %>">
-            <meta property="og:description" content="<% if (memberpet.description) { %><%= memberpet.description %> <% } else { %><%= member.username %>'s <%= memberpet.species.commonName %><% } %>">
+            <meta property="og:title" content="<%= memberpet.nickname ? memberpet.nickname : memberpet.species %>">
+            <meta property="og:description" content="<% if (memberpet.description) { %><%= memberpet.description %> <% } else { %><%= member.username %>'s <%= memberpet.species %><% } %>">
             <meta property="og:image" content="<%= memberpet.image %>">
             <meta property="og:type" content="article">
             <meta property="article:author" content="https://squawkoverflow.com/members/<%= member.id %>">
