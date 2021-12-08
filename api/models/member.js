@@ -6,7 +6,6 @@ const Birds = require('../collections/birds.js');
 const BirdyPet = require('./birdypet.js');
 const Flocks = require('../collections/flocks.js');
 const Flock = require('./flock.js');
-const MemberPet = require('./memberpet.js');
 
 class Member {
   static schema = {
@@ -123,7 +122,7 @@ class Member {
             this.hasWishlist = await Cache.get('wishlist', this.id).then((results) => results ? Object.keys(results).length > 0 : false);
 
             if (member.birdyBuddy) {
-              this.birdyBuddy = new MemberPet(member.birdyBuddy);
+              this.birdyBuddy = new BirdyPet(member.birdyBuddy);
               await this.birdyBuddy.fetch();
             }
 
@@ -135,7 +134,7 @@ class Member {
 
           if (params.include?.includes('birdyBuddy')) {
             if (!this.birdyBuddy) {
-              this.birdyBuddy = new MemberPet(member.birdyBuddy);
+              this.birdyBuddy = new BirdyPet(member.birdyBuddy);
               await this.birdyBuddy.fetch();
             }
           }

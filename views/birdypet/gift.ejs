@@ -1,11 +1,11 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { breadcrumb : "Send a Gift", title : memberpet.nickname ? `${memberpet.nickname} (${memberpet.species})` : memberpet.species }) %>
+    <%- include('../partials/page-title.ejs', { breadcrumb : "Send a Gift", title : birdypet.nickname ? birdypet.nickname : birdypet.bird.name }) %>
 
     <div class="row">
       <div class="col-md-6">
         <div class="mb-4 text-center">
-          <img class="birdypet full" src="<%= memberpet.image %>">
+          <img class="birdypet full" src="<%= birdypet.illustration.image %>">
         </div>
       </div>
       <div class="col-md-6">
@@ -63,13 +63,13 @@
           url: '/api/gift',
           data: JSON.stringify({
             member: member,
-            memberpet: '<%= memberpet.id %>'
+            birdypet: '<%= birdypet.id %>'
           }),
           method: 'POST',
           dataType: "json",
           contentType: 'application/json',
           success: function() {
-            window.location.replace('/birdypet/<%= memberpet.id %>');
+            window.location.replace('/birdypet/<%= birdypet.id %>');
           }
         });
       }

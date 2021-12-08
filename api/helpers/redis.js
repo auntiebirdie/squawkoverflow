@@ -3,18 +3,8 @@ const uuid = require('short-uuid');
 const Redis = require("redis");
 
 function Database() {
-  this.databases = {
-    "memberpet": "CACHE",
-    "flock": "CACHE",
-    "cache": "CACHE",
-    "member": "CACHE",
-    "freebird": "FREEBIRDS"
-  };
-
   this.dataTypes = {
-    "memberpet": "h",
-    "flock": "h",
-    "member": "h",
+    "search": "s",
     "cache": "s",
     "freebird": "kv"
   };
@@ -22,8 +12,8 @@ function Database() {
   this.connections = {};
 }
 
-Database.prototype.connect = function(database) {
-  let DB = process.env.DEV ? 'DEV' : this.databases[database];
+Database.prototype.connect = function() {
+  let DB = process.env.NODE_ENV ? 'PROD' : 'DEV';
 
   if (!this.connections[DB]) {
     this.connections[DB] = Redis.createClient(secrets.REDIS[DB].PORT, secrets.REDIS[DB].HOST);
@@ -41,22 +31,22 @@ Database.prototype.get = function(kind, id, field = "") {
   return new Promise((resolve, reject) => {
     switch (this.dataTypes[kind]) {
       case "s":
-        this.connect(kind).smembers(`${kind}:${id}`, (err, result) => {
+        this.connect().smembers(`${kind}:${id}`, (err, result) => {
           resolve(result);
         });
         break;
       case "kv":
-        this.connect(kind).get(`${kind}:${id}`, (err, result) => {
+        this.connect().get(`${kind}:${id}`, (err, result) => {
           resolve(result);
         });
         break;
       default:
         if (field != "") {
-          this.connect(kind).hget(`${kind}:${id}`, field, (err, result) => {
+          this.connect().hget(`${kind}:${id}`, field, (err, result) => {
             resolve(result);
           });
         } else {
-          this.connect(kind).hgetall(`${kind}:${id}`, (err, result) => {
+          this.connect().hgetall(`${kind}:${id}`, (err, result) => {
             if (err || !result) {
               return resolve();
             }
@@ -73,16 +63,16 @@ Database.prototype.set = function(kind, id, data) {
     switch (this.dataTypes[kind]) {
       case "kv":
         await new Promise((resolve, reject) => {
-          this.connect(kind).set(`${kind}:${id}`, data, resolve);
+          this.connect().set(`${kind}:${id}`, data, resolve);
         });
         break;
       default:
         for (var datum in data) {
           await new Promise((resolve, reject) => {
             if (data[datum] !== null && data[datum] !== undefined) {
-              this.connect(kind).hset(`${kind}:${id}`, datum, data[datum], resolve);
+              this.connect().hset(`${kind}:${id}`, datum, data[datum], resolve);
             } else {
-              this.connect(kind).hdel(`${kind}:${id}`, datum, resolve);
+              this.connect().hdel(`${kind}:${id}`, datum, resolve);
             }
           });
         }
@@ -94,7 +84,7 @@ Database.prototype.set = function(kind, id, data) {
 
 Database.prototype.increment = function(kind, id, field, value) {
   return new Promise(async (resolve, reject) => {
-    await this.connect(kind).sendCommand('HINCRBY', [`${kind}:${id}`, field, value]);
+    await this.connect().sendCommand('HINCRBY', [`${kind}:${id}`, field, value]);
 
     resolve();
   });
@@ -102,7 +92,7 @@ Database.prototype.increment = function(kind, id, field, value) {
 
 Database.prototype.push = function(kind, id, value) {
   return new Promise(async (resolve, reject) => {
-    await this.connect(kind).sadd(`${kind}:${id}`, value);
+    await this.connect().sadd(`${kind}:${id}`, value);
 
     resolve();
   });
@@ -110,14 +100,14 @@ Database.prototype.push = function(kind, id, value) {
 
 Database.prototype.pop = function(kind, id, value) {
   return new Promise(async (resolve, reject) => {
-    await this.connect(kind).srem(`${kind}:${id}`, value);
+    await this.connect().srem(`${kind}:${id}`, value);
     resolve();
   });
 }
 
 Database.prototype.sendCommand = function(kind, command, args) {
   return new Promise(async (resolve, reject) => {
-    this.connect(kind).sendCommand(command, args, function(err, response) {
+    this.connect().sendCommand(command, args, function(err, response) {
       if (err) {
         console.error(err);
       }
@@ -162,7 +152,7 @@ Database.prototype.fetch = function(kind, args = {}) {
 
     do {
       await new Promise((resolve, reject) => {
-        this.connect(kind).sendCommand('FT.SEARCH', query, function(err, response) {
+        this.connect().sendCommand('FT.SEARCH', query, function(err, response) {
           if (err) {
             console.error(err);
             noResultsLeft = true;
@@ -223,7 +213,7 @@ Database.prototype.scan = async function(kind, key = null) {
 
     do {
       await new Promise((resolve, reject) => {
-        this.connect(kind).scan(cursor, 'MATCH', `${key || kind}:*`, async (err, response) => {
+        this.connect().scan(cursor, 'MATCH', `${key || kind}:*`, async (err, response) => {
           if (err) {
             console.error(err);
             noResultsLeft = true;
@@ -288,7 +278,7 @@ Database.prototype.save = function(kind, id, data) {
 
 Database.prototype.delete = function(kind, id) {
   return new Promise(async (resolve, reject) => {
-    await this.connect(kind).del(`${kind}:${id}`);
+    await this.connect().del(`${kind}:${id}`);
 
     return resolve();
   });

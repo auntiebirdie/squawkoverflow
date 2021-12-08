@@ -1,6 +1,6 @@
-try {
-  require('@google-cloud/profiler').start();
-} catch (err) {}
+if (process.env.DEV) {
+ // require( 'trace-unhandled/register' );
+}
 
 const {
   Datastore

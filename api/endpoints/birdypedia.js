@@ -1,15 +1,8 @@
-const Search = require('../helpers/search.js');
+const Birds = require('../collections/birds.js');
+const Bird = require('../models/bird.js');
 
 module.exports = async (req, res) => {
-  let query = req.query;
-
-  query.sort = ['name', 'ASC'];
-  query.member = req.query.loggedInUser;
-
-  Search.get('Bird', query).then((results) => {
-    res.json(results);
-  });
-  /*
+	var birdsPerPage = 24;
     var page = (--req.query.page || 0) * birdsPerPage;
     var output = [];
 
@@ -29,26 +22,26 @@ module.exports = async (req, res) => {
     birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
 
     for (let i = page, len = Math.min(page + birdsPerPage, birds.length); i < len; i++) {
-      let birdypets = BirdyPets.fetch('speciesCode', birds[i].speciesCode).filter((birdypet) => !birdypet.special);
+	    let bird = new Bird(birds[i].speciesCode);
 
-      if (req.query.loggedInUser) {
-        birdypets.forEach((birdypet) => promises.push(birdypet.fetchMemberData(req.query.loggedInUser)));
-      }
+	    promises.push(bird.fetch({
+		    include: ['illustrations', 'memberData'],
+		    member: req.query.loggedInUser
+	    }));
 
-      if (birdypets.length > 0) {
-        output.push(birdypets);
-      }
+        output.push(bird);
     }
 
     await Promise.all(promises).then(() => {
+	    if (req.query.loggedInUser) {
       for (let bird of output) {
-        bird.sort((a, b) => (a.hatched === b.hatched) ? 0 : a.hatched ? -1 : 1);
+        bird.illustrations.sort((a, b) => (a.hatched === b.hatched) ? 0 : a.hatched ? -1 : 1);
       }
+	    }
 
       res.json({
         totalPages: Math.ceil(totalPages / birdsPerPage),
         results: output
       });
     });
-    */
 };

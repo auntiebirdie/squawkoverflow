@@ -96,8 +96,8 @@ class Cache {
             resolve(wishlist);
           });
           break;
-        case 'memberpet':
-          Database.get('MemberPet', id).then((birdypet) => {
+        case 'birdypet':
+          Database.get('BirdyPet', id).then((birdypet) => {
             resolve(birdypet);
           });
           break;
@@ -122,18 +122,18 @@ class Cache {
           }
 
           Database.fetch({
-            kind: 'MemberPet',
+            kind: 'BirdyPet',
             filters: filters
-          }).then((memberpets) => {
+          }).then((birdypets) => {
             data._total = 0;
 
-            for (var memberpet of memberpets) {
-              if (!data[memberpet.family]) {
-                data[memberpet.family] = 0;
+            for (var birdypet of birdypets) {
+              if (!data[birdypet.family]) {
+                data[birdypet.family] = 0;
               }
 
               data._total++;
-              data[memberpet.family]++;
+              data[birdypet.family]++;
             }
 
             resolve(data);

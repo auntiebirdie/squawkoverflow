@@ -1,17 +1,17 @@
+const BirdyPet = require('../models/birdypet.js');
 const Member = require('../models/member.js');
-const MemberPet = require('../models/memberpet.js');
 
 module.exports = async (req, res) => {
   if (!req.body.loggedInUser) {
     return res.sendStatus(401);
   }
 
-  let memberpet = new MemberPet(req.body.memberpet);
+  let birdypet = new BirdyPet(req.body.birdypet);
   let member = new Member(req.body.loggedInUser);
 
-  await memberpet.fetch();
+  await birdypet.fetch();
 
-  if (memberpet.id) {
+  if (birdypet.id) {
     await member.fetch();
 
     if (member.bugs > 0) {
@@ -19,8 +19,8 @@ module.exports = async (req, res) => {
         await member.set({
           bugs: --member.bugs
         }),
-        await memberpet.set({
-          friendship: memberpet.friendship + 5
+        await birdypet.set({
+          friendship: birdypet.friendship + 5
         })
       ]);
 

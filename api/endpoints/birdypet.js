@@ -1,35 +1,35 @@
 const Member = require('../models/member.js');
-const MemberPet = require('../models/memberpet.js');
+const BirdyPet = require('../models/birdypet.js');
 
 const Redis = require('../helpers/redis.js');
 
 module.exports = async (req, res) => {
   switch (req.method) {
     case "GET":
-      var memberpet = new MemberPet(req.query.id);
+      var birdypet = new BirdyPet(req.query.id);
 
-      await memberpet.fetch(req.query);
+      await birdypet.fetch(req.query);
 
-      res.json(memberpet);
+      res.json(birdypet);
       break;
     case "POST":
       if (!req.body.loggedInUser) {
         return res.sendStatus(401);
       }
 
-      var memberpet = new MemberPet();
+      var birdypet = new BirdyPet();
       var member = new Member(req.body.loggedInUser);
 
-      await memberpet.create({
+      await birdypet.create({
         birdypet: req.body.birdypet,
         member: member.id
       });
 
-      if (memberpet.id) {
+      if (birdypet.id) {
         await member.fetch();
 
         if (member.settings.general?.includes('updateWishlist')) {
-          member.updateWishlist(memberpet.speciesCode, "remove");
+          member.updateWishlist(birdypet.speciesCode, "remove");
         }
 
         if (req.body.adjective) {
@@ -38,16 +38,11 @@ module.exports = async (req, res) => {
           });
 
           if (!member.settings.privacy?.includes('activity') && req.headers['x-forwarded-for']) {
-            await pubSubClient.topic(`squawkoverflow-egg-hatchery`).publish(Buffer.from(""), {
-              member: req.body.loggedInUser,
-              adjective: req.body.adjective,
-              birdypet: req.body.birdypet,
-              userpet: memberpet.id
-            });
+		  // TODO : webhook
           }
         }
 
-        return res.status(200).json(memberpet.id);
+        return res.status(200).json(birdypet.id);
       } else {
         return res.sendStatus(404);
       }
@@ -57,16 +52,16 @@ module.exports = async (req, res) => {
         return res.sendStatus(401);
       }
 
-      var memberpet = new MemberPet(req.body.memberpet);
+      var birdypet = new BirdyPet(req.body.birdypet);
       var member = new Member(req.body.loggedInUser);
 
-      await memberpet.fetch();
+      await birdypet.fetch();
 
-      if (memberpet.member == member.id) {
-        let nickname = req.body.nickname || memberpet.nickname || "";
-        let variant = req.body.variant || memberpet.birdypetId;
-        let description = req.body.description || memberpet.description || "";
-        let flocks = req.body.flocks || memberpet.flocks || [];
+      if (birdypet.member == member.id) {
+        let nickname = req.body.nickname || birdypet.nickname || "";
+        let variant = req.body.variant || birdypet.illustration;
+        let description = req.body.description || birdypet.description || "";
+        let flocks = req.body.flocks || birdypet.flocks || [];
 
         if (nickname.length > 50) {
           nickname = nickname.slice(0, 50);
@@ -86,10 +81,10 @@ module.exports = async (req, res) => {
           }
         }
 
-        await memberpet.set({
+        await birdypet.set({
           nickname: nickname,
           description: description,
-          birdypetId: variant,
+          illustration: variant,
           flocks: flocks
         });
 

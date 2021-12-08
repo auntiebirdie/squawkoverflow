@@ -1,17 +1,9 @@
 const Member = require('../models/member.js');
-const MemberPet = require('../models/memberpet.js');
+const BirdyPet = require('../models/birdypet.js');
 
-const Cache = require('../helpers/cache.js');
 const Counters = require('../helpers/counters.js');
 const Webhook = require('../helpers/webhook.js');
-const Redis = require('../helpers/redis.js');
 const Search = require('../helpers/search.js');
-
-module.exports = (req, res) => {
-  Search.get(req.query).then((results) => {
-    res.json(results);
-  });
-};
 
 module.exports = async (req, res) => {
   switch (req.method) {
@@ -25,26 +17,26 @@ module.exports = async (req, res) => {
         return res.sendStatus(401);
       }
 
-      let memberpet = new MemberPet(req.body.memberpet);
+      let birdypet = new BirdyPet(req.body.birdypet);
 
-      await memberpet.fetch();
+      await birdypet.fetch();
 
       let fromMember = new Member(req.body.loggedInUser);
       let toMember = new Member(req.body.member);
 
-      if (memberpet.member == fromMember.id) {
+      if (birdypet.member == fromMember.id) {
         await Promise.all([
           fromMember.fetch(),
           toMember.fetch(),
-          Counters.increment(1, 'birdypets', toMember.id, memberpet.birdypetId),
-          Counters.increment(-1, 'birdypets', fromMember.id, memberpet.birdypetId)
+          Counters.increment(1, 'birdypets', toMember.id, birdypet.illustration.id),
+          Counters.increment(-1, 'birdypets', fromMember.id, birdypet.illustration.id)
         ]);
 
         if (toMember.settings.general?.includes('updateWishlist')) {
-          await toMember.updateWishlist(memberpet.speciesCode, "remove");
+          await toMember.updateWishlist(birdypet.bird.code, "remove");
         }
 
-        await memberpet.set({
+        await birdypet.set({
           member: toMember.id,
           flocks: "NONE",
           friendship: 0
@@ -53,11 +45,11 @@ module.exports = async (req, res) => {
         await Webhook('exchange', {
           content: `${fromMember.username} has sent <@${toMember.id}> a gift!`,
           embeds: [{
-            title: memberpet.species,
-            description: memberpet.label || " ",
-            url: `https://squawkoverflow.com/birdypet/${memberpet.id}`,
+            title: birdypet.nickname || birdypet.bird.name,
+            description: birdypet.illustration.label || " ",
+            url: `https://squawkoverflow.com/birdypet/${birdypet.id}`,
             image: {
-              url: memberpet.image
+              url: birdypet.illustration.image
             }
           }]
         });

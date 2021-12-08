@@ -4,8 +4,6 @@ const Redis = require('../helpers/redis.js');
 
 const Illustration = require('./illustration.js');
 
-const BirdyPets = require('../collections/birdypets.js');
-
 class BirdyPet {
   static schema = {};
 
@@ -14,22 +12,24 @@ class BirdyPet {
   }
 
   create(data) {
-    return new Promise((resolve, reject) => {
-      let birdypet = new BirdyPet(data.birdypet);
+    return new Promise(async (resolve, reject) => {
+      let illustration = new Illustration(data.illustration);
 
-      if (birdypet) {
+      await illustration.fetch();
+
+      if (illustration) {
         Database.create('BirdyPet', {
-          birdypetId: birdypet.id,
-          species: birdypet.species,
-          speciesCode: birdypet.speciesCode,
-          family: birdypet.family,
+          illustration: illustration.id,
+          commonName: illustration.bird.name,
+          speciesCode: illustration.speciesCode,
+          family: illustration.family,
           member: data.member,
           flocks: null,
           hatchedAt: Date.now()
         }).then((id) => {
           this.id = id;
 
-          resolve();
+          resolve(this.fetch());
         });
       } else {
         reject();
@@ -41,24 +41,20 @@ class BirdyPet {
     return new Promise((resolve, reject) => {
       Cache.get('birdypet', this.id).then(async (birdypet) => {
         if (birdypet) {
+          for (let key in birdypet) {
+		  this[key] = birdypet[key];
+	  }
+
           this.illustration = new Illustration(birdypet.illustration);
 
-          await illustration.fetch();
-
-          this.bird = illustration.bird;
-          delete illustration.bird;
-
-          for (key in birdypet) {
-            this[key] = birdypet[key];
-          }
+          await this.illustration.fetch();
 
           if (params.fetchMemberData || params.fetch?.includes('memberData') || params.include?.includes('memberData')) {
-            this.memberData = await birdypet.fetchMemberData(params.member);
+            await this.illustration.fetchMemberData(params.member);
           }
 
-          if (params.fetch?.includes('variants') || params.include?.includes('memberData')) {
-            this.variants = Illustrations.fetch('speciesCode', this.bird.speciesCode);
-          }
+          this.bird = this.illustration.bird;
+          delete this.illustration.bird;
 
           resolve(this);
         } else {

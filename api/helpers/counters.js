@@ -24,28 +24,33 @@ class Counters {
       switch (args[0]) {
         case 'eggs':
           let eggs = require('../data/eggs.json');
+          let value = 0;
+          let start = 0;
+          let end = eggs[args[2]].species.length;
 
-          for (let species of eggs[args[2]].species) {
-            promises.push(this.get('species', args[1], species));
-          }
+          do {
+            promises = [];
 
-          await Promise.all(promises).then((responses) => {
-            let value = 0;
-
-            for (var response of responses) {
-              if (response * 1 > 0) {
-                value++;
-              }
+            for (let i = start, len = Math.min(end, start + 250); i < len; i++, start++) {
+              promises.push(this.get('species', args[1], eggs[args[2]].species[i]));
             }
-            resolve(value);
-          }).catch((err) => {
-            console.log('eggs', err);
-          });
+
+            await Promise.all(promises).then((responses) => {
+              for (let response of responses) {
+                if (response * 1 > 0) {
+                  value++;
+                }
+              }
+            });
+          }
+          while (start < end);
+
+          resolve(value);
 
           break;
         case 'species':
           Database.fetch({
-            kind: 'MemberPet',
+            kind: 'BirdyPet',
             filters: [
               ['member', '=', args[1]],
               ['speciesCode', '=', args[2]]
@@ -57,10 +62,10 @@ class Counters {
           break;
         case 'birdypets':
           Database.fetch({
-            kind: 'MemberPet',
+            kind: 'BirdyPet',
             filters: [
               ['member', '=', args[1]],
-              ['birdypetId', '=', args[2]]
+              ['illustration', '=', args[2]]
             ],
             keysOnly: true
           }).then((response) => {
@@ -90,10 +95,12 @@ class Counters {
           if (newValue < 2) {
             switch (args[0]) {
               case 'birdypets':
-                let BirdyPet = require('../models/birdypet.js');
-                let birdypet = new BirdyPet(args[2]);
+                let Illustration = require('../models/illustration.js');
+                let illustration = new Illustration(args[2]);
 
-                promises.push(this.increment(newValue == 1 ? 1 : -1, 'species', args[1], birdypet.speciesCode));
+                await illustration.fetch();
+
+                promises.push(this.increment(newValue == 1 ? 1 : -1, 'species', args[1], illustration.bird.code));
                 break;
               case 'species':
                 let bird = Birds.findBy('speciesCode', args[2]);

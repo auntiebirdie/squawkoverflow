@@ -43,7 +43,7 @@ router.get('/bird/:code', async (req, res) => {
     speciesCode: req.params.code,
     include: ['members']
   }).then((bird) => {
-    if (bird && bird.variants.length > 0) {
+    if (bird && bird.illustrations.length > 0) {
       var selectedVariant = req.query.variant;
 
       res.render('birdypedia/bird', {

@@ -7,7 +7,7 @@ const ObjectSorter = require('sort-objects-array');
 class Search {
   get(kind, args) {
     this.model = require(`../models/${kind.toLowerCase()}.js`);
-    this.identifier = kind == 'Bird' ? 'bird' : query.member;
+    this.identifier = kind == 'Bird' ? 'bird' : args.member;
 
     return new Promise((resolve, reject) => {
       var query = {

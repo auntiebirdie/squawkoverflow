@@ -1,6 +1,6 @@
 const Counters = require('../helpers/counters.js');
 
-const BirdyPets = require('../collections/birdypets.js');
+const Illustrations = require('../collections/illustrations.js');
 const Member = require('../models/member.js');
 
 module.exports = async (req, res) => {
@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
 
       do {
         var bird = species.sort(() => .5 - Math.random())[0];
-        var birdypets = BirdyPets.fetch('speciesCode', bird).filter((birdypet) => !birdypet.special);
+        var birdypets = await Illustrations.fetch('speciesCode', bird).then( (birdypets) => birdypets.filter((birdypet) => !birdypet.special));
       }
       while (birdypets.length == 0);
 

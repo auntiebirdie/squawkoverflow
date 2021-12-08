@@ -29,16 +29,16 @@
           dataType: 'json',
           contentType: 'application/json',
           method: 'POST',
-          success: function(memberpet) {
+          success: function(birdypet) {
             image.removeAttribute('data-id');
             image.parentNode.classList.remove('loadingData');
             image.style.opacity = .5;
 
-            if (memberpet.error) {
-              h6.innerHTML = memberpet.error;
+            if (birdypet.error) {
+              h6.innerHTML = birdypet.error;
             }
             else {
-              h3.innerHTML = `<a href="/birdypet/${memberpet.id}" target="_blank">${h3.innerText}</a>`;
+              h3.innerHTML = `<a href="/birdypet/${birdypet.id}" target="_blank">${h3.innerText}</a>`;
             }
           }
         });
