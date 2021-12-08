@@ -59,7 +59,7 @@ module.exports = async (req, res) => {
 
       if (birdypet.member == member.id) {
         let nickname = req.body.nickname || birdypet.nickname || "";
-        let variant = req.body.variant || birdypet.illustration;
+        let variant = req.body.variant || birdypet.illustration.id;
         let description = req.body.description || birdypet.description || "";
         let flocks = req.body.flocks || birdypet.flocks || [];
 
