@@ -48,6 +48,10 @@ class Cache {
             }).then((members) => {
               resolve(members.map((member) => member[Database.KEY].name));
             });
+          } else if (id == "freebirds") {
+            Redis.scan('freebird').then((freebirds) => {
+              resolve(freebirds);
+            });
           }
           break;
         case 'flocks':

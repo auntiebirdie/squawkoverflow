@@ -32,6 +32,10 @@ class Illustration {
 
         this.image = `https://storage.googleapis.com/squawkoverflow/${bird.order}/${bird.family}/${bird.scientific.replace(/\s/, '%20')}/${this.id}.${illustration.filetype ? illustration.filetype : "jpg"}`;
 
+	      if (params.include?.includes('memberData') && params.member) {
+		      await this.fetchMemberData(params.member);
+	      }
+
         resolve(this);
       });
     });
@@ -42,12 +46,10 @@ class Illustration {
       await this.bird.fetchMemberData(memberId);
 
       this.hatched = await Counters.get('birdypets', memberId, this.id);
+      this.wishlisted = this.bird.wishlisted;
+      this.owned = this.bird.owned;
 
-      resolve({
-        wishlisted: this.bird.wishlisted,
-        owned: this.bird.owned,
-        hatched: this.hatched
-      });
+      resolve(this);
     });
   }
 }
