@@ -2,7 +2,7 @@
   <div class="w-100 pb-4">
     <div class="h-100 card">
       <% if (locals.loggedInUser) { %>
-        <button class="wishlist-heart btn btn-light btn-sm" data-id="${bird.code}" data-action="${bird.illustrations[0].wishlisted ? 'remove' : 'add'}" role="button">
+        <button class="wishlist-heart btn btn-light btn-sm" data-id="${bird.code}" data-action="${bird.wishlisted ? 'remove' : 'add'}" role="button">
           ${bird.wishlisted ? '❤️' : '🤍'}
         </button>
       <% } %>
