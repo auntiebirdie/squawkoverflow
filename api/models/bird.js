@@ -25,7 +25,9 @@ class Bird {
           const Illustrations = require('../collections/illustrations.js');
 
           this.illustrations = await Illustrations.fetch('speciesCode', this.code, {
-            bird: bird
+            bird: bird,
+            include: params.include,
+            member: params.member
           });
         }
 

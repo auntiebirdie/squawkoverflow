@@ -32,9 +32,9 @@ class Illustration {
 
         this.image = `https://storage.googleapis.com/squawkoverflow/${bird.order}/${bird.family}/${bird.scientific.replace(/\s/, '%20')}/${this.id}.${illustration.filetype ? illustration.filetype : "jpg"}`;
 
-	      if (params.include?.includes('memberData') && params.member) {
-		      await this.fetchMemberData(params.member);
-	      }
+        if (params.include?.includes('memberData') && params.member) {
+          await this.fetchMemberData(params.member);
+        }
 
         resolve(this);
       });
@@ -43,11 +43,14 @@ class Illustration {
 
   fetchMemberData(memberId) {
     return new Promise(async (resolve, reject) => {
-      await this.bird.fetchMemberData(memberId);
+      if (this.bird) {
+        await this.bird.fetchMemberData(memberId);
+
+        this.wishlisted = this.bird.wishlisted;
+        this.owned = this.bird.owned;
+      }
 
       this.hatched = await Counters.get('birdypets', memberId, this.id);
-      this.wishlisted = this.bird.wishlisted;
-      this.owned = this.bird.owned;
 
       resolve(this);
     });
