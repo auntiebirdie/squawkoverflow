@@ -3,22 +3,22 @@
     <div class="h-100 card <% if (locals.loggedInUser && locals.page && page == 'manageFlock' && loggedInUser.id == member.id) { %>${bird.flocks.includes('<%= flock.id %>') ? 'border-chartreuse' : 'border-secondary border-dashed'}<% } %>">
       <% if (locals.page && page == 'gift') { %>
         <button class="wishlist-heart btn btn-light btn-sm" role="button">
-          ${bird.memberData.wishlisted ? '❤️' : '🤍'}
+          ${bird.bird.wishlisted ? '❤️' : '🤍'}
         </button>
       <% } else { %>
         <a class="wishlist-heart">
-          ${bird.memberData.wishlisted ? '❤️' : ''}
+          ${bird.bird.wishlisted ? '❤️' : ''}
         </a>
       <% } %>
       <div>
-        <div class="bg-white lazy birdypet <% if ((locals.page && page != 'aviary') || (locals.loggedInUser && loggedInUser.id != member.id)) { %>checkmark${bird.memberData.owned == 2 ? 2 : bird.memberData.owned}<% } %>"
+        <div class="bg-white lazy birdypet <% if ((locals.page && page != 'aviary') || (locals.loggedInUser && loggedInUser.id != member.id)) { %>checkmark${bird.bird.owned == 2 ? 2 : bird.bird.owned}<% } %>"
              data-id="${bird.id}"
-             data-bg="${bird.image}"
+             data-bg="${bird.illustration.image}"
         ></div>
       </div>
       <div class="card-body">
-        <h3 class="text-center"><a href="/birdypet/${bird.id}">${bird.nickname ? bird.nickname : bird.species}</a></h3> 
-        <h6 class="text-center">${bird.nickname ? bird.species : bird.label}</h6>
+        <h3 class="text-center"><a href="/birdypet/${bird.id}">${bird.nickname ? bird.nickname : bird.bird.name}</a></h3> 
+        <h6 class="text-center">${bird.nickname ? bird.bird.name : bird.illustration.label}</h6>
       </div>
     </div>
   </div>
