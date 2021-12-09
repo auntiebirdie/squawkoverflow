@@ -33,12 +33,6 @@ module.exports = async (req, res) => {
   }
 
   await Promise.all(promises).then(() => {
-    if (req.query.loggedInUser) {
-      for (let bird of output) {
-        bird.illustrations.sort((a, b) => (a.hatched === b.hatched) ? 0 : a.hatched ? -1 : 1);
-      }
-    }
-
     res.json({
       totalPages: Math.ceil(totalPages / birdsPerPage),
       results: output

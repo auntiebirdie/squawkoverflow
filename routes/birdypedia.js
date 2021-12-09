@@ -39,7 +39,7 @@ router.get('/eggs/:egg', async (req, res) => {
 
 router.get('/bird/:code', async (req, res) => {
   API.call('bird', 'GET', {
-	  loggedInUser: req.session.user,
+    loggedInUser: req.session.user,
     speciesCode: req.params.code,
     include: ['members']
   }).then((bird) => {

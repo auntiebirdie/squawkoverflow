@@ -29,6 +29,8 @@ class Bird {
             include: params.include,
             member: params.member
           });
+
+		this.illustrations.sort((a, b) => (a.hatched === b.hatched) ? 0 : a.hatched ? -1 : 1);
         }
 
         if (params.include?.includes('memberData') && params.member) {

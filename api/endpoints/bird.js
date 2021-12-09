@@ -5,11 +5,10 @@ const Members = require('../collections/members.js');
 module.exports = async (req, res) => {
   var bird = new Bird(req.query.speciesCode);
 
-  await bird.fetch();
-
-  if (req.query.loggedInUser) {
-    await bird.fetchMemberData(req.query.loggedInUser);
-  }
+  await bird.fetch({
+	  include: ['illustrations', 'memberData'],
+	  member: req.query.loggedInUser
+  });
 
   if (req.query.include?.includes('members')) {
     let promises = [];
