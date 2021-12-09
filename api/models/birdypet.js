@@ -42,8 +42,8 @@ class BirdyPet {
       Cache.get('birdypet', this.id).then(async (birdypet) => {
         if (birdypet) {
           for (let key in birdypet) {
-		  this[key] = birdypet[key];
-	  }
+            this[key] = birdypet[key];
+          }
 
           this.illustration = new Illustration(birdypet.illustration);
 

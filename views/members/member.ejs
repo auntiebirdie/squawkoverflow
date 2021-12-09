@@ -57,12 +57,12 @@ text-md-end">
   <div class="row">
     <div class="col-md-6 text-center">
       <div class="birdybuddy mb-3">
-        <img src="<%= member.birdyBuddy.image %>">
+        <img src="<%= member.birdyBuddy.illustration.image %>">
         <span class="message border border-1 border-secondary" style="display: none;"></span>
       </div>
     </div>
     <div class="col-md-6">
-      <h4><a class="text-decoration-none" href="/birdypet/<%= member.birdyBuddy.id %>"><%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.species %></a></h4>
+      <h4><a class="text-decoration-none" href="/birdypet/<%= member.birdyBuddy.id %>"><%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.bird.name %></a></h4>
 
       <%- include('../partials/friendshipMeter.ejs', { friendship : member.birdyBuddy.friendship }) %>
 

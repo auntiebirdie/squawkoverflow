@@ -1,3 +1,4 @@
+const BirdyPet = require('../models/birdypet.js');
 const Member = require('../models/member.js');
 
 module.exports = async (req, res) => {
