@@ -22,8 +22,6 @@ class Search {
 
       var hash = ObjectHash(query);
 
-	    console.log(query, hash);
-
       Redis.connect().sendCommand('ZCOUNT', [`search:${this.identifier}:${hash}`, '-inf', '+inf'], async (err, totalResults) => {
         if (err || !totalResults) {
           totalResults = await this.refresh(kind, hash, query);
