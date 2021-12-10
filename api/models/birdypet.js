@@ -24,7 +24,7 @@ class BirdyPet {
           speciesCode: illustration.speciesCode,
           family: illustration.family,
           member: data.member,
-          flocks: null,
+          flocks: [],
           hatchedAt: Date.now()
         }).then((id) => {
           this.id = id;
@@ -55,6 +55,17 @@ class BirdyPet {
 
           this.bird = this.illustration.bird;
           delete this.illustration.bird;
+
+          try {
+            if (typeof this.flocks == "string") {
+              this.flocks = JSON.parse(this.flocks);
+            }
+            if (this.flocks == null) {
+              this.flocks = [];
+            }
+
+            this.flocks = this.flocks.filter((flock) => flock != '' && flock != 'NONE');
+          } catch (err) {}
 
           resolve(this);
         } else {

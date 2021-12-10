@@ -27,10 +27,11 @@ class Search {
           totalResults = await this.refresh(kind, hash, query);
         }
 
+        let promises = [];
+        let totalPages = Math.ceil(totalResults / birdsPerPage);
+
         if (args.page) {
           var page = (args.page - 1) * birdsPerPage;
-          let totalPages = Math.ceil(totalResults / 24);
-          let promises = [];
 
           if (args.sortDir == 'ASC') {
             var start = page;
@@ -39,8 +40,13 @@ class Search {
             var end = (page * -1) - 1;
             var start = page - birdsPerPage;
           }
+        } else {
+          var start = 0;
+          var end = totalResults;
+        }
 
-          Redis.connect().sendCommand('ZRANGE', [`search:${this.identifier}:${hash}`, start, end], (err, results) => {
+        Redis.connect().sendCommand('ZRANGE', [`search:${this.identifier}:${hash}`, start, end], (err, results) => {
+          if (args.page) {
             results = results.map((result) => {
               let model = new this.model(result);
 
@@ -51,71 +57,47 @@ class Search {
 
               return model;
             });
-
-            return Promise.all(promises).then(() => {
-
-              if (args.sortDir == 'DESC') {
-                results.reverse();
-              }
-
-              resolve({
-                totalPages,
-                results
-              });
-            });
-          });
-        } else {
-          if (args.sortDir == 'DESC') {
-            results.reverse();
           }
 
-          resolve(results);
-        }
+          return Promise.all(promises).then(() => {
+            if (args.sortDir = 'DESC') {
+              results.reverse();
+            }
+
+            resolve({
+              totalPages,
+              results
+            });
+          });
+        });
       });
     });
   }
 
   refresh(kind, hash, query) {
     return new Promise(async (resolve, reject) => {
-      if (query.search) {
+      if (query.family || query.flock || query.search) {
         await this.get(kind, {
           member: query.member,
-          family: query.family,
-          flocks: query.flock,
+          family: '',
+          flock: '',
           sort: query.sort
-        }).then((results) => resolve);
+        }).then((results) => resolve(results.results));
       } else {
-        var filters = [];
-
-        if (kind == 'Bird') {
-          filters.push(['type', '=', 'species']);
-        } else if (query.member) {
-          filters.push(['member', '=', query.member]);
-        }
-
-        if (query.family) {
-          filters.push(['family', '=', query.family]);
-        }
-
-        if (query.flock) {
-          filters.push(['flocks', '=', query.flock]);
-        }
-
         await Database.fetch({
           kind: kind,
-          filters: filters,
+          filters: [
+            ['member', '=', query.member]
+          ],
           keysOnly: true
-        }).then(async (results) => {
-          results = results.map((result) => result[Database.KEY].name);
-
-          resolve(results);
-        });
+        }).then((results) => resolve(results.map((result) => result[Database.KEY].name)));
       }
     }).then(async (results) => {
-      if (query.search || query.sort) {
+      if (query.search || query.family || query.flock) {
+        var search = new RegExp(query.search);
         var start = 0;
         var end = results.length;
-        var sort = [];
+        var output = [];
 
         do {
           let promises = [];
@@ -123,24 +105,37 @@ class Search {
           for (let i = start, len = Math.min(start + 250, end); i < len; i++, start++) {
             results[i] = new this.model(results[i]);
 
-            promises.push(results[i].fetch({
-              fields: [sort[0]]
-            }));
+            promises.push(results[i].fetch());
           }
 
           await Promise.all(promises);
 
-          if (query.search) {
-            let search = new RegExp(query.search);
-
-            results.filter((resultt) => search.text([result.nickname, result.bird?.name, result.name].filter((text) => typeof text !== "undefined").join(' ')));
-          }
-
           promises = [];
         }
-        while (start < end)
+        while (start < end);
 
-        if (!query.search && query.sort) {
+        results = results.filter((result) => {
+          if (query.search && !search.text([result.nickname, result.bird.name, result.name].filter((text) => typeof text !== "undefined").join(' '))) {
+            return false;
+          }
+
+          if (query.family && result.bird.family != query.family) {
+            return false;
+          }
+
+		if (query.flock) {
+			if (query.flock == 'NONE' && result.flocks.length > 0) {
+				return false;
+			}
+			else if (query.flock != 'NONE' && !result.flocks.includes(query.flock)) {
+				return false;
+			}
+		}
+
+          return true;
+        });
+
+        if (query.sort) {
           results = ObjectSorter(results, query.sort, {
             order: 'asc',
             caseinsensitive: true
@@ -153,11 +148,9 @@ class Search {
       }
     }).then((results) => {
       Redis.delete(`search:${this.identifier}:${hash}`);
-
       for (let i = 0, len = results.length; i < len; i++) {
         Redis.connect().zadd(`search:${this.identifier}:${hash}`, i, results[i]);
       }
-
       Redis.connect().sendCommand('EXPIRE', [`search:${this.identifier}:${hash}`, 86400]);
 
       return results.length;
