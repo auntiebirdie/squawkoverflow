@@ -1,11 +1,7 @@
-"use strict";
-
 const Counters = require('../helpers/counters.js');
-
 const Members = require('../collections/members.js');
 
 module.exports = async (req, res) => {
-  // confirm this came from cloud scheduler
   return new Promise((resolve, reject) => {
     Members.all().then(async (members) => {
       var birds = require('../data/birds.json');
