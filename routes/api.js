@@ -6,7 +6,7 @@ const router = express.Router();
 router.all('/*', async (req, res) => {
 	console.log(req.path);
   let data = (req.method == "GET" || req.method == "HEAD" ? req.query : req.body) || {};
-  let endpoint = req.path.match(/\/?(\b[A-Za-z\_\-]+\b)/)[1];
+  let endpoint = req.path.match(/\/?(\b[A-Za-z]+\b)/)[1];
 
   data.loggedInUser = req.session.user;
 
