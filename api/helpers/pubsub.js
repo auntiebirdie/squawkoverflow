@@ -34,6 +34,8 @@ exports.receive = function(message, context) {
 
     await member.fetch();
 
+	  await member.set({ lastRefresh : Date.now () });
+
     promises.push(Search.invalidate(member.id));
 
     promises.push(Search.get('BirdyPet', {
