@@ -147,10 +147,13 @@ class Search {
         return results;
       }
     }).then((results) => {
-      Redis.delete(`search:${this.identifier}:${hash}`);
+      Redis.connect().del(`search:${this.identifier}:${hash}`);
+      Redis.connect().sadd(`search:${this.identifier}`, hash);
+
       for (let i = 0, len = results.length; i < len; i++) {
         Redis.connect().zadd(`search:${this.identifier}:${hash}`, i, results[i]);
       }
+
       Redis.connect().sendCommand('EXPIRE', [`search:${this.identifier}:${hash}`, 86400]);
 
       return results.length;
@@ -159,9 +162,10 @@ class Search {
 
   invalidate(identifier) {
     return new Promise((resolve, reject) => {
-      Redis.scan(`search:${identifier}`).then((results) => {
+      Redis.connect().smembers(`search:${identifier}`, async (err, results) => {
+
         for (let result of results) {
-          Redis.connect().del(result);
+          await Redis.connect().del(`search:${identifier}:${result}`);
         }
 
         resolve();
