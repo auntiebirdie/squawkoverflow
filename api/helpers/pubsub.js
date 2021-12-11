@@ -11,7 +11,7 @@ module.exports = function(topic, action, body) {
       action
     };
 
-    pubsub.topic(topic).publish(Buffer.from("🐦"), data).then(() => {
+    pubsub.topic(topic).publish(Buffer.from(JSON.stringify(data))).then(() => {
       resolve();
     });
   });

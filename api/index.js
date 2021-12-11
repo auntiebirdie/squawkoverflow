@@ -24,7 +24,8 @@ exports.background = (message, context) => {
   const Webhook = require('./helpers/webhook.js');
 
   return new Promise(async (resolve, reject) => {
-    var member = new Member(message.attributes.member);
+    var data = JSON.parse(Buffer.from(message.data, 'base64').toString());
+    var member = new Member(data.member);
     var promises = [];
 
     await member.fetch();
@@ -49,9 +50,9 @@ exports.background = (message, context) => {
       search: ''
     }));
 
-    switch (message.attributes.action) {
+    switch (data.action) {
       case "COLLECT":
-        var illustration = new Illustration(message.attributes.illustration);
+        var illustration = new Illustration(data.illustration);
 
         await illustration.fetch();
 
@@ -61,7 +62,7 @@ exports.background = (message, context) => {
           promises.push(member.updateWishlist(illustration.bird.code, "remove"));
         }
 
-        if (message.attributes.adjective) {
+        if (data.adjective) {
           promises.push(member.set({
             lastHatchedAt: Date.now()
           }));
@@ -71,26 +72,26 @@ exports.background = (message, context) => {
               content: " ",
               embeds: [{
                 title: illustration.bird.name,
-                description: `<@${member.id}> hatched the ${message.attributes.adjective} egg!`,
-                url: `https://squawkoverflow.com/birdypet/${message.attributes.birdypet}`,
+                description: `<@${member.id}> hatched the ${data.adjective} egg!`,
+                url: `https://squawkoverflow.com/birdypet/${data.birdypet}`,
                 image: {
                   url: illustration.image
                 }
               }]
             }));
           }
-        } else if (message.attributes.freebird) {
-          promises.push(Redis.connect().del(`freebird:${message.attributes.freebird}`));
-          promises.push(Cache.remove('cache', 'freebirds', message.attributes.freebird));
+        } else if (data.freebird) {
+          promises.push(Redis.connect().del(`freebird:${data.freebird}`));
+          promises.push(Cache.remove('cache', 'freebirds', data.freebird));
         }
         break;
       case "RELEASE":
-        var illustration = new Illustration(message.attributes.illustration);
+        var illustration = new Illustration(data.illustration);
 
         await illustration.fetch();
 
-        if (message.attributes.birdypet) {
-          promises.push(Counters.increment(-1, 'species', message.attributes.member, illustration.bird.code));
+        if (data.birdypet) {
+          promises.push(Counters.increment(-1, 'species', data.member, illustration.bird.code));
         }
 
         let id = await Redis.create('freebird', illustration.id);
