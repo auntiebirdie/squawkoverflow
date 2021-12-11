@@ -30,7 +30,7 @@ class Member {
         bugs: 0,
         joinedAt: Date.now(),
         lastLogin: Date.now(),
-	lastRefresh: Infinity
+	lastRefresh: 0
       }).then(() => {
         resolve();
       });
@@ -117,7 +117,7 @@ class Member {
           this.active = member.lastLogin > lastMonth || member.lastHatchedAt > lastMonth;
           this.joinedAt = member.joinedAt;
           this.lastHatchedAt = member.lastHatchedAt;
-          this.lastRefresh = member.lastRefresh;
+          this.lastRefresh = member.lastRefresh || 0;
 
           if (params.profile) {
             this.aviary = await Cache.get('aviaryTotals', this.id);

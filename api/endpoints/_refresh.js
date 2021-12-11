@@ -8,7 +8,17 @@ module.exports = async (req, res) => {
       resolve(Members.get(req.query.member));
     } else {
       Members.all().then((members) => {
-        resolve(members.filter((member) => member.active).sort((a, b) => b.lastRefresh - a.lastRefresh)[0]);
+        resolve(members.filter((member) => member.active).sort( (a, b) => {
+		if (!a.lastRefresh) {
+			return -1;
+		}
+		else if (!b.lastRefresh) {
+			return 1;
+		}
+		else {
+			return b.lastRefresh - a.lastRefresh;
+		}
+	})[0]);
       });
     }
   }).then(async (member) => {
