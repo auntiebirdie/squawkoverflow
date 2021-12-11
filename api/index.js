@@ -13,19 +13,41 @@ exports.api = (req, res) => {
   }
 }
 
-exports.background = async (message, context) => {
+exports.background = (message, context) => {
   const Illustration = require('./models/illustration.js');
   const Member = require('./models/member.js');
 
   const Cache = require('./helpers/cache.js');
   const Counters = require('./helpers/counters.js');
   const Redis = require('./helpers/redis.js');
+  const Search = require('./helpers/search.js');
   const Webhook = require('./helpers/webhook.js');
 
-  try {
+  return new Promise((resolve, reject) => {
     var member = new Member(message.json.member);
+    var promises = [];
 
     await member.fetch();
+
+    promises.push(Search.invalidate(member.id));
+
+    promises.push(Search.get('BirdyPet', {
+      member: member.id,
+      page: 1,
+      sort: 'hatchedAt',
+      family: '',
+      flock: '',
+      search: ''
+    }));
+
+    promises.push(Search.get('BirdyPet', {
+      member: member.id,
+      page: 1,
+      sort: 'commonName',
+      family: '',
+      flock: '',
+      search: ''
+    }));
 
     switch (message.json.action) {
       case "COLLECT":
@@ -33,19 +55,19 @@ exports.background = async (message, context) => {
 
         await illustration.fetch();
 
-        Counters.increment(1, 'species', member.id, illustration.bird.code);
+        promises.push(Counters.increment(1, 'species', member.id, illustration.bird.code));
 
         if (member.settings.general?.includes('updateWishlist')) {
-          member.updateWishlist(illustration.bird.code, "remove");
+          promises.push(member.updateWishlist(illustration.bird.code, "remove"));
         }
 
         if (message.json.adjective) {
-          member.set({
+          promises.push(member.set({
             lastHatchedAt: Date.now()
-          });
+          }));
 
           if (!member.settings.privacy?.includes('activity')) {
-            await Webhook('egg-hatchery', {
+            promises.push(Webhook('egg-hatchery', {
               content: " ",
               embeds: [{
                 title: illustration.bird.name,
@@ -55,24 +77,24 @@ exports.background = async (message, context) => {
                   url: illustration.image
                 }
               }]
-            });
+            }));
           }
         } else if (message.json.freebird) {
-          await Redis.connect().del(`freebird:${message.json.freebird}`);
-          await Cache.remove('cache', 'freebirds', message.json.freebird);
+          promises.push(Redis.connect().del(`freebird:${message.json.freebird}`));
+          promises.push(Cache.remove('cache', 'freebirds', message.json.freebird));
         }
         break;
       case "RELEASE":
         var illustration = new Illustration(message.json.illustration);
 
-        await Counters.increment(-1, 'species', message.json.member, illustration.bird.code);
+        promises.push(Counters.increment(-1, 'species', message.json.member, illustration.bird.code));
 
         let id = await Redis.create('freebird', illustration.id);
 
-        await Redis.connect().sendCommand('EXPIRE', [`freebird:${id}`, 2628000]);
-
-        await Cache.add('cache', 'freebirds', id);
+        promises.push(Redis.connect().sendCommand('EXPIRE', [`freebird:${id}`, 2628000]));
+        promises.push(Cache.add('cache', 'freebirds', id));
         break;
     }
-  } catch (e) {}
+    Promise.all(promises).then(resolve);
+  });
 }
