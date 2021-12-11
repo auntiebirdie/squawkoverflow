@@ -15,7 +15,7 @@ module.exports = (req, res) => {
       member: req.body.loggedInUser
     });
 
-    await PubSub('background', 'COLLECT', {
+    await PubSub.publish('background', 'COLLECT', {
 	    birdypet: birdypet.id,
 	    member: req.body.loggedInUser,
 	    illustration: req.body.illustration,

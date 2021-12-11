@@ -1,6 +1,7 @@
 const Cache = require('../helpers/cache.js');
 const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
+const Search = rquire('../helpers/search.js');
 
 const Illustration = require('./illustration.js');
 
@@ -15,7 +16,10 @@ class BirdyPet {
     return new Promise(async (resolve, reject) => {
       let illustration = new Illustration(data.illustration);
 
-      await illustration.fetch();
+      await Promise.all([
+        illustration.fetch(),
+        Search.invalidate(data.member)
+      ]);
 
       if (illustration) {
         Database.create('BirdyPet', {
@@ -80,6 +84,10 @@ class BirdyPet {
       await Database.set('BirdyPet', this.id, data);
       await Cache.refresh('birdypet', this.id);
 
+      if (data.member) {
+        await Search.invalidate(data.member)
+      }
+
       resolve();
     });
   }
@@ -87,7 +95,8 @@ class BirdyPet {
   delete() {
     return Promise.all([
       Database.delete('BirdyPet', this.id),
-      Redis.connect("cache").del(`birdypet:${this.id}`)
+      Redis.connect("cache").del(`birdypet:${this.id}`),
+      Search.invalidate(data.member)
     ]);
   }
 }

@@ -26,11 +26,11 @@ module.exports = async (req, res) => {
 
       if (birdypet.member == fromMember.id) {
         await Promise.all([
-          PubSub('background', 'RELEASE', {
+          PubSub.publish('background', 'RELEASE', {
             member: fromMember.id,
             illustration: birdypet.illustration.id
           }),
-          PubSub('background', 'COLLECT', {
+          PubSub.publish('background', 'COLLECT', {
             member: toMember.id,
             illustration: birdypet.illustration.id
           }),

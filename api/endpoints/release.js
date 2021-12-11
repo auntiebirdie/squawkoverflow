@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
   }
 
   if (illustration) {
-    PubSub('background', 'RELEASE', {
+    PubSub.publish('background', 'RELEASE', {
 	    member: req.body.loggedInUser,
 	    birdypet: req.body.birdypet,
 	    illustration: req.body.illustration
