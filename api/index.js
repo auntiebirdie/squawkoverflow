@@ -24,12 +24,10 @@ exports.background = (message, context) => {
   const Webhook = require('./helpers/webhook.js');
 
   return new Promise(async (resolve, reject) => {
-    var member = new Member(message.json.member);
+    var member = new Member(message.attributes.member);
     var promises = [];
 
     await member.fetch();
-
-	  console.log(member);
 
     promises.push(Search.invalidate(member.id));
 
@@ -51,15 +49,11 @@ exports.background = (message, context) => {
       search: ''
     }));
 
-	  console.log(message.json.action);
-
-    switch (message.json.action) {
+    switch (message.attributes.action) {
       case "COLLECT":
-        var illustration = new Illustration(message.json.illustration);
+        var illustration = new Illustration(message.attributes.illustration);
 
         await illustration.fetch();
-
-		    console.log(illustration);
 
         promises.push(Counters.increment(1, 'species', member.id, illustration.bird.code));
 
@@ -67,7 +61,7 @@ exports.background = (message, context) => {
           promises.push(member.updateWishlist(illustration.bird.code, "remove"));
         }
 
-        if (message.json.adjective) {
+        if (message.attributes.adjective) {
           promises.push(member.set({
             lastHatchedAt: Date.now()
           }));
@@ -77,27 +71,25 @@ exports.background = (message, context) => {
               content: " ",
               embeds: [{
                 title: illustration.bird.name,
-                description: `<@${member.id}> hatched the ${message.json.adjective} egg!`,
-                url: `https://squawkoverflow.com/birdypet/${message.json.birdypet}`,
+                description: `<@${member.id}> hatched the ${message.attributes.adjective} egg!`,
+                url: `https://squawkoverflow.com/birdypet/${message.attributes.birdypet}`,
                 image: {
                   url: illustration.image
                 }
               }]
             }));
           }
-        } else if (message.json.freebird) {
-          promises.push(Redis.connect().del(`freebird:${message.json.freebird}`));
-          promises.push(Cache.remove('cache', 'freebirds', message.json.freebird));
+        } else if (message.attributes.freebird) {
+          promises.push(Redis.connect().del(`freebird:${message.attributes.freebird}`));
+          promises.push(Cache.remove('cache', 'freebirds', message.attributes.freebird));
         }
         break;
       case "RELEASE":
-        var illustration = new Illustration(message.json.illustration);
+        var illustration = new Illustration(message.attributes.illustration);
 
-		    await illustration.fetch();
+        await illustration.fetch();
 
-		    console.log(illustration);
-
-        promises.push(Counters.increment(-1, 'species', message.json.member, illustration.bird.code));
+        promises.push(Counters.increment(-1, 'species', message.attributes.member, illustration.bird.code));
 
         let id = await Redis.create('freebird', illustration.id);
 
