@@ -32,7 +32,8 @@ module.exports = async (req, res) => {
   if (illustration) {
     PubSub('background', 'RELEASE', {
 	    member: req.body.loggedInUser,
-	    illustration: illustration.id
+	    birdypet: req.body.birdypet,
+	    illustration: req.body.illustration
     });
 
     return res.sendStatus(200);

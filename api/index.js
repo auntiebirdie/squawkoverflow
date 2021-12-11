@@ -89,7 +89,9 @@ exports.background = (message, context) => {
 
         await illustration.fetch();
 
-        promises.push(Counters.increment(-1, 'species', message.attributes.member, illustration.bird.code));
+        if (message.attributes.birdypet) {
+          promises.push(Counters.increment(-1, 'species', message.attributes.member, illustration.bird.code));
+        }
 
         let id = await Redis.create('freebird', illustration.id);
 
