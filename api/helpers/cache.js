@@ -4,7 +4,7 @@ const Redis = require('./redis.js');
 class Cache {
   get(kind, id, type = "h") {
     return new Promise((resolve, reject) => {
-      Redis.connect("cache")[type == "h" ? "hgetall" : "smembers"](`${kind}:${id}`, (err, results) => {
+      Redis.connect()[type == "h" ? "hgetall" : "smembers"](`${kind}:${id}`, (err, results) => {
         if (err || typeof results == 'undefined' || results == null || results.length == 0) {
           resolve(this.refresh(kind, id, type));
         } else {
@@ -17,7 +17,17 @@ class Cache {
   add(kind, id, data) {
     return new Promise((resolve, reject) => {
       this.get(kind, id, "s").then((results) => {
-        Redis.connect('cache').sadd(`${kind}:${id}`, data, (err, results) => {
+        Redis.connect().sadd(`${kind}:${id}`, data, (err, results) => {
+          resolve(results);
+        });
+      });
+    });
+  }
+
+  remove(kind, id, data) {
+    return new Promise((resolve, reject) => {
+      this.get(kind, id, "s").then((results) => {
+        Redis.connect().srem(`${kind}:${id}`, data, (err, results) => {
           resolve(results);
         });
       });
@@ -147,7 +157,7 @@ class Cache {
           reject('Unknown cache type');
       }
     }).then(async (results) => {
-      await Redis.connect("cache").del(`${kind}:${id}`);
+      await Redis.connect().del(`${kind}:${id}`);
 
       if (results && results[Database.KEY]) {
         delete results[Database.KEY];
@@ -164,19 +174,19 @@ class Cache {
                 results[key] = JSON.stringify(data);
             }
 
-            await Redis.connect("cache").hset(`${kind}:${id}`, key, results[key]);
+            await Redis.connect().hset(`${kind}:${id}`, key, results[key]);
           }
           break;
         case "array":
           if (results.length > 0) {
-            await Redis.connect("cache").sadd(`${kind}:${id}`, results);
+            await Redis.connect().sadd(`${kind}:${id}`, results);
           }
           break;
         default:
           return results;
       }
 
-      await Redis.connect("cache").sendCommand('EXPIRE', [`${kind}:${id}`, expiration]);
+      await Redis.connect().sendCommand('EXPIRE', [`${kind}:${id}`, expiration]);
 
       return results;
     });

@@ -17,6 +17,7 @@ exports.background = async (message, context) => {
   const Illustration = require('./models/illustration.js');
   const Member = require('./models/member.js');
 
+  const Cache = require('./helpers/cache.js');
   const Counters = require('./helpers/counters.js');
   const Redis = require('./helpers/redis.js');
   const Webhook = require('./helpers/webhook.js');
@@ -57,7 +58,8 @@ exports.background = async (message, context) => {
             });
           }
         } else if (message.json.freebird) {
-          Redis.connect().del(`freebird:${message.json.freebird}`);
+          await Redis.connect().del(`freebird:${message.json.freebird}`);
+          await Cache.remove('cache', 'freebirds', message.json.freebird);
         }
         break;
       case "RELEASE":
@@ -68,6 +70,8 @@ exports.background = async (message, context) => {
         let id = await Redis.create('freebird', illustration.id);
 
         await Redis.connect().sendCommand('EXPIRE', [`freebird:${id}`, 2628000]);
+
+        await Cache.add('cache', 'freebirds', id);
         break;
     }
   } catch (e) {}
