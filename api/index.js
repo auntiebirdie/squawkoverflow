@@ -23,7 +23,7 @@ exports.background = (message, context) => {
   const Search = require('./helpers/search.js');
   const Webhook = require('./helpers/webhook.js');
 
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     var member = new Member(message.json.member);
     var promises = [];
 
