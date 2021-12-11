@@ -1,7 +1,7 @@
 const Cache = require('../helpers/cache.js');
 const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
-const Search = rquire('../helpers/search.js');
+const Search = require('../helpers/search.js');
 
 const Illustration = require('./illustration.js');
 
