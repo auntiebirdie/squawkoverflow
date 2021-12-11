@@ -29,6 +29,8 @@ exports.background = (message, context) => {
 
     await member.fetch();
 
+	  console.log(member);
+
     promises.push(Search.invalidate(member.id));
 
     promises.push(Search.get('BirdyPet', {
@@ -49,11 +51,15 @@ exports.background = (message, context) => {
       search: ''
     }));
 
+	  console.log(message.json.action);
+
     switch (message.json.action) {
       case "COLLECT":
         var illustration = new Illustration(message.json.illustration);
 
         await illustration.fetch();
+
+		    console.log(illustration);
 
         promises.push(Counters.increment(1, 'species', member.id, illustration.bird.code));
 
@@ -87,6 +93,10 @@ exports.background = (message, context) => {
       case "RELEASE":
         var illustration = new Illustration(message.json.illustration);
 
+		    await illustration.fetch();
+
+		    console.log(illustration);
+
         promises.push(Counters.increment(-1, 'species', message.json.member, illustration.bird.code));
 
         let id = await Redis.create('freebird', illustration.id);
@@ -95,6 +105,7 @@ exports.background = (message, context) => {
         promises.push(Cache.add('cache', 'freebirds', id));
         break;
     }
+
     Promise.all(promises).then(resolve);
   });
 }
