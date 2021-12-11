@@ -1,7 +1,6 @@
 const BirdyPet = require('../models/birdypet.js');
-const Counters = require('../helpers/counters.js');
 const Illustration = require('../models/illustration.js');
-const Redis = require('../helpers/redis.js');
+const PubSub = require('../helpers/pubsub.js');
 
 module.exports = async (req, res) => {
   if (!req.body.loggedInUser) {
@@ -28,13 +27,13 @@ module.exports = async (req, res) => {
     };
 
     await birdypet.delete();
-    await Counters.increment(-1, 'birdypets', birdypet.member, birdypet.illustration.id);
   }
 
   if (illustration) {
-    let id = await Redis.create('freebird', illustration.id);
-
-    await Redis.connect().sendCommand('EXPIRE', [`freebird:${id}`, 2628000]);
+    PubSub('background', 'RELEASE', {
+	    member: req.body.loggedInUser,
+	    illustration: illustration.id
+    });
 
     return res.sendStatus(200);
   } else {

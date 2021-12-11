@@ -1,10 +1,6 @@
 const BirdyPet = require('../models/birdypet.js');
-const Illustration = require('../models/illustration');
-const Member = require('../models/member.js');
 
-const Counters = require('../helpers/counters.js');
-const Redis = require('../helpers/redis.js');
-const Webhook = require('../helpers/webhook.js');
+const PubSub = require('../helpers/pubsub.js');
 
 module.exports = (req, res) => {
   return new Promise(async (resolve, reject) => {
@@ -13,59 +9,22 @@ module.exports = (req, res) => {
     }
 
     let birdypet = new BirdyPet();
-    let member = new Member(req.body.loggedInUser);
-    let illustration = null;
-    let promises = [];
-
-    if (req.body.freebird) {
-      illustration = await Redis.get('freebird', req.body.freebird);
-    } else {
-      illustration = req.body.illustration;
-    }
 
     await birdypet.create({
-      illustration: illustration,
-      member: member.id
+      illustration: req.body.illustration,
+      member: req.body.loggedInUser
+    });
+
+    await PubSub('background', 'COLLECT', {
+	    birdypet: birdypet.id,
+	    member: req.body.loggedInUser,
+	    illustration: req.body.illustration,
+	    adjective: req.body.adjective,
+	    freebird: req.body.freebird
     });
 
     if (birdypet.id) {
-      await member.fetch();
-
-      promises.push(Counters.increment(1, 'birdypets', member.id, illustration));
-
-      if (member.settings.general?.includes('updateWishlist')) {
-        member.updateWishlist(birdypet.bird.code, "remove");
-      }
-
-      if (req.body.adjective) {
-        promises.push(member.set({
-          lastHatchedAt: Date.now()
-        }));
-
-        if (!member.settings.privacy?.includes('activity') && req.headers && req.headers['x-forwarded-for']) {
-		illustration = new Illustration(illustration);
-
-		await illustration.fetch();
-
-          await Webhook('egg-hatchery', {
-            content: " ",
-            embeds: [{
-              title: illustration.bird.name,
-              description: `<@${member.id}> hatched the ${req.body.adjective} egg!`,
-              url: `https://squawkoverflow.com/birdypet/${birdypet.id}`,
-              image: {
-                url: illustration.image
-              }
-            }]
-          });
-        }
-      } else if (req.body.freebird) {
-        promises.push(Redis.delete('freebird', req.body.freebird));
-      }
-
-      await Promise.all(promises).then(() => {
-        resolve(res.json(birdypet));
-      });
+      resolve(res.json(birdypet));
     } else {
       resolve(res.sendStatus(404));
     }

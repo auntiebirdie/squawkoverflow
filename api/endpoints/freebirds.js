@@ -8,6 +8,7 @@ module.exports = (req, res) => {
       let promises = [];
 
       Cache.get('cache', 'freebirds', 's').then(async (freebirds) => {
+	      console.log(freebirds);
         if (freebirds.length > 0) {
           let ids = [];
           let limit = req.query?.limit || 24;
