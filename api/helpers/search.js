@@ -115,7 +115,7 @@ class Search {
         while (start < end);
 
         results = results.filter((result) => {
-          if (query.search && !search.text([result.nickname, result.bird.name, result.name].filter((text) => typeof text !== "undefined").join(' '))) {
+          if (query.search && !search.test([result.nickname, result.bird.name, result.name].filter((text) => typeof text !== "undefined").join(' '))) {
             return false;
           }
 
