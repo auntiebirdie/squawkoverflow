@@ -61,7 +61,7 @@ class Search {
 
           return Promise.all(promises).then(() => {
             if (args.sortDir = 'DESC') {
-              results.reverse();
+              //results.reverse();
             }
 
             resolve({
