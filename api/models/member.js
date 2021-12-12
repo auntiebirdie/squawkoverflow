@@ -135,7 +135,7 @@ class Member {
           }
 
           if (params.include?.includes('birdyBuddy')) {
-            if (!this.birdyBuddy) {
+            if (!this.birdyBuddy && member.birdyBuddy) {
               this.birdyBuddy = new BirdyPet(member.birdyBuddy);
               await this.birdyBuddy.fetch();
             }

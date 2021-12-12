@@ -3,6 +3,10 @@ const Redis = require('./redis.js');
 
 class Cache {
   get(kind, id, type = "h") {
+	  if (!id) {
+		  return null;
+	  }
+
     return new Promise((resolve, reject) => {
       Redis.connect()[type == "h" ? "hgetall" : "smembers"](`${kind}:${id}`, (err, results) => {
         if (err || typeof results == 'undefined' || results == null || results.length == 0) {
