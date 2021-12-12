@@ -1,4 +1,5 @@
 const Cache = require('../helpers/cache.js');
+const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
 const Search = require('../helpers/search.js');
@@ -81,14 +82,19 @@ class BirdyPet {
 
   set(data) {
     return new Promise(async (resolve, reject) => {
-      await Database.set('BirdyPet', this.id, data);
-      await Cache.refresh('birdypet', this.id);
+      let promises = [];
+
+      promises.push(Database.set('BirdyPet', this.id, data));
+      promises.push(Cache.refresh('birdypet', this.id));
 
       if (data.member) {
-        await Search.invalidate(data.member)
+        promises.push(Counters.increment(-1, 'species', this.member, this.bird.code));
+        promises.push(Counters.increment(1, 'species', data.member, this.bird.code));
       }
 
-      resolve();
+      Promise.all(promises).then(() => {
+        resolve();
+      });
     });
   }
 
@@ -96,7 +102,7 @@ class BirdyPet {
     return Promise.all([
       Database.delete('BirdyPet', this.id),
       Redis.connect("cache").del(`birdypet:${this.id}`),
-      Search.invalidate(data.member)
+      Counters.increment(-1, 'species', this.member, this.bird.code)
     ]);
   }
 }

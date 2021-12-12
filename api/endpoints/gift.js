@@ -1,7 +1,6 @@
 const Member = require('../models/member.js');
 const BirdyPet = require('../models/birdypet.js');
 
-const PubSub = require('../helpers/pubsub.js');
 const Webhook = require('../helpers/webhook.js');
 const Search = require('../helpers/search.js');
 
@@ -25,21 +24,11 @@ module.exports = async (req, res) => {
       let toMember = new Member(req.body.member);
 
       if (birdypet.member == fromMember.id) {
-        await Promise.all([
-          PubSub.publish('background', 'RELEASE', {
-            member: fromMember.id,
-            illustration: birdypet.illustration.id
-          }),
-          PubSub.publish('background', 'COLLECT', {
-            member: toMember.id,
-            illustration: birdypet.illustration.id
-          }),
-          birdypet.set({
-            member: req.body.member,
-            flocks: [],
-            friendship: 0
-          })
-        ]);
+        await birdypet.set({
+          member: req.body.member,
+          flocks: [],
+          friendship: 0
+        });
 
         await Webhook('exchange', {
           content: `${fromMember.username} has sent <@${toMember.id}> a gift!`,

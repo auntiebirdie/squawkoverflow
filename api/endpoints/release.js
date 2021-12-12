@@ -1,5 +1,4 @@
 const BirdyPet = require('../models/birdypet.js');
-const Illustration = require('../models/illustration.js');
 const PubSub = require('../helpers/pubsub.js');
 
 module.exports = async (req, res) => {
@@ -10,7 +9,7 @@ module.exports = async (req, res) => {
   let illustration = null;
 
   if (req.body.illustration) {
-    illustration = new Illustration(req.body.illustration);
+    illustration = req.body.illustration;
   } else if (req.body.birdypet) {
     let birdypet = new BirdyPet(req.body.birdypet);
 
@@ -22,9 +21,7 @@ module.exports = async (req, res) => {
       return res.sendStatus(401);
     }
 
-    illustration = {
-      id: birdypet.illustration.id
-    };
+    illustration = birdypet.illustration.id;
 
     await birdypet.delete();
   }
@@ -33,7 +30,7 @@ module.exports = async (req, res) => {
     PubSub.publish('background', 'RELEASE', {
 	    member: req.body.loggedInUser,
 	    birdypet: req.body.birdypet,
-	    illustration: req.body.illustration
+	    illustration: illustration
     });
 
     return res.sendStatus(200);
