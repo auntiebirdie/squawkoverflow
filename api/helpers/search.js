@@ -11,7 +11,7 @@ class Search {
     this.model = require(`../models/${kind.toLowerCase()}.js`);
     this.identifier = kind == 'Bird' ? 'bird' : args.member;
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       var query = {
         member: args.member,
         flock: args.flock,
@@ -24,7 +24,7 @@ class Search {
 
       Redis.connect().sendCommand('ZCOUNT', [`search:${this.identifier}:${hash}`, '-inf', '+inf'], async (err, totalResults) => {
         if (err || !totalResults) {
-          totalResults = await this.refresh(kind, hash, query);
+          var totalResults = await this.refresh(kind, hash, query);
         }
 
         let promises = [];
@@ -35,10 +35,10 @@ class Search {
 
           if (args.sortDir == 'ASC') {
             var start = page;
-            var end = (page + birdsPerPage) - 1;
+            var end = (page + birdsPerPage);
           } else {
             var end = (page * -1) - 1;
-            var start = page - birdsPerPage;
+            var start = end - birdsPerPage;
           }
         } else {
           var start = 0;
@@ -93,11 +93,8 @@ class Search {
         }).then((results) => resolve(results.map((result) => result[Database.KEY].name)));
       }
     }).then(async (results) => {
-      if (query.search || query.family || query.flock) {
-        var search = new RegExp(query.search);
         var start = 0;
         var end = results.length;
-        var output = [];
 
         do {
           let promises = [];
@@ -114,6 +111,9 @@ class Search {
         }
         while (start < end);
 
+      if (query.search || query.family || query.flock) {
+        var search = new RegExp(query.search);
+
         results = results.filter((result) => {
           if (query.search && !search.test([result.nickname, result.bird.name, result.name].filter((text) => typeof text !== "undefined").join(' '))) {
             return false;
@@ -123,17 +123,17 @@ class Search {
             return false;
           }
 
-		if (query.flock) {
-			if (query.flock == 'NONE' && result.flocks.length > 0) {
-				return false;
-			}
-			else if (query.flock != 'NONE' && !result.flocks.includes(query.flock)) {
-				return false;
-			}
-		}
+          if (query.flock) {
+            if (query.flock == 'NONE' && result.flocks.length > 0) {
+              return false;
+            } else if (query.flock != 'NONE' && !result.flocks.includes(query.flock)) {
+              return false;
+            }
+          }
 
           return true;
         });
+      }
 
         if (query.sort) {
           results = ObjectSorter(results, query.sort, {
@@ -143,9 +143,6 @@ class Search {
         }
 
         return results.map((result) => result.id);
-      } else {
-        return results;
-      }
     }).then((results) => {
       Redis.connect().del(`search:${this.identifier}:${hash}`);
       Redis.connect().sadd(`search:${this.identifier}`, hash);

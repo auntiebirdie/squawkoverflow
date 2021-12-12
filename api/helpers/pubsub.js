@@ -4,16 +4,21 @@ const {
 
 exports.publish = function(topic, action, body) {
   return new Promise((resolve, reject) => {
-    const pubsub = new PubSub();
+	  if (process.env.NODE_ENV) {
+      const pubsub = new PubSub();
 
-    const data = {
-      ...body,
-      action
-    };
+      const data = {
+        ...body,
+        action
+      };
 
-    pubsub.topic(topic).publish(Buffer.from(JSON.stringify(data))).then(() => {
-      resolve();
-    });
+      pubsub.topic(topic).publish(Buffer.from(JSON.stringify(data))).then(() => {
+        resolve();
+      });
+	  }
+	  else {
+      resolve()
+    }
   });
 }
 

@@ -3,6 +3,7 @@ const Member = require('../models/member.js');
 
 const Counters = require('../helpers/counters.js');
 const PubSub = require('../helpers/pubsub.js');
+const Search = require('../helpers/search.js');
 
 module.exports = (req, res) => {
   return new Promise(async (resolve, reject) => {
