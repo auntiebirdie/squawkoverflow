@@ -31,6 +31,7 @@ module.exports = (req, res) => {
       member: req.body.loggedInUser,
       illustration: req.body.illustration,
       adjective: req.body.adjective,
+      source: req.body.source,
       freebird: req.body.freebird
     }));
 
