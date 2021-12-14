@@ -51,7 +51,7 @@ class BirdyPet {
 
           await this.illustration.fetch();
 
-          if (params.fetchMemberData || params.fetch?.includes('memberData') || params.include?.includes('memberData')) {
+          if (params.include?.includes('memberData') && params.member) {
             await this.illustration.fetchMemberData(params.member);
           }
 

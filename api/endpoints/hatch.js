@@ -35,16 +35,16 @@ module.exports = async (req, res) => {
 
       do {
         var bird = species.sort(() => .5 - Math.random())[0];
-        var birdypets = await Illustrations.fetch('speciesCode', bird).then( (birdypets) => birdypets.filter((birdypet) => !birdypet.special));
+        var illustrations = await Illustrations.fetch('speciesCode', bird).then( (birdypets) => birdypets.filter((birdypet) => !birdypet.special));
       }
-      while (birdypets.length == 0);
+      while (illustrations.length == 0);
 
-      var birdypet = birdypets.sort(() => .5 - Math.random())[0];
+      var illustration = illustrations.sort(() => .5 - Math.random())[0];
 
-      if (birdypet) {
-        await birdypet.fetchMemberData(req.body.loggedInUser);
+      if (illustration) {
+        await illustration.fetchMemberData(req.body.loggedInUser);
 
-        return res.status(200).json(birdypet);
+        return res.status(200).json(illustration);
       } else {
         return res.sendStatus(500);
       }
