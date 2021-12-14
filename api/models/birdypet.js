@@ -23,7 +23,7 @@ class BirdyPet {
         Database.create('BirdyPet', {
           illustration: illustration.id,
           commonName: illustration.bird.name,
-          speciesCode: illustration.speciesCode,
+          speciesCode: illustration.bird.code,
           family: illustration.bird.family,
           member: data.member,
           flocks: [],
