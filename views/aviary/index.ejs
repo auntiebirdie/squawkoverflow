@@ -21,7 +21,7 @@
 
   <%- include('../partials/pagination.ejs') %>
 
-  <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"member":"<%= member.id %>"}'></div>
+  <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"member":"<%= member.id %>","memberData":"<%= locals.loggedInUser ? loggedInUser.id : '' %>"}'></div>
 
   <%- include('../partials/pagination.ejs') %>
 
