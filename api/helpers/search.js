@@ -53,7 +53,7 @@ class Search {
 
               promises.push(model.fetch({
                 include: ['memberData'],
-                member: args.memberData
+                member: args.memberData || args.member
               }));
 
               return model;
