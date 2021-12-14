@@ -19,7 +19,10 @@ module.exports = (req, res) => {
       member: req.body.loggedInUser
     });
 
+	  if (req.body.adjective) {
     promises.push(Counters.increment(1, 'eggs', req.body.loggedInUser, req.body.adjective));
+	  }
+
     promises.push(Counters.increment(1, 'species', req.body.loggedInUser, birdypet.bird.code));
     promises.push(Counters.increment(1, 'birdypets', req.body.loggedInUser, req.body.illustration));
 
