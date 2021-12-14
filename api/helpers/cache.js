@@ -18,6 +18,7 @@ class Cache {
   }
 
   get(kind, id) {
+	  //console.debug('CACHE.GET', kind, id);
     if (!id) {
       return null;
     }
@@ -29,15 +30,18 @@ class Cache {
         case "h":
           action = "hgetall";
           break;
-        case "z":
+        case "s":
           action = "smembers";
           break;
-        case "s":
+        case "z":
           action = "zcount";
           break;
       }
 
+	    //console.debug('CACHE.GET -> action', action);
+
       Redis.connect()[action](`${kind}:${id}`, (err, results) => {
+	      //console.debug('CACHE.GET -> results', results);
         if (err || !results) {
           resolve(this.refresh(kind, id));
         } else {
@@ -70,6 +74,8 @@ class Cache {
   refresh(kind = 'cache', id) {
     var expiration = 604800 // 1 week;
 
+	  //console.debug('CACHE.REFRESH', kind, id);
+
     return new Promise(async (resolve, reject) => {
       var data = {};
       var filters = [];
@@ -77,7 +83,7 @@ class Cache {
       switch (kind) {
         case 'aviary':
           await Database.fetch({
-            kind: kind,
+            kind: 'BirdyPet',
             filters: [
               ['member', '=', id]
             ],

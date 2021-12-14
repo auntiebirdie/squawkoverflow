@@ -76,7 +76,9 @@ class Search {
 
   refresh(kind, hash, query) {
     return new Promise(async (resolve, reject) => {
+	    //console.debug('SEARCH.REFRESH', kind, hash, this.identifier);
       Cache.get('aviary', this.identifier).then(async (results) => {
+	      //console.debug('SEARCH.REFRESH results', kind, hash, results.length);
         var start = 0;
         var end = results.length;
 
