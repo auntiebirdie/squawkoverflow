@@ -4,19 +4,19 @@ const {
 
 exports.publish = function(topic, action, body) {
   return new Promise((resolve, reject) => {
+    const data = {
+      ...body,
+      action
+    };
+
     if (process.env.NODE_ENV) {
       const pubsub = new PubSub();
-
-      const data = {
-        ...body,
-        action
-      };
 
       pubsub.topic(topic).publish(Buffer.from(JSON.stringify(data))).then(() => {
         resolve();
       });
     } else {
-      exports.receive(Buffer.from(JSON.stringify(data))).then(() => {
+      exports.receive({ data : Buffer.from(JSON.stringify(data)) }).then(() => {
         resolve();
       });
     }
@@ -24,15 +24,15 @@ exports.publish = function(topic, action, body) {
 }
 
 exports.receive = function(message, context) {
-  const Bird = require('./models/bird.js');
-  const Illustration = require('./models/illustration.js');
-  const Member = require('./models/member.js');
+  const Bird = require(__dirname + '/../models/bird.js');
+  const Illustration = require(__dirname + '/../models/illustration.js');
+  const Member = require(__dirname + '/../models/member.js');
 
-  const Cache = require('./helpers/cache.js');
-  const Counters = require('./helpers/counters.js');
-  const Redis = require('./helpers/redis.js');
-  const Search = require('./helpers/search.js');
-  const Webhook = require('./helpers/webhook.js');
+  const Cache = require(__dirname + '/../helpers/cache.js');
+  const Counters = require(__dirname + '/../helpers/counters.js');
+  const Redis = require(__dirname + '/../helpers/redis.js');
+  const Search = require(__dirname + '/../helpers/search.js');
+  const Webhook = require(__dirname + '/../helpers/webhook.js');
 
   return new Promise(async (resolve, reject) => {
     var data = JSON.parse(Buffer.from(message.data, 'base64').toString());
@@ -46,6 +46,8 @@ exports.receive = function(message, context) {
         var illustration = new Illustration(data.illustration);
 
         await illustration.fetch();
+
+        promises.push(Cache.add('aviary', member.id, [Date.now(), data.birdypet]));
 
         if (member.settings.general?.includes('updateWishlist')) {
           promises.push(member.updateWishlist(illustration.bird.code, "remove"));
@@ -80,6 +82,10 @@ exports.receive = function(message, context) {
         break;
       case "RELEASE":
         let id = await Redis.create('freebird', data.illustration);
+
+        if (data.birdypet) {
+          promises.push(Cache.remove('aviary', data.member, data.birdypet));
+        }
 
         promises.push(Redis.connect().sendCommand('EXPIRE', [`freebird:${id}`, 2628000]));
         promises.push(Cache.add('cache', 'freebirds', id));

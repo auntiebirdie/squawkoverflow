@@ -17,17 +17,14 @@ class BirdyPet {
     return new Promise(async (resolve, reject) => {
       let illustration = new Illustration(data.illustration);
 
-      await Promise.all([
-        illustration.fetch(),
-        Search.invalidate(data.member)
-      ]);
+      await illustration.fetch()
 
       if (illustration) {
         Database.create('BirdyPet', {
           illustration: illustration.id,
           commonName: illustration.bird.name,
           speciesCode: illustration.speciesCode,
-          family: illustration.family,
+          family: illustration.bird.family,
           member: data.member,
           flocks: [],
           hatchedAt: Date.now()

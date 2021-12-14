@@ -151,6 +151,8 @@ class Search {
           await Redis.connect().del(`search:${identifier}:${result}`);
         }
 
+	      await Redis.connect().del(`search:${identifier}`);
+
         resolve();
       });
     });

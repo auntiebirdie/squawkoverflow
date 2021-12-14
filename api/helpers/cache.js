@@ -49,10 +49,14 @@ class Cache {
 
   add(kind, id, data) {
     return new Promise((resolve, reject) => {
-      this.get(kind, id).then((results) => {
-        Redis.connect().sadd(`${kind}:${id}`, data, (err, results) => {
-          resolve(results);
-        });
+      this.get(kind, id).then(async (results) => {
+        if (this.dataTypes[kind] == "z") {
+          await Redis.connect().zadd(`${kind}:${id}`, data[0], data[1]);
+        } else {
+          await Redis.connect().sadd(`${kind}:${id}`, data);
+        }
+
+        resolve();
       });
     });
   }
@@ -60,7 +64,7 @@ class Cache {
   remove(kind, id, data) {
     return new Promise((resolve, reject) => {
       this.get(kind, id).then((results) => {
-        Redis.connect().srem(`${kind}:${id}`, data, (err, results) => {
+        Redis.connect()[this.dataTypes[kind] + 'rem'](`${kind}:${id}`, data, (err, results) => {
           resolve(results);
         });
       });
@@ -82,9 +86,9 @@ class Cache {
               ['member', '=', id]
             ],
             select: ['family', 'commonName', 'hatchedAt']
-          }).then((results) => { 
-		  resolve(results.map((result) => [result.hatchedAt, result[Database.KEY].name]))
-	  });
+          }).then((results) => {
+            resolve(results.map((result) => [result.hatchedAt, result[Database.KEY].name]))
+          });
           break;
         case 'bird':
           Database.fetch({
@@ -103,7 +107,7 @@ class Cache {
               resolve(members.map((member) => member[Database.KEY].name));
             });
           } else if (id == "freebirds") {
-		  expiration = 0;
+            expiration = 0;
             Redis.scan('freebird').then((freebirds) => {
               resolve(freebirds);
             });
@@ -217,7 +221,7 @@ class Cache {
               case "object":
               case "array":
                 results[key] = JSON.stringify(data);
-			    break;
+                break;
             }
 
             await Redis.connect().hset(`${kind}:${id}`, key, results[key]);
@@ -233,15 +237,15 @@ class Cache {
             await Redis.connect().zadd(`${kind}:${id}`, ...results[i]);
           }
 
-		      results = results.map((result) => result[1]);
+          results = results.map((result) => result[1]);
           break;
         default:
           return results;
       }
 
-	    if (expiration > 0) {
-      await Redis.connect().sendCommand('EXPIRE', [`${kind}:${id}`, expiration]);
-	    }
+      if (expiration > 0) {
+        await Redis.connect().sendCommand('EXPIRE', [`${kind}:${id}`, expiration]);
+      }
 
       return results;
     });
