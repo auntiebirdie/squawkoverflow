@@ -18,6 +18,8 @@ exports.publish = function(topic, action, body) {
     } else {
       exports.receive({
         data: Buffer.from(JSON.stringify(data))
+      }, {
+        eventId: Date.now()
       }).then(() => {
         resolve();
       });
@@ -28,22 +30,20 @@ exports.publish = function(topic, action, body) {
 exports.receive = function(message, context) {
   const Redis = require(__dirname + '/../helpers/redis.js');
 
-  Redis.get('pubsub', context.eventId).then((result) => {
-    if (!result) {
-      Redis.set('pubsub', context.eventId, "🐦");
-      Redis.connect().sendCommand('EXPIRE', [`pubsub:${context.eventId}`, 300]);
+  return new Promise((resolve, reject) => {
+    Redis.get('pubsub', context.eventId).then(async (result) => {
+      if (!result) {
+        Redis.set('pubsub', context.eventId, "🐦");
+        Redis.connect().sendCommand('EXPIRE', [`pubsub:${context.eventId}`, 300]);
 
-      const Bird = require(__dirname + '/../models/bird.js');
-      const Illustration = require(__dirname + '/../models/illustration.js');
-      const Member = require(__dirname + '/../models/member.js');
+        const Bird = require(__dirname + '/../models/bird.js');
+        const Illustration = require(__dirname + '/../models/illustration.js');
+        const Member = require(__dirname + '/../models/member.js');
 
-      const Cache = require(__dirname + '/../helpers/cache.js');
-      const Counters = require(__dirname + '/../helpers/counters.js');
-      const Redis = require(__dirname + '/../helpers/redis.js');
-      const Search = require(__dirname + '/../helpers/search.js');
-      const Webhook = require(__dirname + '/../helpers/webhook.js');
-
-      return new Promise(async (resolve, reject) => {
+        const Cache = require(__dirname + '/../helpers/cache.js');
+        const Counters = require(__dirname + '/../helpers/counters.js');
+        const Search = require(__dirname + '/../helpers/search.js');
+        const Webhook = require(__dirname + '/../helpers/webhook.js');
 
         var data = JSON.parse(Buffer.from(message.data, 'base64').toString());
         var member = new Member(data.member);
@@ -105,9 +105,9 @@ exports.receive = function(message, context) {
         promises.push(Search.invalidate(member.id));
 
         Promise.all(promises).then(resolve);
-      });
-    } else {
-      resolve(null);
-    }
+      } else {
+        resolve(null);
+      }
+    });
   });
 }
