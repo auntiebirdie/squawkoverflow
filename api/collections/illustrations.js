@@ -7,7 +7,7 @@ class Illustrations {
 
   fetch(key, value, params = {}) {
     return new Promise((resolve, reject) => {
-      Cache.get('illustrations', key + ':' + value, "s").then((ids) => {
+      Cache.get('illustrations', key + ':' + value).then((ids) => {
         Promise.all(ids.map((id) => this.get(id, params))).then((illustrations) => {
           resolve(illustrations);
         });

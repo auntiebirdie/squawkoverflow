@@ -7,13 +7,14 @@ module.exports = (req, res) => {
     case "GET":
       let promises = [];
 
-      Cache.get('cache', 'freebirds', 's').then(async (freebirds) => {
-	      console.log(freebirds);
+      Cache.get('cache', 'freebirds').then(async (freebirds) => {
+	      console.log(freebirds.length);
         if (freebirds.length > 0) {
           let ids = [];
           let limit = req.query?.limit || 24;
 
           freebirds.sort(() => .5 - Math.random());
+		console.log('sort');
 
           for (let i = 0, len = freebirds.length; i < len; i++) {
             try {
@@ -40,7 +41,10 @@ module.exports = (req, res) => {
           }
         }
 
+	      console.log('promise all');
+
         Promise.all(promises).then((data) => {
+		console.log('return data');
           res.json({
             totalPages: 0,
             results: data

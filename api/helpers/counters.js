@@ -9,7 +9,7 @@ class Counters {
     return new Promise((resolve, reject) => {
       Redis.connect('cache').get(`${kind}:${member}:${id}`, (err, value) => {
         if (err || value == null || typeof value == "undefined") {
-          resolve(this.refresh(`${kind}:${member}:${id}`));
+          resolve(this.refresh(kind, member, id));
         } else {
           resolve(value * 1);
         }

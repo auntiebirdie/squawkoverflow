@@ -101,6 +101,7 @@ class Cache {
               resolve(members.map((member) => member[Database.KEY].name));
             });
           } else if (id == "freebirds") {
+		  expiration = 0;
             Redis.scan('freebird').then((freebirds) => {
               resolve(freebirds);
             });
@@ -234,7 +235,9 @@ class Cache {
           return results;
       }
 
+	    if (expiration > 0) {
       await Redis.connect().sendCommand('EXPIRE', [`${kind}:${id}`, expiration]);
+	    }
 
       return results;
     });

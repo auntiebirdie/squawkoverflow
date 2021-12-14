@@ -13,7 +13,7 @@ class Flocks {
 
   all(member) {
     return new Promise((resolve, reject) => {
-      Cache.get('flocks', member, 's').then((ids) => {
+      Cache.get('flocks', member).then((ids) => {
         Promise.all(ids.map((id) => this.get(id))).then((flocks) => {
           resolve(flocks.sort((a, b) => a.displayOrder - b.displayOrder));
         });
