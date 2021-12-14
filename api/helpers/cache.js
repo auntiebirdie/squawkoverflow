@@ -18,7 +18,6 @@ class Cache {
   }
 
   get(kind, id) {
-	  //console.debug('CACHE.GET', kind, id);
     if (!id) {
       return null;
     }
@@ -38,11 +37,8 @@ class Cache {
           break;
       }
 
-	    //console.debug('CACHE.GET -> action', action);
-
       Redis.connect()[action](`${kind}:${id}`, (err, results) => {
-	      //console.debug('CACHE.GET -> results', results);
-        if (err || !results) {
+        if (err || !results || results.length == 0) {
           resolve(this.refresh(kind, id));
         } else {
           resolve(results);
@@ -73,8 +69,6 @@ class Cache {
 
   refresh(kind = 'cache', id) {
     var expiration = 604800 // 1 week;
-
-	  //console.debug('CACHE.REFRESH', kind, id);
 
     return new Promise(async (resolve, reject) => {
       var data = {};
