@@ -37,7 +37,6 @@ class Bird {
           await this.fetchMemberData(params.member);
         }
 
-
         resolve(this);
       });
     });

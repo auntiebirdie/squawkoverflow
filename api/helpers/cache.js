@@ -2,15 +2,44 @@ const Database = require('./database.js');
 const Redis = require('./redis.js');
 
 class Cache {
-  get(kind, id, type = "h") {
-	  if (!id) {
-		  return null;
-	  }
+  dataTypes = {
+    aviary: "z",
+    bird: "h",
+    cache: "s",
+    flocks: "s",
+    illustration: "h",
+    illustrations: "s",
+    member: "h",
+    wishlist: "h",
+    birdypet: "h",
+    flock: "h",
+    aviaryTotals: "h",
+    flockTotals: "h"
+  }
+
+  get(kind, id) {
+    if (!id) {
+      return null;
+    }
 
     return new Promise((resolve, reject) => {
-      Redis.connect()[type == "h" ? "hgetall" : "smembers"](`${kind}:${id}`, (err, results) => {
-        if (err || typeof results == 'undefined' || results == null || results.length == 0) {
-          resolve(this.refresh(kind, id, type));
+      let action = null;
+
+      switch (this.dataTypes[kind]) {
+        case "h":
+          action = "hgetall";
+          break;
+        case "z":
+          action = "smembers";
+          break;
+        case "s":
+          action = "zcount";
+          break;
+      }
+
+      Redis.connect()[action](`${kind}:${id}`, (err, results) => {
+        if (err || !results) {
+          resolve(this.refresh(kind, id));
         } else {
           resolve(results);
         }
@@ -20,7 +49,7 @@ class Cache {
 
   add(kind, id, data) {
     return new Promise((resolve, reject) => {
-      this.get(kind, id, "s").then((results) => {
+      this.get(kind, id).then((results) => {
         Redis.connect().sadd(`${kind}:${id}`, data, (err, results) => {
           resolve(results);
         });
@@ -30,7 +59,7 @@ class Cache {
 
   remove(kind, id, data) {
     return new Promise((resolve, reject) => {
-      this.get(kind, id, "s").then((results) => {
+      this.get(kind, id).then((results) => {
         Redis.connect().srem(`${kind}:${id}`, data, (err, results) => {
           resolve(results);
         });
@@ -38,7 +67,7 @@ class Cache {
     });
   }
 
-  refresh(kind = 'cache', id, type) {
+  refresh(kind = 'cache', id) {
     var expiration = 604800 // 1 week;
 
     return new Promise(async (resolve, reject) => {
@@ -46,6 +75,15 @@ class Cache {
       var filters = [];
 
       switch (kind) {
+        case 'aviary':
+          await Database.fetch({
+            kind: kind,
+            filters: [
+              ['member', '=', id]
+            ],
+            order: ['hatchedAt', 'ASC']
+          }).then((results) => resolve(results.map((result) => [result.hatchedAt, result[Database.KEY].name])));
+          break;
         case 'bird':
           Database.fetch({
             kind: 'Bird',
@@ -167,8 +205,8 @@ class Cache {
         delete results[Database.KEY];
       }
 
-      switch (typeof results) {
-        case "object":
+      switch (this.dataTypes[kind]) {
+        case "h":
           for (let key in results) {
             let data = results[key];
 
@@ -176,14 +214,20 @@ class Cache {
               case "object":
               case "array":
                 results[key] = JSON.stringify(data);
+			    break;
             }
 
             await Redis.connect().hset(`${kind}:${id}`, key, results[key]);
           }
           break;
-        case "array":
+        case "s":
           if (results.length > 0) {
             await Redis.connect().sadd(`${kind}:${id}`, results);
+          }
+          break;
+        case "z":
+          for (let i = 0, len = results.length; i < len; i++) {
+            await Redis.connect().zadd(`${kind}:${id}`, ...results[i]);
           }
           break;
         default:

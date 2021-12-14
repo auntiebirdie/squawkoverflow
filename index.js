@@ -40,7 +40,7 @@ app.use(session({
 }));
 
 app.use(async function(req, res, next) {
-  if (req.path.startsWith('/api')) {
+  if (req.path.startsWith('/api') || req.path.startsWith('/logout')) {
     return next();
   }
 

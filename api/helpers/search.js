@@ -1,4 +1,4 @@
-const Database = require('./database.js');
+const Cache = require('./cache.js');
 const Redis = require('./redis.js');
 
 const ObjectHash = require('object-hash');
@@ -76,23 +76,7 @@ class Search {
 
   refresh(kind, hash, query) {
     return new Promise(async (resolve, reject) => {
-      if (query.family || query.flock || query.search) {
-        await this.get(kind, {
-          member: query.member,
-          family: '',
-          flock: '',
-          sort: query.sort
-        }).then((results) => resolve(results.results));
-      } else {
-        await Database.fetch({
-          kind: kind,
-          filters: [
-            ['member', '=', query.member]
-          ],
-          keysOnly: true
-        }).then((results) => resolve(results.map((result) => result[Database.KEY].name)));
-      }
-    }).then(async (results) => {
+      Cache.get('aviary', this.identifier).then(async (results) => {
         var start = 0;
         var end = results.length;
 
@@ -111,29 +95,29 @@ class Search {
         }
         while (start < end);
 
-      if (query.search || query.family || query.flock) {
-        var search = new RegExp(query.search);
+        if (query.search || query.family || query.flock) {
+          var search = new RegExp(query.search);
 
-        results = results.filter((result) => {
-          if (query.search && !search.test([result.nickname, result.bird.name, result.name].filter((text) => typeof text !== "undefined").join(' '))) {
-            return false;
-          }
-
-          if (query.family && result.bird.family != query.family) {
-            return false;
-          }
-
-          if (query.flock) {
-            if (query.flock == 'NONE' && result.flocks.length > 0) {
-              return false;
-            } else if (query.flock != 'NONE' && !result.flocks.includes(query.flock)) {
+          results = results.filter((result) => {
+            if (query.search && !search.test([result.nickname, result.bird.name, result.name].filter((text) => typeof text !== "undefined").join(' '))) {
               return false;
             }
-          }
 
-          return true;
-        });
-      }
+            if (query.family && result.bird.family != query.family) {
+              return false;
+            }
+
+            if (query.flock) {
+              if (query.flock == 'NONE' && result.flocks.length > 0) {
+                return false;
+              } else if (query.flock != 'NONE' && !result.flocks.includes(query.flock)) {
+                return false;
+              }
+            }
+
+            return true;
+          });
+        }
 
         if (query.sort) {
           results = ObjectSorter(results, query.sort, {
@@ -143,6 +127,7 @@ class Search {
         }
 
         return results.map((result) => result.id);
+      });
     }).then((results) => {
       Redis.connect().del(`search:${this.identifier}:${hash}`);
       Redis.connect().sadd(`search:${this.identifier}`, hash);

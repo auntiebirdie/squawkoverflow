@@ -6,6 +6,8 @@ exports.api = (req, res) => {
   try {
     let route = req.path.match(/\/?(\b[A-Za-z\_]+\b)/);
 
+	  console.log(req.method, route, (req.body || req.query));
+
     require(`./endpoints/${route[0]}.js`)(req, res);
   } catch (err) {
     console.error(err);

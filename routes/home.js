@@ -17,7 +17,8 @@ router.get('/login', (req, res) => {
 	    res.redirect('/');
     });
   } else {
-    res.redirect("https://discord.com/api/oauth2/authorize?client_id=885956624777351199&redirect_uri=https%3A%2F%2Fsquawkoverflow.com%2Flogin&response_type=code&scope=identify");
+    var redirectUri = process.env.DEV ? 'http%3A%2F%2F35.208.110.100' :  'https%3A%2F%2Fsquawkoverflow.com';
+    res.redirect(`https://discord.com/api/oauth2/authorize?client_id=885956624777351199&redirect_uri=${redirectUri}%2Flogin&response_type=code&scope=identify`);
   }
 });
 

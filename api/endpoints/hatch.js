@@ -43,7 +43,7 @@ module.exports = async (req, res) => {
 
       if (birdypet) {
         await birdypet.fetchMemberData(req.body.loggedInUser);
-
+console.log(birdypet);
         return res.status(200).json(birdypet);
       } else {
         return res.sendStatus(500);

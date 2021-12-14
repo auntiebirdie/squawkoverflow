@@ -26,10 +26,11 @@ class Member {
       Database.save('Member', data.id, {
         username: data.username,
         avatar: data.avatar,
-        tier: 0,
+        tier: data.tier,
         bugs: 0,
         joinedAt: Date.now(),
         lastLogin: Date.now(),
+	      settings: {},
 	lastRefresh: 0
       }).then(() => {
         resolve();

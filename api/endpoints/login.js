@@ -14,20 +14,18 @@ module.exports = async (req, res) => {
       if (code.used) {
         return res.sendStatus(400);
       } else {
-	      /*
         Database.set('KonamiCode', konami, {
           used: true
         }).then(() => {
-	*/
           return res.json(code.member);
-        //});
+        });
       }
     });
   } else if (req.body.code) {
     await oauth.tokenRequest({
       clientId: secrets.DISCORD.CLIENT_ID,
       clientSecret: secrets.DISCORD.CLIENT_SECRET,
-      redirectUri: 'https://squawkoverflow.com/login',
+      redirectUri: process.env.DEV ? 'http://35.208.110.100/login' : 'https://squawkoverflow.com/login',
       code: req.body.code,
       scope: 'identify',
       grantType: 'authorization_code'
@@ -47,7 +45,9 @@ module.exports = async (req, res) => {
                 username: user.username,
                 avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`,
                 joinedAt: Date.now(),
-                lastLogin: Date.now()
+                lastLogin: Date.now(),
+                settings: {},
+                tier: 0
               });
             }
 

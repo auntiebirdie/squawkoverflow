@@ -4,7 +4,7 @@ const {
 
 exports.publish = function(topic, action, body) {
   return new Promise((resolve, reject) => {
-	  if (process.env.NODE_ENV) {
+    if (process.env.NODE_ENV) {
       const pubsub = new PubSub();
 
       const data = {
@@ -15,18 +15,21 @@ exports.publish = function(topic, action, body) {
       pubsub.topic(topic).publish(Buffer.from(JSON.stringify(data))).then(() => {
         resolve();
       });
-	  }
-	  else {
-      resolve()
+    } else {
+      exports.receive(Buffer.from(JSON.stringify(data))).then(() => {
+        resolve();
+      });
     }
   });
 }
 
 exports.receive = function(message, context) {
+  const Bird = require('./models/bird.js');
   const Illustration = require('./models/illustration.js');
   const Member = require('./models/member.js');
 
   const Cache = require('./helpers/cache.js');
+  const Counters = require('./helpers/counters.js');
   const Redis = require('./helpers/redis.js');
   const Search = require('./helpers/search.js');
   const Webhook = require('./helpers/webhook.js');
@@ -38,12 +41,6 @@ exports.receive = function(message, context) {
 
     await member.fetch();
 
-    await member.set({
-      lastRefresh: Date.now()
-    });
-
-    promises.push(Search.invalidate(member.id));
-
     switch (data.action) {
       case "COLLECT":
         var illustration = new Illustration(data.illustration);
@@ -52,6 +49,14 @@ exports.receive = function(message, context) {
 
         if (member.settings.general?.includes('updateWishlist')) {
           promises.push(member.updateWishlist(illustration.bird.code, "remove"));
+        }
+
+        var bird = new Bird(illustration.bird.code);
+
+        await bird.fetch();
+
+        for (let adjective of bird.adjectives) {
+          promises.push(Counters.refresh('eggs', member.id, adjective));
         }
 
         if (data.adjective) {
@@ -80,6 +85,8 @@ exports.receive = function(message, context) {
         promises.push(Cache.add('cache', 'freebirds', id));
         break;
     }
+
+    promises.push(Search.invalidate(member.id));
 
     Promise.all(promises).then(resolve);
   });
