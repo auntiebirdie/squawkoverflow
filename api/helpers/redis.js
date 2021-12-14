@@ -6,7 +6,8 @@ function Database() {
   this.dataTypes = {
     "search": "s",
     "cache": "s",
-    "freebird": "kv"
+    "freebird": "kv",
+	  "pubsub": "kv"
   };
 
   this.connections = {};
