@@ -106,6 +106,7 @@ Database.prototype.delete = function(kind, id) {
 Database.prototype.fetch = function({
   kind,
   filters,
+  select,
   order,
   limit,
   keysOnly
@@ -126,6 +127,10 @@ Database.prototype.fetch = function({
     if (limit) {
       query.limit(limit);
     }
+
+	  if (select) {
+		  query.select(select);
+	  }
 
     if (keysOnly) {
       query.select('__key__');

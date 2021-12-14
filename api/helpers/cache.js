@@ -87,8 +87,10 @@ class Cache {
             filters: [
               ['member', '=', id]
             ],
-            order: ['hatchedAt', 'ASC']
-          }).then((results) => resolve(results.map((result) => [result.hatchedAt, result[Database.KEY].name])));
+            select: ['family', 'commonName', 'hatchedAt']
+          }).then((results) => { 
+		  resolve(results.map((result) => [result.hatchedAt, result[Database.KEY].name]))
+	  });
           break;
         case 'bird':
           Database.fetch({
@@ -236,6 +238,8 @@ class Cache {
           for (let i = 0, len = results.length; i < len; i++) {
             await Redis.connect().zadd(`${kind}:${id}`, ...results[i]);
           }
+
+		      results = results.map((result) => result[1]);
           break;
         default:
           return results;
