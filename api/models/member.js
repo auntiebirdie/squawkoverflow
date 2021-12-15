@@ -44,7 +44,7 @@ class Member {
         if (!member) {
           if (params.createIfNotExists) {
             Database.save('Member', data.id, params.createIfNotExists).then(() => {
-              resolve(this);
+              resolve(this.fetch());
             });
           }
         } else {
