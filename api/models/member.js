@@ -30,8 +30,8 @@ class Member {
         bugs: 0,
         joinedAt: Date.now(),
         lastLogin: Date.now(),
-	      settings: {},
-	lastRefresh: 0
+        settings: {},
+        lastRefresh: 0
       }).then(() => {
         resolve();
       });
@@ -95,10 +95,14 @@ class Member {
           this.tier = tier;
           this.bugs = member.bugs ? member.bugs * 1 : 0;
 
-          try {
-            this.pronouns = JSON.parse(member.pronouns);
-          } catch (err) {
-            this.pronouns = {};
+          if (typeof member.pronouns == "string") {
+            try {
+              this.pronouns = JSON.parse(member.pronouns);
+            } catch (err) {
+              this.pronouns = {};
+            }
+          } else {
+            this.pronouns = member.pronouns || {};
           }
 
           if (Array.isArray(this.pronouns)) {

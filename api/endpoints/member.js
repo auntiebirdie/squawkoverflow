@@ -12,28 +12,33 @@ module.exports = async (req, res) => {
       break;
     case "PUT":
       var member = new Member(req.body.loggedInUser);
+      var toUpdate = {};
 
       await member.fetch({
         profile: true
       });
 
-      var fields = ["theme", "general", "privacy"];
-      var settings = member.settings;
+      toUpdate.settings = member.settings;
 
       if (req.body.settings) {
-        Object.keys(req.body.settings).filter((val) => fields.includes(val)).forEach((key) => {
+        Object.keys(req.body.settings).filter((val) => ["theme", "general", "privacy"].includes(val)).forEach((key) => {
           if (key == "theme") {
-            settings[key] = req.body.settings[key];
+            toUpdate.settings[key] = req.body.settings[key];
           } else {
-            settings[key] = req.body.settings[key].split(',');
+            toUpdate.settings[key] = req.body.settings[key].split(',');
           }
         });
       }
 
-      await member.set({
-        settings: settings,
-        birdyBuddy: req.body.birdyBuddy || member.birdyBuddy.id
-      });
+      if (req.body.birdyBuddy) {
+        toUpdate.birdyBuddy = req.body.birdyBuddy;
+      }
+
+      if (req.body.pronouns) {
+        toUpdate.pronouns = JSON.parse(req.body.pronouns);
+      }
+
+      await member.set(toUpdate);
 
       return res.sendStatus(200);
       break;
