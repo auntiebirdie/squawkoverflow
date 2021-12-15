@@ -42,7 +42,11 @@ class Member {
     return new Promise((resolve, reject) => {
       Cache.get('member', this.id).then(async (member) => {
         if (!member) {
-          resolve(null);
+          if (params.createIfNotExists) {
+            Database.save('Member', data.id, params.createIfNotExists).then(() => {
+              resolve(this);
+            });
+          }
         } else {
           this.username = member.username;
           this.avatar = member.avatar;
