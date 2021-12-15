@@ -107,9 +107,11 @@ class Cache {
               resolve(members.map((member) => member[Database.KEY].name));
             });
           } else if (id == "freebirds") {
-            expiration = 0;
-            Redis.scan('freebird').then((freebirds) => {
-              resolve(freebirds);
+            Database.fetch({
+		    kind: 'FreeBird',
+		    keysOnly: true
+	    }).then((freebirds) => {
+              resolve(freebirds.map((freebird) => freebird[Database.KEY].name));
             });
           }
           break;

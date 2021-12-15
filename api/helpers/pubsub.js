@@ -30,84 +30,79 @@ exports.publish = function(topic, action, body) {
 exports.receive = function(message, context) {
   const Redis = require(__dirname + '/../helpers/redis.js');
 
-  return new Promise((resolve, reject) => {
-    Redis.get('pubsub', context.eventId).then(async (result) => {
-      if (!result) {
-        Redis.set('pubsub', context.eventId, "🐦");
-        Redis.connect().sendCommand('EXPIRE', [`pubsub:${context.eventId}`, 300]);
+  return new Promise(async (resolve, reject) => {
+    const Bird = require(__dirname + '/../models/bird.js');
+    const Illustration = require(__dirname + '/../models/illustration.js');
+    const Member = require(__dirname + '/../models/member.js');
 
-        const Bird = require(__dirname + '/../models/bird.js');
-        const Illustration = require(__dirname + '/../models/illustration.js');
-        const Member = require(__dirname + '/../models/member.js');
+    const Cache = require(__dirname + '/../helpers/cache.js');
+    const Counters = require(__dirname + '/../helpers/counters.js');
+    const Database = require(__dirname + '/../helpers/database.js');
+    const Search = require(__dirname + '/../helpers/search.js');
+    const Webhook = require(__dirname + '/../helpers/webhook.js');
 
-        const Cache = require(__dirname + '/../helpers/cache.js');
-        const Counters = require(__dirname + '/../helpers/counters.js');
-        const Search = require(__dirname + '/../helpers/search.js');
-        const Webhook = require(__dirname + '/../helpers/webhook.js');
+    var data = JSON.parse(Buffer.from(message.data, 'base64').toString());
+    var member = new Member(data.member);
+    var illustration = new Illustration(data.illustration);
 
-        var data = JSON.parse(Buffer.from(message.data, 'base64').toString());
-        var member = new Member(data.member);
-        var promises = [];
+    var promises = [];
 
-        await member.fetch();
+    await Promise.all([
+      member.fetch(),
+      illustration.fetch()
+    ]);
 
-        switch (data.action) {
-          case "COLLECT":
-            var illustration = new Illustration(data.illustration);
+    switch (data.action) {
+      case "COLLECT":
+        promises.push(Cache.add('aviary', member.id, [Date.now(), data.birdypet]));
 
-            await illustration.fetch();
-
-            promises.push(Cache.add('aviary', member.id, [Date.now(), data.birdypet]));
-
-            if (member.settings.general?.includes('updateWishlist')) {
-              promises.push(member.updateWishlist(illustration.bird.code, "remove"));
-            }
-
-            var bird = new Bird(illustration.bird.code);
-
-            await bird.fetch();
-
-            for (let adjective of bird.adjectives) {
-              promises.push(Counters.refresh('eggs', member.id, adjective));
-            }
-
-            if (data.adjective) {
-              if (!member.settings.privacy?.includes('activity')) {
-                promises.push(Webhook('egg-hatchery', {
-                  content: " ",
-                  embeds: [{
-                    title: illustration.bird.name,
-                    description: `<@${member.id}> hatched the ${data.adjective} egg!`,
-                    url: `https://squawkoverflow.com/birdypet/${data.birdypet}`,
-                    image: {
-                      url: illustration.image
-                    }
-                  }]
-                }));
-              }
-            } else if (data.freebird) {
-              promises.push(Redis.connect().del(`freebird:${data.freebird}`));
-              promises.push(Cache.remove('cache', 'freebirds', data.freebird));
-            }
-            break;
-          case "RELEASE":
-            let id = await Redis.create('freebird', data.illustration);
-
-            if (data.birdypet) {
-              promises.push(Cache.remove('aviary', data.member, data.birdypet));
-            }
-
-            promises.push(Redis.connect().sendCommand('EXPIRE', [`freebird:${id}`, 2628000]));
-            promises.push(Cache.add('cache', 'freebirds', id));
-            break;
+        if (member.settings.general?.includes('updateWishlist')) {
+          promises.push(member.updateWishlist(illustration.bird.code, "remove"));
         }
 
-        promises.push(Search.invalidate(member.id));
+        var bird = new Bird(illustration.bird.code);
 
-        Promise.all(promises).then(resolve);
-      } else {
-        resolve(null);
-      }
-    });
+        await bird.fetch();
+
+        for (let adjective of bird.adjectives) {
+          promises.push(Counters.refresh('eggs', member.id, adjective));
+        }
+
+        if (data.adjective) {
+          if (!member.settings.privacy?.includes('activity')) {
+            promises.push(Webhook('egg-hatchery', {
+              content: " ",
+              embeds: [{
+                title: illustration.bird.name,
+                description: `<@${member.id}> hatched the ${data.adjective} egg!`,
+                url: `https://squawkoverflow.com/birdypet/${data.birdypet}`,
+                image: {
+                  url: illustration.image
+                }
+              }]
+            }));
+          }
+        } else if (data.freebird) {
+          promises.push(Redis.connect().del(`freebird:${data.freebird}`));
+          promises.push(Cache.remove('cache', 'freebirds', data.freebird));
+        }
+        break;
+      case "RELEASE":
+        Database.save('FreeBird', data.illustration, {
+          releasedAt: Date.now()
+        }).then(() => {
+          Cache.add('cache', 'freebirds', data.illustration);
+        });
+
+        if (data.birdypet) {
+          promises.push(Cache.remove('aviary', data.member, data.birdypet));
+        }
+
+        break;
+    }
+
+    promises.push(Search.invalidate(member.id));
+
+    Promise.all(promises).then(resolve);
   });
 }
