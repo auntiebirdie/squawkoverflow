@@ -28,8 +28,6 @@ exports.publish = function(topic, action, body) {
 }
 
 exports.receive = function(message, context) {
-  const Redis = require(__dirname + '/../helpers/redis.js');
-
   return new Promise(async (resolve, reject) => {
     const Bird = require(__dirname + '/../models/bird.js');
     const Illustration = require(__dirname + '/../models/illustration.js');
@@ -83,8 +81,8 @@ exports.receive = function(message, context) {
             }));
           }
         } else if (data.freebird) {
-          promises.push(Redis.connect().del(`freebird:${data.freebird}`));
-          promises.push(Cache.remove('cache', 'freebirds', data.freebird));
+          promises.push(Database.delete('FreeBird', data.illustration));
+          promises.push(Cache.remove('cache', 'freebirds', data.illustration));
         }
         break;
       case "RELEASE":

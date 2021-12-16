@@ -95,7 +95,6 @@ Database.prototype.save = function(kind, id, data) {
 }
 
 Database.prototype.delete = function(kind, id) {
-
   return new Promise((resolve, reject) => {
     datastore.delete(this.key(kind, id)).then(() => {
       return resolve();
