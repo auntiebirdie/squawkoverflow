@@ -1,3 +1,12 @@
+const unhandledRejection = require("unhandled-rejection");
+
+let rejectionEmitter = unhandledRejection();
+
+rejectionEmitter.on("unhandledRejection", (error, promise) => {
+	console.error(error);
+	console.dir(promise);
+});
+
 exports.api = (req, res) => {
   if (req.query?.sort && req.query.sort == "[null]") {
     delete req.query.sort;
