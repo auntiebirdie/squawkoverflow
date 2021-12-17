@@ -35,16 +35,15 @@ class Search {
 
           if (args.sortDir == 'ASC') {
             var start = page;
-            var end = (page + birdsPerPage);
+            var end = (page + birdsPerPage) - 1;
           } else {
-            var end = (page * -1) - 1;
-            var start = end - birdsPerPage;
+            var end = (page * -1) -1;
+            var start = end - birdsPerPage + 1;
           }
         } else {
           var start = 0;
           var end = totalResults;
         }
-
 
         Redis.connect().sendCommand('ZRANGE', [`search:${this.identifier}:${hash}`, start, end], (err, results) => {
           if (args.page) {
