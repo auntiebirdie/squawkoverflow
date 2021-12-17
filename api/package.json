@@ -5,6 +5,9 @@
   "main": "index.js",
   "author": "",
   "license": "ISC",
+  "scripts": {
+    "deploy": "gcloud functions deploy api && gcloud functions deploy background"
+  },
   "dependencies": {
     "@google-cloud/datastore": "^6.6.2",
     "@google-cloud/pubsub": "^2.18.4",
