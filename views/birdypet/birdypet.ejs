@@ -84,7 +84,7 @@
 
         <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
           <div class="text-center">
-            <% if (member.birdyBuddy.id != birdypet.id) { %>
+            <% if (member.birdyBuddy != birdypet.id) { %>
             <p><a id="makeBirdyBuddy" class="btn btn-primary">💖 Make Birdy Buddy</a></p>
             <% } else {  %>
             <%- include('../partials/friendshipMeter.ejs', { friendship : birdypet.friendship || 0 }) %>
