@@ -279,6 +279,7 @@ select {
 .loadingData::after {
 	content: " ";
 	position: fixed;
+	z-index: 9999;
 	top: 0;
 	bottom: 0;
 	right: 0;
@@ -288,7 +289,7 @@ select {
 	text-align: center;
 	width: 3.25em;
 	height: 3.25em;
-	background-color: rgba(155, 155, 155, .5);
+	background-color: rgb(155, 155, 155);
 	background-image: url('/img/eggtime.png');
 	background-position: center center;
 	background-repeat: no-repeat;
