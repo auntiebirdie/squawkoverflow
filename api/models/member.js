@@ -133,12 +133,8 @@ class Member {
             this.hasWishlist = await Cache.get('wishlist', this.id).then((results) => results ? Object.keys(results).length > 0 : false);
 
             if (member.birdyBuddy) {
-              try {
                 this.birdyBuddy = new BirdyPet(member.birdyBuddy);
                 await this.birdyBuddy.fetch();
-              } catch (err) {
-                this.birdyBuddy = null;
-              }
             }
 
             if (member.flock) {

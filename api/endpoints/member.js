@@ -4,6 +4,7 @@ const Member = require('../models/member.js');
 module.exports = async (req, res) => {
   switch (req.method) {
     case "GET":
+		  console.log(req.query);
       var member = new Member(req.query.id);
 
       await member.fetch(req.query);
