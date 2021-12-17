@@ -96,7 +96,7 @@ class Search {
         while (start < end);
 
         if (query.search || query.family || query.flock) {
-          var search = new RegExp(query.search);
+          var search = new RegExp(query.search, "i");
 
           results = results.filter((result) => {
             if (query.search && !search.test([result.nickname, result.bird.name, result.name].filter((text) => typeof text !== "undefined").join(' '))) {
