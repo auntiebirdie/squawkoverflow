@@ -19,7 +19,7 @@
     General
   </h3>
 
-  <div class="p-3 m-3 mb-5">
+  <div class="p-3 m-3 mb-5 d-inline">
     <div class="form-check form-switch mt-3">
       <input type="checkbox" class="form-check-input" name="general" value="updateWishlist" id="general_updateWishlist" <%= loggedInUser.settings.general?.includes('updateWishlist') ? "checked" : "" %>>
       <label class="form-check-label" for="updateWishlist">Remove newly obtained birds from my wishlist automatically</label>
@@ -30,7 +30,7 @@
     Privacy
   </h3>
 
-  <div class="p-3 m-3 mb-5">
+  <div class="p-3 m-3 mb-5 d-inline">
     <div class="form-check form-switch mb-3">
       <input type="checkbox" class="form-check-input" name="privacy" value="activity" id="privacy_activity" <%= loggedInUser.settings.privacy?.includes('activity') ? "checked" : "" %>>
       <label class="form-check-label" for="privacy_activity">Don't post my on-site activity to the Discord server</label>

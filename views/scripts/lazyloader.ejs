@@ -39,7 +39,9 @@
   function resetResults (event, page = 1) {
     container.innerHTML = "";
    <% if (locals.paginate) { %>
-    document.querySelectorAll('.pagination')[1].style.visibility = 'hidden';
+    for (let pagination of paginations) {
+      pagination.style.visibility = 'hidden';
+    }
    <% } %>
     currentPage = page * 1;
     totalPages = 1;
