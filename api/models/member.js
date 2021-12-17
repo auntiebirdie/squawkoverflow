@@ -127,6 +127,7 @@ class Member {
           this.joinedAt = member.joinedAt;
           this.lastHatchedAt = member.lastHatchedAt;
           this.lastRefresh = member.lastRefresh || 0;
+          this.birdyBuddy = member.birdyBuddy;
 
           if (params.profile) {
             this.aviary = await Cache.get('aviaryTotals', this.id);
