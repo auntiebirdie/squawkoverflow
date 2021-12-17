@@ -36,7 +36,7 @@
             <div class="col-12 col-md-4 mb-3">
             <% if (!birdypet.illustration.special && birdypet.bird.illustrations.length > 1) { %>
               <h5><label>Variant</label></h5>
-              <select name="variant" class="form-select">
+              <select name="illustration" class="form-select">
                 <% for (let variant of birdypet.bird.illustrations) { %>
                 <option value="<%= variant.id %>" data-src="<%= variant.image %>" <%= variant.id == birdypet.illustration.id ? "selected" : "" %>>
                   <%= variant.label %>
@@ -132,7 +132,7 @@
     </div>
 
     <script type="text/javascript">
-      $('select[name="variant"]').change(function() {
+      $('select[name="illustration"]').change(function() {
         var option = this.options[this.options.selectedIndex];
         var birdy = document.getElementById('birdy');
 

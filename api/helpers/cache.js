@@ -18,10 +18,6 @@ class Cache {
   }
 
   get(kind, id) {
-    if (!id) {
-      return null;
-    }
-
     return new Promise((resolve, reject) => {
       let action = null;
 
