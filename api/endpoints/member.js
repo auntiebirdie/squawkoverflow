@@ -1,3 +1,4 @@
+const BirdyPet = require('../models/birdypet.js');
 const Member = require('../models/member.js');
 
 module.exports = async (req, res) => {
@@ -11,28 +12,37 @@ module.exports = async (req, res) => {
       break;
     case "PUT":
       var member = new Member(req.body.loggedInUser);
+      var toUpdate = {};
 
       await member.fetch({
         profile: true
       });
 
-      var fields = ["theme", "general", "privacy"];
-      var settings = member.settings;
+      toUpdate.settings = member.settings;
 
-      if (req.body.settings) {
-        Object.keys(req.body.settings).filter((val) => fields.includes(val)).forEach((key) => {
-          if (key == "theme") {
-            settings[key] = req.body.settings[key];
-          } else {
-            settings[key] = req.body.settings[key].split(',');
-          }
-        });
+      for (let key in req.body) {
+        switch (key) {
+          case "birdyBuddy":
+          case "username":
+          case "avatar":
+            toUpdate[key] = req.body[key];
+            break;
+          case "pronouns":
+            toUpdate[key] = JSON.parse(req.body[key]);
+            break;
+          case "settings":
+            Object.keys(req.body.settings).filter((val) => ["theme", "general", "privacy"].includes(val)).forEach((key) => {
+              if (key == "theme") {
+                toUpdate.settings[key] = req.body.settings[key];
+              } else {
+                toUpdate.settings[key] = req.body.settings[key].split(',');
+              }
+            });
+            break;
+        }
       }
 
-      await member.set({
-        settings: settings,
-        birdyBuddy: req.body.birdyBuddy || member.birdyBuddy.id
-      });
+      await member.set(toUpdate);
 
       return res.sendStatus(200);
       break;

@@ -6,7 +6,6 @@ const Birds = require('../collections/birds.js');
 const BirdyPet = require('./birdypet.js');
 const Flocks = require('../collections/flocks.js');
 const Flock = require('./flock.js');
-const MemberPet = require('./memberpet.js');
 
 class Member {
   static schema = {
@@ -27,10 +26,12 @@ class Member {
       Database.save('Member', data.id, {
         username: data.username,
         avatar: data.avatar,
-        tier: 0,
+        tier: data.tier,
         bugs: 0,
         joinedAt: Date.now(),
-        lastLogin: Date.now()
+        lastLogin: Date.now(),
+        settings: {},
+        lastRefresh: 0
       }).then(() => {
         resolve();
       });
@@ -41,7 +42,11 @@ class Member {
     return new Promise((resolve, reject) => {
       Cache.get('member', this.id).then(async (member) => {
         if (!member) {
-          resolve(null);
+          if (params.createIfNotExists) {
+            Database.save('Member', data.id, params.createIfNotExists).then(() => {
+              resolve(this.fetch());
+            });
+          }
         } else {
           this.username = member.username;
           this.avatar = member.avatar;
@@ -94,10 +99,14 @@ class Member {
           this.tier = tier;
           this.bugs = member.bugs ? member.bugs * 1 : 0;
 
-          try {
-            this.pronouns = JSON.parse(member.pronouns);
-          } catch (err) {
-            this.pronouns = {};
+          if (typeof member.pronouns == "string") {
+            try {
+              this.pronouns = JSON.parse(member.pronouns);
+            } catch (err) {
+              this.pronouns = {};
+            }
+          } else {
+            this.pronouns = member.pronouns || {};
           }
 
           if (Array.isArray(this.pronouns)) {
@@ -117,14 +126,16 @@ class Member {
           this.active = member.lastLogin > lastMonth || member.lastHatchedAt > lastMonth;
           this.joinedAt = member.joinedAt;
           this.lastHatchedAt = member.lastHatchedAt;
+          this.lastRefresh = member.lastRefresh || 0;
+          this.birdyBuddy = member.birdyBuddy;
 
           if (params.profile) {
             this.aviary = await Cache.get('aviaryTotals', this.id);
             this.hasWishlist = await Cache.get('wishlist', this.id).then((results) => results ? Object.keys(results).length > 0 : false);
 
             if (member.birdyBuddy) {
-              this.birdyBuddy = new MemberPet(member.birdyBuddy);
-              await this.birdyBuddy.fetch();
+                this.birdyBuddy = new BirdyPet(member.birdyBuddy);
+                await this.birdyBuddy.fetch();
             }
 
             if (member.flock) {
@@ -134,8 +145,8 @@ class Member {
           }
 
           if (params.include?.includes('birdyBuddy')) {
-            if (!this.birdyBuddy) {
-              this.birdyBuddy = new MemberPet(member.birdyBuddy);
+            if (!this.birdyBuddy && member.birdyBuddy) {
+              this.birdyBuddy = new BirdyPet(member.birdyBuddy);
               await this.birdyBuddy.fetch();
             }
           }
@@ -210,7 +221,7 @@ class Member {
     let birds = require('../data/birds.json');
     let bird = birds.find((bird) => bird.speciesCode == speciesCode);
 
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       Database.get('Wishlist', this.id).then(async (results) => {
         let toUpdate = {};
 
@@ -233,7 +244,6 @@ class Member {
         }
 
         await Database.set('Wishlist', this.id, toUpdate);
-
         await Redis.connect('cache').del(`wishlist:${this.id}`);
 
         resolve();

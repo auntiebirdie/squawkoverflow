@@ -1,7 +1,7 @@
 <%- include('../header.ejs') %>
 
   <%- include('../partials/page-title.ejs', {
-        title : memberpet.nickname ? memberpet.nickname : memberpet.species.commonName,
+        title : birdypet.nickname ? birdypet.nickname : birdypet.bird.name,
         breadcrumb: {
           text: `${member.username}`,
           url: `/members/${member.id}`,
@@ -15,32 +15,32 @@
         <div class="text-center">
           <span class="h-100 d-inline-block position-relative">
            <% if (locals.loggedInUser) { %>
-            <button class="wishlist-heart btn btn-light btn-sm" data-id="<%= memberpet.species.speciesCode %>" data-action="<%= memberpet.memberData.wishlisted ? 'remove' : 'add' %>" role="button">
-              <%= memberpet.memberData.wishlisted ? '❤️' : '🤍' %>
+            <button class="wishlist-heart btn btn-light btn-sm" data-id="<%= birdypet.bird.code %>" data-action="<%= birdypet.bird.wishlisted ? 'remove' : 'add' %>" role="button">
+              <%= birdypet.bird.wishlisted ? '❤️' : '🤍' %>
             </button>
            <% } %>
-            <img id="birdy" src="<%= memberpet.image %>" class="birdypet full">
+            <img id="birdy" src="<%= birdypet.illustration.image %>" class="birdypet full">
           </span>
         </div>
 
         <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
           <%- include('../partials/spacer.ejs'); %>
 
-          <form id="manageBirdyPet" method="POST">
+          <form id="manageBirdyPet">
 
           <div class="row">
             <div class="col-12 col-md-8 mb-3">
               <h5><label>Nickname</label></h5>
-              <input id="nickname" type="text" name="nickname" class="form-control" value="<%= memberpet.nickname %>" style="width: 100%">
+              <input id="nickname" type="text" name="nickname" class="form-control" value="<%= birdypet.nickname %>" style="width: 100%">
             </div>
             <div class="col-12 col-md-4 mb-3">
-            <% if (!memberpet.special && memberpet.variants.length > 1) { %>
+            <% if (!birdypet.illustration.special && birdypet.bird.illustrations.length > 1) { %>
               <h5><label>Variant</label></h5>
-              <select name="variant" class="form-select">
-                <% for (let otherVersion of memberpet.variants) { %>
-                <option value="<%= otherVersion.id %>" data-src="<%= otherVersion.image %>" <%= otherVersion.id == memberpet.birdypetId ? "selected" : "" %>>
-                  <%= otherVersion.label %>
-                  <%= otherVersion.id == memberpet.birdypetId ? "[current]" : "" %>
+              <select name="illustration" class="form-select">
+                <% for (let variant of birdypet.bird.illustrations) { %>
+                <option value="<%= variant.id %>" data-src="<%= variant.image %>" <%= variant.id == birdypet.illustration.id ? "selected" : "" %>>
+                  <%= variant.label %>
+                  <%= variant.id == birdypet.illustration.id ? "[current]" : "" %>
                 </option>
                 <% } %>
               </select>
@@ -50,7 +50,7 @@
 
           <div class="mb-3">
             <h5><label>Description</label></h5>
-            <textarea name="description" maxlength="500" class="form-control" style="height: 150px; width: 100%;"><%= memberpet.description %></textarea>
+            <textarea name="description" maxlength="500" class="form-control" style="height: 150px; width: 100%;"><%= birdypet.description %></textarea>
           </div>
 
           <% if (member.flocks) { %>
@@ -58,7 +58,7 @@
             <% for (var flock of member.flocks) { %>
             <p>
               <label>
-                <input type="checkbox" name="flocks[]" class="form-check-input" value="<%= flock.id%>" <%= memberpet.flocks && (memberpet.flocks.includes(flock.id) || memberpet.flocks.includes(`${flock.id}`)) ? "checked" : ""%>>
+                <input type="checkbox" name="flocks[]" class="form-check-input" value="<%= flock.id%>" <%= birdypet.flocks && birdypet.flocks.includes(flock.id) ? "checked" : ""%>>
                 &nbsp;
                 <%= flock.name %>
               </label>
@@ -70,8 +70,8 @@
 
           </form>
         <% } else { %>
-          <% if (memberpet.description) { %>
-            <% for (var para of memberpet.description.split("\r\n")) { %>
+          <% if (birdypet.description) { %>
+            <% for (var para of birdypet.description.split("\r\n")) { %>
               <p><%= para %></p>
             <% } %>
           <% } %>
@@ -84,13 +84,13 @@
 
         <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
           <div class="text-center">
-            <% if (member.birdyBuddy.id != memberpet.id) { %>
+            <% if (member.birdyBuddy != birdypet.id) { %>
             <p><a id="makeBirdyBuddy" class="btn btn-primary">💖 Make Birdy Buddy</a></p>
             <% } else {  %>
-            <%- include('../partials/friendshipMeter.ejs', { friendship : memberpet.friendship || 0 }) %>
+            <%- include('../partials/friendshipMeter.ejs', { friendship : birdypet.friendship || 0 }) %>
             <% } %>
-            <p><a href="/birdypet/<%= memberpet.id %>/gift" class="btn btn-primary">🎁 Gift to Someone</a></p>
-            <p><a href="/birdypet/release/<%= memberpet.id %>" class="btn btn-primary">👋 Release Bird</a></p>
+            <p><a href="/birdypet/<%= birdypet.id %>/gift" class="btn btn-primary">🎁 Gift to Someone</a></p>
+            <p><a href="/birdypet/release/<%= birdypet.id %>" class="btn btn-primary">👋 Release Bird</a></p>
           </div>
 
           <%- include('../partials/spacer.ejs'); %>
@@ -98,31 +98,31 @@
 
         <h6>Common Name</h6>
         <p>
-          <a href="/birdypedia/bird/<%= memberpet.species.speciesCode %>"><%= memberpet.species.commonName %></a>
+          <a href="/birdypedia/bird/<%= birdypet.bird.code %>"><%= birdypet.bird.name %></a>
         </p>
 
         <h6>Scientific Name</h6>
-        <p><%= memberpet.species.scientificName %></p>
+        <p><%= birdypet.bird.scientific %></p>
 
         <h6>Family</h6>
-        <p><a href="/birdypedia?family=<%= memberpet.species.family %>"><%= memberpet.species.family %></a></p>
+        <p><a href="/birdypedia?family=<%= birdypet.bird.family %>"><%= birdypet.bird.family %></a></p>
 
         <h6>Order</h6>
-        <p><%= memberpet.species.order %></p>
+        <p><%= birdypet.bird.order %></p>
 
-        <% if (memberpet.label) { %>
+        <% if (birdypet.illustration.label) { %>
         <h6>Variant</h6>
-        <p><%= memberpet.label %></p>
+        <p><%= birdypet.illustration.label %></p>
         <% } %>
 
         <h6>Hatch Date</h6>
-        <p><%= new Date(memberpet.hatchedAt * 1).toLocaleString('en-US', { dateStyle: "long" }) %></p>
+        <p><%= new Date(birdypet.hatchedAt * 1).toLocaleString('en-US', { dateStyle: "long" }) %></p>
 
-        <% if (memberpet.flocks.length > 0) { %>
+        <% if (birdypet.flocks.length > 0) { %>
         <h6>Flocks</h6>
         <p>
         <% for (var flock of member.flocks) { %>
-          <% if (memberpet.flocks.includes(flock.id)) { %>
+          <% if (birdypet.flocks.includes(flock.id)) { %>
           <a href="/flocks/<%= flock.id %>"><%= flock.name %></a><br>
           <% } %>
         <% } %>
@@ -132,7 +132,7 @@
     </div>
 
     <script type="text/javascript">
-      $('select[name="variant"]').change(function() {
+      $('select[name="illustration"]').change(function() {
         var option = this.options[this.options.selectedIndex];
         var birdy = document.getElementById('birdy');
 
@@ -144,7 +144,7 @@
         $.ajax({
             cache: false,
             url: '/api/member',
-            data: JSON.stringify({ birdyBuddy : "<%= memberpet.id %>" }),
+            data: JSON.stringify({ birdyBuddy : "<%= birdypet.id %>" }),
             dataType: 'json',
             contentType: 'application/json',
             method: 'PUT',
@@ -163,7 +163,7 @@
           form.classList.add('loadingData');
 
           var data = {
-            memberpet: "<%= memberpet.id %>",
+            birdypet: "<%= birdypet.id %>",
             flocks: []
           }
 
@@ -178,7 +178,7 @@
 
           $.ajax({
             cache: false,
-            url: '/api/memberpet',
+            url: '/api/birdypet',
             data: JSON.stringify(data),
             dataType: 'json',
             contentType: 'application/json',

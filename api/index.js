@@ -3,14 +3,20 @@ exports.api = (req, res) => {
     delete req.query.sort;
   }
 
-  console.info(req.method, req.path, JSON.stringify(req.method == "GET" || req.method == "HEAD" ? req.query : req.body));
-
   try {
-    let route = req.path.match(/\/?(\b[A-Za-z]+\b)/);
+    let route = req.path.match(/\/?(\b[A-Za-z\_]+\b)/)[0];
 
-    require(`./endpoints/${route[0]}.js`)(req, res);
+    console.log(req.method, route, (req.body || req.query));
+
+    require(`./endpoints/${route}.js`)(req, res);
   } catch (err) {
     console.error(err);
     res.sendStatus(404);
   }
+}
+
+exports.background = (message, context) => {
+  const PubSub = require('./helpers/pubsub.js');
+
+  return PubSub.receive(message, context);
 }

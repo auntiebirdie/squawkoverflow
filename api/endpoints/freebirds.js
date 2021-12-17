@@ -1,47 +1,47 @@
-const BirdyPet = require('../models/birdypet.js');
+const Illustration = require('../models/illustration.js');
+const Cache = require('../helpers/cache.js');
 const Redis = require('../helpers/redis.js');
 
-module.exports = async (req, res) => {
+module.exports = (req, res) => {
   switch (req.method) {
     case "GET":
-      let data = [];
-      let freebirds = await Redis.scan('freebird', {
-        KEYSONLY: true
-      });
+      let promises = [];
 
-      if (freebirds.length > 0) {
-        let ids = [];
-        let limit = req.query?.limit || 24;
+      Cache.get('cache', 'freebirds').then(async (freebirds) => {
+        if (freebirds.length > 0) {
+          let ids = [];
+          let limit = req.query?.limit || 24;
 
-        freebirds.sort(() => .5 - Math.random());
+          freebirds.sort(() => .5 - Math.random());
 
-        for (let i = 0, len = freebirds.length; i < len; i++) {
-          try {
-            let birdypet = new BirdyPet(await Redis.get('freebird', freebirds[i]));
+          for (let i = 0, len = freebirds.length; i < len; i++) {
+            try {
+              let illustration = new Illustration(freebirds[i]);
 
-            if (!ids.includes(birdypet.id)) {
-              if (req.query?.loggedInUser) {
-                await birdypet.fetchMemberData(req.query.loggedInUser);
+              if (!ids.includes(illustration.id)) {
+                promises.push(illustration.fetch({
+                  include: ['memberData'],
+                  member: req.query.loggedInUser
+                }));
+
+                ids.push(illustration.id);
+
+                if (ids.length == limit) {
+                  break;
+                }
               }
-
-              birdypet.freebirdId = freebirds[i];
-
-              ids.push(birdypet.id);
-              data.push(birdypet);
-
-              if (data.length == limit) {
-                break;
-              }
+            } catch (err) {
+              console.error(err);
             }
-          } catch (err) {
-            console.error(freebirds[i], err);
           }
         }
-      }
 
-      res.json({
-        totalPages: 0,
-        results: data
+        Promise.all(promises).then((data) => {
+          res.json({
+            totalPages: 0,
+            results: data
+          });
+        });
       });
 
       break;

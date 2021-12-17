@@ -5,50 +5,50 @@ const API = require('../helpers/api.js');
 const express = require('express');
 const router = express.Router();
 
-router.get('/:memberpet/gift', Middleware.isLoggedIn, async (req, res) => {
-  let memberpet = await API.call('memberpet', 'GET', {
-    id: req.params.memberpet
+router.get('/:birdypet/gift', Middleware.isLoggedIn, async (req, res) => {
+  let birdypet = await API.call('birdypet', 'GET', {
+    id: req.params.birdypet
   });
 
   let members = await API.call('members', 'GET', {
     privacy: 'gifts'
   });
 
-  if (memberpet.member == req.session.user) {
+  if (birdypet.member == req.session.user) {
     res.render('birdypet/gift', {
-      memberpet: memberpet,
+      birdypet: birdypet,
       members: members,
       selectedMember: req.query.member ? req.query.member : null
     });
   } else {
-    res.redirect(`/birdypet/${req.params.memberpet}`);
+    res.redirect(`/birdypet/${req.params.birdypet}`);
   }
 });
 
-router.get('/release/:memberpet', (req, res) => {
-  API.call('memberpet', 'GET', {
-    id: req.params.memberpet
-  }).then((memberpet) => {
+router.get('/release/:birdypet', (req, res) => {
+  API.call('birdypet', 'GET', {
+    id: req.params.birdypet
+  }).then((birdypet) => {
     res.render('birdypet/release', {
-      memberpet: memberpet
+      birdypet: birdypet
     });
   });
 });
 
-router.get('/:memberpet', async (req, res) => {
-  let memberpet = await API.call('memberpet', 'GET', {
-    id: req.params.memberpet,
+router.get('/:birdypet', async (req, res) => {
+  let birdypet = await API.call('birdypet', 'GET', {
+    id: req.params.birdypet,
     member: req.session.user,
-    fetch: req.session.user ? ['memberData', 'variants'] : []
+    fetch: req.session.user ? ['memberData'] : []
   });
 
   let member = await API.call('member', 'GET', {
-    id: memberpet.member,
-	  include: ['flocks', 'birdyBuddy']
+    id: birdypet.member,
+    include: ['flocks']
   });
 
   res.render('birdypet/birdypet', {
-    memberpet: memberpet,
+    birdypet: birdypet,
     member: member
   });
 });

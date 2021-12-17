@@ -1,19 +1,19 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { title : bird.commonName, breadcrumb : "Birdypedia" }) %>
+    <%- include('../partials/page-title.ejs', { title : bird.name, breadcrumb : "Birdypedia" }) %>
 
     <div class="row">
       <div class="col-md-8 mb-3">
         <div class="text-center">
           <div class="d-inline-block position-relative">
-            <img id="birdy" class="bg-white birdypet full border border-1 <%= bird.variants[0].owned > 0 ? "hatched" : "unhatched" %>" src="<%= bird.variants[0].image %>">
-            <a class="attribution bg-light" href="<%= bird.variants[0].source %>" target="_blank">&copy; <%= bird.variants[0].credit %></a>
+            <img id="birdy" class="bg-white birdypet full border border-1 <%= bird.illustrations[0].hatched ? "hatched" : "unhatched" %>" src="<%= bird.illustrations[0].image %>">
+            <a class="attribution bg-light" href="<%= bird.illustrations[0].source %>" target="_blank">&copy; <%= bird.illustrations[0].credit %></a>
           </div>
         </div>
       </div>
       <div class="col-md-4 border-md-start text-center text-md-start">
         <h5>Scientific Name</h5>
-        <p><%= bird.scientificName %></p>
+        <p><%= bird.scientific %></p>
 
         <h5 class="pt-3">Family</h5>
         <p><a href="/birdypedia?family=<%= bird.family %>"><%= bird.family %></a></p>
@@ -21,13 +21,13 @@
         <h5 class="pt-3">Order</h5>
         <p><%= bird.order %></p>
 
-        <% if (bird.variants.length > 1) { %>
+        <% if (bird.illustrations.length > 1) { %>
         <h5 class="pt-3">Variants</h5>
           <div id="birdDisplay">
-          <% for (var variant of bird.variants) { %>
+          <% for (var variant of bird.illustrations) { %>
             <p>
-              <div class="bg-white border border-1 birdypet mini <%= variant.owned > 0 ? "hatched" : "unhatched" %>" data-id="<%= `${variant.prefix}-${variant.alias}` %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" style="background-image: url('<%= variant.image %>');"></div>
-              <%= variant.label %> <%- variant.owned > 0 ? "<span class=\"checkmark\"></span>" : "" %>
+              <div class="bg-white border border-1 birdypet mini <%= variant.hatched ? "hatched" : "unhatched" %>" data-id="<%= `${variant.prefix}-${variant.alias}` %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" style="background-image: url('<%= variant.image %>');"></div>
+              <%= variant.label %> <%- variant.hatched ? "<span class=\"checkmark\"></span>" : "" %>
             </p>
           <% } %>
           </div>

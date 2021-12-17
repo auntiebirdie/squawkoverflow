@@ -1,10 +1,10 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { breadcrumb : "Release", title : memberpet.nickname? `${memberpet.nickname} (${memberpet.species.commonName})` : `${memberpet.species.commonName}   ${memberpet.label}` }) %>
+    <%- include('../partials/page-title.ejs', { breadcrumb : "Release", title : birdypet.nickname? birdypet.nickname : birdypet.species }) %>
 
     <div class="row">
       <div class="col-md-6">
-        <img class="birdypet full mt-4 mb-4" src="<%= memberpet.image %>">
+        <img class="birdypet full mt-4 mb-4" src="<%= birdypet.illustration.image %>">
       </div>
       <div class="col-md-6">
         <h4>Are you sure you want to release this bird?</h4>
@@ -29,7 +29,7 @@
                 cache: false,
                 url: `/api/release`,
                 data: JSON.stringify({
-                  memberpet : '<%= memberpet.id %>'
+                  birdypet : '<%= birdypet.id %>'
                 }),
                 dataType: "json",
                 method: "POST",

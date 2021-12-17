@@ -6,30 +6,19 @@
   "scripts": {
     "start": "node index.js",
     "deploy": "gcloud app deploy --version squawkoverflow",
-    "update-indexes": "gcloud datastore indexes create db/index.yaml"
+    "update-indexes": "gcloud datastore indexes create db/index.yaml",
+    "dev": "DEV=true node --trace-warnings index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/rest": "^0.1.0-canary.0",
     "@google-cloud/connect-datastore": "^5.0.3",
     "@google-cloud/datastore": "^6.5.0",
-    "@google-cloud/functions": "^1.2.0",
-    "@google-cloud/pubsub": "^2.18.1",
-    "@google-cloud/storage": "^5.14.2",
-    "axios": "^0.21.4",
-    "chance": "^1.1.8",
-    "cheerio": "^1.0.0-rc.10",
-    "csv-parser": "^3.0.0",
-    "discord-oauth2": "^2.7.1",
-    "discord.js": "^13.1.0",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
-    "express-session": "^1.17.2",
-    "jimp": "^0.16.1",
-    "prompt": "^1.2.0",
-    "redis": "^3.1.2",
-    "short-uuid": "^4.2.0",
-    "shorter": "^0.3.1"
+    "express-session": "^1.17.2"
+  },
+  "devDependencies": {
+    "trace-unhandled": "^2.0.1"
   }
 }

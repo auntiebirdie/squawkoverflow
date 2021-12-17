@@ -1,7 +1,6 @@
 const API = require('../helpers/api.js');
 const Middleware = require('../helpers/middleware.js');
 
-const helpers = require('../helpers');
 const express = require('express');
 const router = express.Router();
 

@@ -34,7 +34,7 @@ class Birds {
   }
 
   random(key, value) {
-    var matchingBirds = this.fetch(key, value);
+    var matchingBirds = key && value ? this.fetch(key, value) : [];
 
     return (matchingBirds.length > 0 ? matchingBirds : this.all()).sort(() => .5 - Math.random())[0];
   }

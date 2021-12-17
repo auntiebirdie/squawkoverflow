@@ -1,9 +1,8 @@
 const Birds = require('../collections/birds.js');
-const BirdyPets = require('../collections/birdypets.js');
-
-var birdsPerPage = 24;
+const Bird = require('../models/bird.js');
 
 module.exports = async (req, res) => {
+  var birdsPerPage = 24;
   var page = (--req.query.page || 0) * birdsPerPage;
   var output = [];
 
@@ -22,14 +21,15 @@ module.exports = async (req, res) => {
 
   birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
 
-  for (var i = page, len = Math.min(page + birdsPerPage, birds.length); i < len; i++) {
-    let birdypets = new BirdyPets('speciesCode', birds[i].speciesCode).filter((birdypet) => !birdypet.special);
+  for (let i = page, len = Math.min(page + birdsPerPage, birds.length); i < len; i++) {
+    let bird = new Bird(birds[i].speciesCode);
 
-    if (req.query.loggedInUser) {
-      birdypets.forEach((birdypet) => promises.push(birdypet.fetchMemberData(req.query.loggedInUser)));
-    }
+    promises.push(bird.fetch({
+      include: ['illustrations', 'memberData'],
+      member: req.query.loggedInUser
+    }));
 
-    output.push(birdypets);
+    output.push(bird);
   }
 
   await Promise.all(promises).then(() => {

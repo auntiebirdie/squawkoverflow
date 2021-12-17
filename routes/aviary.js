@@ -4,9 +4,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/:member', async (req, res, next) => {
-  let member = null;
-
-    member = await API.call('member', 'GET', {
+  let member = await API.call('member', 'GET', {
       id: req.params.member,
       flocks: true,
       families: true

@@ -1,16 +1,18 @@
-const BirdyPets = require('../collections/birdypets.js');
+const Bird = require('../models/bird.js');
 const Cache = require('../helpers/cache.js');
+const Counters = require('../helpers/counters.js');
 const Member = require('../models/member.js');
+const Search = require('../helpers/search.js');
 
-var birdsPerPage = 24;
+const birdsPerPage = 24;
 
 module.exports = async (req, res) => {
   let member = new Member(req.body?.loggedInUser || req.query?.id);
 
   switch (req.method) {
     case "HEAD":
-      let families = await Cache.get('wishlist', req.query.id).then( (results) => {
-	      return Object.keys(results);
+      let families = await Cache.get('wishlist', req.query.id).then((results) => {
+        return Object.keys(results);
       });
 
       res.setHeader('SQUAWK', JSON.stringify(families));
@@ -23,6 +25,7 @@ module.exports = async (req, res) => {
       let birds = await member.fetchWishlist(req.query.family);
 
       let output = [];
+		  let promises = [];
 
       if (req.query.search) {
         birds = birds.filter((bird) => bird.commonName.toLowerCase().includes(req.query.search.toLowerCase()) || bird.nickname?.toLowerCase().includes(req.query.search.toLowerCase()));
@@ -33,22 +36,21 @@ module.exports = async (req, res) => {
       birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
 
       for (let i = page, len = Math.min(page + birdsPerPage, birds.length); i < len; i++) {
-        birds[i].hatched = req.query.loggedInUser ? await Cache.get(`species-${birds[i].speciesCode}`, req.query.loggedInUser, "s").then((response) => response.length > 0) : false;
+        let bird = new Bird(birds[i].speciesCode);
 
-        birds[i].variants = new BirdyPets('speciesCode', birds[i].speciesCode).filter((birdypet) => !birdypet.special).map((variant) => {
-          return {
-            id: variant.id,
-            image: variant.image,
-            label: variant.label
-          };
-        });
+        promises.push(bird.fetch({
+          include: ['illustrations', 'memberData'],
+          member: req.query.loggedInUser
+        }));
 
-        output.push(birds[i]);
+        output.push(bird);
       }
 
-      return res.json({
-        totalPages: Math.ceil(totalPages / birdsPerPage),
-        results: output
+      Promise.all(promises).then(() => {
+        return res.json({
+          totalPages: Math.ceil(totalPages / birdsPerPage),
+          results: output
+        });
       });
       break;
     case "POST":

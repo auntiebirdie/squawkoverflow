@@ -1,45 +1,14 @@
 const Member = require('../models/member.js');
-const MemberPet = require('../models/memberpet.js');
+const BirdyPet = require('../models/birdypet.js');
 
-const Cache = require('../helpers/cache.js');
-const Counters = require('../helpers/counters.js');
 const Webhook = require('../helpers/webhook.js');
-const Redis = require('../helpers/redis.js');
-
-const birdsPerPage = 24;
+const Search = require('../helpers/search.js');
 
 module.exports = async (req, res) => {
   switch (req.method) {
     case "GET":
-      var page = req.query.page || 1;
-      var offset = --page * birdsPerPage;
-      var filters = [
-        `@member:{${req.query.loggedInUser}}`,
-        req.query.family ? `@family:${req.query.family}` : '',
-        req.query.flock ? `@flocks:{${req.query.flock}}` : '',
-        req.query.search ? `@nickname|species:${Redis.escape(req.query.search)}` : ''
-      ].join(' ');
-
-      await Redis.fetch('memberpet', {
-        'FILTER': filters,
-        'SORTBY': req.query.sort ? JSON.parse(req.query.sort) : null,
-        'LIMIT': [offset, birdsPerPage]
-      }).then(async (response) => {
-        var wishlist = await Cache.get('wishlist', req.query.member);
-        var output = [];
-
-        for (var result of response.results) {
-          var memberpet = new MemberPet(result._id);
-
-          await memberpet.fetch({ fetchMemberData: req.query.member });
-
-		output.push(memberpet);
-        }
-
-        res.json({
-          totalPages: Math.ceil(response.count / birdsPerPage),
-          results: output
-        });
+      Search.get(req.query).then((results) => {
+        res.json(results);
       });
       break;
     case "POST":
@@ -47,39 +16,30 @@ module.exports = async (req, res) => {
         return res.sendStatus(401);
       }
 
-      let memberpet = new MemberPet(req.body.memberpet);
+      let birdypet = new BirdyPet(req.body.birdypet);
 
-      await memberpet.fetch();
+      await birdypet.fetch();
 
       let fromMember = new Member(req.body.loggedInUser);
       let toMember = new Member(req.body.member);
 
-      if (memberpet.member == fromMember.id) {
-        await Promise.all([
-          fromMember.fetch(),
-          toMember.fetch(),
-          Counters.increment(1, 'species', toMember.id, memberpet.species.speciesCode),
-          Counters.increment(-1, 'species', fromMember.id, memberpet.species.speciesCode)
-        ]);
+      if (birdypet.member == fromMember.id) {
+        await fromMember.fetch();
 
-        if (toMember.settings.general?.includes('updateWishlist')) {
-          await toMember.updateWishlist(memberpet.species.speciesCode, "remove");
-        }
-
-        await memberpet.set({
-          member: toMember.id,
-          flocks: "NONE",
+        await birdypet.set({
+          member: req.body.member,
+          flocks: [],
           friendship: 0
         });
 
         await Webhook('exchange', {
           content: `${fromMember.username} has sent <@${toMember.id}> a gift!`,
           embeds: [{
-            title: memberpet.species.commonName,
-            description: memberpet.label || " ",
-            url: `https://squawkoverflow.com/birdypet/${memberpet.id}`,
+            title: birdypet.nickname || birdypet.bird.name,
+            description: birdypet.illustration.label || " ",
+            url: `https://squawkoverflow.com/birdypet/${birdypet.id}`,
             image: {
-              url: memberpet.image
+              url: birdypet.illustration.image
             }
           }]
         });

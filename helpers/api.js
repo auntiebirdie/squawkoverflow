@@ -18,10 +18,12 @@ exports.call = (endpoint, method = "GET", data = {}) => {
       }
 
       let res = {
-        sendStatus: console.log,
+        sendStatus: resolve,
+        setHeader: function(header, value) {
+          resolve(value);
+        },
         json: resolve,
         status: function(code) {
-          console.log(code);
           return this;
         }
       };

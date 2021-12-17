@@ -1,14 +1,15 @@
 const Database = require('./database.js');
 const Redis = require('./redis.js');
+const Search = require('./search.js');
 
 const Birds = require('../collections/birds.js');
 
 class Counters {
-  get(...args) {
+  get(kind, member, id) {
     return new Promise((resolve, reject) => {
-      Redis.connect('cache').get(args.join(':'), (err, value) => {
+      Redis.connect('cache').get(`${kind}:${member}:${id}`, (err, value) => {
         if (err || value == null || typeof value == "undefined") {
-          resolve(this.refresh(...args));
+          resolve(this.refresh(kind, member, id));
         } else {
           resolve(value * 1);
         }
@@ -16,73 +17,83 @@ class Counters {
     });
   }
 
-  refresh(...args) {
+  refresh(kind, member, id) {
     return new Promise(async (resolve, reject) => {
       let promises = [];
 
-      switch (args[0]) {
+      switch (kind) {
         case 'eggs':
           let eggs = require('../data/eggs.json');
+          let value = 0;
+          let start = 0;
+          let end = eggs[id].species.length;
 
-          for (let species of eggs[args[2]].species) {
-            promises.push(this.get('species', args[1], species));
-          }
+          do {
+            promises = [];
 
-          await Promise.all(promises).then((responses) => {
-            let value = 0;
-
-            for (var response of responses) {
-              if (response * 1 > 0) {
-                value++;
-              }
+            for (let i = start, len = Math.min(end, start + 250); i < len; i++, start++) {
+              promises.push(this.get('species', member, eggs[id].species[i]));
             }
-            resolve(value);
-          });
+
+            await Promise.all(promises).then((responses) => {
+              for (let response of responses) {
+                if (response * 1 > 0) {
+                  value++;
+                }
+              }
+            });
+          }
+          while (start < end);
+
+          resolve(value);
 
           break;
         case 'species':
-          Redis.fetch('memberpet', {
-            'FILTER': `@member:{${args[1]}} @birdypetSpecies:{${args[2]}}`,
-            'COUNT': true
+          Database.fetch({
+            kind: 'BirdyPet',
+            filters: [
+              ['member', '=', member],
+              ['speciesCode', '=', id]
+            ],
+            keysOnly: true
           }).then((response) => {
-            resolve(response.count * 1);
+            resolve(response.length * 1);
           });
           break;
-	      default:
-		      reject();
+        case 'birdypets':
+          Database.fetch({
+            kind: 'BirdyPet',
+            filters: [
+              ['member', '=', member],
+              ['illustration', '=', id]
+            ],
+            keysOnly: true
+          }).then((response) => {
+            resolve(response.length * 1);
+          });
+          break;
+        default:
+          reject(404);
       }
     }).then(async (value) => {
-      await Redis.connect('cache').set(args.join(':'), value);
-      await Redis.connect('cache').sendCommand('EXPIRE', [args.join(':'), 604800]);
+      Redis.connect('cache').set(`${kind}:${member}:${id}`, value);
+      Redis.connect('cache').sendCommand('EXPIRE', [`${kind}:${member}${id}`, 604800]);
 
       return value;
     });
   }
 
-  increment(value, ...args) {
-    let promises = [];
+  increment(value, kind, member, id, cascade = false) {
     value *= 1;
 
     return new Promise((resolve, reject) => {
-      this.get(...args).then(async (currValue) => {
-
+      this.get(kind, member, id).then(async (currValue) => {
         if (currValue + value >= 0) {
           let newValue = currValue + value;
+          let promises = [];
 
-          switch (args[0]) {
-            case 'species':
-              if (newValue < 2) {
-                let bird = Birds.findBy('speciesCode', args[2]);
-
-                for (let adjective of bird.adjectives) {
-                  promises.push(this.increment(newValue == 1 ? 1 : -1, 'eggs', args[1], adjective));
-                }
-              }
-              break;
-          }
-
-          promises.push(Redis.connect('cache').sendCommand('INCRBY', [args.join(':'), value]));
-          promises.push(Redis.connect("cache").sendCommand('EXPIRE', [args.join(':'), 604800]));
+          Redis.connect('cache').sendCommand('INCRBY', [`${kind}:${member}:${id}`, value]);
+          Redis.connect("cache").sendCommand('EXPIRE', [`${kind}:${member}:${id}`, 604800]);
 
           Promise.all(promises).then(() => {
             resolve(newValue);

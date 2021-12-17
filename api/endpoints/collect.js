@@ -1,76 +1,48 @@
 const BirdyPet = require('../models/birdypet.js');
 const Member = require('../models/member.js');
-const MemberPet = require('../models/memberpet.js');
 
 const Counters = require('../helpers/counters.js');
-const Redis = require('../helpers/redis.js');
-const Webhook = require('../helpers/webhook.js');
+const PubSub = require('../helpers/pubsub.js');
+const Search = require('../helpers/search.js');
 
 module.exports = (req, res) => {
-    return new Promise(async (resolve, reject) => {
-      if (!req.body.loggedInUser) {
-        resolve(res.status(401).send());
-      }
+  return new Promise(async (resolve, reject) => {
+    if (!req.body.loggedInUser) {
+      resolve(res.status(401).send());
+    }
 
-      let memberpet = new MemberPet();
-      let member = new Member(req.body.loggedInUser);
-      let birdypet = null;
-      let promises = [];
+    let birdypet = new BirdyPet();
+    let promises = [];
 
-      if (req.body.freebird) {
-        birdypet = new BirdyPet(await Redis.get('freebird', req.body.freebird));
-      } else {
-        birdypet = new BirdyPet(req.body.birdypet);
-      }
-
-      if (birdypet.species) {
-        await memberpet.create({
-          birdypet: birdypet.id,
-          member: member.id
-        });
-
-        if (memberpet.id) {
-          await member.fetch();
-
-          await Counters.increment(1, 'species', member.id, birdypet.species.speciesCode);
-
-          if (member.settings.general?.includes('updateWishlist')) {
-            member.updateWishlist(memberpet.birdypetSpecies, "remove");
-          }
-
-          if (req.body.adjective) {
-            promises.push(member.set({
-              lastHatchedAt: Date.now()
-            }));
-
-            if (!member.settings.privacy?.includes('activity') && req.headers['x-forwarded-for']) {
-              await Webhook('egg-hatchery', {
-                content: " ",
-                embeds: [{
-                  title: birdypet.species.commonName,
-                  description: `<@${member.id}> hatched the ${req.body.adjective} egg!`,
-                  url: `https://squawkoverflow.com/birdypet/${memberpet.id}`,
-                  image: {
-                    url: birdypet.image
-                  }
-                }]
-              });
-            }
-          } else if (req.body.freebird) {
-            promises.push(Redis.delete('freebird', req.body.freebird));
-          }
-
-          await Promise.all(promises).then(() => {
-            resolve(res.json(memberpet));
-          });
-        } else {
-          resolve(res.status(404).send());
-        }
-      } else {
-        resolve(res.status(404).send());
-      }
-    }).catch( (err) => {
-	    console.error("uwu crash");
-	    console.error(err);
+    await birdypet.create({
+      illustration: req.body.illustration,
+      member: req.body.loggedInUser
     });
+
+    if (req.body.adjective) {
+      promises.push(Counters.increment(1, 'eggs', req.body.loggedInUser, req.body.adjective));
+    }
+
+    promises.push(Counters.increment(1, 'species', req.body.loggedInUser, birdypet.bird.code));
+    promises.push(Counters.increment(1, 'birdypets', req.body.loggedInUser, req.body.illustration));
+
+    promises.push(PubSub.publish('background', 'COLLECT', {
+      birdypet: birdypet.id,
+      member: req.body.loggedInUser,
+      illustration: req.body.illustration,
+      adjective: req.body.adjective,
+      freebird: req.body.freebird
+    }));
+
+    Promise.all(promises).then(() => {
+      if (birdypet.id) {
+        resolve(res.json(birdypet));
+      } else {
+        resolve(res.sendStatus(404));
+      }
+    });
+  }).catch((err) => {
+    console.error("uwu crash");
+    console.error(err);
+  });
 };

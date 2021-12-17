@@ -58,13 +58,13 @@
       $('input').on('change', function (e) {
         var input = this;
 
-        if (!input.classList.contains('loadingData')) {
+        if (!input.parentNode.classList.contains('loadingData')) {
           var settings = {};
           var type = input.type;
           var key = input.name;
           var value = input.value;
 
-          input.classList.add('loadingData');
+          input.parentNode.classList.add('loadingData');
 
           switch (type) {
             case 'radio':
@@ -94,9 +94,8 @@
               if (key == 'theme') {
                 window.location.reload();
               }
-              else {
-                input.classList.remove('loadingData');
-              }
+
+              input.parentNode.classList.remove('loadingData');
             }
           });
         }

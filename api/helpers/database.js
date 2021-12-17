@@ -1,3 +1,5 @@
+const uuid = require('short-uuid');
+
 const {
   Datastore
 } = require('@google-cloud/datastore');
@@ -72,19 +74,27 @@ Database.prototype.create = function(kind, data, uniqueField = false) {
 
 Database.prototype.save = function(kind, id, data) {
   return new Promise((resolve, reject) => {
-    var key = this.key(kind, id);
+	     if (!id) {
+      id = uuid.generate();
+    }
+
+    var key = this.key(kind, `${id}`);
 
     datastore.save({
       key: key,
       data: data
     }).then(() => {
-      return resolve(key.id);
+      return resolve(key.name);
+    }).catch( (err) => {
+	    console.log(err);
     });
+  }).catch( (err) => {
+	  console.log(err);
+	  return null;
   });
 }
 
 Database.prototype.delete = function(kind, id) {
-
   return new Promise((resolve, reject) => {
     datastore.delete(this.key(kind, id)).then(() => {
       return resolve();
@@ -95,6 +105,7 @@ Database.prototype.delete = function(kind, id) {
 Database.prototype.fetch = function({
   kind,
   filters,
+  select,
   order,
   limit,
   keysOnly
@@ -115,6 +126,10 @@ Database.prototype.fetch = function({
     if (limit) {
       query.limit(limit);
     }
+
+	  if (select) {
+		  query.select(select);
+	  }
 
     if (keysOnly) {
       query.select('__key__');

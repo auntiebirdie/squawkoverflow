@@ -1,43 +1,37 @@
-const Counters = require('../helpers/counters.js');
-const MemberPet = require('../models/memberpet.js');
-const Redis = require('../helpers/redis.js');
+const BirdyPet = require('../models/birdypet.js');
+const PubSub = require('../helpers/pubsub.js');
 
 module.exports = async (req, res) => {
   if (!req.body.loggedInUser) {
     return res.sendStatus(401);
   }
 
-  let birdypet = null;
+  let illustration = null;
 
-  if (req.body.birdypet) {
-    let birdypets = require('../data/birdypets.json');
+  if (req.body.illustration) {
+    illustration = req.body.illustration;
+  } else if (req.body.birdypet) {
+    let birdypet = new BirdyPet(req.body.birdypet);
 
-    birdypet = birdypets.find((birdypet) => birdypet.id == req.body.birdypet);
+    await birdypet.fetch();
 
     if (!birdypet) {
       return res.sendStatus(404);
-    }
-  } else if (req.body.memberpet) {
-    let memberpet = new MemberPet(req.body.memberpet);
-
-    await memberpet.fetch();
-
-    if (!memberpet) {
-      return res.sendStatus(404);
-    } else if (memberpet.member != req.body.loggedInUser) {
+    } else if (birdypet.member != req.body.loggedInUser) {
       return res.sendStatus(401);
     }
 
-    birdypet = {
-      id: memberpet.birdypetId
-    };
+    illustration = birdypet.illustration.id;
 
-    await memberpet.delete();
-    await Counters.increment(-1, 'species', memberpet.member, memberpet.species.speciesCode);
+    await birdypet.delete();
   }
 
-  if (birdypet) {
-    await Redis.create('freebird', birdypet.id);
+  if (illustration) {
+    PubSub.publish('background', 'RELEASE', {
+	    member: req.body.loggedInUser,
+	    birdypet: req.body.birdypet,
+	    illustration: illustration
+    });
 
     return res.sendStatus(200);
   } else {
