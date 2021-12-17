@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
       let toMember = new Member(req.body.member);
 
       if (birdypet.member == fromMember.id) {
-	      await fromMember.fetch();
+        await fromMember.fetch();
 
         await birdypet.set({
           member: req.body.member,

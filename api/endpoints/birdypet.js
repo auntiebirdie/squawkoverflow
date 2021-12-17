@@ -36,10 +36,6 @@ module.exports = async (req, res) => {
           await member.set({
             lastHatchedAt: Date.now()
           });
-
-          if (!member.settings.privacy?.includes('activity') && req.headers['x-forwarded-for']) {
-		  // TODO : webhook
-          }
         }
 
         return res.status(200).json(birdypet.id);
@@ -58,35 +54,29 @@ module.exports = async (req, res) => {
       await birdypet.fetch();
 
       if (birdypet.member == member.id) {
-        let nickname = req.body.nickname || birdypet.nickname || "";
-        let variant = req.body.variant || birdypet.illustration.id;
-        let description = req.body.description || birdypet.description || "";
-        let flocks = req.body.flocks || birdypet.flocks || [];
+        let toUpdate = {};
 
-        if (nickname.length > 50) {
-          nickname = nickname.slice(0, 50);
-        }
+        for (let key in req.body) {
+          switch (key) {
+            case 'nickname':
+            case 'description':
+            case 'illustration':
+              toUpdate[key] = req.body[key];
+              break;
+            case 'flock':
+              let flocks = birdypet.flocks || [];
 
-        if (description.length > 500) {
-          description = description.slice(0, 500);
-        }
+              let index = flocks.indexOf(req.body.flock);
 
-        if (req.body.flock) {
-          let index = flocks.indexOf(req.body.flock);
-
-          if (index !== -1) {
-            flocks = flocks.filter( (flock) => flock != req.body.flock);
-          } else {
-            flocks.push(req.body.flock);
+              if (index !== -1) {
+                flocks = flocks.filter((flock) => flock != req.body.flock);
+              } else {
+                flocks.push(req.body.flock);
+              }
           }
         }
 
-        await birdypet.set({
-          nickname: nickname,
-          description: description,
-          illustration: variant,
-          flocks: flocks
-        });
+        await birdypet.set(toUpdate);
 
         return res.sendStatus(200);
       } else {

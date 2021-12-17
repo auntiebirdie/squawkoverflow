@@ -89,7 +89,7 @@ class BirdyPet {
       }
 
       Promise.all(promises).then(() => {
-	      Cache.refresh('birdypet', this.id).then(resolve);
+        Cache.refresh('birdypet', this.id).then(resolve);
       });
     });
   }
