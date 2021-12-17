@@ -20,22 +20,26 @@ module.exports = async (req, res) => {
 
       toUpdate.settings = member.settings;
 
-      if (req.body.settings) {
-        Object.keys(req.body.settings).filter((val) => ["theme", "general", "privacy"].includes(val)).forEach((key) => {
-          if (key == "theme") {
-            toUpdate.settings[key] = req.body.settings[key];
-          } else {
-            toUpdate.settings[key] = req.body.settings[key].split(',');
-          }
-        });
-      }
-
-      if (req.body.birdyBuddy) {
-        toUpdate.birdyBuddy = req.body.birdyBuddy;
-      }
-
-      if (req.body.pronouns) {
-        toUpdate.pronouns = JSON.parse(req.body.pronouns);
+      for (let key in req.body) {
+        switch (key) {
+          case "birdyBuddy":
+          case "username":
+          case "avatar":
+            toUpdate[key] = req.body[key];
+            break;
+          case "pronouns":
+            toUpdate[key] = JSON.parse(req.body[key]);
+            break;
+          case "settings":
+            Object.keys(req.body.settings).filter((val) => ["theme", "general", "privacy"].includes(val)).forEach((key) => {
+              if (key == "theme") {
+                toUpdate.settings[key] = req.body.settings[key];
+              } else {
+                toUpdate.settings[key] = req.body.settings[key].split(',');
+              }
+            });
+            break;
+        }
       }
 
       await member.set(toUpdate);
