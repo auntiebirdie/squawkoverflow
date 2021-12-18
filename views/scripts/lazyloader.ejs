@@ -4,6 +4,7 @@
   var container = document.getElementById('lazyLoader');
   var endpoint = container.getAttribute('data-endpoint');
   var search = document.getElementById('search');
+  var paginations = document.querySelectorAll('.pagination');
   var currentPage = <%= locals.paginate || 1 %>;
   var totalPages = 0;
   var timeout;
@@ -129,7 +130,6 @@
   }
 
   function updatePagination () {
-    var paginations = document.querySelectorAll('.pagination');
     var content = "";
 
     if (currentPage > 3) {
