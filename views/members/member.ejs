@@ -83,6 +83,17 @@
   </div>
   <% } %>
 
+  <% if (member.featuredFlock) { %>
+    <%- include('../partials/spacer.ejs') %>
+
+    <h4 class="mb-5"><%= member.featuredFlock.name %></h4>
+
+    <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"member":"<%= member.id %>","flock":"<%= member.featuredFlock.id %>"}'></div>
+
+    <%- include('../scripts/lazyloader.ejs') %>
+  <% } %>
+
+
   <% if (member.aviary._total > 0) { %>
 
     <%- include('../partials/spacer.ejs') %>
@@ -92,26 +103,17 @@
     <div class="row">
       <% for (var family of member.families) { %>
         <% if (family.owned > 0) { %>
-          <div class="col-6 col-md-4 col-lg-3 mb-2">
-            <h5><%= family.value %></h5>
+          <div class="col-6 col-md-4 col-lg-3 mb-4">
+            <h5><a href="/birdypedia?family=<%= family.value %>"><%= family.value %></a></h5>
+            <h6 class="small"><small>(<%= family.label.split(' (').pop() %></small></h6>
             <% var prct = family.owned / family.total * 100; %>
-            <div class="progress">
+            <div class="progress mx-2">
               <div class="progress-bar<%= prct == 100 ? " bg-success" : "" %>" style="width: <%= prct %>%" role="progressbar" aria-valuenow="<%= family.owned %>" aria-valuemin="0" aria-valuemax="<%= family.total %>"></div>
             </div>
           </div>
         <% } %>
       <% } %>
     </div>
-  <% } %>
-
-  <% if (member.featuredFlock) { %>
-    <%- include('../partials/spacer.ejs') %>
-
-    <h4 class="mb-5"><%= member.featuredFlock.name %></h4>
-
-    <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"member":"<%= member.id %>","flock":"<%= member.featuredFlock.id %>"}'></div>
-
-    <%- include('../scripts/lazyloader.ejs') %>
   <% } %>
 
  <% if (member.birdyBuddy) { %>
