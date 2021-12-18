@@ -43,7 +43,7 @@ class Member {
     return new Promise((resolve, reject) => {
       Cache.get('member', this.id).then(async (member) => {
         if (!member) {
-		console.log('member not found?');
+          console.log('member not found?');
           if (params.createIfNotExists) {
             Database.save('Member', data.id, params.createIfNotExists).then(() => {
               resolve(this.fetch());
@@ -156,14 +156,14 @@ class Member {
                   let families = require('../data/families.json');
 
                   this.families = Object.values(families).map((family) => {
-                    promises.push(Counters.get('family', this.id, family.value).then( (value) => {
-			    family.owned = value;
-		    }));
+                    promises.push(Counters.get('family', this.id, family.value).then((value) => {
+                      family.owned = value;
+                    }));
 
-			  return family;
+                    return family;
                   });
                 } catch (err) {
-			console.log(err);
+                  console.log(err);
                   this.families = [];
                 }
                 break;
@@ -173,7 +173,9 @@ class Member {
             }
           }
 
-          Promise.all(promises).then(resolve(this));
+          Promise.all(promises).then(() => {
+            resolve(this)
+          });
         }
       });
     });

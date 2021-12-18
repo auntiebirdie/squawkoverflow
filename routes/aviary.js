@@ -6,14 +6,13 @@ const router = express.Router();
 router.get('/:member', async (req, res, next) => {
   let member = await API.call('member', 'GET', {
       id: req.params.member,
-      flocks: true,
-      families: true
+      include: ['flocks', 'families']
     });
 
   res.render('aviary/index', {
     page: 'aviary',
     member: member,
-    families: member.families,
+    families: member.families.filter( (family) => family.owned > 0).map( (family) => family.value ),
     flocks: member.flocks,
     currentPage: (req.query.page || 1) * 1
   });
