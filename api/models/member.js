@@ -1,4 +1,5 @@
 const Cache = require('../helpers/cache.js');
+const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
 
@@ -129,54 +130,49 @@ class Member {
           this.lastRefresh = member.lastRefresh || 0;
           this.birdyBuddy = member.birdyBuddy;
 
-          if (params.profile) {
-            this.aviary = await Cache.get('aviaryTotals', this.id);
-            this.hasWishlist = await Cache.get('wishlist', this.id).then((results) => results ? Object.keys(results).length > 0 : false);
+          let promises = [];
 
-            if (member.birdyBuddy) {
-                this.birdyBuddy = new BirdyPet(member.birdyBuddy);
-                await this.birdyBuddy.fetch();
+          for (let include of params.include || []) {
+            switch (include) {
+              case 'aviary':
+                this.aviary = await Cache.get('aviaryTotals', this.id);
+                break;
+              case 'birdyBuddy':
+                if (member.birdyBuddy) {
+                  this.birdyBuddy = new BirdyPet(member.birdyBuddy);
+                  await this.birdyBuddy.fetch();
+                }
+                break;
+              case 'featuredFlock':
+                this.featuredFlock = new Flock(member.flock);
+                await this.featuredFlock.fetch();
+                break;
+              case 'flocks':
+                this.flocks = await Flocks.all(this.id);
+                break;
+              case 'families':
+                try {
+                  let families = require('../data/families.json');
+
+                  this.families = Object.values(families).map((family) => {
+                    promises.push(Counters.get('family', this.id, family.value).then( (value) => {
+			    family.owned = value;
+		    }));
+
+			  return family;
+                  });
+                } catch (err) {
+			console.log(err);
+                  this.families = [];
+                }
+                break;
+              case 'wishlist':
+                this.wishlist = await Cache.get('wishlist', this.id);
+                break;
             }
-
-            if (member.flock) {
-              this.flock = new Flock(member.flock);
-              await this.flock.fetch();
-            }
           }
 
-          if (params.include?.includes('birdyBuddy')) {
-            if (!this.birdyBuddy && member.birdyBuddy) {
-              this.birdyBuddy = new BirdyPet(member.birdyBuddy);
-              await this.birdyBuddy.fetch();
-            }
-          }
-
-          if (params.flocks || params.include?.includes('flocks')) {
-            this.flocks = await Flocks.all(this.id);
-          }
-
-          if (params.families || params.include?.includes('families')) {
-            if (!this.aviary) {
-              this.aviary = await Cache.get('aviaryTotals', this.id);
-            }
-
-            try {
-              this.families = Object.keys(this.aviary)
-                .filter((key) => this.aviary[key] > 0 && !key.startsWith('_'));
-            } catch (err) {
-              this.families = [];
-            }
-          }
-
-          if (params.fetch?.includes('wishlist') || params.include?.includes('wishlist')) {
-            this.wishlist = await Cache.get('wishlist', this.id);
-          }
-
-          if (this.aviary) {
-            this.aviary = this.aviary._total;
-          }
-
-          resolve(this);
+          Promise.all(promises).then(resolve);
         }
       });
     });

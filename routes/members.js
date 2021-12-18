@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
 router.get('/:member', async (req, res) => {
   API.call('member', "GET", {
     id: req.params.member,
-    profile: true
+    include: ['aviary', 'birdyBuddy', 'families', 'featuredFlock', 'flocks', 'wishlist']
   }).then(async (member) => {
     if (member.id != req.session.user && member.settings?.privacy?.includes('profile')) {
       return res.redirect('/error');

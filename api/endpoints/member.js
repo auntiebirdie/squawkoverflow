@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
       var toUpdate = {};
 
       await member.fetch({
-        profile: true
+        include: ['profile']
       });
 
       toUpdate.settings = member.settings;

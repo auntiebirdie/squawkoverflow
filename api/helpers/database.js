@@ -74,7 +74,7 @@ Database.prototype.create = function(kind, data, uniqueField = false) {
 
 Database.prototype.save = function(kind, id, data) {
   return new Promise((resolve, reject) => {
-	     if (!id) {
+    if (!id) {
       id = uuid.generate();
     }
 
@@ -85,12 +85,12 @@ Database.prototype.save = function(kind, id, data) {
       data: data
     }).then(() => {
       return resolve(key.name);
-    }).catch( (err) => {
-	    console.log(err);
+    }).catch((err) => {
+      console.log(err);
     });
-  }).catch( (err) => {
-	  console.log(err);
-	  return null;
+  }).catch((err) => {
+    console.log(err);
+    return null;
   });
 }
 
@@ -127,9 +127,9 @@ Database.prototype.fetch = function({
       query.limit(limit);
     }
 
-	  if (select) {
-		  query.select(select);
-	  }
+    if (select) {
+      query.select(select);
+    }
 
     if (keysOnly) {
       query.select('__key__');

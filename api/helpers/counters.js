@@ -23,8 +23,9 @@ class Counters {
 
       switch (kind) {
         case 'eggs':
+          var value = 0;
+
           let eggs = require('../data/eggs.json');
-          let value = 0;
           let start = 0;
           let end = eggs[id].species.length;
 
@@ -46,6 +47,30 @@ class Counters {
           while (start < end);
 
           resolve(value);
+
+          break;
+        case 'family':
+          var value = 0;
+
+          Database.fetch({
+            kind: 'BirdyPet',
+            filters: [
+              ['member', '=', member],
+              ['family', '=', id]
+            ]
+          }).then((results) => {
+            let species = {};
+
+            for (let result of results) {
+              if (!species[result.speciesCode]) {
+                species[result.speciesCode] = true;
+
+                value++;
+              }
+            }
+
+            resolve(value);
+          });
 
           break;
         case 'species':
