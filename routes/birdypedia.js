@@ -12,12 +12,16 @@ router.get('/', async (req, res) => {
   });
 });
 
-router.get('/eggs', async (req, res) => {
+router.get('/eggs/:letter([A-Za-z]{1})?', async (req, res) => {
+  var letter = req.params.letter ? req.params.letter.toLowerCase() : 'a';
+
   API.call('eggs', 'GET', {
-    loggedInUser: req.session.user
+    loggedInUser: req.session.user,
+    firstLetter: letter
   }).then((eggs) => {
     res.render('birdypedia/eggs', {
-      eggs: eggs
+      eggs: eggs,
+      firstLetter: letter.toUpperCase()
     });
   });
 });

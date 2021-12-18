@@ -48,6 +48,10 @@ a:hover {
 	text-decoration: none;
 }
 
+.text-monospace {
+	font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
+
 .text-light {
         color: #aeaeae !important;
 }
