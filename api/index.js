@@ -1,3 +1,5 @@
+require( 'trace-unhandled/register' );
+
 exports.api = (req, res) => {
   if (req.query?.sort && req.query.sort == "[null]") {
     delete req.query.sort;

@@ -15,6 +15,7 @@
     "object-hash": "^2.2.0",
     "redis": "^3.1.2",
     "short-uuid": "^4.2.0",
-    "sort-objects-array": "^1.7.1"
+    "sort-objects-array": "^1.7.1",
+    "trace-unhandled": "^2.0.1"
   }
 }
