@@ -1,4 +1,6 @@
-require( 'trace-unhandled/register' );
+if (process.env.DEV) {
+  require( 'trace-unhandled/register' );
+}
 
 const {
   Datastore
