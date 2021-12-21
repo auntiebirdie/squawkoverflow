@@ -47,14 +47,12 @@ app.use(async function(req, res, next) {
   var menu = [];
 
   if (req.session.user) {
-    if (!req.session.loggedInUser) {
-      req.session.loggedInUser = await API.call('member', 'GET', {
-        id: req.session.user
-      }).catch((err) => {
-        console.log(err);
-        return null;
-      });
-    }
+    req.session.loggedInUser = await API.call('member', 'GET', {
+      id: req.session.user
+    }).catch((err) => {
+      console.log(err);
+      return null;
+    });
 
     res.locals.loggedInUser = req.session.loggedInUser;
 

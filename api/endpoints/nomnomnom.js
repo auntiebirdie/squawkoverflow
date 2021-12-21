@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
           bugs: --member.bugs
         }),
         await birdypet.set({
-          friendship: birdypet.friendship + 5
+          friendship: (birdypet.friendship * 1 || 0) + 5
         })
       ]);
 
