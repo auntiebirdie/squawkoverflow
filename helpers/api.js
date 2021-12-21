@@ -39,6 +39,10 @@ exports.call = (endpoint, method = "GET", data = {}) => {
         method: method,
       };
 
+	    for (let key in data) {
+		    data[key] = JSON.stringify(data[key]);
+	    }
+
       if (method == "GET" || method == "HEAD") {
         options.params = data;
       } else {

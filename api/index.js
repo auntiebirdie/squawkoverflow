@@ -6,7 +6,18 @@ exports.api = (req, res) => {
   try {
     let route = req.path.match(/\/?(\b[A-Za-z\_]+\b)/)[0];
 
-    console.log(req.method, route, (req.body || req.query));
+	  console.log(req.method);
+
+    var data = (req.method == "GET" || req.method == "HEAD") ? req.query : req.body;
+	  console.log(req.query, data);
+
+    for (let key in data) {
+	    data[key] = JSON.parse(data[key]);
+    }
+
+	  console.log(req.query, data);
+
+		  console.log(req.method, route, data);
 
     require(`./endpoints/${route}.js`)(req, res);
   } catch (err) {
