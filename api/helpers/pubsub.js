@@ -101,6 +101,8 @@ exports.receive = function(message, context) {
 
     promises.push(Search.invalidate(member.id));
 
+	  promises.push(Cache.refresh('aviary', aviary.id));
+
     Promise.all(promises).then(resolve);
   });
 }
