@@ -55,7 +55,7 @@ exports.receive = function(message, context) {
     switch (data.action) {
       case "COLLECT":
         promises.push(Cache.add('aviary', member.id, [Date.now(), data.birdypet]));
-        promises.push(Counters.increment(1, 'birdypets', member.id, illustration.id, true));
+        promises.push(Counters.increment(1, 'species', member.id, illustration.bird.code, true));
 
         if (member.settings.general?.includes('updateWishlist')) {
           promises.push(member.updateWishlist(illustration.bird.code, "remove"));
@@ -82,7 +82,7 @@ exports.receive = function(message, context) {
         break;
       case "GIFT":
         promises.push(Cache.remove('aviary', member.id, birdypet.id));
-        promises.push(Counters.increment(-1, 'birdypets', member.id, illustration.id, true));
+        promises.push(Counters.increment(-1, 'species', member.id, illustration.bird.code, true));
         break;
       case "RELEASE":
         Database.save('FreeBird', illustration.id, {
@@ -93,7 +93,7 @@ exports.receive = function(message, context) {
 
         if (data.birdypet) {
           promises.push(Cache.remove('aviary', member.id, birdypet.id));
-          promises.push(Counters.increment(-1, 'birdypets', member.id, illustration.id));
+          promises.push(Counters.increment(-1, 'species', member.id, illustration.bird.code, true));
         }
 
         break;

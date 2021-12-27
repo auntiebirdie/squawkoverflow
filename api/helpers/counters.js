@@ -2,9 +2,6 @@ const Database = require('./database.js');
 const Redis = require('./redis.js');
 const Search = require('./search.js');
 
-const Birds = require('../collections/birds.js');
-const Illustration = require('../models/illustration.js');
-
 class Counters {
   get(kind, member, id) {
     return new Promise((resolve, reject) => {
@@ -114,29 +111,31 @@ class Counters {
 
     return new Promise((resolve, reject) => {
       this.get(kind, member, id).then(async (currValue) => {
-        if (currValue + value >= 0) {
-          let newValue = currValue + value;
-          let promises = [];
+        let promises = [];
 
-          if (cascade && newValue < 2) {
-            switch (kind) {
-              case 'birdypets':
-                let illustration = new Illustration(id);
+        if (cascade) {
+          if (currValue < 2) {
+		  const Birds = require('../collections/birds.js');
+            let bird = Birds.findBy('speciesCode', id);
 
-                await illustration.fetch();
-
-                promises.push(this.increment(value, 'species', member, illustration.bird.code, true));
-                break;
-              case 'species':
-                var bird = new Bird(id);
-
-                await bird.fetch();
-
-                for (let adjective of bird.adjectives) {
-                  promises.push(this.increment(value, 'eggs', member, adjective));
-                }
-                break;
+            for (let adjective of bird.adjectives) {
+              promises.push(this.increment(currValue == 0 ? -1 : 1, 'eggs', member, adjective));
             }
+
+            Promise.all(promises).then(() => {
+              resolve(currValue);
+            });
+          }
+        } else if (currValue + value >= 0) {
+          let newValue = currValue + value;
+
+          if (kind == 'birdypets' && newValue < 2) {
+            const Illustration = require('../models/illustration.js');
+            let illustration = new Illustration(id);
+
+            await illustration.fetch();
+
+            promises.push(this.increment(newValue == 0 ? -1 : 1, 'species', member, illustration.bird.code));
           }
 
           Redis.connect('cache').sendCommand('INCRBY', [`${kind}:${member}:${id}`, value]);
