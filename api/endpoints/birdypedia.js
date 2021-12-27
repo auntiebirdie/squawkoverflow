@@ -33,6 +33,8 @@ module.exports = async (req, res) => {
   }
 
   await Promise.all(promises).then(() => {
+    output = output.filter((bird) => bird.illustrations.length > 0);
+
     res.json({
       totalPages: Math.ceil(totalPages / birdsPerPage),
       results: output
