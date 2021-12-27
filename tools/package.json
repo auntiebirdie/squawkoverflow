@@ -1,0 +1,19 @@
+{
+  "name": "tools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "new-illustration.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/storage": "^5.16.1",
+    "axios": "^0.24.0",
+    "cheerio": "^1.0.0-rc.10",
+    "jimp": "^0.16.1",
+    "prompt": "^1.2.0",
+    "short-uuid": "^4.2.0"
+  }
+}

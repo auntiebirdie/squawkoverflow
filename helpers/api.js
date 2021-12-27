@@ -1,15 +1,11 @@
-const {
-  GoogleAuth
-} = require('google-auth-library');
-
-const auth = new GoogleAuth();
-
 exports.call = (endpoint, method = "GET", data = {}) => {
   return new Promise(async (resolve, reject) => {
     if (process.env.DEV) {
       let req = {
         method: method
       };
+
+	    console.log(method, endpoint, data);
 
       if (method == 'GET' || method == 'HEAD') {
         req.query = data;
@@ -30,6 +26,12 @@ exports.call = (endpoint, method = "GET", data = {}) => {
 
       require(`../api/endpoints/${endpoint}.js`)(req, res);
     } else {
+      const {
+        GoogleAuth
+      } = require('google-auth-library');
+
+      const auth = new GoogleAuth();
+
       const apiPath = 'https://us-central1-squawkoverflow.cloudfunctions.net/api';
       const client = await auth.getIdTokenClient(apiPath);
       const url = `${apiPath}/${endpoint}`;
@@ -39,9 +41,9 @@ exports.call = (endpoint, method = "GET", data = {}) => {
         method: method,
       };
 
-	    for (let key in data) {
-		    data[key] = JSON.stringify(data[key]);
-	    }
+      for (let key in data) {
+        data[key] = JSON.stringify(data[key]);
+      }
 
       if (method == "GET" || method == "HEAD") {
         options.params = data;

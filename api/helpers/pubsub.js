@@ -12,6 +12,8 @@ exports.publish = function(topic, action, body) {
     if (process.env.NODE_ENV) {
       const pubsub = new PubSub();
 
+	    console.log('[calling background]');
+
       pubsub.topic(topic).publish(Buffer.from(JSON.stringify(data))).then(() => {
         resolve();
       });

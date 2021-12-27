@@ -20,6 +20,9 @@ class BirdyPet {
       await illustration.fetch()
 
       if (illustration) {
+	      this.illustration = illustration;
+	      this.member = data.member;
+
         Database.create('BirdyPet', {
           illustration: illustration.id,
           commonName: illustration.bird.name,
@@ -31,7 +34,7 @@ class BirdyPet {
         }).then((id) => {
           this.id = id;
 
-          resolve(this.fetch());
+          resolve(this);
         });
       } else {
         reject();

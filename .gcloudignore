@@ -18,5 +18,4 @@ node_modules/
 
 # Non-App Engine directories:
 /api
-/cron
-/manual
+/tools

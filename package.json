@@ -12,13 +12,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@google-cloud/connect-datastore": "^5.0.3",
-    "@google-cloud/datastore": "^6.5.0",
+    "connect-redis": "^6.0.0",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
-    "express-session": "^1.17.2"
-  },
-  "devDependencies": {
-    "trace-unhandled": "^2.0.1"
+    "express-session": "^1.17.2",
+    "google-auth-library": "^7.11.0",
+    "redis": "^3.1.2"
   }
 }

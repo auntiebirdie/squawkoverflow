@@ -7,7 +7,7 @@ function Database() {
     "search": "s",
     "cache": "s",
     "freebird": "kv",
-	  "pubsub": "kv"
+    "pubsub": "kv"
   };
 
   this.connections = {};

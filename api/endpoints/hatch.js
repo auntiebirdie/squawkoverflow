@@ -34,8 +34,9 @@ module.exports = async (req, res) => {
       var species = require('../data/eggs.json')[req.body.egg].species;
 
       do {
-        var bird = species.sort(() => .5 - Math.random())[0];
-        var illustrations = await Illustrations.fetch('speciesCode', bird).then( (birdypets) => birdypets.filter((birdypet) => !birdypet.special));
+          var bird = species.sort(() => .5 - Math.random())[0];
+
+          var illustrations = await Illustrations.fetch('speciesCode', bird).then((birdypets) => birdypets.filter((birdypet) => !birdypet.special));
       }
       while (illustrations.length == 0);
 

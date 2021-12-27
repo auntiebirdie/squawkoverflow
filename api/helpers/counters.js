@@ -130,17 +130,20 @@ class Counters {
           let newValue = currValue + value;
 
           if (newValue < 2) {
-            const Illustration = require('../models/illustration.js');
-            let illustration = new Illustration(id);
-
-            await illustration.fetch();
-
             switch (kind) {
               case 'birdypets':
+                const Illustration = require('../models/illustration.js');
+                let illustration = new Illustration(id);
+
+                await illustration.fetch();
+
                 promises.push(this.increment(newValue == 0 ? -1 : 1, 'species', member, illustration.bird.code));
                 break;
               case 'species':
-                promises.push(this.increment(newValue == 0 ? -1 : 1, 'family', member, illustration.bird.family));
+                const Birds = require('../collections/birds.js');
+                let bird = Birds.findBy('speciesCode', id);
+
+                promises.push(this.increment(newValue == 0 ? -1 : 1, 'family', member, bird.family));
                 break;
             }
           }
