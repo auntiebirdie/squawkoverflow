@@ -3,6 +3,7 @@ const Redis = require('./redis.js');
 const Search = require('./search.js');
 
 const Birds = require('../collections/birds.js');
+const Illustration = require('../models/illustration.js');
 
 class Counters {
   get(kind, member, id) {
@@ -116,6 +117,27 @@ class Counters {
         if (currValue + value >= 0) {
           let newValue = currValue + value;
           let promises = [];
+
+          if (cascade && newValue < 2) {
+            switch (kind) {
+              case 'birdypets':
+                let illustration = new Illustration(id);
+
+                await illustration.fetch();
+
+                promises.push(this.increment(value, 'species', member, illustration.bird.code, true));
+                break;
+              case 'species':
+                var bird = new Bird(id);
+
+                await bird.fetch();
+
+                for (let adjective of bird.adjectives) {
+                  promises.push(this.increment(value, 'eggs', member, adjective));
+                }
+                break;
+            }
+          }
 
           Redis.connect('cache').sendCommand('INCRBY', [`${kind}:${member}:${id}`, value]);
           Redis.connect("cache").sendCommand('EXPIRE', [`${kind}:${member}:${id}`, 604800]);

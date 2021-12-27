@@ -30,6 +30,7 @@ exports.publish = function(topic, action, body) {
 exports.receive = function(message, context) {
   return new Promise(async (resolve, reject) => {
     const Bird = require(__dirname + '/../models/bird.js');
+    const BirdyPet = require(__dirname + '/../models/birdypet.js');
     const Illustration = require(__dirname + '/../models/illustration.js');
     const Member = require(__dirname + '/../models/member.js');
 
@@ -40,6 +41,7 @@ exports.receive = function(message, context) {
     const Webhook = require(__dirname + '/../helpers/webhook.js');
 
     var data = JSON.parse(Buffer.from(message.data, 'base64').toString());
+    var birdypet = new BirdyPet(data.birdypet);
     var member = new Member(data.member);
     var illustration = new Illustration(data.illustration);
 
@@ -53,17 +55,10 @@ exports.receive = function(message, context) {
     switch (data.action) {
       case "COLLECT":
         promises.push(Cache.add('aviary', member.id, [Date.now(), data.birdypet]));
+        promises.push(Counters.increment(1, 'birdypets', member.id, illustration.id, true));
 
         if (member.settings.general?.includes('updateWishlist')) {
           promises.push(member.updateWishlist(illustration.bird.code, "remove"));
-        }
-
-        var bird = new Bird(illustration.bird.code);
-
-        await bird.fetch();
-
-        for (let adjective of bird.adjectives) {
-          promises.push(Counters.refresh('eggs', member.id, adjective));
         }
 
         if (data.adjective) {
@@ -81,27 +76,30 @@ exports.receive = function(message, context) {
             }));
           }
         } else if (data.freebird) {
-          promises.push(Database.delete('FreeBird', data.illustration));
-          promises.push(Cache.remove('cache', 'freebirds', data.illustration));
+          promises.push(Database.delete('FreeBird', illustration.id));
+          promises.push(Cache.remove('cache', 'freebirds', illustration.id));
         }
         break;
+      case "GIFT":
+        promises.push(Cache.remove('aviary', member.id, birdypet.id));
+        promises.push(Counters.increment(-1, 'birdypets', member.id, illustration.id, true));
+        break;
       case "RELEASE":
-        Database.save('FreeBird', data.illustration, {
+        Database.save('FreeBird', illustration.id, {
           releasedAt: Date.now()
         }).then(() => {
-          Cache.add('cache', 'freebirds', data.illustration);
+          Cache.add('cache', 'freebirds', illustration.id);
         });
 
         if (data.birdypet) {
-          promises.push(Cache.remove('aviary', data.member, data.birdypet));
+          promises.push(Cache.remove('aviary', member.id, birdypet.id));
+          promises.push(Counters.increment(-1, 'birdypets', member.id, illustration.id));
         }
 
         break;
     }
 
     promises.push(Search.invalidate(member.id));
-
-	  promises.push(Cache.refresh('aviary', member.id));
 
     Promise.all(promises).then(resolve);
   });

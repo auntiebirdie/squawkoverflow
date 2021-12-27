@@ -8,7 +8,8 @@ module.exports = async (req, res) => {
       resolve(Members.get(req.query.member));
     } else {
       Members.all().then((members) => {
-        resolve(members.filter((member) => member.active).sort( () => .5 - Math.random() )[0]);
+	      // fix to lastRefresh sort ASC
+        resolve(members.filter((member) => member.active).sort(() => .5 - Math.random())[0]);
       });
     }
   }).then(async (member) => {
@@ -44,29 +45,40 @@ module.exports = async (req, res) => {
 
     promises = [];
 
-    await Search.invalidate(member.id);
+    promises.push(Cache.refresh('aviary', member.id));
 
-    await Search.get('BirdyPet', {
+    promises.push(Search.invalidate(member.id));
+
+    await Promise.all(promises);
+
+    promises = [];
+
+    promises.push(Search.get('BirdyPet', {
       member: member.id,
       page: 1,
       sort: 'hatchedAt',
       family: '',
       flock: '',
       search: ''
-    });
+    }));
 
-    await Search.get('BirdyPet', {
+    promises.push(Search.get('BirdyPet', {
       member: member.id,
       page: 1,
       sort: 'commonName',
       family: '',
       flock: '',
       search: ''
-    });
+    }));
 
-    await member.set({ lastRefresh : Date.now() });
+    promises.push(member.set({
+      lastRefresh: Date.now()
+    }));
+
+    await Promise.all(promises);
 
     console.log("DONE!");
+
     return res.sendStatus(200);
   });
 };

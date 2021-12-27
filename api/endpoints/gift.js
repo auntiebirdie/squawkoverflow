@@ -26,13 +26,15 @@ module.exports = async (req, res) => {
       if (birdypet.member == fromMember.id) {
         await fromMember.fetch();
 
+        let promises = [];
+
         await birdypet.set({
-          member: req.body.member,
+          member: toMember.id,
           flocks: [],
           friendship: 0
         });
 
-        await Webhook('exchange', {
+        promises.push(Webhook('exchange', {
           content: `${fromMember.username} has sent <@${toMember.id}> a gift!`,
           embeds: [{
             title: birdypet.nickname || birdypet.bird.name,
@@ -42,7 +44,19 @@ module.exports = async (req, res) => {
               url: birdypet.illustration.image
             }
           }]
-        });
+        }));
+
+        promises.push(PubSub.publish('background', 'GIFT', {
+          member: fromMember.id,
+          birdypet: birdypet.id,
+          illustration: birdypet.illustration.id
+        }));
+
+        promises.push(PubSub.publish('background', 'COLLECT', {
+          member: toMember.id,
+          birdypet: birdypet.id,
+          illustration: birdypet.illustration.id
+        }));
 
         return res.sendStatus(200);
       } else {

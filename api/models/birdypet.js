@@ -81,16 +81,11 @@ class BirdyPet {
     return new Promise((resolve, reject) => {
       let promises = [];
 
-      promises.push(Database.set('BirdyPet', this.id, data));
+      await Database.set('BirdyPet', this.id, data);
 
-      if (data.member) {
-        promises.push(Counters.increment(-1, 'species', this.member, this.bird.code));
-        promises.push(Counters.increment(1, 'species', data.member, this.bird.code));
-      }
+      await Cache.refresh('birdypet', this.id);
 
-      Promise.all(promises).then(() => {
-        Cache.refresh('birdypet', this.id).then(resolve);
-      });
+      resolve();
     });
   }
 
