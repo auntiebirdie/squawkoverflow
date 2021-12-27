@@ -78,22 +78,16 @@ class BirdyPet {
   }
 
   set(data) {
-    return new Promise((resolve, reject) => {
-      let promises = [];
-
-      await Database.set('BirdyPet', this.id, data);
-
-      await Cache.refresh('birdypet', this.id);
-
-      resolve();
-    });
+    return Promise.all([
+      Database.set('BirdyPet', this.id, data),
+      Cache.refresh('birdypet', this.id)
+    ]);
   }
 
   delete() {
     return Promise.all([
       Database.delete('BirdyPet', this.id),
       Redis.connect("cache").del(`birdypet:${this.id}`),
-      Counters.increment(-1, 'species', this.member, this.bird.code)
     ]);
   }
 }
