@@ -17,9 +17,9 @@ const DB = secrets.REDIS[process.env.NODE_ENV ? 'PROD' : 'DEV'];
 
 const RedisStore = connectRedis(session);
 const RedisClient = redis.createClient({
-	host: DB.HOST,
-	port: DB.PORT,
-	password: DB.PASS
+  host: DB.HOST,
+  port: DB.PORT,
+  password: DB.PASS
 });
 
 app.set('view engine', 'ejs');
@@ -33,9 +33,9 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-	  secure: process.env.NODE_ENV ? true : false,
+    secure: process.env.NODE_ENV ? true : false,
     httpOnly: true,
-    maxAge: 1000 * 60 * 10
+    maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
   }
 }));
 
