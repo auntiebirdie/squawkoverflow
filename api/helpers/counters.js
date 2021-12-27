@@ -106,16 +106,16 @@ class Counters {
     });
   }
 
-  increment(value, kind, member, id, cascade = false) {
+  increment(value, kind, member, id, updateEggs = false) {
     value *= 1;
 
     return new Promise((resolve, reject) => {
       this.get(kind, member, id).then(async (currValue) => {
         let promises = [];
 
-        if (cascade) {
+        if (updateEggs) {
           if (currValue < 2) {
-		  const Birds = require('../collections/birds.js');
+            const Birds = require('../collections/birds.js');
             let bird = Birds.findBy('speciesCode', id);
 
             for (let adjective of bird.adjectives) {
@@ -129,13 +129,20 @@ class Counters {
         } else if (currValue + value >= 0) {
           let newValue = currValue + value;
 
-          if (kind == 'birdypets' && newValue < 2) {
+          if (newValue < 2) {
             const Illustration = require('../models/illustration.js');
             let illustration = new Illustration(id);
 
             await illustration.fetch();
 
-            promises.push(this.increment(newValue == 0 ? -1 : 1, 'species', member, illustration.bird.code));
+            switch (kind) {
+              case 'birdypets':
+                promises.push(this.increment(newValue == 0 ? -1 : 1, 'species', member, illustration.bird.code));
+                break;
+              case 'species':
+                promises.push(this.increment(newValue == 0 ? -1 : 1, 'family', member, illustration.bird.family));
+                break;
+            }
           }
 
           Redis.connect('cache').sendCommand('INCRBY', [`${kind}:${member}:${id}`, value]);
