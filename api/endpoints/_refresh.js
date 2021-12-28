@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
       resolve(Members.get(req.query.member));
     } else {
       Members.all().then((members) => {
-	      // fix to lastRefresh sort ASC
+        // fix to lastRefresh sort ASC
         resolve(members.filter((member) => member.active).sort(() => .5 - Math.random())[0]);
       });
     }
@@ -69,6 +69,14 @@ module.exports = async (req, res) => {
       family: '',
       flock: '',
       search: ''
+    }));
+
+    promises.push(Search.get('BirdyPet', {
+      member: member.id,
+      page: 1,
+      sort: 'hatchedAt',
+      family: '',
+      flock: member.flock
     }));
 
     promises.push(member.set({
