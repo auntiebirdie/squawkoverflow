@@ -94,6 +94,23 @@ input:active, input:active:focus, input:focus {
         color: #DDF600;
 }
 
+.nav-tabs {
+	border-color: #6c757d;
+}
+
+.nav-tabs .nav-link, .nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+	color: rgb(95, 106, 16);
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+	border-color: #6c757d;
+	background-color: #cccccc;
+}
+
+.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+	border-color: #6c757d;
+}
+
 img {
 	max-width: 100%;
 }

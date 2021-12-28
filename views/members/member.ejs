@@ -44,77 +44,86 @@
     </div>
   </div>
 
-  <% if (member.birdyBuddy?.illustration) { %>
+  <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="birdy-buddy-tab" data-bs-toggle="tab" data-bs-target="#birdy-buddy" type="button" role="tab" aria-controls="home" aria-selected="true">Birdy Buddy</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="featured-flock-tab" data-bs-toggle="tab" data-bs-target="#featured-flock" type="button" role="tab" aria-controls="profile" aria-selected="false">Featured Flock</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="collection-progress-tab" data-bs-toggle="tab" data-bs-target="#collection-progress" type="button" role="tab" aria-controls="contact" aria-selected="false">Collection Progress</button>
+    </li>
+  </ul>
+  <div class="tab-content py-4 px-3" id="profileTabsContent">
+    <div class="tab-pane fade show active" id="birdy-buddy" role="tabpanel" aria-labelledby="birdy-buddy-tab">
+     <% if (member.birdyBuddy?.illustration) { %>
 
-  <%- include('../partials/spacer.ejs') %>
-
-  <h3 class="mb-4">Birdy Buddy</h3>
-
-  <div class="row">
-    <div class="col-md-6 text-center">
-      <div class="birdybuddy mb-3">
-        <img src="<%= member.birdyBuddy.illustration.image %>">
-        <span class="message border border-1 border-secondary" style="display: none;"></span>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <h4><a class="text-decoration-none" href="/birdypet/<%= member.birdyBuddy.id %>"><%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.bird.name %></a></h4>
-
-      <%- include('../partials/friendshipMeter.ejs', { friendship : member.birdyBuddy.friendship }) %>
-
-      <div>
-        <% if (member.birdyBuddy.description) { %>
-        <div class="py-4 ps-4">
-          <% for (var para of member.birdyBuddy.description.split("\r\n")) { %>
-            <p><%= para %></p>
-          <% } %>
-        </div>
-        <% } %>
-
-        <% if (locals.loggedInUser && loggedInUser.bugs > 0) { %>
-           <% if (member.birdyBuddy.friendship >= 100) { %>
-             <p><em>You have <%= loggedInUser.bugs %> bug<%= loggedInUser.bugs != 1 ? "s" : "" %>, but <%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.species %> is full!</em></p>
-           <% } else { %>
-             <p><button id="feedBug" class="btn btn-primary" role="button" data-birdypet="<%= member.birdyBuddy.id %>">🐛 Feed a Bug (you have <span><%= loggedInUser.bugs %></span>)</button></p>
-           <% } %>
-        <% } %>
-      </div>
-    </div>
-  </div>
-  <% } %>
-
-  <% if (member.featuredFlock) { %>
-    <%- include('../partials/spacer.ejs') %>
-
-    <h4 class="mb-5"><%= member.featuredFlock.name %></h4>
-
-    <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"member":"<%= member.id %>","flock":"<%= member.featuredFlock.id %>"}'></div>
-
-    <%- include('../scripts/lazyloader.ejs') %>
-  <% } %>
-
-
-  <% if (member.aviary._total > 0) { %>
-
-    <%- include('../partials/spacer.ejs') %>
-
-    <h3 class="mb-4">Collection Progress</h3>
-
-    <div class="row">
-      <% for (var family of member.families) { %>
-        <% if (family.owned > 0) { %>
-          <div class="col-6 col-md-4 col-lg-3 mb-4">
-            <h5><a href="/birdypedia?family=<%= family.value %>"><%= family.value %></a></h5>
-            <h6 class="small"><small>(<%= family.label.split(' (').pop() %></small></h6>
-            <% var prct = family.owned / family.total * 100; %>
-            <div class="progress mx-2">
-              <div class="progress-bar<%= prct == 100 ? " bg-success" : "" %>" style="width: <%= prct %>%" role="progressbar" aria-valuenow="<%= family.owned %>" aria-valuemin="0" aria-valuemax="<%= family.total %>"></div>
-            </div>
+      <div class="row">
+        <div class="col-md-6 text-center">
+          <div class="birdybuddy mb-3">
+            <img src="<%= member.birdyBuddy.illustration.image %>">
+            <span class="message border border-1 border-secondary" style="display: none;"></span>
           </div>
-        <% } %>
+        </div>
+        <div class="col-md-6">
+          <h4><a class="text-decoration-none" href="/birdypet/<%= member.birdyBuddy.id %>"><%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.bird.name %></a></h4>
+
+          <%- include('../partials/friendshipMeter.ejs', { friendship : member.birdyBuddy.friendship }) %>
+
+          <div>
+            <% if (member.birdyBuddy.description) { %>
+            <div class="py-4 ps-4">
+              <% for (var para of member.birdyBuddy.description.split("\r\n")) { %>
+                <p><%= para %></p>
+              <% } %>
+            </div>
+            <% } %>
+
+            <% if (locals.loggedInUser && loggedInUser.bugs > 0) { %>
+               <% if (member.birdyBuddy.friendship >= 100) { %>
+                 <p><em>You have <%= loggedInUser.bugs %> bug<%= loggedInUser.bugs != 1 ? "s" : "" %>, but <%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.species %> is full!</em></p>
+               <% } else { %>
+                 <p><button id="feedBug" class="btn btn-primary" role="button" data-birdypet="<%= member.birdyBuddy.id %>">🐛 Feed a Bug (you have <span><%= loggedInUser.bugs %></span>)</button></p>
+               <% } %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+     <% } else { %>
+      <em>This member hasn't selected a Birdy Buddy.</em>
+     <% } %>
+    </div>
+    <div class="tab-pane fade" id="featured-flock" role="tabpanel" aria-labelledby="featured-flock-tab">
+      <% if (member.featuredFlock) { %>
+        <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"member":"<%= member.id %>","flock":"<%= member.featuredFlock.id %>"}'></div>
+
+        <%- include('../scripts/lazyloader.ejs') %>
+     <% } else { %>
+        <em>This member hasn't selected a flock to feature.</em>
       <% } %>
     </div>
-  <% } %>
+    <div class="tab-pane fade" id="collection-progress" role="tabpanel" aria-labelledby="collection-progress-tab">
+     <% if (member.aviary._total > 0) { %>
+      <div class="row">
+        <% for (var family of member.families) { %>
+          <% if (family.owned > 0) { %>
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+              <h5><a href="/birdypedia?family=<%= family.value %>"><%= family.value %></a></h5>
+              <h6 class="small"><small>(<%= family.label.split(' (').pop() %></small></h6>
+              <% var prct = family.owned / family.total * 100; %>
+              <div class="progress mx-2">
+                <div class="progress-bar<%= prct == 100 ? " bg-success" : "" %>" style="width: <%= prct %>%" role="progressbar" aria-valuenow="<%= family.owned %>" aria-valuemin="0" aria-valuemax="<%= family.total %>"></div>
+              </div>
+            </div>
+          <% } %>
+        <% } %>
+      </div>
+     <% } else { %>
+       <em>This member hasn't collected any birds yet.</em>
+     <% } %>
+    </div>
+  </div>
 
  <% if (member.birdyBuddy) { %>
   <script type="text/javascript">
