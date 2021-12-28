@@ -17,9 +17,11 @@ module.exports = (req, res) => {
 
   Promise.allSettled(promises).then((results) => {
     eggs.forEach((egg) => {
-      egg.memberTotal.then((value) => {
-        egg.memberTotal = value;
-      });
+      if (egg.memberTotal) {
+        egg.memberTotal.then((value) => {
+          egg.memberTotal = value;
+        });
+      }
     });
 
     res.json(eggs);
