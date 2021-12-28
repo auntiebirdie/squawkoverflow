@@ -16,13 +16,13 @@ module.exports = (req, res) => {
   });
 
   Promise.allSettled(promises).then((results) => {
-    eggs.forEach((egg) => {
+    for (let egg of eggs) {
       if (egg.memberTotal) {
         egg.memberTotal.then((value) => {
           egg.memberTotal = value;
         });
       }
-    });
+    }
 
     res.json(eggs);
   });
