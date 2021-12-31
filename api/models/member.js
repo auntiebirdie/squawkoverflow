@@ -136,7 +136,7 @@ class Member {
           for (let include of params.include || []) {
             switch (include) {
               case 'aviary':
-                this.aviary = await Cache.get('aviaryTotals', this.id);
+                this.aviary = await Counters.get('aviary', this.id);
                 break;
               case 'birdyBuddy':
                 if (member.birdyBuddy) {

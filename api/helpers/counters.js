@@ -20,6 +20,17 @@ class Counters {
       let promises = [];
 
       switch (kind) {
+        case 'aviary':
+          Database.fetch({
+            kind: 'BirdyPet',
+            filters: [
+              ['member', '=', member]
+            ],
+            keysOnly: true
+          }).then((response) => {
+            resolve(response.length * 1);
+          });
+          break;
         case 'eggs':
           var value = 0;
 
