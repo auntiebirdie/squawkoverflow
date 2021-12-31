@@ -30,7 +30,7 @@ class Illustration {
         this.source = illustration.source;
         this.special = illustration.special || false;
 
-        this.image = `https://storage.googleapis.com/squawkoverflow/${bird.order}/${bird.family}/${bird.scientific.replace(/\s/, '%20')}/${this.id}.${illustration.filetype ? illustration.filetype : "jpg"}`;
+        this.image = `https://storage.googleapis.com/squawkoverflow/${bird.order}/${bird.family}/${bird.scientific.replace(/\s/g, '%20')}/${this.id}.${illustration.filetype ? illustration.filetype : "jpg"}`;
 
         if (params.include?.includes('memberData') && params.member) {
           await this.fetchMemberData(params.member);
