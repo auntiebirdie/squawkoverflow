@@ -12,7 +12,7 @@ exports.publish = function(topic, action, body) {
     if (process.env.NODE_ENV) {
       const pubsub = new PubSub();
 
-	    console.log('[calling background]');
+      console.log('[calling background]');
 
       pubsub.topic(topic).publish(Buffer.from(JSON.stringify(data))).then(() => {
         resolve();
@@ -57,6 +57,7 @@ exports.receive = function(message, context) {
     switch (data.action) {
       case "COLLECT":
         promises.push(Cache.add('aviary', member.id, [Date.now(), data.birdypet]));
+        promises.push(Counters.increment(1, 'aviary', member.id));
         promises.push(Counters.increment(1, 'species', member.id, illustration.bird.code, true));
 
         if (member.settings.general?.includes('updateWishlist')) {
@@ -84,6 +85,7 @@ exports.receive = function(message, context) {
         break;
       case "GIFT":
         promises.push(Cache.remove('aviary', member.id, birdypet.id));
+        promises.push(Counters.increment(-1, 'aviary', member.id));
         promises.push(Counters.increment(-1, 'species', member.id, illustration.bird.code, true));
         break;
       case "RELEASE":
@@ -95,6 +97,7 @@ exports.receive = function(message, context) {
 
         if (data.birdypet) {
           promises.push(Cache.remove('aviary', member.id, birdypet.id));
+          promises.push(Counters.increment(-1, 'aviary', member.id));
           promises.push(Counters.increment(-1, 'species', member.id, illustration.bird.code, true));
         }
 

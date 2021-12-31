@@ -145,13 +145,12 @@ class Member {
                 }
                 break;
               case 'featuredFlock':
-			    if (member.flock) {
-                this.featuredFlock = new Flock(member.flock);
-                await this.featuredFlock.fetch();
-			    }
-			    else {
-				    this.featuredFlock = null;
-			    }
+                if (member.flock) {
+                  this.featuredFlock = new Flock(member.flock);
+                  await this.featuredFlock.fetch();
+                } else {
+                  this.featuredFlock = null;
+                }
                 break;
               case 'flocks':
                 this.flocks = await Flocks.all(this.id);
