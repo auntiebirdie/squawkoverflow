@@ -58,6 +58,7 @@ module.exports = async (req, res) => {
 
         for (let key in req.body) {
           switch (key) {
+	    case 'flocks':
             case 'nickname':
             case 'description':
             case 'illustration':

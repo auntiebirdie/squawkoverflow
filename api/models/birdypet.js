@@ -20,8 +20,8 @@ class BirdyPet {
       await illustration.fetch()
 
       if (illustration) {
-	      this.illustration = illustration;
-	      this.member = data.member;
+        this.illustration = illustration;
+        this.member = data.member;
 
         Database.create('BirdyPet', {
           illustration: illustration.id,
@@ -80,11 +80,11 @@ class BirdyPet {
     });
   }
 
-  set(data) {
-    return Promise.all([
-      Database.set('BirdyPet', this.id, data),
-      Cache.refresh('birdypet', this.id)
-    ]);
+  async set(data) {
+    await Database.set('BirdyPet', this.id, data);
+    await Cache.refresh('birdypet', this.id);
+
+    return true;
   }
 
   delete() {
