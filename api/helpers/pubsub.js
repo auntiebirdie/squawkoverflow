@@ -12,8 +12,6 @@ exports.publish = function(topic, action, body) {
     if (process.env.NODE_ENV) {
       const pubsub = new PubSub();
 
-      console.log('[calling background]');
-
       pubsub.topic(topic).publish(Buffer.from(JSON.stringify(data))).then(() => {
         resolve();
       });
@@ -43,6 +41,9 @@ exports.receive = function(message, context) {
     const Webhook = require(__dirname + '/../helpers/webhook.js');
 
     var data = JSON.parse(Buffer.from(message.data, 'base64').toString());
+
+    console.log(data);
+
     var birdypet = new BirdyPet(data.birdypet);
     var member = new Member(data.member);
     var illustration = new Illustration(data.illustration);
