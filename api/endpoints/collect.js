@@ -26,7 +26,8 @@ module.exports = (req, res) => {
       member: req.body.loggedInUser,
       illustration: req.body.illustration,
       adjective: req.body.adjective,
-      freebird: req.body.freebird
+      freebird: req.body.freebird,
+      source: req.headers['x-forwarded-for'] == '35.208.110.100' ? 'DISCORD' : 'WEB'
     }));
 
     Promise.all(promises).then(() => {

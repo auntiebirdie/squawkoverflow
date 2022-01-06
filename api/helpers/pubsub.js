@@ -66,7 +66,8 @@ exports.receive = function(message, context) {
         }
 
         if (data.adjective) {
-          if (!member.settings.privacy?.includes('activity')) {
+          if (!member.settings.privacy?.includes('activity') || data.source == "DISCORD") {
+            // TODO: check that user is a valid server member
             promises.push(Webhook('egg-hatchery', {
               content: " ",
               embeds: [{
