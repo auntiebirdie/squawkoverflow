@@ -1,72 +1,38 @@
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+    <div class="container">
+      <div class="copyright">
+        &copy; Copyright <strong><span>iPortfolio</span></strong>
+      </div>
+      <div class="credits">
+        <!-- All the links in the footer should remain intact. -->
+        <!-- You can delete the links only if you purchased the pro version. -->
+        <!-- Licensing information: https://bootstrapmade.com/license/ -->
+        <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/iportfolio-bootstrap-portfolio-websites-template/ -->
+        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
       </div>
     </div>
-  </main>
+  </footer><!-- End  Footer -->
 
-  <% if (!locals.error) { %>
-  <footer class="col-10 col-md-9 col-lg-10 offset-2 offset-md-3 offset-lg-2 pt-5 pb-3 bg-dark text-light">
-    <div class="text-center">
-      <p><small>All images &copy; their respective owners.  For takedown requests, <a href="mailto:seppukawaii+takedown@gmail.com" class="text-light"><u>email us</u></a> with the URL of the photo you would like removed.</small></p>
-    </div>
-  </footer>
-  <% } %>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-  <script type="text/javascript">
-    $(document).ready( function () {
-      var menu = document.getElementById('sidebarNav');
+  <!-- Vendor JS Files -->
+  <script src="https://bootstrapmade.com/demo/templates/iPortfolio/assets/vendor/purecounter/purecounter.js"></script>
+  <script src="https://bootstrapmade.com/demo/templates/iPortfolio/assets/vendor/aos/aos.js"></script>
+  <script src="https://bootstrapmade.com/demo/templates/iPortfolio/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="https://bootstrapmade.com/demo/templates/iPortfolio/assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="https://bootstrapmade.com/demo/templates/iPortfolio/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="https://bootstrapmade.com/demo/templates/iPortfolio/assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="https://bootstrapmade.com/demo/templates/iPortfolio/assets/vendor/typed.js/typed.min.js"></script>
+  <script src="https://bootstrapmade.com/demo/templates/iPortfolio/assets/vendor/waypoints/noframework.waypoints.js"></script>
+  <script src="https://bootstrapmade.com/demo/templates/iPortfolio/assets/vendor/php-email-form/validate.js"></script>
 
-      lazyLoadInstance.update();
+  <!-- Template Main JS File -->
+  <script src="https://bootstrapmade.com/demo/templates/iPortfolio/assets/js/main.js"></script>
 
-      $('#sidebarToggle').on('click', function () {
-        var action = this.getAttribute('data-toggle');
-
-        menu.classList.toggle('col-6');
-
-        $('.nav-item .label', menu).toggleClass('d-none');
-
-        if (action == "expand") {
-          this.setAttribute('data-toggle', 'shrink');
-          this.innerHTML = '&lsaquo;';
-        }
-        else {
-          this.setAttribute('data-toggle', 'expand');
-          this.innerHTML = '&rsaquo;';
-        }
-      });
-
-     <% if (locals.loggedInUser) { %>
-      $('#content').on('click', '.wishlist-heart', function (event) {
-        var button = event.target;
-
-          if (!button.style.opacity) { 
-            var action = button.getAttribute('data-action');
-            button.style.opacity = .5;
-            button.innerHTML = "⏳";
-
-            $.ajax({
-              url: '/api/wishlist',
-              data: JSON.stringify({
-                speciesCode: button.getAttribute('data-id')
-              }),
-              method: action == "add" ? "POST" : "DELETE",
-              dataType: "json",
-              contentType: 'application/json',
-              success: function(data) {
-                button.style.opacity = null;
-
-                if (action == "add") {
-                  button.innerHTML = "❤️";
-                  button.setAttribute('data-action', 'remove');
-                }
-                else {
-                  button.innerHTML = "🤍";
-                  button.setAttribute('data-action', 'add');
-                }
-              }
-            });
-          }
-      });
-    <% } %>
-    });
-  </script>
 </body>
+
 </html>
