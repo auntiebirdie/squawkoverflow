@@ -1,0 +1,16 @@
+#header {
+	background: #2c3100;
+}
+
+.text-primary {
+  color: #DDF600 !important;
+}
+
+.mobile-nav-toggle {
+	color: #DDF600;
+	background-color: #444D00;
+}
+
+.nav-menu a:hover {
+	color: #DDF600 !important;
+}
