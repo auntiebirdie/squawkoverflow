@@ -1,4 +1,3 @@
-const Cache = require('../helpers/cache.js');
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
@@ -9,30 +8,21 @@ const Flocks = require('../collections/flocks.js');
 const Flock = require('./flock.js');
 
 class Member {
-  static schema = {
-    username: String,
-    avatar: String,
-    tier: Number,
-    bugs: Number,
-    settings: Object,
-    pronouns: Object
-  };
-
   constructor(id) {
     this.id = id;
   }
 
   create(data) {
     return new Promise((resolve, reject) => {
-      Database.save('Member', data.id, {
+      Database.create('members', {
+        id: this.id,
         username: data.username,
         avatar: data.avatar,
         tier: data.tier,
         bugs: 0,
-        joinedAt: Date.now(),
-        lastLogin: Date.now(),
-        settings: {},
-        lastRefresh: 0
+        joinedAt: new Date(),
+        lastLoginAt: new Date(),
+        settings: JSON.stringify({}),
       }).then(() => {
         resolve();
       });
@@ -41,14 +31,17 @@ class Member {
 
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
-      Cache.get('member', this.id).then(async (member) => {
+      Database.get('members', {
+        'id': this.id
+      }).then(async ([member]) => {
         if (!member) {
-          console.log('member not found?');
           if (params.createIfNotExists) {
-            Database.save('Member', data.id, params.createIfNotExists).then(() => {
+            Database.query('INSERT INTO members (id) VALUES (?)', [this.id]).then(() => {
               resolve(this.fetch());
             });
           }
+
+          reject();
         } else {
           this.username = member.username;
           this.avatar = member.avatar;
@@ -125,9 +118,9 @@ class Member {
 
           let lastMonth = new Date().setMonth(new Date().getMonth() - 1);
 
-          this.active = member.lastLogin > lastMonth || member.lastHatchedAt > lastMonth;
+          this.active = member.lastLogin > lastMonth || member.lastHatchAt > lastMonth;
           this.joinedAt = member.joinedAt;
-          this.lastHatchedAt = member.lastHatchedAt;
+          this.lastHatchAt = member.lastHatchAt;
           this.lastRefresh = member.lastRefresh || 0;
           this.birdyBuddy = member.birdyBuddy;
 
@@ -187,8 +180,9 @@ class Member {
 
   set(data) {
     return new Promise(async (resolve, reject) => {
-      await Database.set('Member', this.id, data);
-      await Cache.refresh('member', this.id);
+      await Database.set('members', {
+        id: this.id
+      }, data);
 
       resolve();
     });

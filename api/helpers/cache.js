@@ -13,7 +13,6 @@ class Cache {
     wishlist: "h",
     birdypet: "h",
     flock: "h",
-    aviaryTotals: "h",
     flockTotals: "h"
   }
 
@@ -147,18 +146,13 @@ class Cache {
             resolve(illustrations.map((illustration) => illustration[Database.KEY].name));
           });
           break;
-        case 'member':
-          Database.get('Member', id).then((member) => {
-            resolve(member);
-          });
-          break;
         case 'wishlist':
           Database.get('Wishlist', id).then((wishlist) => {
             resolve(wishlist);
           });
           break;
         case 'birdypet':
-          Database.get('BirdyPet', id).then((birdypet) => {
+          Database.get('birdypets', { id: id }).then(([birdypet]) => {
             resolve(birdypet);
           });
           break;
@@ -167,11 +161,7 @@ class Cache {
             resolve(flock);
           });
           break;
-        case 'aviaryTotals':
         case 'flockTotals':
-          if (kind == 'aviaryTotals') {
-            filters.push(['member', '=', id]);
-          } else if (kind == 'flockTotals') {
             if (id.startsWith('NONE-')) {
               let tmp = id.split('-');
 
@@ -180,9 +170,8 @@ class Cache {
             } else {
               filters.push(['flocks', '=', id]);
             }
-          }
 
-          Database.fetch({
+          Database.get('birdypets', {
             kind: 'BirdyPet',
             filters: filters
           }).then((birdypets) => {

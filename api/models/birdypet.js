@@ -20,20 +20,19 @@ class BirdyPet {
       await illustration.fetch()
 
       if (illustration) {
+	      this.id = Database.key();
         this.illustration = illustration;
         this.member = data.member;
 
-        Database.create('BirdyPet', {
-          illustration: illustration.id,
-          commonName: illustration.bird.name,
-          speciesCode: illustration.bird.code,
-          family: illustration.bird.family,
-          member: data.member,
-          flocks: [],
-          hatchedAt: Date.now()
-        }).then((id) => {
-          this.id = id;
-
+        Database.create('birdypets', {
+		id: this.id,
+		member: data.member,
+		variant: illustration.id,
+		nickname: "",
+		description: "",
+		friendship: 0,
+		hatchedAt: new Date()
+        }).then(() => {
           resolve(this);
         });
       } else {
@@ -81,7 +80,7 @@ class BirdyPet {
   }
 
   async set(data) {
-    await Database.set('BirdyPet', this.id, data);
+    await Database.set('birdypets', { id: this.id }, data);
     await Cache.refresh('birdypet', this.id);
 
     return true;
@@ -89,7 +88,7 @@ class BirdyPet {
 
   delete() {
     return Promise.all([
-      Database.delete('BirdyPet', this.id),
+      Database.delete('birdypets', { id: this.id }),
       Redis.connect("cache").del(`birdypet:${this.id}`),
     ]);
   }

@@ -1,4 +1,5 @@
 const Counters = require('../helpers/counters.js');
+const Database = require('../helpers/database.js');
 
 const Illustrations = require('../collections/illustrations.js');
 const Member = require('../models/member.js');
@@ -14,18 +15,11 @@ module.exports = async (req, res) => {
 
       await member.fetch();
 
-      var eggs = require('../data/eggs.json');
-      var keys = Object.keys(eggs).sort(() => .5 - Math.random()).slice(0, 6);
+      var eggs = await Database.query('SELECT adjective, numSpecies FROM adjectives ORDER BY RAND() LIMIT 6');
 
-      eggs = await Promise.all(keys.map(async (egg) => {
-        let cached = member.tier?.extraInsights ? await Counters.get('eggs', member.id, egg) : [];
-
-        return {
-          ...eggs[egg],
-          name: egg,
-          totals: [(cached || 0), eggs[egg].species.length]
-        }
-      }));
+      for (let egg in eggs) {
+        eggs[egg].numHatched = member.tier?.extraInsights ? await Counters.get('eggs', member.id, egg.adjective) : 0;
+      };
 
       return res.status(200).json(eggs);
       break;

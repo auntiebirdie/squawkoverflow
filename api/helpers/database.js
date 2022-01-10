@@ -1,155 +1,133 @@
 const uuid = require('short-uuid');
-
-const {
-  Datastore
-} = require('@google-cloud/datastore');
+const mariadb = require('mariadb');
 const secrets = require('../secrets.json');
-
-const datastore = new Datastore({
-  namespace: 'squawkoverflow'
-});
 
 function Database() {}
 
-Database.prototype.KEY = datastore.KEY;
+Database.prototype.connect = function() {
+  return new Promise(async (resolve, reject) => {
+    if (!this.conn) {
+      let ENV = process.env.NODE_ENV ? 'PROD' : 'DEV';
 
-Database.prototype.key = function(kind, id = null) {
-  return id ? datastore.key([kind, id]) : datastore.key([kind]);
-}
-
-Database.prototype.get = function(kind, id) {
-  return new Promise((resolve, reject) => {
-    datastore.get(this.key(kind, id)).then(([result]) => {
-      return resolve(result);
-    });
-  });
-}
-
-Database.prototype.set = function(kind, id, data) {
-  return new Promise((resolve, reject) => {
-    this.get(kind, id).then((entity) => {
-
-      if (entity) {
-        for (var datum in data) {
-          if (data[datum]) {
-            entity[datum] = data[datum];
-          } else {
-            delete entity[datum];
-          }
-        }
-
-        datastore.save({
-          key: entity[Datastore.KEY],
-          data: entity
-        }).then(() => {
-          return resolve(entity);
-        });
-      } else {
-        resolve(null);
-      }
-    });
-  });
-}
-
-Database.prototype.create = function(kind, data, uniqueField = false) {
-  return new Promise((resolve, reject) => {
-    if (uniqueField) {
-      this.fetch({
-        "kind": kind,
-        "filters": [
-          [uniqueField, "=", data[uniqueField]]
-        ]
-      }).then((results) => {
-        if (results.length > 0) {
-          reject(results);
-        } else {
-          resolve(this.create(kind, data));
-        }
+      this.conn = await mariadb.createConnection({
+        host: secrets.DB[ENV].HOST,
+        user: secrets.DB[ENV].USER,
+        password: secrets.DB[ENV].PASS
       });
-    } else {
-      resolve(this.save(kind, null, data));
+
+      this.conn.query('USE squawkdata');
     }
+
+    resolve();
   });
 }
 
-Database.prototype.save = function(kind, id, data) {
+Database.prototype.query = function(query, params = []) {
   return new Promise((resolve, reject) => {
-    if (!id) {
-      id = uuid.generate();
-    }
-
-    var key = this.key(kind, `${id}`);
-
-    datastore.save({
-      key: key,
-      data: data
-    }).then(() => {
-      return resolve(key.name);
-    }).catch((err) => {
-      console.log(err);
-    });
-  }).catch((err) => {
-    console.log(err);
-    return null;
-  });
-}
-
-Database.prototype.delete = function(kind, id) {
-  return new Promise((resolve, reject) => {
-    datastore.delete(this.key(kind, id)).then(() => {
-      return resolve();
+    this.connect().then(() => {
+      this.conn.query(query, params).then((results) => {
+        resolve(results);
+      });
     });
   });
 }
 
-Database.prototype.fetch = function({
-  kind,
-  filters,
-  select,
-  order,
-  limit,
-  keysOnly
-}) {
+Database.prototype.get = function(type, identifiers, options = {}) {
   return new Promise((resolve, reject) => {
-    let query = datastore.createQuery(kind);
+    let query = `SELECT`;
+    let selects = [];
+    let filters = [];
+    let params = [];
 
-    if (filters) {
-      for (filter of filters) {
-        query.filter(...filter);
+    if (options.select) {
+      for (let s in options.select) {
+        selects.push(options.select[s]);
       }
+    } else {
+      selects.push('*');
     }
 
-    if (order) {
-      query.order(...order);
+    query += selects.join(', ') + ` FROM ${type} WHERE `;
+
+    for (let i in identifiers) {
+      filters.push(`${i} = ?`);
+      params.push(identifiers[i]);
     }
 
-    if (limit) {
-      query.limit(limit);
-    }
+    query += filters.join(' AND ');
 
-    if (select) {
-      query.select(select);
-    }
-
-    if (keysOnly) {
-      query.select('__key__');
-    }
-
-    datastore.runQuery(query).then(([results]) => {
-      return resolve(results);
+    this.query(query, params).then((results) => {
+      resolve(results.map((result) => result));
     });
   });
 }
 
-Database.prototype.fetchOne = function(args) {
+Database.prototype.set = function(type, identifiers, data) {
   return new Promise((resolve, reject) => {
-    this.fetch({
-      ...args,
-      "limit": 1
-    }).then((results) => {
-      resolve(results[0]);
-    });
+    let query = `UPDATE ${type} SET `;
+    let values = [];
+    let filters = [];
+    let params = [];
 
+    for (let d in data) {
+      values.push(`${d} = ?`);
+      params.push(data[d]);
+    }
+
+    query += values.join(', ');
+
+    for (let i in identifiers) {
+      filters.push(`${i} = ?`);
+      params.push(identifiers[i]);
+    }
+
+    query += 'WHERE ' + filters.join(' AND ');
+
+    this.query(query, params).then((results) => {
+      resolve(results);
+    });
+  });
+}
+
+Database.prototype.key = function() {
+  return uuid.generate();
+}
+
+Database.prototype.create = function(type, data) {
+  return new Promise((resolve, reject) => {
+    let query = `INSERT INTO ${type} (`;
+    let fields = [];
+    let values = [];
+    let params = [];
+
+    for (let d in data) {
+      fields.push(d);
+      values.push('?');
+      params.push(data[d]);
+    }
+
+    query += fields.join(', ') + ') VALUES (' + values.join(', ') + ')';
+
+    this.query(query, params).then((results) => {
+      resolve(results);
+    });
+  });
+}
+
+Database.prototype.delete = function(type, identifiers) {
+  return new Promise((resolve, reject) => {
+    let query = `DELETE FROM ${type} WHERE `;
+
+    for (let i in identifiers) {
+      filters.push(`${i} = ?`);
+      params.push(identifiers[i]);
+    }
+
+    query += filters.join(' AND ');
+
+    this.query(query, params).then((results) => {
+      resolve(results);
+    });
   });
 }
 

@@ -10,13 +10,11 @@ module.exports = async (req, res) => {
   if (req.body.konami) {
     let konami = req.body.konami * 1;
 
-    await Database.get('KonamiCode', konami).then((code) => {
+    await Database.query('SELECT * FROM konami WHERE code = ?', [konami]).then(([code]) => {
       if (code.used) {
         return res.sendStatus(400);
       } else {
-        Database.set('KonamiCode', konami, {
-          used: true
-        }).then(() => {
+        Database.query('UPDATE konami SET used = true WHERE code = ?', [konami]).then(() => {
           return res.json(code.member);
         });
       }
@@ -33,23 +31,22 @@ module.exports = async (req, res) => {
       if (response.access_token) {
         oauth.getUser(response.access_token).then((user) => {
           let member = new Member(user.id);
-
           member.fetch().then(async (memberData) => {
-            if (memberData) {
-              await member.set({
-                lastLogin: Date.now()
-              });
-            } else {
-              await member.create({
-                id: user.id,
-                username: user.username,
-                avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`,
-                joinedAt: Date.now(),
-                lastLogin: Date.now(),
-                settings: {},
-                tier: 0
-              });
-            }
+            await member.set({
+              lastLoginAt: new Date()
+            });
+
+            return res.json(user.id);
+          }).catch(async (err) => {
+            await member.create({
+              id: user.id,
+              username: user.username,
+              avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`,
+              joinedAt: new Date(),
+              lastLoginAt: new Date(),
+              settings: {},
+              tier: 0
+            });
 
             return res.json(user.id);
           });
@@ -59,7 +56,7 @@ module.exports = async (req, res) => {
         return res.sendStatus(400);
       }
     }).catch((err) => {
-      console.error(err);
+      console.error('OAUTH FAILED', err);
       return res.sendStatus(400);
     });
   } else {
