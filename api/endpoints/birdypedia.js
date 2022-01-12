@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
     let bird = new Bird(birds[i].speciesCode);
 
     promises.push(bird.fetch({
-      include: ['illustrations', 'memberData'],
+      include: ['variants', 'memberData'],
       member: req.query.loggedInUser
     }));
 
@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
   }
 
   await Promise.all(promises).then(() => {
-    output = output.filter((bird) => bird.illustrations.length > 0);
+    output = output.filter((bird) => bird.variants.length > 0);
 
     res.json({
       totalPages: Math.ceil(totalPages / birdsPerPage),

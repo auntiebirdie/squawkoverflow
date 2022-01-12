@@ -39,7 +39,7 @@ module.exports = async (req, res) => {
         let bird = new Bird(birds[i].speciesCode);
 
         promises.push(bird.fetch({
-          include: ['illustrations', 'memberData'],
+          include: ['variants', 'memberData'],
           member: req.query.loggedInUser
         }));
 

@@ -55,11 +55,11 @@
 	<div class="px-2 pt-2 pb-4 text-center">
 	<% if (locals.loggedInUser) { %>
         <div class="dropdown">
-          <a href="#" class="align-items-center text-light text-decoration-none" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+          <a href="#" class="align-items-center text-light text-decoration-none" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
 		  <img src="<%= loggedInUser.avatar %>" width="32" class="rounded-circle" onerror="missingMemberAvatar(this)">
 		  <span class="d-none d-sm-inline-block"><%= loggedInUser.username %></span>
           </a>
-          <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+          <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser">
             <li><a class="dropdown-item" href="/members/<%= loggedInUser.id %>">Profile</a></li>
             <li><a class="dropdown-item" href="/aviary/<%= loggedInUser.id %>">Aviary</a></li>
             <li><a class="dropdown-item" href="/wishlist/<%= loggedInUser.id %>">Wishlist</a></li>
@@ -77,6 +77,6 @@
 
       <div class="bg-light col-10 col-md-9 col-lg-10 <% if (locals.error) { %> error-page full-image-background<% } %>">
       <% if (!locals.page || page != "home") { %>
-        <div id="content" class="container py-5 py-sm-3 mb-5">
+        <div id="content" class="container py-3 py-md-5 mb-5">
 	  <div class="mx-md-3 mb-5">
       <% } %>

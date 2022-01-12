@@ -1,7 +1,7 @@
 <%- include('../header.ejs') %>
 
   <%- include('../partials/page-title.ejs', {
-        title : birdypet.nickname ? birdypet.nickname : birdypet.bird.name,
+        title : birdypet.nickname ? birdypet.nickname : birdypet.bird.commonName,
         breadcrumb: {
           text: `${member.username}`,
           url: `/members/${member.id}`,
@@ -19,7 +19,7 @@
               <%= birdypet.bird.wishlisted ? '❤️' : '🤍' %>
             </button>
            <% } %>
-            <img id="birdy" src="<%= birdypet.illustration.image %>" class="birdypet full">
+            <img id="birdy" src="<%= birdypet.variant.image %>" class="birdypet full">
           </span>
         </div>
 
@@ -34,13 +34,13 @@
               <input id="nickname" type="text" name="nickname" class="form-control" value="<%= birdypet.nickname %>" style="width: 100%">
             </div>
             <div class="col-12 col-md-4 mb-3">
-            <% if (!birdypet.illustration.special && birdypet.bird.illustrations.length > 1) { %>
+            <% if (!birdypet.variant.special && birdypet.bird.variants.length > 1) { %>
               <h5><label>Variant</label></h5>
-              <select name="illustration" class="form-select">
-                <% for (let variant of birdypet.bird.illustrations) { %>
-                <option value="<%= variant.id %>" data-src="<%= variant.image %>" <%= variant.id == birdypet.illustration.id ? "selected" : "" %>>
+              <select name="variant" class="form-select">
+                <% for (let variant of birdypet.bird.variants) { %>
+                <option value="<%= variant.id %>" data-src="<%= variant.image %>" <%= variant.id == birdypet.variant.id ? "selected" : "" %>>
                   <%= variant.label %>
-                  <%= variant.id == birdypet.illustration.id ? "[current]" : "" %>
+                  <%= variant.id == birdypet.variant.id ? "[current]" : "" %>
                 </option>
                 <% } %>
               </select>
@@ -98,11 +98,11 @@
 
         <h6>Common Name</h6>
         <p>
-          <a href="/birdypedia/bird/<%= birdypet.bird.code %>"><%= birdypet.bird.name %></a>
+          <a href="/birdypedia/bird/<%= birdypet.bird.code %>"><%= birdypet.bird.commonName %></a>
         </p>
 
         <h6>Scientific Name</h6>
-        <p><%= birdypet.bird.scientific %></p>
+        <p><%= birdypet.bird.scientificName %></p>
 
         <h6>Family</h6>
         <p><a href="/birdypedia?family=<%= birdypet.bird.family %>"><%= birdypet.bird.family %></a></p>
@@ -110,13 +110,13 @@
         <h6>Order</h6>
         <p><%= birdypet.bird.order %></p>
 
-        <% if (birdypet.illustration.label) { %>
+        <% if (birdypet.variant.label) { %>
         <h6>Variant</h6>
-        <p><%= birdypet.illustration.label %></p>
+        <p><%= birdypet.variant.label %></p>
         <% } %>
 
         <h6>Hatch Date</h6>
-        <p><%= new Date(birdypet.hatchedAt * 1).toLocaleString('en-US', { dateStyle: "long" }) %></p>
+        <p><%= new Date(birdypet.hatchedAt.split('T').shift()).toLocaleString('en-US', { dateStyle: "long" }) %></p>
 
         <% if (birdypet.flocks.length > 0) { %>
         <h6>Flocks</h6>
@@ -132,7 +132,7 @@
     </div>
 
     <script type="text/javascript">
-      $('select[name="illustration"]').change(function() {
+      $('select[name="variant"]').change(function() {
         var option = this.options[this.options.selectedIndex];
         var birdy = document.getElementById('birdy');
 

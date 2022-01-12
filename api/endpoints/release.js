@@ -6,10 +6,10 @@ module.exports = async (req, res) => {
     return res.sendStatus(401);
   }
 
-  let illustration = null;
+  let variant = null;
 
-  if (req.body.illustration) {
-    illustration = req.body.illustration;
+  if (req.body.variant) {
+    variant = req.body.variant;
   } else if (req.body.birdypet) {
     let birdypet = new BirdyPet(req.body.birdypet);
 
@@ -21,16 +21,16 @@ module.exports = async (req, res) => {
       return res.sendStatus(401);
     }
 
-    illustration = birdypet.illustration.id;
+    variant = birdypet.variant.id;
 
     await birdypet.delete();
   }
 
-  if (illustration) {
+  if (variant) {
     PubSub.publish('background', 'RELEASE', {
 	    member: req.body.loggedInUser,
 	    birdypet: req.body.birdypet,
-	    illustration: illustration
+	    variant: variant
     });
 
     return res.sendStatus(200);

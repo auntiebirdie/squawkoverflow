@@ -1,6 +1,6 @@
 const secrets = require('../secrets.json');
 const uuid = require('short-uuid');
-const redis = require("redis");
+const redis = require('redis');
 
 function Redis() {
   this.dataTypes = {

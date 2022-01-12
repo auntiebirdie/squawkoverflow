@@ -26,15 +26,38 @@ Database.prototype.query = function(query, params = []) {
   return new Promise((resolve, reject) => {
     this.connect().then(() => {
       this.conn.query(query, params).then((results) => {
-        resolve(results);
+        if (query.endsWith(' LIMIT 1')) {
+          resolve(results[0]);
+        } else {
+          resolve(results);
+        }
       });
+    });
+  });
+}
+
+Database.prototype.count = function(type, identifiers) {
+  return new Promise((resolve, reject) => {
+    let query = `SELECT COUNT(*) AS total FROM ${type} WHERE `;
+    let filters = [];
+    let params = [];
+
+    for (let i in identifiers) {
+      filters.push(`${i} = ?`);
+      params.push(identifiers[i]);
+    }
+
+    query += filters.join(' AND ');
+
+    this.query(query, params).then((results) => {
+      resolve(results[0]['total']);
     });
   });
 }
 
 Database.prototype.get = function(type, identifiers, options = {}) {
   return new Promise((resolve, reject) => {
-    let query = `SELECT`;
+    let query = `SELECT `;
     let selects = [];
     let filters = [];
     let params = [];
@@ -58,6 +81,14 @@ Database.prototype.get = function(type, identifiers, options = {}) {
 
     this.query(query, params).then((results) => {
       resolve(results.map((result) => result));
+    });
+  });
+}
+
+Database.prototype.getOne = function(type, identifiers, options = {}) {
+  return new Promise((resolve, reject) => {
+    this.get(type, identifiers, options).then((results) => {
+      resolve(results[0]);
     });
   });
 }
@@ -117,6 +148,8 @@ Database.prototype.create = function(type, data) {
 Database.prototype.delete = function(type, identifiers) {
   return new Promise((resolve, reject) => {
     let query = `DELETE FROM ${type} WHERE `;
+	  let filters = [];
+	  let params = [];
 
     for (let i in identifiers) {
       filters.push(`${i} = ?`);

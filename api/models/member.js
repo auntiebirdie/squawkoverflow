@@ -218,33 +218,16 @@ class Member {
     let birds = require('../data/birds.json');
     let bird = birds.find((bird) => bird.speciesCode == speciesCode);
 
-    return new Promise((resolve, reject) => {
-      Database.get('Wishlist', this.id).then(async (results) => {
-        let toUpdate = {};
-
-        if (results[bird.family]) {
-          toUpdate[bird.family] = results[bird.family];
-        } else {
-          toUpdate[bird.family] = [];
-        }
-
+    return new Promise(async (resolve, reject) => {
         if (action == "add") {
-          if (!toUpdate[bird.family].includes(bird.speciesCode)) {
-            toUpdate[bird.family].push(bird.speciesCode);
-          }
+		await Database.create('wishlist', { member: this.id, species: bird.speciesCode, intensity: 1 });
         } else if (action == "remove") {
-          toUpdate[bird.family] = toUpdate[bird.family].filter((tmp) => tmp != bird.speciesCode);
+		await Database.delete('wishlist', { member: this.id, species: bird.speciesCode });
         }
 
-        if (toUpdate[bird.family].length == 0) {
-          toUpdate[bird.family] = null;
-        }
-
-        await Database.set('Wishlist', this.id, toUpdate);
         await Redis.connect('cache').del(`wishlist:${this.id}`);
 
         resolve();
-      });
     });
   }
 }

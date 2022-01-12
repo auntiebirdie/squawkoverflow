@@ -1,8 +1,10 @@
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 
-const Illustrations = require('../collections/illustrations.js');
 const Member = require('../models/member.js');
+const Variant = require('../models/variant.js');
+
+const fs = require('fs');
 
 module.exports = async (req, res) => {
   if (!req.body?.loggedInUser && !req.query?.loggedInUser) {
@@ -25,24 +27,15 @@ module.exports = async (req, res) => {
       break;
     case "POST":
       var birdypets = [];
-      var species = require('../data/eggs.json')[req.body.egg].species;
+      var species = await Database.query('SELECT species FROM species_adjectives WHERE adjective = ? ORDER BY RAND() LIMIT 1', [req.body.egg]);
 
-      do {
-          var bird = species.sort(() => .5 - Math.random())[0];
+      var variant = new Variant(await Database.query('SELECT id FROM variants WHERE species = ? AND special = FALSE ORDER BY RAND() LIMIT 1', [species.species]).then((result) => result.id));
 
-          var illustrations = await Illustrations.fetch('speciesCode', bird).then((birdypets) => birdypets.filter((birdypet) => !birdypet.special));
-      }
-      while (illustrations.length == 0);
+      await variant.fetch();
 
-      var illustration = illustrations.sort(() => .5 - Math.random())[0];
+      await variant.fetchMemberData(req.body.loggedInUser);
 
-      if (illustration) {
-        await illustration.fetchMemberData(req.body.loggedInUser);
-
-        return res.status(200).json(illustration);
-      } else {
-        return res.sendStatus(500);
-      }
+      return res.status(200).json(variant);
       break;
     default:
       return res.sendStatus(405);

@@ -38,10 +38,10 @@ module.exports = async (req, res) => {
           content: `${fromMember.username} has sent <@${toMember.id}> a gift!`,
           embeds: [{
             title: birdypet.nickname || birdypet.bird.name,
-            description: birdypet.illustration.label || " ",
+            description: birdypet.variant.label || " ",
             url: `https://squawkoverflow.com/birdypet/${birdypet.id}`,
             image: {
-              url: birdypet.illustration.image
+              url: birdypet.variant.image
             }
           }]
         }));
@@ -49,13 +49,13 @@ module.exports = async (req, res) => {
         promises.push(PubSub.publish('background', 'GIFT', {
           member: fromMember.id,
           birdypet: birdypet.id,
-          illustration: birdypet.illustration.id
+          variant: birdypet.variant.id
         }));
 
         promises.push(PubSub.publish('background', 'COLLECT', {
           member: toMember.id,
           birdypet: birdypet.id,
-          illustration: birdypet.illustration.id
+          variant: birdypet.variant.id
         }));
 
         return res.sendStatus(200);

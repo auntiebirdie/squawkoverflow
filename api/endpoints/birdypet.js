@@ -61,7 +61,7 @@ module.exports = async (req, res) => {
 	    case 'flocks':
             case 'nickname':
             case 'description':
-            case 'illustration':
+            case 'variant':
               toUpdate[key] = req.body[key];
               break;
             case 'flock':

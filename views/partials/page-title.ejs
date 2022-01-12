@@ -1,4 +1,5 @@
-<% if (locals.breadcrumb) { %>
+<div class="ms-4">
+ <% if (locals.breadcrumb) { %>
   <h6>
  <% if (typeof breadcrumb == "object") { %>
     <%- breadcrumb.prepend %><a <%- breadcrumb.url ? `href="${breadcrumb.url}"` : "" %>><%= breadcrumb.text %></a><%- breadcrumb.append %>
@@ -6,14 +7,15 @@
     <%= breadcrumb %>
   <% } %>
   </h6>
-<% } %>
-
-<h1 class="mb-4 pb-3 border-bottom border-2 border-dark">
-<% if (locals.title) { %>
- <% if (typeof title == "object") { %>
-    <%- title.prepend %><a <%- title.url ? `href="${title.url}"` : "" %>><%= title.text %></a><%- title.append %>
-  <% } else { %>
-    <%= title %>
-  <% } %>
  <% } %>
-</h1>
+
+  <h1 class="mb-4 pb-3">
+   <% if (locals.title) { %>
+    <% if (typeof title == "object") { %>
+     <%- title.prepend %><a <%- title.url ? `href="${title.url}"` : "" %>><%= title.text %></a><%- title.append %>
+    <% } else { %>
+     <%= title %>
+    <% } %>
+   <% } %>
+  </h1>
+</div>

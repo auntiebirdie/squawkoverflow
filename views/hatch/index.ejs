@@ -8,7 +8,7 @@
       <div class="col-6 col-md-4 col-lg-2">
         <a data-egg="<%= egg.adjective %>" class="btn btn-lg btn-outline-secondary p-3 mb-2">
           <h3>
-            <img src="/img/eggs/<%= egg.adjective %>.png" onerror="if (this.src != '/img/eggs/default.png') this.src = '/img/eggs/default.png';">
+            <img src="/img/eggs/<%= egg.icon %>.png">
           </h3>
           <h5><%= egg.adjective %></h5>
          <% if (loggedInUser.tier.extraInsights) { %>
@@ -59,7 +59,7 @@
     var hatched = document.getElementById('hatched');
     var actions = document.getElementById('actions');
 
-    var egg, illustration;
+    var egg, variant;
 
     $(eggs).one('click', 'a', function (e) {
       egg = e.currentTarget.getAttribute('data-egg');
@@ -76,14 +76,14 @@
         contentType: 'application/json',
         method: "POST",
         success: function(data) {
-          illustration = data.id;
+          variant = data.id;
 
           hatched.querySelector('h1').innerHTML = hatched.querySelector('h1').innerHTML.replace('%adjective%', egg);
           hatched.querySelector('img').setAttribute('src', data.image);
 
           var h3 = hatched.querySelector('h3').querySelector('a');
           h3.setAttribute('href', `/birdypedia/bird/${data.bird.code}`);
-          h3.innerHTML = data.bird.name;
+          h3.innerHTML = data.bird.commonName;
 
           var h5 = hatched.querySelector('h5');
           // add label to returned data
@@ -127,7 +127,7 @@
               cache: false,
               url: `/api/collect`,
               data: JSON.stringify({
-                illustration: illustration,
+                variant: variant,
                 adjective : egg
               }),
               dataType: "json",
@@ -148,7 +148,7 @@
               cache: false,
               url: `/api/release`,
               data: JSON.stringify({
-                illustration : illustration
+                variant : variant
               }),
               dataType: "json",
               contentType: 'application/json',

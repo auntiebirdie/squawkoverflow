@@ -38,11 +38,14 @@ class Flock {
           this.member = flock.member;
           this.displayOrder = flock.displayOrder;
 
-          if (params.include?.includes('families')) {
-            var totals = await Cache.get('flockTotals', this.id);
-
-            this.families = Object.keys(totals).filter((key) => totals[key] > 0 && !key.startsWith('_'));
-          }
+          this.families = await Database.query(`
+	  SELECT DISTINCT species.taxonomy
+	  FROM birdypets
+	  JOIN variants ON (birdypets.variant = variants.id)
+	  JOIN species ON (variants.species = species.code)
+	  JOIN birdypet_flocks ON (birdypets.id = birdypet_flocks.birdypet)
+	  WHERE birdypet_flocks.flock = ?
+	  `, [this.id]).then((results) => results.map( (result) => result.taxonomy));
 
           resolve(this);
         }
@@ -58,7 +61,7 @@ class Flock {
         }
       }
 
-      await Database.set('Flock', this.id, data);
+      await Database.set('flocks', { id : this.id }, data);
       await Cache.refresh('flock', this.id);
 
       resolve();
