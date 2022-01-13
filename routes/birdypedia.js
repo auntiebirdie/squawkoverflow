@@ -8,7 +8,8 @@ router.get('/', async (req, res) => {
 
   res.render('birdypedia', {
     families: families.map((family) => family.value),
-    currentPage: (req.query.page || 1) * 1
+    currentPage: (req.query.page || 1) * 1,
+	  sidebar: "filter"
   });
 });
 
