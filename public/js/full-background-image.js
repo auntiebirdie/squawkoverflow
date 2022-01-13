@@ -23,11 +23,10 @@
     for (var i = 0, len = containers.length; i < len; i++) {
       var image = images.pop();
 
+      containers[i].style.backgroundSize = 'cover';
+      containers[i].style.backgroundRepeat = 'no-repeat';
       containers[i].style.backgroundImage = "url('" + image.image + "')";
-
-      if (image.position) {
-        containers[i].style.backgroundPosition = image.position;
-      }
+      containers[i].style.backgroundPosition = image.position || 'center center';
 
       var attribution = containers[i].querySelector('.attribution');
 	    

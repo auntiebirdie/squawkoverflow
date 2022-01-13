@@ -1,16 +1,39 @@
-#header {
-	background: #2c3100;
+a {
+	color: #454d00;
+}
+
+a:hover {
+	color: #cee600;
+}
+
+.bg-dark, .btn-dark {
+	background: #2c3100 !important;
+}
+
+.text-dark {
+	color: #2c3100 !important;
+}
+
+.bg-primary, .btn-primary {
+	background-color: #DDF600 !important;
 }
 
 .text-primary {
   color: #DDF600 !important;
 }
 
-.mobile-nav-toggle {
-	color: #DDF600;
-	background-color: #444D00;
+.border-primary {
+	border-color: #DDF600 !important;
+}
+
+.bg-secondary, .btn-secondary {
+	background-color: #444D00 !important;
 }
 
 .nav-menu a:hover {
 	color: #DDF600 !important;
+}
+
+.page-title h1::after {
+	background: #a0b300;
 }

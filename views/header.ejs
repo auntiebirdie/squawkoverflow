@@ -27,25 +27,29 @@
 
 <body>
 
-  <i class="mobile-nav-toggle d-xl-none">≡</i>
+  <span class="mobile-nav-toggle d-xl-none bg-secondary text-primary">≡</span>
 
-  <header id="header">
-    <div class="d-flex flex-column">
+ <% if (locals.sidebar) { %>
+  <span class="mobile-sidebar-toggle d-xl-none bg-secondary text-primary"><%= sidebar == "info" ? "ℹ" : "🝖" %></span>
+ <% } %>
 
-      <div class="profile">
+  <div id="navbar" class="bg-dark">
+    <div class="d-flex flex-column pt-3 ps-3 ps-sm-0">
+
+      <div class="ps-3 ps-sm-0">
         <img src="/img/SQUAWK.png" alt="logo" class="img-fluid d-none d-sm-block">
-	<h1 class="text-light"><a href="/"><span class="text-primary">SQUAWK</a>overflow</a></h1>
+	<h2 class="text-center text-light"><span class="text-primary">SQUAWK</span>overflow</h2>
       </div>
 
-      <nav id="navbar" class="nav-menu navbar">
+      <nav class="nav-menu navbar">
         <ul>
           <% siteMenu.forEach( function (item) { %> 
-          <li class="nav-item">
-            <a href="<%= item.href %>" class="nav-link p-0 py-2 ps-md-3 text-light">
+          <li class="nav-item pb-2">
+            <a href="<%= item.href %>" class="nav-link text-light">
               <span class="icon d-inline-block fs-4">
                 <%= item.icon %>
               </span>
-              <span class="d-none d-sm-block label">
+              <span class="d-block label">
                 <%= item.label %>
               </span>
             </a>
@@ -54,6 +58,20 @@
         </ul>
       </nav>
     </div>
-  </header>
+  </div>
 
-  <main id="main">
+  <% if (locals.page && locals.page == "home") { %> 
+    <div id="home-banner" class="full-image-background d-none d-md-block">
+      <p class="bg-light text-secondary">welcome to</p>
+
+      <h1 class="bg-secondary text-light border-bottom border-5 border-primary"><strong>SQUAWK</strong>overflow</h1>
+
+      <p><em>the ultimate bird collecting game</em></p>
+
+      <a class="attribution bg-light"></a>
+    </div>
+    <script type="text/javascript" src="/js/full-background-image.js" image="banner"></script>
+  <% } %>
+
+  <main id="main" class="pt-3">
+    <div class="container">

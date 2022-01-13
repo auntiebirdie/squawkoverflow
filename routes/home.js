@@ -5,7 +5,8 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   res.render('home/index', {
-    page: "home"
+    page: "home",
+    sidebar: "recentActivity"
   });
 });
 
