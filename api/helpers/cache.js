@@ -7,13 +7,12 @@ class Cache {
     bird: "h",
     cache: "s",
     flocks: "s",
-    illustration: "h",
-    illustrations: "s",
+    variant: "h",
+    variants: "s",
     member: "h",
     wishlist: "h",
     birdypet: "h",
     flock: "h",
-    aviaryTotals: "h",
     flockTotals: "h"
   }
 
@@ -76,22 +75,17 @@ class Cache {
 
       switch (kind) {
         case 'aviary':
-          await Database.fetch({
-            kind: 'BirdyPet',
-            filters: [
-              ['member', '=', id]
-            ],
-            select: ['family', 'commonName', 'hatchedAt']
+          await Database.get('birdypets', {
+            member: id
+          }, {
+            select: ['id', 'hatchedAt']
           }).then((results) => {
-            resolve(results.map((result) => [result.hatchedAt, result[Database.KEY].name]))
+            resolve(results.map((result) => [new Date(result.hatchedAt).getTime(), result.id]))
           });
           break;
         case 'bird':
-          Database.fetch({
-            kind: 'Bird',
-            filters: [
-              ['code', '=', id]
-            ]
+          Database.get('species', {
+            code: id
           }).then((bird) => resolve(bird[0]));
           break;
         case 'cache':
@@ -104,104 +98,71 @@ class Cache {
             });
           } else if (id == "freebirds") {
             Database.fetch({
-		    kind: 'FreeBird',
-		    keysOnly: true
-	    }).then((freebirds) => {
+              kind: 'FreeBird',
+              keysOnly: true
+            }).then((freebirds) => {
               resolve(freebirds.map((freebird) => freebird[Database.KEY].name));
             });
           }
           break;
         case 'flocks':
-          Database.fetch({
-            kind: 'Flock',
-            filters: [
-              ['member', '=', id]
-            ],
-            keysOnly: true
-          }).then((flocks) => {
-            resolve(flocks.map((flock) => flock[Database.KEY].name));
+          Database.get('flocks', {
+              member: id
+            }, {
+              select: ['id']
+            })
+            .then((flocks) => {
+              resolve(flocks.map((flock) => flock.id));
+            });
+          break;
+        case 'variant':
+          Database.getOne('variants', {
+            id: id
+          }).then((variant) => {
+            resolve(variant);
           });
           break;
-        case 'illustration':
-          Database.get('Illustration', id).then((illustration) => {
-            resolve(illustration);
-          });
-          break;
-        case 'illustrations':
+        case 'variants':
           let tmp = id.split(':');
           let tmpKey = tmp[0];
           let tmpValue = tmp[1];
 
           if (tmpKey == 'prefix-alias') {
-            filters.push(['prefix', '=', tmpValue.split('-').shift()]);
-            filters.push(['alias', '=', tmpValue.split('-').pop()]);
+            filters.prefix = tmpValue.split('-').shift();
+            filters.alias = tmpValue.split('-').pop();
           } else {
-            filters.push([tmpKey, '=', tmpValue]);
+            filters[tmpKey] = tmpValue;
           }
 
-          Database.fetch({
-            kind: 'Illustration',
-            filters: filters,
-            keysOnly: true
-          }).then((illustrations) => {
-            resolve(illustrations.map((illustration) => illustration[Database.KEY].name));
-          });
-          break;
-        case 'member':
-          Database.get('Member', id).then((member) => {
-            resolve(member);
+          Database.get('variants', filters, {
+            select: ['id']
+          }).then((variants) => {
+            resolve(variants.map((variant) => variant.id));
           });
           break;
         case 'wishlist':
-          Database.get('Wishlist', id).then((wishlist) => {
-            resolve(wishlist);
+          Database.get('wishlist', {
+            member: id
+          }).then((results) => {
+            resolve(results.filter((result) => result.intensity > 0).map((result) => result.species));
           });
           break;
         case 'birdypet':
-          Database.get('BirdyPet', id).then((birdypet) => {
+          Database.get('birdypets', {
+            id: id
+          }).then(([birdypet]) => {
             resolve(birdypet);
           });
           break;
         case 'flock':
-          Database.get('Flock', id).then((flock) => {
+          Database.getOne('flocks', {
+            id: id
+          }).then((flock) => {
             resolve(flock);
           });
           break;
-        case 'aviaryTotals':
-        case 'flockTotals':
-          if (kind == 'aviaryTotals') {
-            filters.push(['member', '=', id]);
-          } else if (kind == 'flockTotals') {
-            if (id.startsWith('NONE-')) {
-              let tmp = id.split('-');
-
-              filters.push(['member', '=', tmp[1]]);
-              filters.push(['flocks', '=', 'NONE']);
-            } else {
-              filters.push(['flocks', '=', id]);
-            }
-          }
-
-          Database.fetch({
-            kind: 'BirdyPet',
-            filters: filters
-          }).then((birdypets) => {
-            data._total = 0;
-
-            for (var birdypet of birdypets) {
-              if (!data[birdypet.family]) {
-                data[birdypet.family] = 0;
-              }
-
-              data._total++;
-              data[birdypet.family]++;
-            }
-
-            resolve(data);
-          });
-          break;
         default:
-          reject('Unknown cache type');
+          reject(`Unknown cache type ${kind}`);
       }
     }).then(async (results) => {
       await Redis.connect().del(`${kind}:${id}`);

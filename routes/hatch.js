@@ -1,5 +1,6 @@
 const API = require('../helpers/api.js');
 
+const fs = require('fs');
 const express = require('express');
 const router = express.Router();
 
@@ -12,7 +13,11 @@ router.get('/', async (req, res) => {
       req.session.adjectives = response.map((egg) => egg.name);
 
       return res.render('hatch/index', {
-        eggs: response
+        eggs: response.map((egg) => {
+          egg.icon = fs.existsSync(`${__dirname}/../public/img/eggs/${egg.adjective}.png`) ? egg.adjective : 'default';
+
+          return egg;
+        })
       });
     })
     .catch((err) => {

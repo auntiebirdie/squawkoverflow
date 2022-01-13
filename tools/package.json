@@ -9,9 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/datastore": "^6.6.2",
     "@google-cloud/storage": "^5.16.1",
     "axios": "^0.24.0",
     "cheerio": "^1.0.0-rc.10",
+    "csv-parser": "^3.0.0",
     "jimp": "^0.16.1",
     "prompt": "^1.2.0",
     "short-uuid": "^4.2.0"

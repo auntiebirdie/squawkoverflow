@@ -1,3 +1,4 @@
+const Database = require('../helpers/database.js');
 const Cache = require('../helpers/cache.js');
 const Counters = require('../helpers/counters.js');
 
@@ -8,33 +9,35 @@ class Bird {
 
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
-      Cache.get('bird', this.id).then(async (bird) => {
+      Database.getOne('species', {
+        code: this.id
+      }).then(async (bird) => {
+
         for (let key in bird) {
           if (!params.fields || params.fields.includes(key)) {
-            switch (key) {
-              case 'adjectives':
-                try {
-                  this[key] = JSON.parse(bird[key]);
-                } catch (err) {
-                  this[key] = [];
-                }
-                break;
-              default:
-                this[key] = bird[key];
-            }
+            this[key] = bird[key];
           }
         }
 
-        if (!params.fields || params.fields.includes('illustrations')) {
-          const Illustrations = require('../collections/illustrations.js');
+        await Database.getOne('taxonomy', {
+          name: bird.taxonomy
+        }, {
+          select: ['name', 'parent']
+        }).then((taxonomy) => {
+          this.family = taxonomy.name;
+          this.order = taxonomy.parent;
+        });
 
-          this.illustrations = await Illustrations.fetch('speciesCode', this.code, {
+        if (!params.fields || params.fields.includes('variants')) {
+          const Variants = require('../collections/variants.js');
+
+          this.variants = await Variants.fetch('species', this.code, {
             bird: bird,
             include: params.include,
             member: params.member
           });
 
-          this.illustrations.sort((a, b) => (a.hatched === b.hatched) ? 0 : a.hatched ? -1 : 1);
+          this.variants.sort((a, b) => (a.hatched === b.hatched) ? 0 : a.hatched ? -1 : 1);
         }
 
         if (params.include?.includes('memberData') && params.member) {

@@ -6,7 +6,7 @@ module.exports = async (req, res) => {
   var bird = new Bird(req.query.speciesCode);
 
   await bird.fetch({
-	  include: ['illustrations', 'memberData'],
+	  include: ['variants', 'memberData'],
 	  member: req.query.loggedInUser
   });
 

@@ -15,16 +15,16 @@
         <% } else if (locals.birdypet && locals.member) { %>
             <meta property="og:title" content="<%= birdypet.nickname ? birdypet.nickname : birdypet.bird.name %>">
             <meta property="og:description" content="<% if (birdypet.description) { %><%= birdypet.description %> <% } else { %><%= member.username %>'s <%= birdypet.bird.name %><% } %>">
-            <meta property="og:image" content="<%= birdypet.illustration.image %>">
+            <meta property="og:image" content="<%= birdypet.variant.image %>">
             <meta property="og:type" content="article">
             <meta property="article:author" content="https://squawkoverflow.com/members/<%= member.id %>">
             <meta property="twitter:card" content="summary_large_image">
-            <meta property="twitter:image" content="<%= birdypet.illustration.image %>">
+            <meta property="twitter:image" content="<%= birdypet.variant.image %>">
         <% } else if (locals.page && page == 'birdypedia/bird') { %>
             <meta property="og:title" content="<%= bird.name %>">
-            <meta property="og:image" content="<%= bird.illustrations[0].image %>">
+            <meta property="og:image" content="<%= bird.variants[0].image %>">
             <meta property="twitter:card" content="summary_large_image">
-            <meta property="twitter:image" content="<%= bird.illustrations[0].image %>">
+            <meta property="twitter:image" content="<%= bird.variants[0].image %>">
         <% } else { %>
             <meta property="og:title" content="the ultimate bird collecting game">
             <meta property="og:description" content="🥚 hatch | ❤️ collect | 🤝 connect">

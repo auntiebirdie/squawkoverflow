@@ -1,4 +1,4 @@
-const Illustration = require('../models/illustration.js');
+const Variant = require('../models/variant.js');
 const Cache = require('../helpers/cache.js');
 const Redis = require('../helpers/redis.js');
 
@@ -16,15 +16,15 @@ module.exports = (req, res) => {
 
           for (let i = 0, len = freebirds.length; i < len; i++) {
             try {
-              let illustration = new Illustration(freebirds[i]);
+              let variant = new Variant(freebirds[i]);
 
-              if (!ids.includes(illustration.id)) {
-                promises.push(illustration.fetch({
+              if (!ids.includes(variant.id)) {
+                promises.push(variant.fetch({
                   include: ['memberData'],
                   member: req.query.loggedInUser
                 }));
 
-                ids.push(illustration.id);
+                ids.push(variant.id);
 
                 if (ids.length == limit) {
                   break;
