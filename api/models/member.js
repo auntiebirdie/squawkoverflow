@@ -46,7 +46,12 @@ class Member {
           this.username = member.username;
           this.avatar = member.avatar;
 
-          this.settings = member.settings ? JSON.parse(member.settings) : {};
+          try {
+            this.settings = member.settings ? JSON.parse(member.settings) : {};
+          } catch (err) {
+            console.log(member.settings);
+            this.settings = {};
+          }
 
           var tier = {
             name: "Birder",
@@ -149,7 +154,7 @@ class Member {
                 this.flocks = await Flocks.all(this.id);
                 break;
               case 'families':
-	        await Database.query('SELECT name, display FROM taxonomy WHERE type = "family" ORDER BY name').then( (results) => {
+                await Database.query('SELECT name, display FROM taxonomy WHERE type = "family" ORDER BY name').then((results) => {
                   this.families = results.map((result) => {
                     promises.push(Counters.get('family', this.id, result.name).then((value) => {
                       result.owned = value;
@@ -157,7 +162,7 @@ class Member {
 
                     return result;
                   });
-		});
+                });
                 break;
               case 'hasWishlist':
                 this.hasWishlist = await Database.getOne('wishlist', {
