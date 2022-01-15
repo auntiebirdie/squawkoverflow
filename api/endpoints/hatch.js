@@ -19,8 +19,8 @@ module.exports = async (req, res) => {
 
       var eggs = await Database.query('SELECT adjective, numSpecies FROM adjectives ORDER BY RAND() LIMIT 6');
 
-      for (let egg in eggs) {
-        eggs[egg].numHatched = member.tier?.extraInsights ? await Counters.get('eggs', member.id, egg.adjective) : 0;
+      for (let egg of eggs) {
+        egg.numHatched = member.tier?.extraInsights ? await Counters.get('eggs', member.id, egg.adjective) : 0;
       };
 
       return res.status(200).json(eggs);

@@ -30,15 +30,15 @@ class Counters {
         case 'eggs':
           var value = 0;
 
-          let eggs = require('../data/eggs.json');
+          let birds = await Database.get('species_adjectives', { adjective : id }, { select: ['species'] });
           let start = 0;
-          let end = eggs[id].species.length;
+          let end = birds.length;
 
           do {
             promises = [];
 
             for (let i = start, len = Math.min(end, start + 250); i < len; i++, start++) {
-              promises.push(this.get('species', member, eggs[id].species[i]));
+              promises.push(this.get('species', member, birds[i].species));
             }
 
             await Promise.all(promises).then((responses) => {

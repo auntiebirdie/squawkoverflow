@@ -43,7 +43,7 @@ Database.prototype.count = function(type, identifiers) {
     let params = [];
 
     for (let i in identifiers) {
-      filters.push(`${i} = ?`);
+      filters.push(`\`${i}\` = ?`);
       params.push(identifiers[i]);
     }
 
@@ -73,7 +73,7 @@ Database.prototype.get = function(type, identifiers, options = {}) {
     query += selects.join(', ') + ` FROM ${type}`;
 
     for (let i in identifiers) {
-      filters.push(`${i} = ?`);
+      filters.push(`\`${i}\` = ?`);
       params.push(identifiers[i]);
     }
 
@@ -111,14 +111,14 @@ Database.prototype.set = function(type, identifiers, data) {
     let params = [];
 
     for (let d in data) {
-      values.push(`${d} = ?`);
+      values.push(`\`${d}\` = ?`);
       params.push(data[d]);
     }
 
     query += values.join(', ');
 
     for (let i in identifiers) {
-      filters.push(`${i} = ?`);
+      filters.push(`\`${i}\` = ?`);
       params.push(identifiers[i]);
     }
 
@@ -142,7 +142,7 @@ Database.prototype.create = function(type, data) {
     let params = [];
 
     for (let d in data) {
-      fields.push(d);
+      fields.push(`\`${d}\``);
       values.push('?');
       params.push(data[d]);
     }
@@ -162,7 +162,7 @@ Database.prototype.delete = function(type, identifiers) {
     let params = [];
 
     for (let i in identifiers) {
-      filters.push(`${i} = ?`);
+      filters.push(`\`${i}\` = ?`);
       params.push(identifiers[i]);
     }
 

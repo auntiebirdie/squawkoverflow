@@ -63,8 +63,6 @@ const secrets = require('../api/secrets.json');
 
         console.log('*** NEW ***');
         console.log(newSpecies);
-
-        process.exit(0);
       });
   });
 })();

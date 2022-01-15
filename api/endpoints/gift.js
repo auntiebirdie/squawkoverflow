@@ -40,7 +40,7 @@ module.exports = async (req, res) => {
         promises.push(Webhook('exchange', {
           content: `${fromMember.username} has sent <@${toMember.id}> a gift!`,
           embeds: [{
-            title: birdypet.nickname || birdypet.bird.name,
+            title: birdypet.nickname || birdypet.bird.commonName,
             description: birdypet.variant.label || " ",
             url: `https://squawkoverflow.com/birdypet/${birdypet.id}`,
             image: {
