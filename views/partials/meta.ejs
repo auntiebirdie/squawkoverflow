@@ -13,15 +13,15 @@
             <meta property="profile:first_name" content="<%= member.username %>">
             <meta property="profile:last_name" content="">
         <% } else if (locals.birdypet && locals.member) { %>
-            <meta property="og:title" content="<%= birdypet.nickname ? birdypet.nickname : birdypet.bird.name %>">
-            <meta property="og:description" content="<% if (birdypet.description) { %><%= birdypet.description %> <% } else { %><%= member.username %>'s <%= birdypet.bird.name %><% } %>">
+            <meta property="og:title" content="<%= birdypet.nickname ? birdypet.nickname : birdypet.bird.commonName %>">
+            <meta property="og:description" content="<% if (birdypet.description) { %><%= birdypet.description %> <% } else { %><%= birdypet.bird.scientificName %><% } %>">
             <meta property="og:image" content="<%= birdypet.variant.image %>">
             <meta property="og:type" content="article">
             <meta property="article:author" content="https://squawkoverflow.com/members/<%= member.id %>">
             <meta property="twitter:card" content="summary_large_image">
             <meta property="twitter:image" content="<%= birdypet.variant.image %>">
         <% } else if (locals.page && page == 'birdypedia/bird') { %>
-            <meta property="og:title" content="<%= bird.name %>">
+            <meta property="og:title" content="<%= bird.commonName %>">
             <meta property="og:image" content="<%= bird.variants[0].image %>">
             <meta property="twitter:card" content="summary_large_image">
             <meta property="twitter:image" content="<%= bird.variants[0].image %>">
