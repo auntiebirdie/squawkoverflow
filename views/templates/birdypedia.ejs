@@ -2,20 +2,21 @@
   <div class="w-100 pb-4">
     <div class="h-100 card">
       <% if (locals.loggedInUser) { %>
-        <button class="wishlist-heart btn btn-light btn-sm" data-id="${bird.code}" data-action="${bird.wishlisted ? 'remove' : 'add'}" role="button">
-          ${bird.wishlisted ? '❤️' : '🤍'}
+        <button class="wishlist-heart btn btn-light btn-sm" data-id="${model.code}" data-action="${model.wishlisted ? 'remove' : 'add'}" role="button">
+          ${model.wishlisted ? '❤️' : '🤍'}
         </button>
       <% } %>
       <div class="h100">
-        <div class="bg-white lazy birdypet ${bird.illustrations[0].hatched ? "hatched" : "unhatched"}"
-               data-bg="${bird.illustrations[0].image}"
+        <div class="bg-white lazy birdypet ${model.variants[0].hatched ? "hatched" : "unhatched"}"
+               data-bg="${model.variants[0].image}"
         ></div>
         <h6 class="p-1 bg-white birdypets text-center d-none d-sm-block">
-          ${bird.illustrations.length > 1 ? bird.illustrations.map(function (illustration) { return '<div class="lazy birdypet mini ' + (illustration.hatched ? "hatched" : "unhatched") + '" data-bg="' + illustration.image + '"></div>'; }).join("") : '<div class="birdypet mini disabled"></div>'}
+          ${model.variants.length > 1 ? model.variants.map(function (variant) { return '<div class="lazy birdypet mini ' + (variant.hatched ? "hatched" : "unhatched") + '" data-bg="' + variant.image + '"></div>'; }).join("") : '<div class="birdypet mini disabled"></div>'}
         </h6>
        </div>
        <div class="card-body">
-        <h3 class="text-center"><a href="/birdypedia/bird/${bird.code}">${bird.name}</a></h3> 
+        <h3 class="text-center"><a href="/birdypedia/bird/${model.code}">${model.commonName}</a></h3>
+        <h6 class="text-center"><em>${model.scientificName}</em></h6>
       </div>
     </div>
   </div>

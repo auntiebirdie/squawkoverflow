@@ -1,8 +1,8 @@
 const secrets = require('../secrets.json');
 const uuid = require('short-uuid');
-const Redis = require("redis");
+const redis = require('redis');
 
-function Database() {
+function Redis() {
   this.dataTypes = {
     "search": "s",
     "cache": "s",
@@ -13,22 +13,22 @@ function Database() {
   this.connections = {};
 }
 
-Database.prototype.connect = function() {
+Redis.prototype.connect = function() {
   let DB = process.env.NODE_ENV ? 'PROD' : 'DEV';
 
   if (!this.connections[DB]) {
-    this.connections[DB] = Redis.createClient(secrets.REDIS[DB].PORT, secrets.REDIS[DB].HOST);
+    this.connections[DB] = redis.createClient(secrets.REDIS[DB].PORT, secrets.REDIS[DB].HOST);
     this.connections[DB].auth(secrets.REDIS[DB].AUTH);
   }
 
   return this.connections[DB];
 }
 
-Database.prototype.escape = function(text) {
+Redis.prototype.escape = function(text) {
   return text.trim().replace(/\'s/g, "").replace(/\-/g, " ").replace(/\s/g, "* ") + "*";
 }
 
-Database.prototype.get = function(kind, id, field = "") {
+Redis.prototype.get = function(kind, id, field = "") {
   return new Promise((resolve, reject) => {
     switch (this.dataTypes[kind]) {
       case "s":
@@ -59,7 +59,7 @@ Database.prototype.get = function(kind, id, field = "") {
   });
 }
 
-Database.prototype.set = function(kind, id, data) {
+Redis.prototype.set = function(kind, id, data) {
   return new Promise(async (resolve, reject) => {
     switch (this.dataTypes[kind]) {
       case "kv":
@@ -83,7 +83,7 @@ Database.prototype.set = function(kind, id, data) {
   });
 }
 
-Database.prototype.increment = function(kind, id, field, value) {
+Redis.prototype.increment = function(kind, id, field, value) {
   return new Promise(async (resolve, reject) => {
     await this.connect().sendCommand('HINCRBY', [`${kind}:${id}`, field, value]);
 
@@ -91,7 +91,7 @@ Database.prototype.increment = function(kind, id, field, value) {
   });
 }
 
-Database.prototype.push = function(kind, id, value) {
+Redis.prototype.push = function(kind, id, value) {
   return new Promise(async (resolve, reject) => {
     await this.connect().sadd(`${kind}:${id}`, value);
 
@@ -99,14 +99,14 @@ Database.prototype.push = function(kind, id, value) {
   });
 }
 
-Database.prototype.pop = function(kind, id, value) {
+Redis.prototype.pop = function(kind, id, value) {
   return new Promise(async (resolve, reject) => {
     await this.connect().srem(`${kind}:${id}`, value);
     resolve();
   });
 }
 
-Database.prototype.sendCommand = function(kind, command, args) {
+Redis.prototype.sendCommand = function(kind, command, args) {
   return new Promise(async (resolve, reject) => {
     this.connect().sendCommand(command, args, function(err, response) {
       if (err) {
@@ -117,7 +117,7 @@ Database.prototype.sendCommand = function(kind, command, args) {
   });
 }
 
-Database.prototype.fetch = function(kind, args = {}) {
+Redis.prototype.fetch = function(kind, args = {}) {
   return new Promise(async (resolve, reject) => {
     var output = {
       count: 0,
@@ -195,7 +195,7 @@ Database.prototype.fetch = function(kind, args = {}) {
   });
 }
 
-Database.prototype.fetchOne = function(kind, args) {
+Redis.prototype.fetchOne = function(kind, args) {
   return new Promise((resolve, reject) => {
     this.fetch(kind, {
       ...args,
@@ -206,7 +206,7 @@ Database.prototype.fetchOne = function(kind, args) {
   });
 }
 
-Database.prototype.scan = async function(kind, key = null) {
+Redis.prototype.scan = async function(kind, key = null) {
   return new Promise(async (resolve, reject) => {
     var noResultsLeft = false;
     var cursor = 0;
@@ -242,7 +242,7 @@ Database.prototype.scan = async function(kind, key = null) {
   });
 }
 
-Database.prototype.create = function(kind, data, uniqueField = false) {
+Redis.prototype.create = function(kind, data, uniqueField = false) {
   return new Promise((resolve, reject) => {
     if (uniqueField) {
       this.fetchOne(kind, {
@@ -263,7 +263,7 @@ Database.prototype.create = function(kind, data, uniqueField = false) {
   });
 }
 
-Database.prototype.save = function(kind, id, data) {
+Redis.prototype.save = function(kind, id, data) {
   return new Promise((resolve, reject) => {
     if (!id) {
       id = uuid.generate();
@@ -277,7 +277,7 @@ Database.prototype.save = function(kind, id, data) {
   });
 }
 
-Database.prototype.delete = function(kind, id) {
+Redis.prototype.delete = function(kind, id) {
   return new Promise(async (resolve, reject) => {
     await this.connect().del(`${kind}:${id}`);
 
@@ -285,4 +285,4 @@ Database.prototype.delete = function(kind, id) {
   });
 }
 
-module.exports = new Database();
+module.exports = new Redis();

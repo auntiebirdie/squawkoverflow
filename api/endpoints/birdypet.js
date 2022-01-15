@@ -1,7 +1,7 @@
 const Member = require('../models/member.js');
 const BirdyPet = require('../models/birdypet.js');
 
-const Redis = require('../helpers/redis.js');
+const Database = require('../helpers/database.js');
 
 module.exports = async (req, res) => {
   switch (req.method) {
@@ -58,10 +58,9 @@ module.exports = async (req, res) => {
 
         for (let key in req.body) {
           switch (key) {
-	    case 'flocks':
             case 'nickname':
             case 'description':
-            case 'illustration':
+            case 'variant':
               toUpdate[key] = req.body[key];
               break;
             case 'flock':
@@ -70,14 +69,16 @@ module.exports = async (req, res) => {
               let index = flocks.indexOf(req.body.flock);
 
               if (index !== -1) {
-                flocks = flocks.filter((flock) => flock != req.body.flock);
+		await Database.query('DELETE FROM birdypet_flocks WHERE birdypet = ? AND flock = ?', [birdypet.id, req.body.flock]);
               } else {
-                flocks.push(req.body.flock);
+		      await Database.query('INSERT INTO birdypet_flocks VALUES (?, ?)', [birdypet.id, req.body.flock]);
               }
           }
         }
 
-        await birdypet.set(toUpdate);
+	if (Object.values(toUpdate).length > 0) {
+          	await birdypet.set(toUpdate);
+	}
 
         return res.sendStatus(200);
       } else {

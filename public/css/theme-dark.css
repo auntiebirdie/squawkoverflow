@@ -1,0 +1,70 @@
+html, body {
+	background-color: #121212;
+	color: #ffffff;
+}
+
+a {
+	color: #a0b300;
+}
+
+a:hover, .nav-menu a:hover {
+	color: #454d00 !important;
+}
+
+.bg-dark, .btn-dark {
+	background: #2c3100 !important;
+}
+
+.text-dark, .btn-primary {
+	color: #2c3100 !important;
+}
+
+.bg-light {
+	background-color: #202123 !important;
+}
+
+.bg-primary, .btn-primary {
+	background-color: #DDF600 !important;
+}
+
+.text-primary {
+  color: #DDF600 !important;
+}
+
+.border-primary, .btn-primary, .btn-outline-primary {
+	border-color: #DDF600 !important;
+}
+
+.bg-secondary, .btn-secondary,
+.page-item.active .page-link,
+.form-check-input:checked,
+.btn-check:active+.btn-outline-secondary, .btn-check:checked+.btn-outline-secondary,
+.btn-outline-secondary:hover {
+	background-color: #444D00 !important;
+}
+
+.text-secondary, .page-item .page-link {
+	color: #444D00 !important;
+}
+
+.btn-outline-secondary {
+	color: #444D00;
+}
+
+.border-secondary, .btn-secondary, .btn-outline-secondary,
+.page-item.active .page-link,
+.form-check-input:checked {
+	border-color: #444D00 !important;
+}
+
+.page-item.active .page-link {
+	color: #ffffff !important;
+}
+
+.page-title h1::after {
+	background: #a0b300;
+}
+
+.nav-menu hr {
+        background-color: #A0B300 !important;
+}

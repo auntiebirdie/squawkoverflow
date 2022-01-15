@@ -2,22 +2,22 @@
   <div class="w-100 pb-4">
     <div class="h-100 card">      
       <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>
-      <button class="wishlist-heart btn btn-light btn-sm" data-id="${bird.code}" data-action="remove" role="button">
+      <button class="wishlist-heart btn btn-light btn-sm" data-id="${model.code}" data-action="remove" role="button">
         ❤️
       </button>
       <% } %>
       <div>
-        <div class="bg-white lazy birdypet ${bird.illustrations[0].hatched ? "hatched" : "unhatched"}"
-             data-bg="${bird.illustrations[0].image}"
+        <div class="bg-white lazy birdypet ${model.variants[0].hatched ? "hatched" : "unhatched"}"
+             data-bg="${model.variants[0].image}"
         ></div>
       </div>
       <div class="card-body">
         <h3 class="text-center">
           <a
-            <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>${bird.illustrations[0].hatched ? `href="/aviary/<%= loggedInUser.id %>?search=${bird.name}"` : ``}<% } %>
-            <% if (locals.loggedInUser && loggedInUser.id != member.id) { %>${bird.illustrations[0].hatched ? `href="/members/<%= member.id %>/gift?search=${bird.name}"` : ``}<% } %>
+            <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>${model.variants[0].hatched ? `href="/aviary/<%= loggedInUser.id %>?search=${model.commonName}"` : ``}<% } %>
+            <% if (locals.loggedInUser && loggedInUser.id != member.id) { %>${model.variants[0].hatched ? `href="/members/<%= member.id %>/gift?search=${model.commonName}"` : ``}<% } %>
           >
-            ${bird.name}
+            ${model.commonName}
           </a>
         </h3> 
       </div>

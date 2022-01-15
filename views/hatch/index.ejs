@@ -5,15 +5,15 @@
 
     <div class="row text-center mb-5">
       <% for (var egg of eggs) { %>
-      <div class="col-6 col-md-4 col-lg-2">
-        <a data-egg="<%= egg.name %>" class="btn btn-lg btn-outline-secondary p-3 mb-2">
+      <div class="col-6 col-md-4 col-lg-2 mb-3">
+        <a data-egg="<%= egg.adjective %>" class="mb-2" role="button">
           <h3>
-            <img src="/img/eggs/<%= egg.icon ? egg.name : "default" %>.png">
+            <img src="/img/eggs/<%= egg.icon %>.png">
           </h3>
-          <h5><%= egg.name %></h5>
+          <h5><%= egg.adjective %></h5>
          <% if (loggedInUser.tier.extraInsights) { %>
           <div class="small text-muted">
-            <small><%= egg.totals[0] %>/<%= egg.totals[1] %></small>
+            <small><%= egg.numHatched %>/<%= egg.numSpecies %></small>
           </div>
            <% } %>
         </a>
@@ -46,9 +46,9 @@
         <h6></h6>
 
         <div id="actions" class="mt-5 text-center">
-          <button data-action="keep" class="btn btn-lg btn-primary mb-3">❤️&nbsp;Keep</button>
+          <a data-action="keep" class="btn btn-lg btn-secondary mb-3" role="button">❤️&nbsp;Keep</a>
           &nbsp;
-          <button data-action="release" class="btn btn-lg btn-primary mb-3">👋&nbsp;Release</button>
+          <a data-action="release" class="btn btn-lg btn-secondary mb-3" role="button">👋&nbsp;Release</a>
         </div>
       </div>
     </div>
@@ -59,7 +59,7 @@
     var hatched = document.getElementById('hatched');
     var actions = document.getElementById('actions');
 
-    var egg, illustration;
+    var egg, variant;
 
     $(eggs).one('click', 'a', function (e) {
       egg = e.currentTarget.getAttribute('data-egg');
@@ -76,14 +76,14 @@
         contentType: 'application/json',
         method: "POST",
         success: function(data) {
-          illustration = data.id;
+          variant = data.id;
 
           hatched.querySelector('h1').innerHTML = hatched.querySelector('h1').innerHTML.replace('%adjective%', egg);
           hatched.querySelector('img').setAttribute('src', data.image);
 
           var h3 = hatched.querySelector('h3').querySelector('a');
           h3.setAttribute('href', `/birdypedia/bird/${data.bird.code}`);
-          h3.innerHTML = data.bird.name;
+          h3.innerHTML = data.bird.commonName;
 
           var h5 = hatched.querySelector('h5');
           // add label to returned data
@@ -112,7 +112,7 @@
       });
     });
 
-    $(actions).on('click', 'button', function (e) {
+    $(actions).on('click', 'a[data-action]', function (e) {
       var button = e.currentTarget;
 
       if (!button.style.opacity) { 
@@ -127,7 +127,7 @@
               cache: false,
               url: `/api/collect`,
               data: JSON.stringify({
-                illustration: illustration,
+                variant: variant,
                 adjective : egg
               }),
               dataType: "json",
@@ -135,7 +135,7 @@
               method: "POST",
               success: function(birdypet) {
                 actions.classList.remove('loadingData');
-                actions.innerHTML = `<a class="btn btn-lg btn-primary mb-3" href="/birdypet/${birdypet.id}">🐣 View BirdyPet</a>&nbsp;<a class="btn btn-lg btn-primary mb-3" href="/hatch">🥚 Hatch Another Egg</a>`;
+                actions.innerHTML = `<a class="btn btn-lg btn-secondary mb-3" href="/birdypet/${birdypet.id}">🐣 View BirdyPet</a>&nbsp;<a class="btn btn-lg btn-secondary mb-3" href="/hatch">🥚 Hatch Another Egg</a>`;
               },
               error: function(XMLHttpRequest, textStatus, errorThrown) {
                 actions.classList.remove('loadingData');
@@ -148,7 +148,7 @@
               cache: false,
               url: `/api/release`,
               data: JSON.stringify({
-                illustration : illustration
+                variant : variant
               }),
               dataType: "json",
               contentType: 'application/json',

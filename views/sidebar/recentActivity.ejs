@@ -1,0 +1,13 @@
+<h5 class="border-bottom border-secondary pb-2 mb-3">Recently Hatched</h5>
+
+<% for (let model of activity) { %>
+  <div class="card mb-3">
+    <div class="lazy birdypet"
+         data-id="<%= model.id %>"
+         data-bg="<%= model.variant.image %>"
+    ></div>
+    <div class="card-body">
+      <h6 class="text-center"><a href="/birdypets/<%= model.id %>"><%= model.bird.commonName %></a></h6>
+    </div>
+  </div>
+<% } %>

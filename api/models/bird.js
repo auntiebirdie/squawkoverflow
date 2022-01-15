@@ -1,3 +1,4 @@
+const Database = require('../helpers/database.js');
 const Cache = require('../helpers/cache.js');
 const Counters = require('../helpers/counters.js');
 
@@ -8,33 +9,43 @@ class Bird {
 
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
-      Cache.get('bird', this.id).then(async (bird) => {
+      Database.getOne('species', {
+        code: this.id
+      }).then(async (bird) => {
+
         for (let key in bird) {
           if (!params.fields || params.fields.includes(key)) {
-            switch (key) {
-              case 'adjectives':
-                try {
-                  this[key] = JSON.parse(bird[key]);
-                } catch (err) {
-                  this[key] = [];
-                }
-                break;
-              default:
-                this[key] = bird[key];
-            }
+            this[key] = bird[key];
           }
         }
 
-        if (!params.fields || params.fields.includes('illustrations')) {
-          const Illustrations = require('../collections/illustrations.js');
+        await Database.getOne('taxonomy', {
+          name: bird.family
+        }, {
+          select: ['name', 'parent']
+        }).then((taxonomy) => {
+          this.family = taxonomy.name;
+          this.order = taxonomy.parent;
+        });
 
-          this.illustrations = await Illustrations.fetch('speciesCode', this.code, {
-            bird: bird,
+        if (params.include?.includes('variants')) {
+          const Variants = require('../collections/variants.js');
+
+          this.variants = await Variants.fetch('species', this.code, {
+            bird: this,
             include: params.include,
             member: params.member
           });
 
-          this.illustrations.sort((a, b) => (a.hatched === b.hatched) ? 0 : a.hatched ? -1 : 1);
+          this.variants.sort((a, b) => (a.hatched === b.hatched) ? 0 : a.hatched ? -1 : 1);
+        }
+
+        if (params.include?.includes('adjectives')) {
+          this.adjectives = await Database.get('species_adjectives', {
+            species: this.id
+          }, {
+            select: ['adjective']
+          }).then((results) => results.map((result) => result.adjective));
         }
 
         if (params.include?.includes('memberData') && params.member) {
@@ -48,9 +59,7 @@ class Bird {
 
   fetchMemberData(memberId) {
     return new Promise(async (resolve, reject) => {
-      let wishlist = await Cache.get('wishlist', memberId) || {};
-
-      this.wishlisted = wishlist[this.family] ? wishlist[this.family].includes(this.code) : false;
+      this.wishlisted = await Database.count('wishlist', { member : memberId, species: this.code });
       this.owned = await Counters.get('species', memberId, this.code);
 
       resolve({

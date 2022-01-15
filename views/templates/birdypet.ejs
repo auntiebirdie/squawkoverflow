@@ -1,24 +1,24 @@
-<div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
+<div class="col-6 col-md-4 d-flex align-items-stretch">
   <div class="w-100 pb-4">
-    <div class="h-100 card <% if (locals.loggedInUser && locals.page && page == 'manageFlock' && loggedInUser.id == member.id) { %>${bird.flocks.includes('<%= flock.id %>') ? 'border-chartreuse' : 'border-secondary border-dashed'}<% } %>">
+    <div class="h-100 card <% if (locals.loggedInUser && locals.page && page == 'manageFlock' && loggedInUser.id == member.id) { %>${model.flocks.includes('<%= flock.id %>') ? 'border-primary' : 'border-secondary border-dashed border-2'}<% } %>">
       <% if (locals.page && page == 'gift') { %>
         <button class="wishlist-heart btn btn-light btn-sm" role="button">
-          ${bird.bird.wishlisted ? '❤️' : '🤍'}
+          ${model.bird.wishlisted ? '❤️' : '🤍'}
         </button>
       <% } else { %>
         <a class="wishlist-heart">
-          ${bird.bird.wishlisted ? '❤️' : ''}
+          ${model.bird.wishlisted ? '❤️' : ''}
         </a>
       <% } %>
       <div>
-        <div class="bg-white lazy birdypet <% if ((locals.page && page != 'aviary') || (locals.loggedInUser && loggedInUser.id != member.id)) { %>checkmark${bird.bird.owned == 2 ? 2 : bird.bird.owned}<% } %>"
-             data-id="${bird.id}"
-             data-bg="${bird.illustration.image}"
+        <div class="bg-white lazy birdypet <% if ((locals.page && page != 'aviary') || (locals.loggedInUser && loggedInUser.id != member.id)) { %>checkmark${model.bird.owned == 2 ? 2 : model.bird.owned}<% } %>"
+             data-id="${model.id}"
+             data-bg="${model.variant.image}"
         ></div>
       </div>
       <div class="card-body">
-        <h3 class="text-center"><a href="/birdypet/${bird.id}">${bird.nickname ? bird.nickname : bird.bird.name}</a></h3> 
-        <h6 class="text-center">${bird.nickname ? bird.bird.name : bird.illustration.label}</h6>
+        <h3 class="text-center"><a href="/birdypet/${model.id}">${model.nickname ? model.nickname : model.bird.commonName}</a></h3>
+        <h6 class="text-small text-center">${model.variant.label}&nbsp;</h6>
       </div>
     </div>
   </div>

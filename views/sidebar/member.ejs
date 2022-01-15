@@ -1,0 +1,12 @@
+<h5>Collection Progress</h5>
+<% for (let family of allFamilies) { %>
+ <% family.owned = member.families.find( (fam) => fam.name == family.name)?.owned; %>
+ <% if (family.owned > 0) { %>
+  <p class="mb-0 mt-4"><a href="/birdypedia?family=<%= family.name %>"><%= family.name %></a></hp>
+  <p class="small mt-0 mb-2"><small>(<%= family.display.split(' (').pop() %></small></p>
+  <% var prct = family.owned / family.total * 100; %>
+  <div class="progress mx-2">
+    <div class="progress-bar<%= prct == 100 ? " bg-success" : "" %>" style="width: <%= prct %>%" role="progressbar" aria-valuenow="<%= family.owned %>" aria-valuemin="0" aria-valuemax="<%= family.total %>"></div>
+  </div>
+ <% } %>
+<% } %>

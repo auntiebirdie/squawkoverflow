@@ -1,38 +1,28 @@
-const Cache = require('../helpers/cache.js');
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
 
-const Birds = require('../collections/birds.js');
+const Bird = require('./bird.js');
 const BirdyPet = require('./birdypet.js');
 const Flocks = require('../collections/flocks.js');
 const Flock = require('./flock.js');
 
 class Member {
-  static schema = {
-    username: String,
-    avatar: String,
-    tier: Number,
-    bugs: Number,
-    settings: Object,
-    pronouns: Object
-  };
-
   constructor(id) {
     this.id = id;
   }
 
   create(data) {
     return new Promise((resolve, reject) => {
-      Database.save('Member', data.id, {
+      Database.create('members', {
+        id: this.id,
         username: data.username,
         avatar: data.avatar,
         tier: data.tier,
         bugs: 0,
-        joinedAt: Date.now(),
-        lastLogin: Date.now(),
-        settings: {},
-        lastRefresh: 0
+        joinedAt: new Date(),
+        lastLoginAt: new Date(),
+        settings: JSON.stringify({}),
       }).then(() => {
         resolve();
       });
@@ -41,14 +31,17 @@ class Member {
 
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
-      Cache.get('member', this.id).then(async (member) => {
+      Database.get('members', {
+        'id': this.id
+      }).then(async ([member]) => {
         if (!member) {
-          console.log('member not found?');
           if (params.createIfNotExists) {
-            Database.save('Member', data.id, params.createIfNotExists).then(() => {
+            Database.query('INSERT INTO members (id) VALUES (?)', [this.id]).then(() => {
               resolve(this.fetch());
             });
           }
+
+          reject();
         } else {
           this.username = member.username;
           this.avatar = member.avatar;
@@ -127,7 +120,7 @@ class Member {
 
           this.active = true; //this.active = member.lastLogin > lastMonth || member.lastHatchedAt > lastMonth;
           this.joinedAt = member.joinedAt;
-          this.lastHatchedAt = member.lastHatchedAt;
+          this.lastHatchAt = member.lastHatchAt;
           this.lastRefresh = member.lastRefresh || 0;
           this.birdyBuddy = member.birdyBuddy;
 
@@ -145,8 +138,8 @@ class Member {
                 }
                 break;
               case 'featuredFlock':
-                if (member.flock) {
-                  this.featuredFlock = new Flock(member.flock);
+                if (member.featuredFlock) {
+                  this.featuredFlock = new Flock(member.featuredFlock);
                   await this.featuredFlock.fetch();
                 } else {
                   this.featuredFlock = null;
@@ -156,23 +149,27 @@ class Member {
                 this.flocks = await Flocks.all(this.id);
                 break;
               case 'families':
-                try {
-                  let families = require('../data/families.json');
-
-                  this.families = Object.values(families).map((family) => {
-                    promises.push(Counters.get('family', this.id, family.value).then((value) => {
-                      family.owned = value;
+	        await Database.query('SELECT name, display FROM taxonomy WHERE type = "family" ORDER BY name').then( (results) => {
+                  this.families = results.map((result) => {
+                    promises.push(Counters.get('family', this.id, result.name).then((value) => {
+                      result.owned = value;
                     }));
 
-                    return family;
+                    return result;
                   });
-                } catch (err) {
-                  console.log(err);
-                  this.families = [];
-                }
+		});
+                break;
+              case 'hasWishlist':
+                this.hasWishlist = await Database.getOne('wishlist', {
+                  member: this.id
+                });
                 break;
               case 'wishlist':
-                this.wishlist = await Cache.get('wishlist', this.id);
+                this.wishlist = await Database.get('wishlist', {
+                  member: this.id
+                }, {
+                  select: ['species', 'intensity']
+                });
                 break;
             }
           }
@@ -187,36 +184,35 @@ class Member {
 
   set(data) {
     return new Promise(async (resolve, reject) => {
-      await Database.set('Member', this.id, data);
-      await Cache.refresh('member', this.id);
+      await Database.set('members', {
+        id: this.id
+      }, data);
 
       resolve();
     });
   }
 
   fetchWishlist(family = null) {
-    return new Promise(async (resolve, reject) => {
-      let birds = [];
+    let birds = [];
 
-      await Cache.get('wishlist', this.id).then((results) => {
-        if (family) {
-          try {
-            birds = JSON.parse(results[family]);
-          } catch (err) {}
-        } else {
-          Object.values(results).forEach((result) => {
-            try {
-              JSON.parse(result).forEach((speciesCode) => {
-                birds.push(speciesCode);
-              });
-            } catch (err) {}
-          });
+    return new Promise((resolve, reject) => {
+      Database.get('wishlist', {
+        member: this.id
+      }, {
+        select: ['species', 'intensity']
+      }).then(async (results) => {
+        for (let i = 0, len = results.length; i < len; i++) {
+          let bird = new Bird(results[i].species);
+
+          bird.intensity = results[i].intensity;
+
+          birds.push(bird.fetch());
         }
+
+        Promise.all(birds).then(() => {
+          resolve(birds);
+        });
       });
-
-      birds = birds.map((speciesCode) => Birds.findBy('speciesCode', speciesCode));
-
-      resolve(birds);
     });
   }
 
@@ -224,33 +220,23 @@ class Member {
     let birds = require('../data/birds.json');
     let bird = birds.find((bird) => bird.speciesCode == speciesCode);
 
-    return new Promise((resolve, reject) => {
-      Database.get('Wishlist', this.id).then(async (results) => {
-        let toUpdate = {};
+    return new Promise(async (resolve, reject) => {
+      if (action == "add") {
+        await Database.create('wishlist', {
+          member: this.id,
+          species: bird.speciesCode,
+          intensity: 1
+        });
+      } else if (action == "remove") {
+        await Database.delete('wishlist', {
+          member: this.id,
+          species: bird.speciesCode
+        });
+      }
 
-        if (results[bird.family]) {
-          toUpdate[bird.family] = results[bird.family];
-        } else {
-          toUpdate[bird.family] = [];
-        }
+      await Redis.connect('cache').del(`wishlist:${this.id}`);
 
-        if (action == "add") {
-          if (!toUpdate[bird.family].includes(bird.speciesCode)) {
-            toUpdate[bird.family].push(bird.speciesCode);
-          }
-        } else if (action == "remove") {
-          toUpdate[bird.family] = toUpdate[bird.family].filter((tmp) => tmp != bird.speciesCode);
-        }
-
-        if (toUpdate[bird.family].length == 0) {
-          toUpdate[bird.family] = null;
-        }
-
-        await Database.set('Wishlist', this.id, toUpdate);
-        await Redis.connect('cache').del(`wishlist:${this.id}`);
-
-        resolve();
-      });
+      resolve();
     });
   }
 }

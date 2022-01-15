@@ -2,25 +2,6 @@
 
   <%- include('../partials/page-title.ejs', { title : "Birdypedia" }) %> 
 
-  <div id="toggles" class="row select-none mb-3">
-    <div class="col-2"></div>
-    <div class="col-4 text-center">
-      <a class="btn btn-lg btn-primary" href="/birdypedia">
-        <h2>🐦</h2>
-        <h5>Bird Guide</h5>
-      </a>
-    </div>
-    <div class="col-4 text-center">
-      <a class="btn btn-lg btn-secondary" href="/birdypedia/eggs">
-        <h2>🥚</h2>
-        <h5>Egg Guide</h5>
-      </a>
-    </div>
-    <div class="col-2"></div>
-  </div>
-
-  <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies : true }) %>
-
   <%- include('../partials/pagination.ejs') %>
 
   <div id="lazyLoader" class="row" data-endpoint="/api/birdypedia"></div>

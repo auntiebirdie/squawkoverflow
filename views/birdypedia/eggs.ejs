@@ -1,42 +1,7 @@
 <%- include('../header.ejs') %>
 
-  <%- include('../partials/page-title.ejs', { title : "Egg Guide" }) %> 
+  <%- include('../partials/page-title.ejs', { title : "Birdypedia", subtitle: `Eggs - ${selectedLetter}` }) %> 
 
-  <div id="toggles" class="row select-none mb-3">
-    <div class="col-2"></div>
-    <div class="col-4 text-center">
-      <a class="btn btn-lg btn-secondary" href="/birdypedia">
-        <h2>🐦</h2>
-        <h5>Bird Guide</h5>
-      </a>
-    </div>
-    <div class="col-4 text-center">
-      <a class="btn btn-lg btn-primary" href="/birdypedia/eggs">
-        <h2>🥚</h2>
-        <h5>Egg Guide</h5>
-      </a>
-    </div>
-    <div class="col-2"></div>
-  </div>
-
-  <%- include('../partials/spacer.ejs'); %>
-
-  <h3 class="sticky-top bg-secondary text-white py-1 px-2 text-center text-monospace">
-    <% for (var alphabet of [["A","B","C","D","E","F","G","H","I","J","K","L","M"], ["N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]]) { %>
-      <div>
-       |
-       <% for (var letter of alphabet) { %>
-        <% if (letter == firstLetter) { %>
-          <%= letter %>
-        <% } else { %>
-          <a href="/birdypedia/eggs/<%= letter %>"><%= letter %></a>
-        <% } %>
-          |
-       <% } %>
-      </div>
-    <% } %>
-  </h3>
-  
   <div class="row">
    <% for (var egg of eggs) { %>
     <div class="col-12 col-md-4">
@@ -45,7 +10,7 @@
           <a href="/birdypedia/eggs/<%= egg.name %>"><%= egg.name %></a>
         </div>
         <div class="col-5 text-end">
-          <small class="text-light">
+          <small class="text-muted">
             <% if (locals.loggedInUser) { %>
               <% if (egg.memberTotal == egg.speciesTotal) { %>
                 <span class="checkmark"></span>

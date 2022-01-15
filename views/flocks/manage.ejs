@@ -17,7 +17,7 @@
     <h5><label>Description</label></h5>
     <textarea id="flockDescription" maxlength="500" class="form-control mb-3" style="height: 150px; width: 100%;"><%= flock.description %></textarea>
 
-    <button id="updateFlock" class="btn btn-primary" type="button">Save Changes</button>
+    <button id="updateFlock" class="btn btn-secondary" type="button">Save Changes</button>
 
     <button id="deleteFlock" class="btn btn-danger float-end" type="button">Delete</button>
   </div>
@@ -27,10 +27,8 @@
   <h3 class="mb-3">Add/Remove Birds</h3>
 
   <p>
-    <span class="border border-2 border-chartreuse p-1 mx-2">In Flock</span>  <span class="border border-2 border-secondary border-dashed p-1 mx-2">Not In Flock</span>
+    <span class="border border-2 border-primary p-1 mx-2">In Flock</span>  <span class="border border-2 border-secondary border-dashed p-1 mx-2">Not In Flock</span>
   </p>
-
-  <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies: true, selectedFlock: flock.id, sortFields : [{ "value" : "hatchedAt-DESC", "label" : "Hatch Date (Newest)" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
 
   <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"member":"<%= loggedInUser.id %>"}'></div>
 
@@ -59,7 +57,7 @@
               image.style.opacity = null;
               image.innerHTML = "";
 
-              $(image.parentNode.parentNode).toggleClass('border-chartreuse border-secondary border-dashed loadingData');
+              $(image.parentNode.parentNode).toggleClass('border-primary border-secondary border-dashed loadingData');
             }
           });
         }

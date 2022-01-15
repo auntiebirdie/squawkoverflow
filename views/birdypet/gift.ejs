@@ -1,11 +1,11 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { breadcrumb : "Send a Gift", title : birdypet.nickname ? birdypet.nickname : birdypet.bird.name }) %>
+    <%- include('../partials/page-title.ejs', { title : birdypet.nickname ? birdypet.nickname : birdypet.bird.name }) %>
 
     <div class="row">
       <div class="col-md-6">
         <div class="mb-4 text-center">
-          <img class="birdypet full" src="<%= birdypet.illustration.image %>">
+          <img class="birdypet full" src="<%= birdypet.variant.image %>">
         </div>
       </div>
       <div class="col-md-6">
@@ -25,7 +25,7 @@
           <div id="memberDisplay" class="my-5"></div>
 
           <div class="text-center">
-            <button id="actionButton" class="btn btn-primary" type="button" disabled>Send Gift!</button>
+            <button id="actionButton" class="btn btn-secondary" type="button" disabled>Send Gift!</button>
           </div>
         </div>
       </div>
@@ -41,7 +41,7 @@
       var memberId = option.value;
 
       if (memberId) {
-        memberDisplay.html(`<h3><img src="${option.getAttribute('data-avatar')}" class="member-avatar" width="75" data-id="${memberId}" onerror="missingMemberAvatar(this)"> ${option.getAttribute('data-username')}</h3>`);
+        memberDisplay.html(`<h3><img src="${option.getAttribute('data-avatar')}" class="rounded-circle" width="75" data-id="${memberId}" onerror="missingMemberAvatar(this)"> ${option.getAttribute('data-username')}</h3>`);
         actionButton.attr('disabled', false);
       }
       else {

@@ -1,6 +1,8 @@
 const Member = require('../models/member.js');
 const BirdyPet = require('../models/birdypet.js');
 
+const Database = require('../helpers/database.js');
+const PubSub = require('../helpers/pubsub.js');
 const Webhook = require('../helpers/webhook.js');
 const Search = require('../helpers/search.js');
 
@@ -30,18 +32,19 @@ module.exports = async (req, res) => {
 
         await birdypet.set({
           member: toMember.id,
-          flocks: [],
           friendship: 0
         });
+
+        promises.push(Database.query('DELETE FROM birdypet_flocks WHERE birdypet = ?', [birdypet.id]));
 
         promises.push(Webhook('exchange', {
           content: `${fromMember.username} has sent <@${toMember.id}> a gift!`,
           embeds: [{
             title: birdypet.nickname || birdypet.bird.name,
-            description: birdypet.illustration.label || " ",
+            description: birdypet.variant.label || " ",
             url: `https://squawkoverflow.com/birdypet/${birdypet.id}`,
             image: {
-              url: birdypet.illustration.image
+              url: birdypet.variant.image
             }
           }]
         }));
@@ -49,13 +52,13 @@ module.exports = async (req, res) => {
         promises.push(PubSub.publish('background', 'GIFT', {
           member: fromMember.id,
           birdypet: birdypet.id,
-          illustration: birdypet.illustration.id
+          variant: birdypet.variant.id
         }));
 
         promises.push(PubSub.publish('background', 'COLLECT', {
           member: toMember.id,
           birdypet: birdypet.id,
-          illustration: birdypet.illustration.id
+          variant: birdypet.variant.id
         }));
 
         return res.sendStatus(200);

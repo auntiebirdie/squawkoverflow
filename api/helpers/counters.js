@@ -21,14 +21,10 @@ class Counters {
 
       switch (kind) {
         case 'aviary':
-          Database.fetch({
-            kind: 'BirdyPet',
-            filters: [
-              ['member', '=', member]
-            ],
-            keysOnly: true
-          }).then((response) => {
-            resolve(response.length * 1);
+          Database.count('birdypets', {
+            member: member
+          }).then((results) => {
+            resolve(results * 1);
           });
           break;
         case 'eggs':
@@ -59,51 +55,35 @@ class Counters {
 
           break;
         case 'family':
-          var value = 0;
-
-          Database.fetch({
-            kind: 'BirdyPet',
-            filters: [
-              ['member', '=', member],
-              ['family', '=', id]
-            ]
-          }).then((results) => {
-            let species = {};
-
-            for (let result of results) {
-              if (!species[result.speciesCode]) {
-                species[result.speciesCode] = true;
-
-                value++;
-              }
-            }
-
-            resolve(value);
-          });
+          Database.query(`
+	    SELECT COUNT(DISTINCT variants.species) total
+	    FROM birdypets
+	    JOIN variants ON (birdypets.variant = variants.id)
+	    JOIN species ON (variants.species = species.code)
+	    WHERE birdypets.member = ? AND species.family = ?
+	  `, [member, id])
+            .then((results) => {
+              resolve(results[0].total);
+            });
 
           break;
         case 'species':
-          Database.fetch({
-            kind: 'BirdyPet',
-            filters: [
-              ['member', '=', member],
-              ['speciesCode', '=', id]
-            ],
-            keysOnly: true
-          }).then((response) => {
-            resolve(response.length * 1);
-          });
+          Database.query(`
+            SELECT COUNT(*) total
+            FROM birdypets
+            JOIN variants ON (birdypets.variant = variants.id)
+            WHERE birdypets.member = ? AND variants.species = ?
+          `, [member, id])
+            .then((results) => {
+              resolve(results[0].total);
+            });
           break;
         case 'birdypets':
-          Database.fetch({
-            kind: 'BirdyPet',
-            filters: [
-              ['member', '=', member],
-              ['illustration', '=', id]
-            ],
-            keysOnly: true
-          }).then((response) => {
-            resolve(response.length * 1);
+          Database.count('birdypets', {
+            member: member,
+            variant: id
+          }).then((results) => {
+            resolve(results * 1);
           });
           break;
         default:
@@ -120,14 +100,18 @@ class Counters {
   increment(value, kind, member, id, updateEggs = false) {
     value *= 1;
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       this.get(kind, member, id).then(async (currValue) => {
         let promises = [];
 
         if (updateEggs) {
           if (currValue < 2) {
-            const Birds = require('../collections/birds.js');
-            let bird = Birds.findBy('speciesCode', id);
+            const Bird = require('../models/bird.js');
+            let bird = new Bird(id);
+
+            await bird.fetch({
+              include: ['adjectives']
+            })
 
             for (let adjective of bird.adjectives) {
               promises.push(this.increment(currValue == 0 ? -1 : 1, 'eggs', member, adjective));
@@ -143,16 +127,18 @@ class Counters {
           if (newValue < 2) {
             switch (kind) {
               case 'birdypets':
-                const Illustration = require('../models/illustration.js');
-                let illustration = new Illustration(id);
+                const Variant = require('../models/variant.js');
+                let variant = new Variant(id);
 
-                await illustration.fetch();
+                await variant.fetch();
 
-                promises.push(this.increment(newValue == 0 ? -1 : 1, 'species', member, illustration.bird.code));
+                promises.push(this.increment(newValue == 0 ? -1 : 1, 'species', member, variant.bird.code));
                 break;
               case 'species':
-                const Birds = require('../collections/birds.js');
-                let bird = Birds.findBy('speciesCode', id);
+                const Bird = require('../models/bird.js');
+                let bird = new Bird(id);
+
+			    await bird.fetch();
 
                 promises.push(this.increment(newValue == 0 ? -1 : 1, 'family', member, bird.family));
                 break;

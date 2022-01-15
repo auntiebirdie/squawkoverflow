@@ -39,7 +39,7 @@ router.get('/:birdypet', async (req, res) => {
   let birdypet = await API.call('birdypet', 'GET', {
     id: req.params.birdypet,
     member: req.session.user,
-    fetch: req.session.user ? ['memberData'] : []
+    include: req.session.user ? ['memberData', 'variants'] : ['variants']
   });
 
   let member = await API.call('member', 'GET', {
@@ -48,8 +48,10 @@ router.get('/:birdypet', async (req, res) => {
   });
 
   res.render('birdypet/birdypet', {
+    page: 'birdypet',
     birdypet: birdypet,
-    member: member
+    member: member,
+    sidebar: 'birdypet'
   });
 });
 

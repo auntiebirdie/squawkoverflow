@@ -2,8 +2,6 @@
 
     <%- include('../partials/page-title.ejs', { title : `Send Gift to: ${member.username}` }) %>
 
-    <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies : true, sortFields : [{ "value" : "hatchedAt-DESC", "label" : "Hatch Date (Newest)" }, { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" }, { "value" : "species", "label" : "Species" }] }) %>
-
     <%- include('../partials/pagination.ejs') %>
 
     <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"member":"<%= loggedInUser.id  %>","memberData":"<%= member.id %>"}'></div>

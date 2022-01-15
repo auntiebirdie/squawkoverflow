@@ -1,9 +1,9 @@
-const Illustration = require('../models/illustration');
+const Variant = require('../models/variant.js');
 
 module.exports = async (req, res) => {
-  var illustration = new Illustration(req.query.id);
+  var variant = new Variant(req.query.id);
 
-  await illustration.fetch();
+  await variant.fetch();
 
-  res.json(illustration);
+  res.json(variant);
 }

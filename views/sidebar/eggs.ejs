@@ -1,0 +1,27 @@
+<% if (locals.page == "birdypedia") { %>
+  <h5>Guides</h5>
+
+  <ul class="nav-menu p-0">
+    <li class="nav-item pb-2">
+      <a href="/birdypedia" class="text-dark">
+        <span class="icon d-inline-block fs-4">🐦</span>
+        <span class="d-block label">Birds</span>
+      </a>
+    </li>
+    <li class="nav-item pb-2">
+      <a href="/birdypedia/eggs" class="text-dark">
+        <span class="icon d-inline-block fs-4">🥚</span>
+        <span class="d-block label">Eggs</span>
+      </a>
+    </li>
+  </ul>
+<% } %>
+
+<h5>First Letter</h5>
+<div class="row">
+<% for (let letter of 'ABCDEFGHIJKLMNOPQRTSUVWXYZ'.split('')) { %>
+  <div class="col-6 col-md-4 text-center">
+    <a href="/birdypedia/eggs/<%= letter %>" class="btn btn-light"><%= letter %></a>
+  </div>
+<% } %>
+</div>

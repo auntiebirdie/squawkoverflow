@@ -2,19 +2,19 @@
   <div class="w-100 pb-4">
     <div class="h-100 card">      
       <a class="wishlist-heart">
-        ${bird.bird.wishlisted ? '❤️' : ''}
+        ${model.bird.wishlisted ? '❤️' : ''}
       </a>
       <div>
-        <a href="/birdypet/${bird.id}/gift?member=<%= member.id %>">
-          <div class="bg-white lazy birdypet checkmark${bird.bird.owned > 2 ? 2 : bird.bird.owned}"
-               data-id="${bird.id}"
-               data-bg="${bird.illustration.image}"
+        <a href="/birdypet/${model.id}/gift?member=<%= member.id %>">
+          <div class="bg-white lazy birdypet checkmark${model.bird.owned > 2 ? 2 : model.bird.owned}"
+               data-id="${model.id}"
+               data-bg="${model.variant.image}"
           ></div>
         </a>
       </div>
       <div class="card-body align-top">
-        <h3 class="text-center"><a href="/birdypet/${bird.id}/gift?member=<%= member.id %>">${bird.nickname ? bird.nickname : bird.commonName}</a></h3> 
-        <h6 class="text-center">${bird.nickname ? bird.commonName : (bird.illustration.label ? bird.illustration.label : '&nbsp;')}</h6>
+        <h3 class="text-center"><a href="/birdypet/${model.id}/gift?member=<%= member.id %>">${model.nickname ? model.nickname : model.bird.commonName}</a></h3> 
+        <h6 class="text-center">${model.nickname ? model.bird.commonName : (model.variant.label ? model.variant.label : '&nbsp;')}</h6>
       </div>
     </div>
   </div>

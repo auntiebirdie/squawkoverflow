@@ -2,9 +2,8 @@ const Cache = require('../helpers/cache.js');
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
-const Search = require('../helpers/search.js');
 
-const Illustration = require('./illustration.js');
+const Variant = require('./variant.js');
 
 class BirdyPet {
   static schema = {};
@@ -15,25 +14,24 @@ class BirdyPet {
 
   create(data) {
     return new Promise(async (resolve, reject) => {
-      let illustration = new Illustration(data.illustration);
+      let variant = new Variant(data.variant);
 
-      await illustration.fetch()
+      await variant.fetch()
 
-      if (illustration) {
-        this.illustration = illustration;
+      if (variant) {
+        this.id = Database.key();
+        this.variant = variant;
         this.member = data.member;
 
-        Database.create('BirdyPet', {
-          illustration: illustration.id,
-          commonName: illustration.bird.name,
-          speciesCode: illustration.bird.code,
-          family: illustration.bird.family,
+        Database.create('birdypets', {
+          id: this.id,
           member: data.member,
-          flocks: [],
-          hatchedAt: Date.now()
-        }).then((id) => {
-          this.id = id;
-
+          variant: variant.id,
+          nickname: "",
+          description: "",
+          friendship: 0,
+          hatchedAt: new Date()
+        }).then(() => {
           resolve(this);
         });
       } else {
@@ -50,27 +48,24 @@ class BirdyPet {
             this[key] = birdypet[key];
           }
 
-          this.illustration = new Illustration(birdypet.illustration);
+          this.variant = new Variant(birdypet.variant);
 
-          await this.illustration.fetch();
+          await this.variant.fetch();
 
-          if (params.include?.includes('memberData') && params.member) {
-            await this.illustration.fetchMemberData(params.member);
-          }
+          this.bird = this.variant.bird;
+          delete this.variant.bird;
 
-          this.bird = this.illustration.bird;
-          delete this.illustration.bird;
+          await this.bird.fetch(params);
 
           try {
-            if (typeof this.flocks == "string") {
-              this.flocks = JSON.parse(this.flocks);
-            }
-            if (this.flocks == null) {
-              this.flocks = [];
-            }
-
-            this.flocks = this.flocks.filter((flock) => flock != '' && flock != 'NONE');
-          } catch (err) {}
+            this.flocks = await Database.get('birdypet_flocks', {
+              birdypet: this.id
+            }, {
+              select: ['flock']
+            }).then((results) => results.map((result) => result.flock));
+          } catch (err) {
+	    this.flocks = [];
+	  }
 
           resolve(this);
         } else {
@@ -81,7 +76,9 @@ class BirdyPet {
   }
 
   async set(data) {
-    await Database.set('BirdyPet', this.id, data);
+    await Database.set('birdypets', {
+      id: this.id
+    }, data);
     await Cache.refresh('birdypet', this.id);
 
     return true;
@@ -89,7 +86,9 @@ class BirdyPet {
 
   delete() {
     return Promise.all([
-      Database.delete('BirdyPet', this.id),
+      Database.delete('birdypets', {
+        id: this.id
+      }),
       Redis.connect("cache").del(`birdypet:${this.id}`),
     ]);
   }

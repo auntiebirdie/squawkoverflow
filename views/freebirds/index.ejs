@@ -2,7 +2,7 @@
 
     <%- include('../partials/page-title.ejs', { title : 'Free Birds' }) %>
 
-    <p>Look out!  There are birds on the loose!!  They've been released and are running around stealing things for their nests.  Do you have space in your aviary for any of them?</p>
+    <p class="text-center"><em>Look out!  These birds have been released and are running around stealing things for their nests.  Do you have space in your aviary for any of them?</em></p>
 
     <div id="lazyLoader" class="row mt-5" data-endpoint="/api/freebirds"></div>
 
@@ -23,8 +23,7 @@
           cache: false,
           url: `/api/collect`,
           data: JSON.stringify({
-            illustration: `${image.getAttribute('data-id')}`,
-            freebird: true
+            freebird: `${image.getAttribute('data-id')}`,
           }),
           dataType: 'json',
           contentType: 'application/json',

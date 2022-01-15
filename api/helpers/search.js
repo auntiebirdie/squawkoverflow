@@ -1,4 +1,5 @@
 const Cache = require('./cache.js');
+const Database = require('./database.js');
 const Redis = require('./redis.js');
 
 const ObjectHash = require('object-hash');
@@ -7,9 +8,9 @@ const ObjectSorter = require('sort-objects-array');
 const birdsPerPage = 24;
 
 class Search {
-  get(kind, args) {
-    this.model = require(`../models/${kind.toLowerCase()}.js`);
-    this.identifier = kind == 'Bird' ? 'bird' : args.member;
+  get(args) {
+    this.model = require(`../models/birdypet.js`);
+    this.identifier = args.member;
 
     return new Promise(async (resolve, reject) => {
       var query = {
@@ -24,7 +25,7 @@ class Search {
 
       Redis.connect().sendCommand('ZCOUNT', [`search:${this.identifier}:${hash}`, '-inf', '+inf'], async (err, totalResults) => {
         if (err || !totalResults) {
-          var totalResults = await this.refresh(kind, hash, query);
+          var totalResults = await this.refresh(hash, query);
         }
 
         let promises = [];
@@ -37,7 +38,7 @@ class Search {
             var start = page;
             var end = (page + birdsPerPage) - 1;
           } else {
-            var end = (page * -1) -1;
+            var end = (page * -1) - 1;
             var start = end - birdsPerPage + 1;
           }
         } else {
@@ -46,18 +47,16 @@ class Search {
         }
 
         Redis.connect().sendCommand('ZRANGE', [`search:${this.identifier}:${hash}`, start, end], (err, results) => {
-          if (args.page) {
-            results = results.map((result) => {
-              let model = new this.model(result);
+          results = results.map((result) => {
+            let model = new this.model(result);
 
-              promises.push(model.fetch({
-                include: ['memberData'],
-                member: args.memberData || args.member
-              }));
+            promises.push(model.fetch({
+              include: ['memberData'],
+              member: args.memberData || args.member
+            }));
 
-              return model;
-            });
-          }
+            return model;
+          });
 
           return Promise.all(promises).then(() => {
             if (args.sortDir == 'DESC') {
@@ -74,57 +73,55 @@ class Search {
     });
   }
 
-  refresh(kind, hash, query) {
+  refresh(hash, args) {
     return new Promise(async (resolve, reject) => {
-      Cache.get('aviary', this.identifier).then(async (results) => {
+      let query = '';
+      let filters = [];
+      let params = [];
+
+      /*
+       *   page: '1',
+        sort: 'hatchedAt',
+        sortDir: 'DESC',
+        family: '',
+        flock: '',
+        search: '',
+        member: '121294882861088771',
+        memberData: '121294882861088771',
+        loggedInUser: '121294882861088771'
+        */
+
+      query = 'SELECT birdypets.id FROM birdypets';
+
+      if (args.family) {
+        query += ' JOIN variants ON (birdypets.variant = variants.id)';
+	      query += ' JOIN species ON (variants.species = species.code)';
+        filters.push('species.family = ?');
+        params.push(args.family);
+      }
+
+      if (args.flock) {
+        query += ' JOIN birdypet_flocks ON (birdypets.id = birdypet_flocks.birdypet)';
+        filters.push('birdypet_flocks.flock = ?');
+        params.push(args.flock);
+      }
+
+      query += ' WHERE ';
+
+      filters.push('birdypets.member = ?');
+      params.push(args.member);
+
+      query += filters.join(' AND ');
+
+      switch (args.sort) {
+        case "hatchedAt":
+          query += ` ORDER BY ${args.sort} ASC`;
+          break;
+      }
+
+      Database.query(query, params).then(async (results) => {
         var start = 0;
         var end = results.length;
-
-        do {
-          let promises = [];
-
-          for (let i = start, len = Math.min(start + 250, end); i < len; i++, start++) {
-            results[i] = new this.model(results[i]);
-
-            promises.push(results[i].fetch());
-          }
-
-          await Promise.all(promises);
-
-          promises = [];
-        }
-        while (start < end);
-
-        if (query.search || query.family || query.flock) {
-          var search = new RegExp(query.search, "i");
-
-          results = results.filter((result) => {
-            if (query.search && !search.test([result.nickname, result.bird.name, result.name].filter((text) => typeof text !== "undefined").join(' '))) {
-              return false;
-            }
-
-            if (query.family && result.bird.family != query.family) {
-              return false;
-            }
-
-            if (query.flock) {
-              if (query.flock == 'NONE' && result.flocks.length > 0) {
-                return false;
-              } else if (query.flock != 'NONE' && !result.flocks.includes(query.flock)) {
-                return false;
-              }
-            }
-
-            return true;
-          });
-        }
-
-        if (query.sort) {
-          results = ObjectSorter(results, query.sort, {
-            order: 'asc',
-            caseinsensitive: true
-          });
-        }
 
         resolve(results.map((result) => result.id));
       });
@@ -150,7 +147,7 @@ class Search {
           await Redis.connect().del(`search:${identifier}:${result}`);
         }
 
-	      await Redis.connect().del(`search:${identifier}`);
+        await Redis.connect().del(`search:${identifier}`);
 
         resolve();
       });

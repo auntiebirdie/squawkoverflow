@@ -3,10 +3,10 @@
   <%- include ('../partials/page-title.ejs', { title : member.username }) %>
 
   <div class="row">
-    <div class="col-sm-6 col-md-2 text-center mb-3">
-      <img class="member-avatar" src="<%= member.avatar %>" data-id="<%= member.id %>" onerror="missingMemberAvatar(this)">
+    <div class="col-6 col-md-2 text-center mb-3">
+      <img class="rounded-circle" src="<%= member.avatar %>" data-id="<%= member.id %>" onerror="missingMemberAvatar(this)">
     </div>
-    <div class="col-sm-6 col-md-4 text-center text-md-start mb-3">
+    <div class="col-6 col-md-4 text-center text-md-start mb-3">
       <h4>
         <% if (member.aviary <= 0) { %>
           Aspiring
@@ -34,108 +34,66 @@
       <p><%= new Date(member.joinedAt * 1).toLocaleString('en-US', { dateStyle: "long" }) %></p>
     </div>
     <div class="col-md-6 text-center text-md-end">
-        <p><a href="/aviary/<%= member.id %>" class="btn btn-primary">🐦 View Aviary</a></p>
-      <% if (member.wishlist && !member.settings.privacy?.includes('wishlist')) { %>
-        <p><a href="/wishlist/<%= member.id %>" class="btn btn-primary">❤️ View Wishlist</a></p>
+        <p><a href="/aviary/<%= member.id %>" class="btn btn-secondary">🐦 View Aviary</a></p>
+      <% if (member.hasWishlist && !member.settings.privacy?.includes('wishlist')) { %>
+        <p><a href="/wishlist/<%= member.id %>" class="btn btn-secondary">❤️ View Wishlist</a></p>
       <% } %>
       <% if (locals.loggedInUser && loggedInUser.id != member.id && !member.settings.privacy?.includes('gifts')) { %>
-        <p><a href="/members/<%= member.id %>/gift" class="btn btn-primary">🎁 Send Gift</a></p>
+        <p><a href="/members/<%= member.id %>/gift" class="btn btn-secondary">🎁 Send Gift</a></p>
       <% } %>
     </div>
   </div>
 
-  <div class="accordion" id="profileAccordion">
-   <% if (member.birdyBuddy?.illustration) { %>
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="birdyBuddy-heading">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#birdyBuddy-content" aria-expanded="false" aria-controls="birdyBuddy-content">
-            Birdy Buddy
-        </button>
-      </h2>
-      <div id="birdyBuddy-content" class="accordion-collapse collapse" aria-labelledby="birdyBuddy-heading" data-bs-parent="#profileAccordion">
-        <div class="accordion-body bg-secondary">
-          <div class="row">
-            <div class="col-md-7 text-center">
-              <div class="birdybuddy birdypet full mb-3">
-                <img src="<%= member.birdyBuddy.illustration.image %>">
-                <span class="message border border-1 border-secondary" style="display: none;"></span>
-              </div>
-            </div>
-            <div class="col-md-5">
-              <div class="bg-light px-3 py-2 rounded">
-                <h4><a class="text-decoration-none" href="/birdypet/<%= member.birdyBuddy.id %>"><%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.bird.name %></a></h4>
-
-                <%- include('../partials/friendshipMeter.ejs', { friendship : member.birdyBuddy.friendship }) %>
-
-                <div>
-                  <% if (member.birdyBuddy.description) { %>
-                  <div class="py-4 ps-4">
-                    <% for (var para of member.birdyBuddy.description.split("\r\n")) { %>
-                      <p><%= para %></p>
-                    <% } %>
-                  </div>
-                  <% } %>
-
-                  <% if (locals.loggedInUser && loggedInUser.bugs > 0) { %>
-                     <% if (member.birdyBuddy.friendship >= 100) { %>
-                       <p><em>You have <%= loggedInUser.bugs %> bug<%= loggedInUser.bugs != 1 ? "s" : "" %>, but <%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.species %> is full!</em></p>
-                     <% } else { %>
-                       <p><button id="feedBug" class="btn btn-primary" role="button" data-birdypet="<%= member.birdyBuddy.id %>">🐛 Feed a Bug (you have <span><%= loggedInUser.bugs %></span>)</button></p>
-                     <% } %>
-                  <% } %>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+ <% if (member.birdyBuddy?.variant) { %>
+  <div class="row mt-3">
+    <div class="col-lg-7 text-center">
+      <div class="birdybuddy birdypet full mb-3">
+        <img src="<%= member.birdyBuddy.variant.image %>">
+        <span class="message border border-1 border-secondary" style="display: none;"></span>
       </div>
     </div>
-   <% } %>
-   <% if (member.featuredFlock) { %>
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="featuredFlock-heading">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#featuredFlock-content" aria-expanded="false" aria-controls="featuredFlock-content">
-          <%= member.featuredFlock.name %>
-        </button>
-      </h2>
-      <div id="featuredFlock-content" class="accordion-collapse collapse" aria-labelledby="featuredFlock-heading" data-bs-parent="#profileAccordion">
-        <div class="accordion-body bg-secondary">
-          <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"member":"<%= member.id %>","flock":"<%= member.featuredFlock.id %>"}'></div>
+  <div class="col-lg-5">
+    <div class="bg-light px-3 py-2 rounded">
+      <h4><a class="text-decoration-none" href="/birdypet/<%= member.birdyBuddy.id %>"><%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.bird.commonName %></a></h4>
 
-          <%- include('../scripts/lazyloader.ejs') %>
-        </div>
-      </div>
-    </div>
-   <% } %>
-   <% if (member.aviary > 0) { %>
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="collectionProgress-heading">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collectionProgress-content" aria-expanded="false" aria-controls="collectionProgress-content">
-          Collection Progress
-        </button>
-      </h2>
-      <div id="collectionProgress-content" class="accordion-collapse collapse" aria-labelledby="collectionProgress-heading" data-bs-parent="#profileAccordion">
-        <div class="accordion-body bg-secondary">
-          <div class="row">
-           <% for (var family of member.families) { %>
-             <% if (family.owned > 0) { %>
-              <div class="col-6 col-md-4 col-lg-3 mb-4">
-                <h5><a href="/birdypedia?family=<%= family.value %>"><%= family.value %></a></h5>
-                <h6 class="small"><small>(<%= family.label.split(' (').pop() %></small></h6>
-                <% var prct = family.owned / family.total * 100; %>
-                <div class="progress mx-2">
-                  <div class="progress-bar<%= prct == 100 ? " bg-success" : "" %>" style="width: <%= prct %>%" role="progressbar" aria-valuenow="<%= family.owned %>" aria-valuemin="0" aria-valuemax="<%= family.total %>"></div>
-                </div>
-              </div>
-            <% } %>
+      <%- include('../partials/friendshipMeter.ejs', { friendship : member.birdyBuddy.friendship }) %>
+
+       <div>
+        <% if (member.birdyBuddy.description) { %>
+         <div class="py-4 ps-4">
+          <% for (var para of member.birdyBuddy.description.split("\r\n")) { %>
+           <p><%= para %></p>
           <% } %>
-        </div>
-      </div>
-    </div>
-   <% } %>
-  </div>
+         </div>
+        <% } %>
 
- <% if (member.birdyBuddy) { %>
+      <% if (locals.loggedInUser && loggedInUser.bugs > 0) { %>
+        <% if (member.birdyBuddy.friendship >= 100) { %>
+         <p><em>You have <%= loggedInUser.bugs %> bug<%= loggedInUser.bugs != 1 ? "s" : "" %>, but <%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.bird.commonName %> is full!</em></p>
+        <% } else { %>
+         <p><button id="feedBug" class="btn btn-secondary" role="button" data-birdypet="<%= member.birdyBuddy.id %>">🐛 Feed a Bug (you have <span><%= loggedInUser.bugs %></span>)</button></p>
+        <% } %>
+      <% } %>
+       </div>
+     </div>
+   </div>
+ </div>
+<% } %>
+
+<% if (member.featuredFlock) { %>
+  <div class="page-title my-5 pt-3">
+    <h1 class="text-center">
+      <a href="/flocks/<%= member.featuredFlock.id %>">
+        <%= member.featuredFlock.name %>
+      </a>
+    </h1>
+  </div>
+  <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"member":"<%= member.id %>","flock":"<%= member.featuredFlock.id %>"}'></div>
+
+  <%- include('../scripts/lazyloader.ejs') %>
+<% } %>
+
+ <% if (locals.loggedInUser && member.birdyBuddy?.variant) { %>
   <script type="text/javascript">
     var message = $('.birdybuddy .message');
 
@@ -176,11 +134,5 @@
     });
   </script>
  <% } %>
-
-  <script type="text/javascript">
-    try {
-      document.getElementById('profileAccordion').children[0].children[0].children[0].click();
-    } catch (err) { }
-  </script>
 
 <%- include('../footer.ejs') %>

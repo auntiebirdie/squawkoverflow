@@ -1,17 +1,11 @@
 <%- include('../header.ejs') %>
 
   <%- include('../partials/page-title.ejs', {
-        title : birdypet.nickname ? birdypet.nickname : birdypet.bird.name,
-        breadcrumb: {
-          text: `${member.username}`,
-          url: `/members/${member.id}`,
-          prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member.id}" onerror="missingMemberAvatar(this)"> `
-        }
+        title : birdypet.nickname ? birdypet.nickname : birdypet.bird.commonName,
+        subtitle : (birdypet.nickname ? birdypet.bird.commonName : birdypet.bird.scientificName) + ' ' + birdypet.variant.label
     })
   %>
 
-    <div class="row">
-      <div class="col-md-8 pt-3">
         <div class="text-center">
           <span class="h-100 d-inline-block position-relative">
            <% if (locals.loggedInUser) { %>
@@ -19,14 +13,12 @@
               <%= birdypet.bird.wishlisted ? '❤️' : '🤍' %>
             </button>
            <% } %>
-            <img id="birdy" src="<%= birdypet.illustration.image %>" class="birdypet full">
+            <img id="birdy" src="<%= birdypet.variant.image %>" class="birdypet full">
           </span>
         </div>
 
-        <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
-          <%- include('../partials/spacer.ejs'); %>
-
-          <form id="manageBirdyPet">
+       <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
+        <form id="manageBirdyPet" class="py-3">
 
           <div class="row">
             <div class="col-12 col-md-8 mb-3">
@@ -34,13 +26,13 @@
               <input id="nickname" type="text" name="nickname" class="form-control" value="<%= birdypet.nickname %>" style="width: 100%">
             </div>
             <div class="col-12 col-md-4 mb-3">
-            <% if (!birdypet.illustration.special && birdypet.bird.illustrations.length > 1) { %>
+            <% if (!birdypet.variant.special && birdypet.bird.variants.length > 1) { %>
               <h5><label>Variant</label></h5>
-              <select name="illustration" class="form-select">
-                <% for (let variant of birdypet.bird.illustrations) { %>
-                <option value="<%= variant.id %>" data-src="<%= variant.image %>" <%= variant.id == birdypet.illustration.id ? "selected" : "" %>>
+              <select name="variant" class="form-select">
+                <% for (let variant of birdypet.bird.variants) { %>
+                <option value="<%= variant.id %>" data-src="<%= variant.image %>" <%= variant.id == birdypet.variant.id ? "selected" : "" %>>
                   <%= variant.label %>
-                  <%= variant.id == birdypet.illustration.id ? "[current]" : "" %>
+                  <%= variant.id == birdypet.variant.id ? "[current]" : "" %>
                 </option>
                 <% } %>
               </select>
@@ -66,129 +58,79 @@
             <% } %>
           <% } %>
 
-          <button class="btn btn-primary mt-3" type="submit">Save Changes</button>
+          <button class="btn btn-secondary mt-3" type="submit">Save Changes</button>
 
-          </form>
-        <% } else { %>
-          <% if (birdypet.description) { %>
-            <% for (var para of birdypet.description.split("\r\n")) { %>
-              <p><%= para %></p>
-            <% } %>
+        </form>
+      <% } else { %>
+        <% if (birdypet.description) { %>
+          <% for (var para of birdypet.description.split("\r\n")) { %>
+            <p><%= para %></p>
           <% } %>
         <% } %>
-      </div>
-      <div class="col-md-4 pt-3 border-md-start text-cener text-md-start">
-        <div class="d-block d-md-none">
-          <%- include('../partials/spacer.ejs'); %>
-        </div>
+      <% } %>
 
-        <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
-          <div class="text-center">
-            <% if (member.birdyBuddy != birdypet.id) { %>
-            <p><a id="makeBirdyBuddy" class="btn btn-primary">💖 Make Birdy Buddy</a></p>
-            <% } else {  %>
-            <%- include('../partials/friendshipMeter.ejs', { friendship : birdypet.friendship || 0 }) %>
-            <% } %>
-            <p><a href="/birdypet/<%= birdypet.id %>/gift" class="btn btn-primary">🎁 Gift to Someone</a></p>
-            <p><a href="/birdypet/release/<%= birdypet.id %>" class="btn btn-primary">👋 Release Bird</a></p>
-          </div>
+    <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
+      <script type="text/javascript">
+        $(document).ready(function () {
 
-          <%- include('../partials/spacer.ejs'); %>
-        <% } %>
+          $('select[name="variant"]').change(function() {
+            var option = this.options[this.options.selectedIndex];
+            var birdy = document.getElementById('birdy');
 
-        <h6>Common Name</h6>
-        <p>
-          <a href="/birdypedia/bird/<%= birdypet.bird.code %>"><%= birdypet.bird.name %></a>
-        </p>
+            birdy.src = option.getAttribute('data-src');
+          });
 
-        <h6>Scientific Name</h6>
-        <p><%= birdypet.bird.scientific %></p>
+          $('#makeBirdyBuddy').on('click', function () {
+            $.ajax({
+              cache: false,
+              url: '/api/member',
+              data: JSON.stringify({ birdyBuddy : "<%= birdypet.id %>" }),
+              dataType: 'json',
+              contentType: 'application/json',
+              method: 'PUT',
+              success: function(data) {
+                window.location.reload();
+              }
+            });
+          });
 
-        <h6>Family</h6>
-        <p><a href="/birdypedia?family=<%= birdypet.bird.family %>"><%= birdypet.bird.family %></a></p>
+          var form = document.getElementById('manageBirdyPet');
 
-        <h6>Order</h6>
-        <p><%= birdypet.bird.order %></p>
+          form.onsubmit = function (e) {
+            e.preventDefault();
 
-        <% if (birdypet.illustration.label) { %>
-        <h6>Variant</h6>
-        <p><%= birdypet.illustration.label %></p>
-        <% } %>
+            if (!form.classList.contains('loadingData')) {
+              form.classList.add('loadingData');
 
-        <h6>Hatch Date</h6>
-        <p><%= new Date(birdypet.hatchedAt * 1).toLocaleString('en-US', { dateStyle: "long" }) %></p>
+              var data = {
+                birdypet: "<%= birdypet.id %>",
+                flocks: []
+              }
 
-        <% if (birdypet.flocks.length > 0) { %>
-        <h6>Flocks</h6>
-        <p>
-        <% for (var flock of member.flocks) { %>
-          <% if (birdypet.flocks.includes(flock.id)) { %>
-          <a href="/flocks/<%= flock.id %>"><%= flock.name %></a><br>
-          <% } %>
-        <% } %>
-        </p>
-        <% } %>
-      </div>
-    </div>
+              $(form).serializeArray().map( function (datum) {
+                if (datum.name == "flocks[]") {
+                  data['flocks'].push(datum.value);
+                }
+                else {
+                  data[datum.name] = datum.value;
+                }
+              });
 
-    <script type="text/javascript">
-      $('select[name="illustration"]').change(function() {
-        var option = this.options[this.options.selectedIndex];
-        var birdy = document.getElementById('birdy');
-
-        birdy.src = option.getAttribute('data-src');
-      });
-
-     <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
-      $('#makeBirdyBuddy').on('click', function () {
-        $.ajax({
-            cache: false,
-            url: '/api/member',
-            data: JSON.stringify({ birdyBuddy : "<%= birdypet.id %>" }),
-            dataType: 'json',
-            contentType: 'application/json',
-            method: 'PUT',
-            success: function(data) {
-              window.location.reload();
+              $.ajax({
+                cache: false,
+                url: '/api/birdypet',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+                method: 'PUT',
+                success: function(data) {
+                  window.location.reload();
+                }
+              });
             }
-        });
-      });
-
-      var form = document.getElementById('manageBirdyPet');
-
-      form.onsubmit = function (e) {
-        e.preventDefault();
-
-        if (!form.classList.contains('loadingData')) {
-          form.classList.add('loadingData');
-
-          var data = {
-            birdypet: "<%= birdypet.id %>",
-            flocks: []
           }
-
-          $(form).serializeArray().map( function (datum) {
-            if (datum.name == "flocks[]") {
-              data['flocks'].push(datum.value);
-            }
-            else {
-              data[datum.name] = datum.value;
-            }
-          });
-
-          $.ajax({
-            cache: false,
-            url: '/api/birdypet',
-            data: JSON.stringify(data),
-            dataType: 'json',
-            contentType: 'application/json',
-            method: 'PUT',
-            success: function(data) {
-              window.location.reload();
-            }
-          });
-        }
-      }
-     <% } %>
+      });
     </script>
+   <% } %>
+
 <%- include('../footer.ejs') %>

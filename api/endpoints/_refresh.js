@@ -100,7 +100,7 @@ module.exports = async (req, res) => {
           let promises = [];
 
           for (let birdypet of birdypets) {
-            promises.push(Counters.refresh('birdypets', member.id, birdypet.illustration.id));
+            promises.push(Counters.refresh('birdypets', member.id, birdypet.variant.id));
           }
 
           return Promise.all(promises);

@@ -1,9 +1,8 @@
 const BirdyPet = require('../models/birdypet.js');
-const Member = require('../models/member.js');
 
 const Counters = require('../helpers/counters.js');
+const Database = require('../helpers/database.js');
 const PubSub = require('../helpers/pubsub.js');
-const Search = require('../helpers/search.js');
 
 module.exports = (req, res) => {
   return new Promise(async (resolve, reject) => {
@@ -13,21 +12,30 @@ module.exports = (req, res) => {
 
     let birdypet = new BirdyPet();
     let promises = [];
+    let variant = req.body.variant;
+
+    if (req.body.freebird) {
+      variant = await Database.getOne('freebirds', {
+        id: req.body.freebird
+      }).then((result) => result.variant);
+      promises.push(Database.delete('freebirds', {
+        id: req.body.freebird
+      }));
+    }
 
     await birdypet.create({
-      illustration: req.body.illustration,
+      variant: variant,
       member: req.body.loggedInUser
     });
 
-    promises.push(Counters.increment(1, 'birdypets', req.body.loggedInUser, req.body.illustration));
+    promises.push(Counters.increment(1, 'birdypets', req.body.loggedInUser, variant));
 
     promises.push(PubSub.publish('background', 'COLLECT', {
       birdypet: birdypet.id,
       member: req.body.loggedInUser,
-      illustration: req.body.illustration,
+      variant: variant,
       adjective: req.body.adjective,
-      freebird: req.body.freebird,
-      source: req.headers['x-forwarded-for'] == '35.208.110.100' ? 'DISCORD' : 'WEB'
+      source: req.headers && req.headers['x-forwarded-for'] == '35.208.110.100' ? 'DISCORD' : 'WEB'
     }));
 
     Promise.all(promises).then(() => {

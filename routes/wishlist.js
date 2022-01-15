@@ -31,7 +31,32 @@ router.get('/:member', async (req, res, next) => {
     page: 'wishlist',
     member: member,
     families: families,
-    currentPage: (req.query.page || 1) * 1
+    currentPage: (req.query.page || 1) * 1,
+    sidebar: 'filters',
+    sortFields: [{
+        value: 'commonName-ASC',
+        label: 'Common Name (A-Z)'
+      },
+      {
+        value: 'commonName-DESC',
+        label: 'Common Name (Z-A)'
+      },
+      {
+        value: 'scientificName-ASC',
+        label: 'Scientific Name (A-Z)'
+      },
+      {
+        value: 'scientificName-DESC',
+        label: 'Scientific Name (Z-A)'
+      }
+    ],
+    extraInsights: [{
+      id: 'hatched',
+      label: 'Hatched species',
+    }, {
+      id: 'unhatched',
+      label: 'Unhatched species'
+    }]
   });
 });
 
