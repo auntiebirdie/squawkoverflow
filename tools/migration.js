@@ -131,7 +131,7 @@ const datastore = new Datastore({
         break;
       case "flocks":
         await conn.query('DROP TABLE IF EXISTS squawkdata.flocks');
-        await conn.query('CREATE TABLE squawkdata.flocks (id VARCHAR(50) NOT NULL PRIMARY KEY, member VARCHAR(50), name VARCHAR(75), description VARCHAR(500), displayOrder INT)');
+        await conn.query('CREATE TABLE squawkdata.flocks (id VARCHAR(50) NOT NULL PRIMARY KEY, `member` VARCHAR(50), name VARCHAR(75), description VARCHAR(500), displayOrder INT)');
 
         await datastore.runQuery(datastore.createQuery('Flock')).then(async ([results]) => {
           var displayOrders = {};
@@ -153,7 +153,7 @@ const datastore = new Datastore({
         break;
       case "birdypets":
         await conn.query('DROP TABLE IF EXISTS squawkdata.birdypets');
-        await conn.query('CREATE TABLE squawkdata.birdypets (id VARCHAR(50) NOT NULL PRIMARY KEY, member VARCHAR(50), variant VARCHAR(50), nickname VARCHAR(75), description VARCHAR(500), friendship INT DEFAULT 0, hatchedAt DATETIME)');
+        await conn.query('CREATE TABLE squawkdata.birdypets (id VARCHAR(50) NOT NULL PRIMARY KEY, `member` VARCHAR(50), variant VARCHAR(50), nickname VARCHAR(75), description VARCHAR(500), friendship INT DEFAULT 0, hatchedAt DATETIME)');
 
         await conn.query('DROP TABLE IF EXISTS squawkdata.birdypet_flocks');
         await conn.query('CREATE TABLE squawkdata.birdypet_flocks (birdypet VARCHAR(50), flock VARCHAR(50), PRIMARY KEY (birdypet, flock))');
@@ -187,7 +187,7 @@ const datastore = new Datastore({
         break;
       case "extra":
         await conn.query('DROP TABLE IF EXISTS squawkdata.konami');
-        await conn.query('CREATE TABLE squawkdata.konami (code VARCHAR(50) NOT NULL PRIMARY KEY, member VARCHAR(50), used BOOLEAN DEFAULT false)');
+        await conn.query('CREATE TABLE squawkdata.konami (code VARCHAR(50) NOT NULL PRIMARY KEY, `member` VARCHAR(50), used BOOLEAN DEFAULT false)');
 
         await conn.query('DROP TABLE IF EXISTS squawkdata.freebirds');
         await conn.query('CREATE TABLE squawkdata.freebirds (id VARCHAR(50) NOT NULL PRIMARY KEY, variant VARCHAR(50), freedAt DATETIME DEFAULT NOW())');
