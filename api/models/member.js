@@ -118,7 +118,7 @@ class Member {
 
           let lastMonth = new Date().setMonth(new Date().getMonth() - 1);
 
-          this.active = member.lastLogin > lastMonth || member.lastHatchAt > lastMonth;
+          this.active = true; //this.active = member.lastLogin > lastMonth || member.lastHatchedAt > lastMonth;
           this.joinedAt = member.joinedAt;
           this.lastHatchAt = member.lastHatchAt;
           this.lastRefresh = member.lastRefresh || 0;
