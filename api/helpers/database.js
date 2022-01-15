@@ -11,6 +11,7 @@ Database.prototype.connect = function() {
 
       this.conn = await mariadb.createConnection({
         host: secrets.DB[ENV].HOST,
+	socketPath: secrets.DB[ENV].SOCKET,
         user: secrets.DB[ENV].USER,
         password: secrets.DB[ENV].PASS
       });
