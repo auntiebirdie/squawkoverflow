@@ -5,8 +5,8 @@
 
     <div class="row text-center mb-5">
       <% for (var egg of eggs) { %>
-      <div class="col-6 col-md-4 col-lg-2">
-        <a data-egg="<%= egg.adjective %>" class="p-3 mb-2" role="button"
+      <div class="col-6 col-md-4 col-lg-2 mb-3">
+        <a data-egg="<%= egg.adjective %>" class="mb-2" role="button">
           <h3>
             <img src="/img/eggs/<%= egg.icon %>.png">
           </h3>
@@ -46,9 +46,9 @@
         <h6></h6>
 
         <div id="actions" class="mt-5 text-center">
-          <button data-action="keep" class="btn btn-lg btn-primary mb-3">❤️&nbsp;Keep</button>
+          <a data-action="keep" class="btn btn-lg btn-secondary mb-3" role="button">❤️&nbsp;Keep</a>
           &nbsp;
-          <button data-action="release" class="btn btn-lg btn-primary mb-3">👋&nbsp;Release</button>
+          <a data-action="release" class="btn btn-lg btn-secondary mb-3" role="button">👋&nbsp;Release</a>
         </div>
       </div>
     </div>
@@ -112,7 +112,7 @@
       });
     });
 
-    $(actions).on('click', 'button', function (e) {
+    $(actions).on('click', 'a[data-action]', function (e) {
       var button = e.currentTarget;
 
       if (!button.style.opacity) { 
@@ -135,7 +135,7 @@
               method: "POST",
               success: function(birdypet) {
                 actions.classList.remove('loadingData');
-                actions.innerHTML = `<a class="btn btn-lg btn-primary mb-3" href="/birdypet/${birdypet.id}">🐣 View BirdyPet</a>&nbsp;<a class="btn btn-lg btn-primary mb-3" href="/hatch">🥚 Hatch Another Egg</a>`;
+                actions.innerHTML = `<a class="btn btn-lg btn-secondary mb-3" href="/birdypet/${birdypet.id}">🐣 View BirdyPet</a>&nbsp;<a class="btn btn-lg btn-secondary mb-3" href="/hatch">🥚 Hatch Another Egg</a>`;
               },
               error: function(XMLHttpRequest, textStatus, errorThrown) {
                 actions.classList.remove('loadingData');

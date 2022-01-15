@@ -1,6 +1,8 @@
 const Member = require('../models/member.js');
 const BirdyPet = require('../models/birdypet.js');
 
+const Database = require('../helpers/database.js');
+const PubSub = require('../helpers/pubsub.js');
 const Webhook = require('../helpers/webhook.js');
 const Search = require('../helpers/search.js');
 
@@ -30,9 +32,10 @@ module.exports = async (req, res) => {
 
         await birdypet.set({
           member: toMember.id,
-          flocks: [],
           friendship: 0
         });
+
+        promises.push(Database.query('DELETE FROM birdypet_flocks WHERE birdypet = ?', [birdypet.id]));
 
         promises.push(Webhook('exchange', {
           content: `${fromMember.username} has sent <@${toMember.id}> a gift!`,

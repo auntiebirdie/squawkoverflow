@@ -8,8 +8,6 @@
           }
     }) %>
 
-    <%- include('../partials/filter-search-sort.ejs', { includeAllFamilies : true } ) %>
-
     <%- include('../partials/pagination.ejs') %>
 
     <div id="lazyLoader" class="row" data-endpoint="/api/wishlist" data-params='{"id":"<%= member.id  %>"}'></div>

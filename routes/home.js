@@ -4,9 +4,12 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  res.render('home/index', {
-    page: "home",
-    sidebar: "recentActivity"
+  API.call('activity', 'GET').then((results) => {
+    res.render('home/index', {
+      page: "home",
+      sidebar: "recentActivity",
+      activity: results
+    });
   });
 });
 

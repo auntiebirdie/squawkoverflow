@@ -23,6 +23,7 @@ module.exports = async (req, res) => {
       for (let key in req.body) {
         switch (key) {
           case "birdyBuddy":
+          case "featuredFlock":
           case "username":
           case "avatar":
             toUpdate[key] = req.body[key];

@@ -6,12 +6,13 @@ module.exports = async (req, res) => {
   var bird = new Bird(req.query.speciesCode);
 
   await bird.fetch({
-	  include: ['variants', 'memberData'],
-	  member: req.query.loggedInUser
+    include: ['variants', 'adjectives', 'memberData'],
+    member: req.query.loggedInUser
   });
 
   if (req.query.include?.includes('members')) {
-    let promises = [];
+	  let promises = [];
+
     await Members.all().then((members) => {
       for (let member of members) {
         if (!member.settings?.privacy?.includes('profile')) {

@@ -1,36 +1,33 @@
-const birds = require('../data/birds.json');
+const Database = require('../helpers/database.js');
 
 class Birds {
   constructor() {
-//    this.model = require('../models/bird.js');
+    this.model = require('../models/bird.js');
   }
 
   findBy(key, value) {
-    for (var bird of birds) {
-      if (bird[key].toLowerCase() == value.toLowerCase()) {
-        return bird;
-      }
-    }
+    return new Promise((resolve, reject) => {
+      let query = {};
 
-    return {};
+      query[key] = value;
+
+      Database.getOne('species', query, { select: ['code'] }).then((bird) => {
+        resolve(new this.model(bird.code));
+      });
+    });
   }
 
   fetch(key, value) {
-    let matchingBirds = [];
+    return new Promise((resolve, reject) => {
+      let query = {};
 
-    value = value ? value.toLowerCase() : "";
+      query[key] = value;
 
-    for (let bird of birds) {
-      if (bird[key] && bird[key] != "" && bird[key].length > 0) {
-        let isMatch = Array.isArray(bird[key]) ? bird[key].map((val) => val.toLowerCase()).includes(value) : bird[key].toLowerCase() == value;
+      Database.get('species', query, { select: ['code'] }).then((birds) => {
+        resolve(birds);
+      });
 
-        if (isMatch) {
-          matchingBirds.push(bird);
-        }
-      }
-    }
-
-    return matchingBirds;
+    });
   }
 
   random(key, value) {
@@ -40,7 +37,11 @@ class Birds {
   }
 
   all() {
-    return birds;
+    return new Promise((resolve, reject) => {
+      Database.get('species').then((birds) => {
+        resolve(birds);
+      });
+    });
   }
 }
 

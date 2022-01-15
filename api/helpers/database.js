@@ -70,14 +70,24 @@ Database.prototype.get = function(type, identifiers, options = {}) {
       selects.push('*');
     }
 
-    query += selects.join(', ') + ` FROM ${type} WHERE `;
+    query += selects.join(', ') + ` FROM ${type}`;
 
     for (let i in identifiers) {
       filters.push(`${i} = ?`);
       params.push(identifiers[i]);
     }
 
-    query += filters.join(' AND ');
+    if (filters.length > 0) {
+      query += ' WHERE ' + filters.join(' AND ');
+    }
+
+    if (options.order) {
+      query += ` ORDER BY ${options.order}`;
+    }
+
+    if (options.limit) {
+      query += ` LIMIT ${options.limit}`;
+    }
 
     this.query(query, params).then((results) => {
       resolve(results.map((result) => result));
@@ -112,7 +122,7 @@ Database.prototype.set = function(type, identifiers, data) {
       params.push(identifiers[i]);
     }
 
-    query += 'WHERE ' + filters.join(' AND ');
+    query += ' WHERE ' + filters.join(' AND ');
 
     this.query(query, params).then((results) => {
       resolve(results);
@@ -148,8 +158,8 @@ Database.prototype.create = function(type, data) {
 Database.prototype.delete = function(type, identifiers) {
   return new Promise((resolve, reject) => {
     let query = `DELETE FROM ${type} WHERE `;
-	  let filters = [];
-	  let params = [];
+    let filters = [];
+    let params = [];
 
     for (let i in identifiers) {
       filters.push(`${i} = ?`);

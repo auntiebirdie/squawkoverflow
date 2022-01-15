@@ -37,7 +37,39 @@ router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
     member: member,
     flock: flock,
     flocks: member.flocks,
-    families: member.families
+    families: member.families,
+    selectedFlock: flock.id,
+    sidebar: 'filters',
+    sortFields: [{
+        value: 'commonName-ASC',
+        label: 'Common Name (A-Z)'
+      },
+      {
+        value: 'commonName-DESC',
+        label: 'Common Name (Z-A)'
+      },
+      {
+        value: 'scientificName-ASC',
+        label: 'Scientific Name (A-Z)'
+      },
+      {
+        value: 'scientificName-DESC',
+        label: 'Scientific Name (Z-A)'
+      }
+    ],
+    extraInsights: member.id == req.session.user ? [{
+      id: 'duplicates',
+      label: 'Duplicates'
+    }] : [{
+      id: 'hatched',
+      label: "Birds I have",
+    }, {
+      id: 'unhatched',
+      label: "Birds I don't have"
+    }, {
+      id: 'wishlisted',
+      label: "Birds on my wishlist"
+    }]
   });
 });
 
@@ -51,11 +83,44 @@ router.get('/:flock', async (req, res) => {
     id: flock.member
   });
 
+	console.log(flock.families);
+
   res.render('flocks/flock', {
     page: 'flock',
     member: member,
     flock: flock,
-    families: flock.families
+    families: flock.families,
+    sidebar: 'filters',
+    sortFields: [{
+        value: 'commonName-ASC',
+        label: 'Common Name (A-Z)'
+      },
+      {
+        value: 'commonName-DESC',
+        label: 'Common Name (Z-A)'
+      },
+      {
+        value: 'scientificName-ASC',
+        label: 'Scientific Name (A-Z)'
+      },
+      {
+        value: 'scientificName-DESC',
+        label: 'Scientific Name (Z-A)'
+      }
+    ],
+    extraInsights: member.id == req.session.user ? [{
+      id: 'duplicated',
+      label: 'Duplicates'
+    }] : [{
+      id: 'hatched',
+      label: "Birds I have",
+    }, {
+      id: 'unhatched',
+      label: "Birds I don't have"
+    }, {
+      id: 'wishlisted',
+      label: "Birds on my wishlist"
+    }]
   });
 });
 

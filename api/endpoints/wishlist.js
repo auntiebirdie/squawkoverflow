@@ -1,8 +1,6 @@
 const Bird = require('../models/bird.js');
-const Cache = require('../helpers/cache.js');
-const Counters = require('../helpers/counters.js');
+const Database = require('../helpers/database.js');
 const Member = require('../models/member.js');
-const Search = require('../helpers/search.js');
 
 const birdsPerPage = 24;
 
@@ -11,45 +9,86 @@ module.exports = async (req, res) => {
 
   switch (req.method) {
     case "HEAD":
-      let families = await Cache.get('wishlist', req.query.id).then((results) => {
-        return Object.keys(results);
-      });
+      let families = await Database.query('SELECT DISTINCT species.family FROM species JOIN wishlist ON (species.code = wishlist.species) WHERE wishlist.member = ?', [req.query.id]).then((results) => results.map((result) => result.family));
 
       res.setHeader('SQUAWK', JSON.stringify(families));
 
       return res.sendStatus(200);
       break;
     case "GET":
-      let page = (--req.query.page || 0) * birdsPerPage;
+      var birdsPerPage = 24;
+      var page = (--req.query.page || 0) * birdsPerPage;
+      var output = [];
 
-      let birds = await member.fetchWishlist(req.query.family);
+      let query = 'SELECT species.code FROM wishlist JOIN species ON (wishlist.species = species.code)';
+      let filters = ['wishlist.member = ?'];
+      let params = [req.query.id];
 
-      let output = [];
-		  let promises = [];
+      if (req.query.family) {
+        filters.push('species.family = ?');
+        params.push(req.query.family);
+      }
 
       if (req.query.search) {
-        birds = birds.filter((bird) => bird.commonName.toLowerCase().includes(req.query.search.toLowerCase()) || bird.nickname?.toLowerCase().includes(req.query.search.toLowerCase()));
+        filters.push('(species.commonName LIKE ? OR species.scientificName LIKE ?)');
+        params.push(`%${req.query.search}%`);
+        params.push(`%${req.query.search}%`);
       }
 
-      let totalPages = birds.length;
-
-      birds.sort((a, b) => a.commonName.localeCompare(b.commonName));
-
-      for (let i = page, len = Math.min(page + birdsPerPage, birds.length); i < len; i++) {
-        let bird = new Bird(birds[i].speciesCode);
-
-        promises.push(bird.fetch({
-          include: ['variants', 'memberData'],
-          member: req.query.loggedInUser
-        }));
-
-        output.push(bird);
+      // TODO: validate user has access to extra insights
+      if (req.query.loggedInUser) {
+        switch (req.query.extraInsights) {
+          case 'hatched':
+            filters.push('species.code IN (SELECT b.species FROM birdypets a JOIN variants b ON (a.variant = b.id) WHERE a.member = ?)');
+            params.push(req.query.loggedInUser);
+            break;
+          case 'unhatched':
+            filters.push('species.code NOT IN (SELECT b.species FROM birdypets a JOIN variants b ON (a.variant = b.id) WHERE a.member = ?)');
+            params.push(req.query.loggedInUser);
+            break;
+        }
       }
 
-      Promise.all(promises).then(() => {
-        return res.json({
-          totalPages: Math.ceil(totalPages / birdsPerPage),
-          results: output
+      if (filters.length > 0) {
+        query += ' WHERE ' + filters.join(' AND ');
+      }
+
+      query += ' ORDER BY ';
+
+      switch (req.query.sort) {
+        case 'scientificName':
+          query += 'species.scientificName';
+          break;
+        case 'commonName':
+        default:
+          query += 'species.commonName';
+      }
+
+      query += ' ' + (req.query.sortDir == 'DESC' ? 'DESC' : 'ASC');
+
+      Database.query(query, params).then((birds) => {
+
+        var totalPages = birds.length;
+        var promises = [];
+
+        for (let i = page, len = Math.min(page + birdsPerPage, birds.length); i < len; i++) {
+          let bird = new Bird(birds[i].code);
+
+          promises.push(bird.fetch({
+            include: ['variants', 'memberData'],
+            member: req.query.loggedInUser
+          }));
+
+          output.push(bird);
+        }
+
+        Promise.all(promises).then(() => {
+          output = output.filter((bird) => bird.variants.length > 0);
+
+          res.json({
+            totalPages: Math.ceil(totalPages / birdsPerPage),
+            results: output
+          });
         });
       });
       break;

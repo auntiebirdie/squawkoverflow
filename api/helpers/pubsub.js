@@ -42,8 +42,6 @@ exports.receive = function(message, context) {
 
     var data = JSON.parse(Buffer.from(message.data, 'base64').toString());
 
-    console.log(data);
-
     var birdypet = new BirdyPet(data.birdypet);
     var member = new Member(data.member);
     var variant = new Variant(data.variant);
@@ -80,9 +78,6 @@ exports.receive = function(message, context) {
               }]
             }));
           }
-        } else if (data.freebird) {
-          promises.push(Database.delete('FreeBird', variant.id));
-          promises.push(Cache.remove('cache', 'freebirds', variant.id));
         }
         break;
       case "GIFT":
@@ -91,8 +86,10 @@ exports.receive = function(message, context) {
         promises.push(Counters.increment(-1, 'species', member.id, variant.bird.code, true));
         break;
       case "RELEASE":
-        Database.save('FreeBird', variant.id, {
-          releasedAt: Date.now()
+        Database.create('freebirds', {
+          id: Database.key(),
+          variant: variant.id,
+          freedAt: new Date()
         }).then(() => {
           Cache.add('cache', 'freebirds', variant.id);
         });

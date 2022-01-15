@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
       await flock.fetch();
 
       if (flock.member == req.body.loggedInUser) {
-        await Redis.delete('flock', req.body.id);
+        await flock.delete();
 
         res.sendStatus(200);
       } else {

@@ -20,7 +20,7 @@ class Bird {
         }
 
         await Database.getOne('taxonomy', {
-          name: bird.taxonomy
+          name: bird.family
         }, {
           select: ['name', 'parent']
         }).then((taxonomy) => {
@@ -28,16 +28,24 @@ class Bird {
           this.order = taxonomy.parent;
         });
 
-        if (!params.fields || params.fields.includes('variants')) {
+        if (params.include?.includes('variants')) {
           const Variants = require('../collections/variants.js');
 
           this.variants = await Variants.fetch('species', this.code, {
-            bird: bird,
+            bird: this,
             include: params.include,
             member: params.member
           });
 
           this.variants.sort((a, b) => (a.hatched === b.hatched) ? 0 : a.hatched ? -1 : 1);
+        }
+
+        if (params.include?.includes('adjectives')) {
+          this.adjectives = await Database.get('species_adjectives', {
+            species: this.id
+          }, {
+            select: ['adjective']
+          }).then((results) => results.map((result) => result.adjective));
         }
 
         if (params.include?.includes('memberData') && params.member) {
@@ -51,9 +59,7 @@ class Bird {
 
   fetchMemberData(memberId) {
     return new Promise(async (resolve, reject) => {
-      let wishlist = await Cache.get('wishlist', memberId) || {};
-
-      this.wishlisted = wishlist[this.family] ? wishlist[this.family].includes(this.code) : false;
+      this.wishlisted = await Database.count('wishlist', { member : memberId, species: this.code });
       this.owned = await Counters.get('species', memberId, this.code);
 
       resolve({

@@ -1,4 +1,3 @@
-const Cache = require('../helpers/cache.js');
 const Database = require('../helpers/database.js');
 
 class Flock {
@@ -14,9 +13,10 @@ class Flock {
 
   create(data) {
     return new Promise((resolve, reject) => {
-      Database.create('flock', {
-        name: data.name,
-        description: data.description,
+      Database.create('flocks', {
+        id: Database.key(),
+        name: data.name || "",
+        description: data.description || "",
         displayOrder: 100,
         member: data.member
       }).then((id) => {
@@ -29,7 +29,9 @@ class Flock {
 
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
-      Cache.get('flock', this.id).then(async (flock) => {
+      Database.getOne('flocks', {
+        id: this.id
+      }).then(async (flock) => {
         if (!flock) {
           resolve(null);
         } else {
@@ -39,13 +41,13 @@ class Flock {
           this.displayOrder = flock.displayOrder;
 
           this.families = await Database.query(`
-	  SELECT DISTINCT species.taxonomy
+	  SELECT DISTINCT species.family
 	  FROM birdypets
 	  JOIN variants ON (birdypets.variant = variants.id)
 	  JOIN species ON (variants.species = species.code)
 	  JOIN birdypet_flocks ON (birdypets.id = birdypet_flocks.birdypet)
 	  WHERE birdypet_flocks.flock = ?
-	  `, [this.id]).then((results) => results.map( (result) => result.taxonomy));
+	  `, [this.id]).then((results) => results.map((result) => result.family));
 
           resolve(this);
         }
@@ -56,15 +58,27 @@ class Flock {
   set(data = {}) {
     return new Promise(async (resolve, reject) => {
       for (let key in data) {
-        if (typeof this.constructor.schema[key] == "undefined") {
+        if (typeof this.constructor.schema[key] == "undefined" || typeof data[key] == "undefined") {
           delete data[key];
         }
       }
 
-      await Database.set('flocks', { id : this.id }, data);
-      await Cache.refresh('flock', this.id);
+      await Database.set('flocks', {
+        id: this.id
+      }, data);
 
       resolve();
+    });
+  }
+
+  delete() {
+    return new Promise((resolve, reject) => {
+      Database.delete('flocks', {
+        id: this.id
+      }).then(() => {
+
+        resolve();
+      });
     });
   }
 }

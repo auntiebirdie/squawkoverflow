@@ -16,7 +16,7 @@ class Variant {
         if (!params.bird) {
           bird = new Bird(variant.species);
 
-          await bird.fetch();
+          await bird.fetch({ include: params.include });
 
           this.bird = bird;
         } else {
@@ -28,7 +28,7 @@ class Variant {
         this.label = variant.label;
         this.credit = variant.credit;
         this.source = variant.source;
-        this.special = variant.special || false;
+        this.special = variant.special == '1';
 
         this.image = `https://storage.googleapis.com/squawkoverflow/${bird.order}/${bird.family}/${bird.scientificName.replace(/\s/g, '%20')}/${this.id}.${variant.filetype ? variant.filetype : "jpg"}`;
 

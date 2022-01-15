@@ -1,4 +1,4 @@
-const Cache = require('../helpers/cache.js');
+const Database = require('../helpers/database.js');
 
 class Flocks {
   constructor() {
@@ -13,10 +13,8 @@ class Flocks {
 
   all(member) {
     return new Promise((resolve, reject) => {
-      Cache.get('flocks', member).then((ids) => {
-        Promise.all(ids.map((id) => this.get(id))).then((flocks) => {
-          resolve(flocks.sort((a, b) => a.displayOrder - b.displayOrder));
-        });
+	    Database.get('flocks', { member : member }, { order: 'displayOrder' }).then( (results) => {
+		    resolve(results);
       });
     });
   }

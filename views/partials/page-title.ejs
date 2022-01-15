@@ -1,21 +1,17 @@
 <div class="page-title mt-2 mb-5">
-  <% if (locals.breadcrumb) { %>
-    <h6>
-   <% if (typeof breadcrumb == "object") { %>
-      <%- breadcrumb.prepend %><a <%- breadcrumb.url ? `href="${breadcrumb.url}"` : "" %>><%= breadcrumb.text %></a><%- breadcrumb.append %>
-    <% } else { %>
-      <%= breadcrumb %>
-    <% } %>
-    </h6>
-  <% } %>
-
   <h1 class="mx-4">
-  <% if (locals.title) { %>
-   <% if (typeof title == "object") { %>
-      <%- title.prepend %><a <%- title.url ? `href="${title.url}"` : "" %>><%= title.text %></a><%- title.append %>
+   <% if (locals.title) { %>
+    <% if (typeof title == "object") { %>
+      <%- title.prepend %><%- title.url ? `<a href="${title.url}">` : "" %><%= title.text %><%- title.url ? '</a>' : '' %><%- title.append %>
     <% } else { %>
       <%= title %>
     <% } %>
    <% } %>
   </h1>
+
+ <% if (locals.subtitle) { %>
+  <h6 class="text-center">
+    <em><%= subtitle %></em>
+  </h6>
+ <% } %>
 </div>

@@ -1,4 +1,5 @@
 const BirdyPet = require('../models/birdypet.js');
+const Counters = require('../helpers/counters.js');
 const PubSub = require('../helpers/pubsub.js');
 
 module.exports = async (req, res) => {
@@ -27,10 +28,12 @@ module.exports = async (req, res) => {
   }
 
   if (variant) {
-    PubSub.publish('background', 'RELEASE', {
-	    member: req.body.loggedInUser,
-	    birdypet: req.body.birdypet,
-	    variant: variant
+    await Counters.increment(-1, 'birdypets', req.body.loggedInUser, variant);
+
+    await PubSub.publish('background', 'RELEASE', {
+      member: req.body.loggedInUser,
+      birdypet: req.body.birdypet,
+      variant: variant
     });
 
     return res.sendStatus(200);

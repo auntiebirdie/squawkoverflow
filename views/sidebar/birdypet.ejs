@@ -1,0 +1,49 @@
+<% if (locals.page == "birdypet") { %>
+        <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
+          <div class="text-center mt-4">
+            <% if (member.birdyBuddy != birdypet.id) { %>
+            <p><a id="makeBirdyBuddy" class="btn btn-secondary">💖 Make Birdy Buddy</a></p>
+            <% } else {  %>
+            <%- include('../partials/friendshipMeter.ejs', { friendship : birdypet.friendship || 0 }) %>
+            <% } %>
+            <p><a href="/birdypet/<%= birdypet.id %>/gift" class="btn btn-secondary">🎁 Gift to Someone</a></p>
+            <p><a href="/birdypet/release/<%= birdypet.id %>" class="btn btn-secondary">👋 Release Bird</a></p>
+          </div>
+        <% } %>
+
+        <h6 class="mt-4">Common Name</h6>
+        <p class="ms-2">
+          <a href="/birdypedia/bird/<%= birdypet.bird.code %>"><%= birdypet.bird.commonName %></a>
+        </p>
+
+        <h6>Scientific Name</h6>
+        <p class="ms-2"><%= birdypet.bird.scientificName %></p>
+
+        <h6>Family</h6>
+        <p class="ms-2"><a href="/birdypedia?family=<%= birdypet.bird.family %>"><%= birdypet.bird.family %></a></p>
+
+        <h6>Order</h6>
+        <p class="ms-2"><%= birdypet.bird.order %></p>
+
+        <% if (birdypet.variant.label) { %>
+        <h6>Variant</h6>
+        <p class="ms-2"><%= birdypet.variant.label %></p>
+        <% } %>
+
+        <h6>Hatch Date</h6>
+        <p class="ms-2"><%= new Date(birdypet.hatchedAt.split('T').shift()).toLocaleString('en-US', { dateStyle: "long" }) %></p>
+
+        <h6>Belongs To</h6>
+        <p class="ms-2"><a href="/members/<%= member.id %>"><%= member.username %></a></p>
+
+        <% if (birdypet.flocks.length > 0) { %>
+        <h6>Flocks</h6>
+        <p class="ms-2">
+        <% for (var flock of member.flocks) { %>
+          <% if (birdypet.flocks.includes(flock.id)) { %>
+          <a href="/flocks/<%= flock.id %>"><%= flock.name %></a><br>
+          <% } %>
+        <% } %>
+        </p>
+        <% } %>
+<% } %>

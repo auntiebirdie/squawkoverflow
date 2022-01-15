@@ -29,7 +29,7 @@ const datastore = new Datastore({
         await conn.query('CREATE TABLE squawkdata.taxonomy (name VARCHAR(50) NOT NULL PRIMARY KEY, display VARCHAR(100), type ENUM("family","order") NOT NULL, parent VARCHAR(50))');
 
         await conn.query('DROP TABLE IF EXISTS squawkdata.species');
-        await conn.query('CREATE TABLE squawkdata.species (code VARCHAR(10) PRIMARY KEY, taxonomy VARCHAR(50), commonName VARCHAR(75), scientificName VARCHAR(75))');
+        await conn.query('CREATE TABLE squawkdata.species (code VARCHAR(10) PRIMARY KEY, family VARCHAR(50), commonName VARCHAR(75), scientificName VARCHAR(75))');
 
         await conn.query('DROP TABLE IF EXISTS squawkdata.species_adjectives');
         await conn.query('CREATE TABLE squawkdata.species_adjectives (species VARCHAR(10), adjective VARCHAR(25), PRIMARY KEY (species, adjective))');
@@ -190,7 +190,7 @@ const datastore = new Datastore({
         await conn.query('CREATE TABLE squawkdata.konami (code VARCHAR(50) NOT NULL PRIMARY KEY, member VARCHAR(50), used BOOLEAN DEFAULT false)');
 
         await conn.query('DROP TABLE IF EXISTS squawkdata.freebirds');
-        await conn.query('CREATE TABLE squawkdata.freebirds (variant VARCHAR(50), freedAt DATETIME DEFAULT NOW())');
+        await conn.query('CREATE TABLE squawkdata.freebirds (id VARCHAR(50) NOT NULL PRIMARY KEY, variant VARCHAR(50), freedAt DATETIME DEFAULT NOW())');
         break;
     }
   } catch (err) {

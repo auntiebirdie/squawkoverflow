@@ -1,16 +1,8 @@
-/**
-* Template Name: iPortfolio - v3.7.0
-* Template URL: https://bootstrapmade.com/iportfolio-bootstrap-portfolio-websites-template/
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
-
-/*--------------------------------------------------------------
-# General
---------------------------------------------------------------*/
-body {
+html, body {
   font-family: "Open Sans", sans-serif;
   color: #272829;
+  height: 100%;
+  overflow-x: hidden;
 }
 
 a, a:hover, a:focus, a:active {
@@ -21,9 +13,18 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Raleway", sans-serif;
 }
 
-/*--------------------------------------------------------------
-# Navbar
---------------------------------------------------------------*/
+img {
+	max-width: 100%;
+}
+
+.form-check-input:focus {
+	box-shadow: 0 0 0 transparent;
+}
+
+.border-dashed {
+	border-style: dashed !important;
+}
+
 #navbar, #sidebar {
   position: fixed;
   top: 0;
@@ -38,8 +39,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #sidebar {
-	left: unset;
-	right: 0;
+  left: unset;
+  right: 0;
 }
 
 #main, #home-banner {
@@ -47,24 +48,33 @@ h1, h2, h3, h4, h5, h6 {
   margin-right: 300px;
 }
 
+@media (max-width: 1399px) {
+	#sidebar {
+		right: -300px;
+	}
+
+	#main, #home-banner {
+		margin-right: 0;
+	}
+}
+
 @media (max-width: 1199px) {
   #navbar {
     left: -300px;
   }
 
-  #sidebar {
-	  right: -300px;
-  }
-
   #main, #home-banner {
     margin-left: 0;
-    margin-right: 0;
   }
 }
-/*--------------------------------------------------------------
-# Navigation Menu
---------------------------------------------------------------*/
-/* Desktop Navigation */
+
+.no-sidebar #sidebar {
+	display: none;
+}
+.no-sidebar #main {
+	margin-right: 0;
+}
+
 .nav-menu * {
   margin: 0;
   padding: 0;
@@ -124,7 +134,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .mobile-sidebar-toggle {
-	right: 5px;
+	right: 20px;
 	left: auto;
 }
 
@@ -132,11 +142,12 @@ h1, h2, h3, h4, h5, h6 {
 .mobile-sidebar-active {
   overflow: hidden;
 }
+
 .mobile-nav-active #navbar {
 	left: 0;
 }
 
-.mobile-sidebar-active #sidear {
+.mobile-sidebar-active #sidebar {
   right: 0;
 }
 
@@ -146,35 +157,39 @@ h1, h2, h3, h4, h5, h6 {
 #home-banner {
 	position: relative;
 	height: 600px;
-	margin-bottom: 150px;
 }
-#home-banner h1, #home-banner p {
+#home-text {
+	position: relative;
+	text-align: center;
+	top: -65px;
+}
+#home-text h1, #home-text p {
 	display: inline-block;
 	padding: 10px;
-	position: absolute;
 }
-#home-banner h1 {
+#home-text h1 {
 	font-size: 4em;
-	bottom: -65px;
-	left: 25%;
 }
-#home-banner p:nth-child(1) {
-	font-size: 1.25em;
-	bottom: 15px;
-	left: 22%;
-	padding-bottom: 20px;
-}
-#home-banner p:nth-child(3) {
+#home-text p {
 	font-size: 1.5em;
 	letter-spacing: 4px;
-	bottom: -135px;
-	left: 30%;
+}
+@media (max-width:575px) {
+	#home-text {
+		top: -35px;
+	}
+	#home-text h1 {
+		font-size: 2.5em;
+	}
+	#home-text p {
+		font-size: 1em;
+	}
 }
 .attribution {
 	padding: 10px;
 	position: absolute;
 	font-size: .8em;
-	top: 15px;
+	bottom: 100px;
 	right: 15px;
 	opacity: .75;
 }
@@ -206,4 +221,169 @@ section {
 }
 .page-title p {
   margin-bottom: 0;
+}
+
+.birdypet {
+	height: 300px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center center;
+	position: relative;
+}
+
+.birdypet h6 {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+
+@media (max-width: 576px) {
+	.birdypet {
+		height: 150px;
+	}
+}
+
+.birdypet.mini {
+	cursor: pointer;
+	height: 50px;
+	width: 50px;
+	display: inline-block;
+	margin-right: 5px;
+	vertical-align: middle;
+	filter: none;
+}
+
+.birdypet.mini.disabled {
+	cursor: auto;
+}
+
+.birdypet.full {
+	max-height: 600px;
+	height: auto;
+}
+
+.birdypet.unhatched {
+	filter: saturate(0%);
+}
+
+span.checkmark {
+	display: inline-block;
+	background-size: contain;
+	background-image: url('/img/checkmark.png');
+	height: 25px;
+	width: 25px;
+	vertical-align: middle;
+}
+
+.birdypet.checkmark1::after, .birdypet.checkmark2::after {
+	content: ' ';
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	height: 25px;
+	width: 25px;
+	background-image: url('/img/checkmark.png');
+	background-size: contain;
+}
+
+.birdypet.checkmark2::after {
+	width: 50px;
+}
+
+.wishlist-heart {
+	position: absolute;
+	top: 3px;
+	right: 3px;
+	z-index: 100;
+}
+
+.wishlist-heart:hover {
+	background-color: #e81224 !important;
+}
+
+.birdybuddy {
+	position: relative;
+}
+
+.birdybuddy .message {
+	position: absolute;
+	top: -50px;
+	right: 0;
+	border-radius: 10px 10px 10px 0;
+	background: rgba(255, 255, 255, .9);
+        padding: 10px;
+	width: 50%;
+	color: #000000;
+}
+
+.birdybuddy .message::before {
+	content: '💬';
+	position: absolute;
+	bottom: -10px;
+	left: -10px;
+}
+
+.feature-flock {
+	filter: grayscale(1);
+}
+
+.feature-flock.featured {
+	filter: grayscale(0);
+}
+
+.loadingData {
+	position: relative;
+	transform: translateZ(0);
+}
+
+.loadingData > * {
+	opacity: 0.5;
+}
+
+.loadingData::after {
+	content: " ";
+	position: fixed;
+	z-index: 9999;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	margin: auto;
+	display: inline-block;
+	text-align: center;
+	width: 3.25em;
+	height: 3.25em;
+	background-color: rgb(155, 155, 155);
+	background-image: url('/img/eggtime.png');
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	border-radius: 100px;
+        animation: loadingData 2s ease-in-out infinite;
+}
+
+input.loadingData::after {
+	font-size: 1em;
+}
+
+@keyframes loadingData {
+  40% {
+	  transform: rotate(-30deg);
+  }
+
+  45% {
+	  transform: rotate(35deg);
+  }
+
+  50% {
+	  transform: rotate(-30deg);
+  }
+
+  55% {
+	  transform: rotate(-35deg);
+  }
+
+  60% {
+	  transform: rotate(0);
+  }
 }

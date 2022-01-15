@@ -6,13 +6,11 @@ class Cache {
     aviary: "z",
     bird: "h",
     cache: "s",
-    flocks: "s",
     variant: "h",
     variants: "s",
     member: "h",
     wishlist: "h",
     birdypet: "h",
-    flock: "h",
     flockTotals: "h"
   }
 
@@ -97,23 +95,14 @@ class Cache {
               resolve(members.map((member) => member[Database.KEY].name));
             });
           } else if (id == "freebirds") {
-            Database.fetch({
-              kind: 'FreeBird',
-              keysOnly: true
-            }).then((freebirds) => {
-              resolve(freebirds.map((freebird) => freebird[Database.KEY].name));
+            Database.get('freebirds', {}, {
+	      select: ['id'],
+		    order: ['RAND()'],
+	      limit: 100
+	    }).then((freebirds) => {
+              resolve(freebirds.map((freebird) => freebird.id));
             });
           }
-          break;
-        case 'flocks':
-          Database.get('flocks', {
-              member: id
-            }, {
-              select: ['id']
-            })
-            .then((flocks) => {
-              resolve(flocks.map((flock) => flock.id));
-            });
           break;
         case 'variant':
           Database.getOne('variants', {
@@ -152,13 +141,6 @@ class Cache {
             id: id
           }).then(([birdypet]) => {
             resolve(birdypet);
-          });
-          break;
-        case 'flock':
-          Database.getOne('flocks', {
-            id: id
-          }).then((flock) => {
-            resolve(flock);
           });
           break;
         default:

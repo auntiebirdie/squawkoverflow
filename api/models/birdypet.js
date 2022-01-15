@@ -52,12 +52,10 @@ class BirdyPet {
 
           await this.variant.fetch();
 
-          if (params.include?.includes('memberData') && params.member) {
-            await this.variant.fetchMemberData(params.member);
-          }
-
           this.bird = this.variant.bird;
           delete this.variant.bird;
+
+          await this.bird.fetch(params);
 
           try {
             this.flocks = await Database.get('birdypet_flocks', {
@@ -65,7 +63,9 @@ class BirdyPet {
             }, {
               select: ['flock']
             }).then((results) => results.map((result) => result.flock));
-          } catch (err) {}
+          } catch (err) {
+	    this.flocks = [];
+	  }
 
           resolve(this);
         } else {

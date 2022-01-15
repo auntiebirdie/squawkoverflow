@@ -9,16 +9,6 @@
     })
   %>
 
-  <%- include('../partials/filter-search-sort.ejs', {
-      includeAllFamilies : true,
-      sortFields : [
-        { "value" : "hatchedAt-DESC", "label" : "Hatch Date (Newest)" },
-        { "value" : "hatchedAt-ASC", "label" : "Hatch Date (Oldest)" }, 
-        { "value" : "commonName-ASC", "label" : "Species" }
-      ]
-    })
-  %>
-
   <%- include('../partials/pagination.ejs') %>
 
   <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"member":"<%= member.id %>","memberData":"<%= locals.loggedInUser ? loggedInUser.id : '' %>"}'></div>

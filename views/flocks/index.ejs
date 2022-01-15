@@ -2,25 +2,39 @@
 
   <%- include('../partials/page-title.ejs', { title : "Manage Flocks" }) %>
 
-  <div class="text-end mb-3">
-    <a href="/flocks/new" class="btn btn-primary">New Flock</a>
+  <div class="row">
+    <div class="col-6 d-flex align-items-center">
+      ⭐ Featured on Profile
+    </div>
+    <div class="col-6 text-end mb-3">
+      <a href="/flocks/new" class="btn btn-secondary">New Flock</a>
+    </div>
   </div>
 
   <div id="sortable" class="row">
     <% for (let flock of flocks) { %>
-    <div class="col-11 offset-1 offset-md-0 col-md-12 p-3" data-id="<%= flock.id %>" data-display-order="<%= flock.displayOrder || 0 %>">
-      <div class="card p-2">
+    <div data-id="<%= flock.id %>" data-display-order="<%= flock.displayOrder || 0 %>">
+      <div class="card p-2 mb-4">
         <div class="row">
-          <div class="col-8 col-md-10">
-            <h3 class="draggable">
-              <small class="text-muted font-weight-light">&#x283F</small>
-              <%= flock.name %>
-            </h3>
+          <div class="col-1 d-flex align-items-center">
+              <h1 class="text-muted font-weight-light draggable" role="button">&#x283F</h1>
           </div>
-          <div class="col-4 col-md-2 text-end">
-            <a class="btn btn-secondary" href="/flocks/<%= flock.id %>/manage">
-              ✏️
-            </a>
+          <div class="col-11">
+            <div class="row">
+              <div class="col-12 col-lg-9">
+                <h3>
+                  <%= flock.name %>
+                </h3>
+              </div>
+              <div class="col-12 col-lg-3 text-end">
+                <a class="feature-flock <%= flock.id == loggedInUser.featuredFlock ? "featured" : "" %> btn btn-light border-secondary me-4" role="button" data-id="<%= flock.id %>">
+                  ⭐
+                </a>
+                <a class="btn btn-light border-secondary" href="/flocks/<%= flock.id %>/manage" role="button">
+                  ✏️
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -30,33 +44,67 @@
 
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js" integrity="sha256-DqWm+/v1Q0tgaHhTPLema89wDw8Ir+kIM10JePtjrZQ=" crossorigin="anonymous"></script>
   <script type="text/javascript">
-    Sortable.create(document.getElementById('sortable'), {
-      onUpdate: function (e) {
-        var item = e.item;
-        var prev = item.previousElementSibling ? (item.previousElementSibling.getAttribute('data-display-order') * 1) : 0;
-        var next = item.nextElementSibling ? (item.nextElementSibling.getAttribute('data-display-order') * 1) : prev + 100;
+    $(document).ready(function () {
+      Sortable.create(document.getElementById('sortable'), {
+        handle: '.draggable',
+        onUpdate: function (e) {
+          var item = e.item;
+          var prev = item.previousElementSibling ? (item.previousElementSibling.getAttribute('data-display-order') * 1) : 0;
+          var next = item.nextElementSibling ? (item.nextElementSibling.getAttribute('data-display-order') * 1) : prev + 100;
 
-        var displayOrder = (prev + next) / 2;
+          var displayOrder = (prev + next) / 2;
 
-        item.setAttribute('data-display-order', displayOrder);
+          item.setAttribute('data-display-order', displayOrder);
 
-        item.classList.add('loadingData');
+          item.classList.add('loadingData');
+
+          $.ajax({
+            cache: false,
+            url: `/api/flock`,
+            data: JSON.stringify({
+             id: item.getAttribute('data-id'),
+             displayOrder : displayOrder
+            }),
+            dataType: "json",
+            method: "PUT",
+            contentType: 'application/json',
+            success: function(data) {
+              item.classList.remove('loadingData');
+            }
+          });
+        }
+      });
+
+      $('.feature-flock', '#sortable').on('click', function (e) {
+        var toFeature = e.target;
+        var featured = $('.featured', '#sortable');
+        var featuredFlock = null;
+
+        if (featured[0] != toFeature) {
+          toFeature.classList.add('featured');
+          featured.removeClass('featured');
+          featuredFlock = toFeature.getAttribute('data-id');
+        }
+        else {
+          toFeature.classList.remove('featured');
+        }
+
+        toFeature.classList.add('loadingData');
 
         $.ajax({
           cache: false,
-          url: `/api/flock`,
-          data: JSON.stringify({
-           id: item.getAttribute('data-id'),
-           displayOrder : displayOrder
-          }),
-          dataType: "json",
-          method: "PUT",
+          url: '/api/member',
+          dataType: 'json',
+          method: 'PUT',
           contentType: 'application/json',
-          success: function(data) {
-            item.classList.remove('loadingData');
+          data: JSON.stringify({
+            featuredFlock: featuredFlock
+          }),
+          success: function (data) {
+            toFeature.classList.remove('loadingData');
           }
         });
-      }
+      });
     });
   </script>
 

@@ -30,7 +30,7 @@
   "image": "https://images.unsplash.com/photo-1557401622-cfc0aa5d146c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNTk0OTB8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2NDgxODY&ixlib=rb-1.2.1&q=80&w=1080",
   "attribution": "Mathew Schwartz",
   "source": "https://unsplash.com/photos/OjQgsR1oyEw",
-  "position" : "0 75%"
+  "position" : "center center"
 }, {
   "image": "https://images.unsplash.com/photo-1582201957428-5ff47ff7605c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNTk0OTB8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2NDgxODY&ixlib=rb-1.2.1&q=80&w=1080",
   "attribution": "Birmingham Museums Trust",

@@ -1,23 +1,7 @@
 <%- include('../header.ejs') %>
 
   <%- include('../partials/page-title.ejs', {
-        title : flock.name,
-        breadcrumb: {
-          text: `${member.username}`,
-          url: `/members/${member.id}`,
-          prepend: `<img class="member-avatar avatar-sm" src="${member.avatar}" data-id="${member.id}" onerror="missingMemberAvatar(this)"> `
-        }
-      }
-    )
-  %>
-
-  <%- include('../partials/filter-search-sort.ejs', {
-        includeAllFamilies: true,
-        sortFields : [
-          { "value" : "hatchedAt-DESC", "label" : "Hatch Date (Newest)" },
-          { "value" : "hatchedAt", "label" : "Hatch Date (Oldest)" },
-          { "value" : "species", "label" : "Species" }
-        ]
+        title : flock.name
       }
     )
   %>

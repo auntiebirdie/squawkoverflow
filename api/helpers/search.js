@@ -96,7 +96,7 @@ class Search {
       if (args.family) {
         query += ' JOIN variants ON (birdypets.variant = variants.id)';
 	      query += ' JOIN species ON (variants.species = species.code)';
-        filters.push('species.taxonomy = ?');
+        filters.push('species.family = ?');
         params.push(args.family);
       }
 

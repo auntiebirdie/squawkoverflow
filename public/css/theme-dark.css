@@ -1,9 +1,14 @@
+html, body {
+	background-color: #121212;
+	color: #ffffff;
+}
+
 a {
-	color: #454d00;
+	color: #a0b300;
 }
 
 a:hover, .nav-menu a:hover {
-	color: #a0b300 !important;
+	color: #454d00 !important;
 }
 
 .bg-dark, .btn-dark {
@@ -12,6 +17,10 @@ a:hover, .nav-menu a:hover {
 
 .text-dark, .btn-primary {
 	color: #2c3100 !important;
+}
+
+.bg-light {
+	background-color: #202123 !important;
 }
 
 .bg-primary, .btn-primary {

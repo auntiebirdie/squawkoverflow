@@ -3,47 +3,54 @@
 
 <head>
   <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQUAWKoverflow</title>
+  <meta property="og:site_name" content="SQUAWKoverflow">
 
-  <title>SQUAWK | home</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
-
-  <link href="https://bootstrapmade.com/demo/templates/iPortfolio/assets/img/favicon.png" rel="icon">
-  <link href="https://bootstrapmade.com/demo/templates/iPortfolio/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <%- include('./partials/meta.ejs') %>
 
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
-  <link href="https://bootstrapmade.com/demo/templates/iPortfolio/assets/vendor/aos/aos.css" rel="stylesheet">
-  <link href="https://bootstrapmade.com/demo/templates/iPortfolio/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://bootstrapmade.com/demo/templates/iPortfolio/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="https://bootstrapmade.com/demo/templates/iPortfolio/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="https://bootstrapmade.com/demo/templates/iPortfolio/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-  <link href="https://bootstrapmade.com/demo/templates/iPortfolio/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
 
   <link href="/css/style.css" rel="stylesheet">
-  <link href="/css/theme-default.css" rel="stylesheet">
+  <link href="/css/theme-<%= locals.loggedInUser ? (loggedInUser.settings?.theme || "default") : "default" %>.css" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.4.0/dist/lazyload.min.js" integrity="sha256-Uukz8+FlQ78tU43ix2oKDcK84sJpKYzuU8XweQ1DaU0=" crossorigin="anonymous"></script>
+
+
+  <script type="text/javascript">
+    function missingMemberAvatar (img) {
+      img.onerror = "";
+      img.src = '/img/avatar-placeholder.jpeg';
+      img.style.transform = `rotate(${Math.max(0, img.getAttribute('data-id'))}deg)`;
+    };
+
+    var lazyLoadInstance = new LazyLoad({ });
+  </script>
 </head>
 
-<body>
+<body class="<%= locals.error ? "full-image-background" : "" %> <%= !locals.sidebar ? "no-sidebar" : "" %>">
 
   <span class="mobile-nav-toggle d-xl-none bg-secondary text-primary">≡</span>
 
  <% if (locals.sidebar) { %>
-  <span class="mobile-sidebar-toggle d-xl-none bg-secondary text-primary"><%= sidebar == "info" ? "ℹ" : "🝖" %></span>
+  <span class="mobile-sidebar-toggle d-xxl-none bg-secondary text-primary"><%= sidebar == "filters" ? "🝖" : "ℹ" %></span>
  <% } %>
 
   <div id="navbar" class="bg-dark">
     <div class="d-flex flex-column pt-3 ps-3 ps-sm-0">
 
       <div class="ps-3 ps-sm-0">
-        <img src="/img/SQUAWK.png" alt="logo" class="img-fluid d-none d-sm-block">
-	<h2 class="text-center text-light"><span class="text-primary">SQUAWK</span>overflow</h2>
+        <img src="/img/SQUAWK.png" alt="logo" class="img-fluid d-none d-sm-block mb-2">
+	<h2 class="text-center"><a href="/" class="text-light"><span class="text-primary">SQUAWK</span>overflow</a></h2>
       </div>
 
       <nav class="nav-menu navbar">
         <ul>
-          <% siteMenu.forEach( function (item) { %> 
+         <% siteMenu.forEach( function (item) { %> 
           <li class="nav-item pb-2">
             <a href="<%= item.href %>" class="nav-link text-light">
               <span class="icon d-inline-block fs-4">
@@ -55,20 +62,70 @@
             </a>
           </li>
           <% }) %>
+	  <li class="my-2 ms-3 pb-2">
+            <hr>
+	  </li>
+	 <% if (locals.loggedInUser) { %>
+	  <li class="nav-item pb-2">
+            <a href="/members/<%= loggedInUser.id %>" class="nav-link text-light">
+              <span class="icon d-inline-block fs-4">
+                <img src="<%= loggedInUser.avatar %>" class="rounded-circle p-2" onerror="missingMemberAvatar(this)">
+              </span>
+              <span class="ms-1"><%= loggedInUser.username %></span>
+            </a>
+	  </li>
+          <li class="nav-item pb-2 ms-2">
+            <a href="/aviary/<%= loggedInUser.id %>" class="nav-link text-light">
+              <span class="icon d-inline-block fs-5">🐦</span>
+	      <span class="d-block label">Aviary</span>
+	    </a>
+	  </li>
+	  <li class="nav-item pb-2 ms-2">
+            <a href="/wishlist/<%= loggedInUser.id %>" class="nav-link text-light">
+              <span class="icon d-inline-block fs-5">❤️</span>
+              <span class="d-block label">Wishlist</span>
+            </a>
+          </li>
+	  <li class="nav-item pb-2 ms-2">
+            <a href="/flocks" class="nav-link text-light">
+              <span class="icon d-inline-block fs-5">🏘️</span>
+              <span class="d-block label">Flocks</span>
+            </a>
+	  </li>
+	  <li class="nav-item pb-2 ms-2">
+            <a href="/settings" class="nav-link text-light">
+              <span class="icon d-inline-block fs-5">⚙️</span>
+              <span class="d-block label">Settings</span>
+            </a>
+	  </li>
+          <li class="my-2 ms-3 pb-2">
+            <hr>
+          </li>
+          <li class="nav-item ps-4">
+            <a href="/logout">
+              Log Out
+            </a>
+          </li>
+	 <% } else { %>
+	  <li class="nav-item ps-4">
+            <a href="/login">
+              Log In
+	    </a>
+	  </li>
+	 <% } %>
         </ul>
       </nav>
     </div>
   </div>
 
   <% if (locals.page && locals.page == "home") { %> 
-    <div id="home-banner" class="full-image-background d-none d-md-block">
-      <p class="bg-light text-secondary">welcome to</p>
-
-      <h1 class="bg-secondary text-light border-bottom border-5 border-primary"><strong>SQUAWK</strong>overflow</h1>
-
-      <p><em>the ultimate bird collecting game</em></p>
-
+    <div id="home-banner" class="full-image-background">
       <a class="attribution bg-light"></a>
+    </div>
+    <div id="home-text">
+      <h1 class="bg-secondary text-light border-bottom border-5 border-primary"><strong>SQUAWK</strong>overflow</h1>
+      <div></div>
+      <p class="text-center"><em>the ultimate bird collecting game</em></p>
     </div>
     <script type="text/javascript" src="/js/full-background-image.js" image="banner"></script>
   <% } %>

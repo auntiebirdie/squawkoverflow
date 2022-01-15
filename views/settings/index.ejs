@@ -10,7 +10,7 @@
       <div class="btn-group" role="group">
         <% for (var theme of themes) { %>
         <input type="radio" class="btn-check" name="theme" value="<%= theme.id %>" id="theme_<%= theme.id %>" autocomplete="off" <%= loggedInUser.settings.theme == theme.id ? "checked" : "" %>>
-        <label class="btn btn-outline-primary" for="theme_<%= theme.id %>"><%= theme.icon %> <%= theme.name %></label>
+        <label class="btn btn-outline-secondary" for="theme_<%= theme.id %>"><%= theme.icon %> <%= theme.name %></label>
         <% } %>
       </div>
   </div>

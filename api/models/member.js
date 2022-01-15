@@ -2,7 +2,7 @@ const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
 
-const Birds = require('../collections/birds.js');
+const Bird = require('./bird.js');
 const BirdyPet = require('./birdypet.js');
 const Flocks = require('../collections/flocks.js');
 const Flock = require('./flock.js');
@@ -138,8 +138,8 @@ class Member {
                 }
                 break;
               case 'featuredFlock':
-                if (member.flock) {
-                  this.featuredFlock = new Flock(member.flock);
+                if (member.featuredFlock) {
+                  this.featuredFlock = new Flock(member.featuredFlock);
                   await this.featuredFlock.fetch();
                 } else {
                   this.featuredFlock = null;
@@ -149,23 +149,27 @@ class Member {
                 this.flocks = await Flocks.all(this.id);
                 break;
               case 'families':
-                try {
-                  let families = require('../data/families.json');
-
-                  this.families = Object.values(families).map((family) => {
-                    promises.push(Counters.get('family', this.id, family.value).then((value) => {
-                      family.owned = value;
+	        await Database.query('SELECT name, display FROM taxonomy WHERE type = "family" ORDER BY name').then( (results) => {
+                  this.families = results.map((result) => {
+                    promises.push(Counters.get('family', this.id, result.name).then((value) => {
+                      result.owned = value;
                     }));
 
-                    return family;
+                    return result;
                   });
-                } catch (err) {
-                  console.log(err);
-                  this.families = [];
-                }
+		});
+                break;
+              case 'hasWishlist':
+                this.hasWishlist = await Database.getOne('wishlist', {
+                  member: this.id
+                });
                 break;
               case 'wishlist':
-                this.wishlist = await Cache.get('wishlist', this.id);
+                this.wishlist = await Database.get('wishlist', {
+                  member: this.id
+                }, {
+                  select: ['species', 'intensity']
+                });
                 break;
             }
           }
@@ -189,28 +193,26 @@ class Member {
   }
 
   fetchWishlist(family = null) {
-    return new Promise(async (resolve, reject) => {
-      let birds = [];
+    let birds = [];
 
-      await Cache.get('wishlist', this.id).then((results) => {
-        if (family) {
-          try {
-            birds = JSON.parse(results[family]);
-          } catch (err) {}
-        } else {
-          Object.values(results).forEach((result) => {
-            try {
-              JSON.parse(result).forEach((speciesCode) => {
-                birds.push(speciesCode);
-              });
-            } catch (err) {}
-          });
+    return new Promise((resolve, reject) => {
+      Database.get('wishlist', {
+        member: this.id
+      }, {
+        select: ['species', 'intensity']
+      }).then(async (results) => {
+        for (let i = 0, len = results.length; i < len; i++) {
+          let bird = new Bird(results[i].species);
+
+          bird.intensity = results[i].intensity;
+
+          birds.push(bird.fetch());
         }
+
+        Promise.all(birds).then(() => {
+          resolve(birds);
+        });
       });
-
-      birds = birds.map((speciesCode) => Birds.findBy('speciesCode', speciesCode));
-
-      resolve(birds);
     });
   }
 
@@ -219,15 +221,22 @@ class Member {
     let bird = birds.find((bird) => bird.speciesCode == speciesCode);
 
     return new Promise(async (resolve, reject) => {
-        if (action == "add") {
-		await Database.create('wishlist', { member: this.id, species: bird.speciesCode, intensity: 1 });
-        } else if (action == "remove") {
-		await Database.delete('wishlist', { member: this.id, species: bird.speciesCode });
-        }
+      if (action == "add") {
+        await Database.create('wishlist', {
+          member: this.id,
+          species: bird.speciesCode,
+          intensity: 1
+        });
+      } else if (action == "remove") {
+        await Database.delete('wishlist', {
+          member: this.id,
+          species: bird.speciesCode
+        });
+      }
 
-        await Redis.connect('cache').del(`wishlist:${this.id}`);
+      await Redis.connect('cache').del(`wishlist:${this.id}`);
 
-        resolve();
+      resolve();
     });
   }
 }

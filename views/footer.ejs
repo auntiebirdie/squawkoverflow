@@ -2,14 +2,58 @@
   </main>
 
   <div id="sidebar" class="bg-light">
-    <div class="d-flex flex-column pt-3 ps-3 ps-sm-0">
+    <div class="d-flex flex-column py-4 ps-3 ps-sm-0">
       <% if (locals.sidebar) { %>
         <%- include(`./sidebar/${sidebar}.ejs`) %>
       <% } %>
     </div>
   </div>
 
-  <script src="/js/main.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready( function () {
+      lazyLoadInstance.update();
+
+      $('.mobile-nav-toggle').on('click', function () {
+        $('body').toggleClass('mobile-nav-active');
+      });
+
+      $('.mobile-sidebar-toggle').on('click', function () {
+        $('body').toggleClass('mobile-sidebar-active');
+      });
+
+     <% if (locals.loggedInUser) { %>
+      $('#main').on('click', '.wishlist-heart', function (event) {
+        var button = event.target;
+          if (!button.style.opacity) { 
+            var action = button.getAttribute('data-action');
+            button.style.opacity = .5;
+            button.innerHTML = '⏳';
+            $.ajax({
+              url: '/api/wishlist',
+              data: JSON.stringify({
+                speciesCode: button.getAttribute('data-id')
+              }),
+              method: action == 'add' ? 'POST' : 'DELETE',
+              dataType: 'json',
+              contentType: 'application/json',
+              success: function(data) {
+                button.style.opacity = null;
+                if (action == 'add') {
+                  button.innerHTML = '❤️';
+                  button.setAttribute('data-action', 'remove');
+                }
+                else {
+                  button.innerHTML = '🤍';
+                  button.setAttribute('data-action', 'add');
+                }
+              }
+            });
+          }
+      });
+    <% } %>
+    });
+  </script>
 
 </body>
 

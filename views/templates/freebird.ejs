@@ -1,18 +1,18 @@
-<div class="col-md-3 d-flex align-items-stretch">
+<div class="col-6 col-md-4 d-flex align-items-stretch">
   <div class="w-100 pb-4">
     <div class="h-100 card" style="cursor: pointer">
       <a class="wishlist-heart">
-        ${bird.wishlisted ? '❤️' : '' }
+        ${model.wishlisted ? '❤️' : '' }
       </a>
       <div>
-        <div class="bg-white lazy birdypet checkmark${bird.owned > 2 ? 2 : bird.owned}"
-             data-id="${bird.id}"
-             data-bg="${bird.image}"
+        <div class="bg-white lazy birdypet checkmark${model.bird.owned > 2 ? 2 : model.bird.owned}"
+             data-id="${model.freebird}"
+             data-bg="${model.image}"
         ></div>
       </div>
       <div class="card-body">
-        <h3 class="mt-3 text-center">${bird.bird.name}</h3>
-        <h6 class="mb-3 text-center">${bird.label}</h6>
+        <h3 class="text-center">${model.bird.commonName}</h3>
+        <h6 class="text-small text-center">${model.label}</h6>
       </div>
     </div>
   </div>

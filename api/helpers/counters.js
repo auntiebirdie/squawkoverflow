@@ -60,10 +60,10 @@ class Counters {
 	    FROM birdypets
 	    JOIN variants ON (birdypets.variant = variants.id)
 	    JOIN species ON (variants.species = species.code)
-	    WHERE birdypets.member = ? AND species.taxonomy = ?
+	    WHERE birdypets.member = ? AND species.family = ?
 	  `, [member, id])
             .then((results) => {
-		    resolve(results[0].total);
+              resolve(results[0].total);
             });
 
           break;
@@ -75,7 +75,7 @@ class Counters {
             WHERE birdypets.member = ? AND variants.species = ?
           `, [member, id])
             .then((results) => {
-                    resolve(results[0].total);
+              resolve(results[0].total);
             });
           break;
         case 'birdypets':
@@ -100,14 +100,18 @@ class Counters {
   increment(value, kind, member, id, updateEggs = false) {
     value *= 1;
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       this.get(kind, member, id).then(async (currValue) => {
         let promises = [];
 
         if (updateEggs) {
           if (currValue < 2) {
-            const Birds = require('../collections/birds.js');
-            let bird = Birds.findBy('speciesCode', id);
+            const Bird = require('../models/bird.js');
+            let bird = new Bird(id);
+
+            await bird.fetch({
+              include: ['adjectives']
+            })
 
             for (let adjective of bird.adjectives) {
               promises.push(this.increment(currValue == 0 ? -1 : 1, 'eggs', member, adjective));
@@ -131,8 +135,10 @@ class Counters {
                 promises.push(this.increment(newValue == 0 ? -1 : 1, 'species', member, variant.bird.code));
                 break;
               case 'species':
-                const Birds = require('../collections/birds.js');
-                let bird = Birds.findBy('speciesCode', id);
+                const Bird = require('../models/bird.js');
+                let bird = new Bird(id);
+
+			    await bird.fetch();
 
                 promises.push(this.increment(newValue == 0 ? -1 : 1, 'family', member, bird.family));
                 break;
