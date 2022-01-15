@@ -31,7 +31,7 @@
       <p><%= (member.aviary * 1).toLocaleString("en-US") %> birds collected</p>
 
       <h5>Joined</h5>
-      <p><%= new Date(member.joinedAt * 1).toLocaleString('en-US', { dateStyle: "long" }) %></p>
+      <p><%= new Date(member.joinedAt).toLocaleString('en-US', { dateStyle: "long" }) %></p>
     </div>
     <div class="col-md-6 text-center text-md-end">
         <p><a href="/aviary/<%= member.id %>" class="btn btn-secondary">🐦 View Aviary</a></p>
