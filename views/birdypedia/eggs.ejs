@@ -7,17 +7,17 @@
     <div class="col-12 col-md-4">
       <div class="row">
         <div class="col-5 offset-1">
-          <a href="/birdypedia/eggs/<%= egg.name %>"><%= egg.name %></a>
+          <a href="/birdypedia/eggs/<%= egg.adjective %>"><%= egg.adjective %></a>
         </div>
         <div class="col-5 text-end">
           <small class="text-muted">
             <% if (locals.loggedInUser) { %>
-              <% if (egg.memberTotal == egg.speciesTotal) { %>
+              <% if (egg.memberTotal == egg.numSpecies) { %>
                 <span class="checkmark"></span>
               <% } %>
-              (<%= egg.memberTotal %>/<%= egg.speciesTotal %>)
+              (<%= egg.memberTotal %>/<%= egg.numSpecies %>)
             <% } else { %>
-              (<%= egg.speciesTotal %>)
+              (<%= egg.numSpecies %>)
             <% } %>
           </small>
         </div>
