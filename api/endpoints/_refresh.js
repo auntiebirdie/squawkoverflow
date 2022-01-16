@@ -1,24 +1,52 @@
-const BirdyPet = require('../models/birdypet.js');
+const secrets = require('../secrets.json');
+
+const Database = require('../helpers/database.js');
 const Members = require('../collections/members.js');
 
-module.exports = async (req, res) => {
-  return new Promise((resolve, reject) => {
-    if (req.query.member) {
-      resolve(Members.get(req.query.member));
-    } else {
-      Members.all().then((members) => {
-        // fix to lastRefresh sort ASC
-        resolve(members.filter((member) => member.active).sort(() => .5 - Math.random())[0]);
-      });
-    }
-  }).then(async (member) => {
-    let promises = [];
-    console.log(`Refreshing cache for ${member.id}`);
+const {
+  Client,
+  Intents
+} = require('discord.js');
 
-	  // TODO: update avatar, username, refresh counters
+const client = new Client({
+  intents: [Intents.FLAGS.GUILD_MEMBERS]
+});
 
-    console.log("DONE!");
+//module.exports = async (req, res) => {
+return new Promise(async (resolve, reject) => {
+  let siteMembers = await Members.all();
+  let serverMembers = [];
 
-    return res.sendStatus(200);
+  client.login(secrets.DISCORD.BOT_TOKEN);
+
+  client.on('ready', () => {
+    client.guilds.fetch(secrets.DISCORD.GUILD_ID).then((guild) => {
+      let promises = [];
+
+      for (let siteMember of siteMembers) {
+        promises.push(guild.members.fetch(`${siteMember.id}`).then((serverMember) => {
+          if (serverMember) {
+            return Database.set('members', {
+              id: serverMember.id
+            }, {
+              username: serverMember.displayName,
+              avatar: serverMember.displayAvatarURL(),
+              serverMember: true
+            });
+          } else {
+            return Database.set('members', {
+              id: serverMember.id
+            }, {
+              serverMember: false
+            });
+          }
+        }));
+      }
+
+      Promise.allSettled(promises).then(resolve);
+    });
   });
-};
+}).then(() => {
+  return res.sendStatus(200);
+});
+//};
