@@ -114,8 +114,8 @@ img {
 .mobile-nav-toggle,
 .mobile-sidebar-toggle {
   position: fixed;
-  left: 5px;
-  top: 5px;
+  left: 15px;
+  top: 15px;
   z-index: 9998;
   border: 0;
   font-size: 24px;
@@ -134,7 +134,7 @@ img {
 }
 
 .mobile-sidebar-toggle {
-	right: 20px;
+	right: 15px;
 	left: auto;
 }
 
