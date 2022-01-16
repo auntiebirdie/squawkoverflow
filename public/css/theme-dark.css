@@ -43,7 +43,8 @@ a:hover, .nav-menu a:hover {
 	background-color: #444D00 !important;
 }
 
-.text-secondary, .page-item .page-link {
+.text-secondary, .page-item .page-link,
+.card {
 	color: #444D00 !important;
 }
 

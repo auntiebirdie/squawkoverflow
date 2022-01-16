@@ -30,7 +30,7 @@ prompt.get(fields, async (err, result) => {
 
   conn.query('USE squawkdata');
 
-  conn.query('SELECT * FROM species JOIN taxonomy ON (species.family = taxonomy.name) WHERE code = ?', [result.code]).then(async ([bird]) => {
+  conn.query('SELECT name AS family, parent AS `order`, scientificName FROM species JOIN taxonomy ON (species.family = taxonomy.name) WHERE code = ?', [result.code]).then(async ([bird]) => {
 	  console.log(bird);
     if (bird) {
       let existing = null;
