@@ -50,7 +50,7 @@ class Variant {
         this.owned = this.bird.owned;
       }
 
-      this.hatched = await Counters.get('birdypets', memberId, this.id);
+      this.hatched = await Counters.get('variant', memberId, this.id);
 
       resolve(this);
     });

@@ -34,10 +34,7 @@ exports.receive = function(message, context) {
     const Variant = require(__dirname + '/../models/variant.js');
     const Member = require(__dirname + '/../models/member.js');
 
-    const Cache = require(__dirname + '/../helpers/cache.js');
-    const Counters = require(__dirname + '/../helpers/counters.js');
     const Database = require(__dirname + '/../helpers/database.js');
-    const Search = require(__dirname + '/../helpers/search.js');
     const Webhook = require(__dirname + '/../helpers/webhook.js');
 
     var data = JSON.parse(Buffer.from(message.data, 'base64').toString());
@@ -55,10 +52,6 @@ exports.receive = function(message, context) {
 
     switch (data.action) {
       case "COLLECT":
-        promises.push(Cache.add('aviary', member.id, [Date.now(), data.birdypet]));
-        promises.push(Counters.increment(1, 'aviary', member.id));
-        promises.push(Counters.increment(1, 'species', member.id, variant.bird.code, true));
-
         if (member.settings.general?.includes('updateWishlist')) {
           promises.push(member.updateWishlist(variant.bird.code, "remove"));
         }
@@ -80,30 +73,15 @@ exports.receive = function(message, context) {
           }
         }
         break;
-      case "GIFT":
-        promises.push(Cache.remove('aviary', member.id, birdypet.id));
-        promises.push(Counters.increment(-1, 'aviary', member.id));
-        promises.push(Counters.increment(-1, 'species', member.id, variant.bird.code, true));
-        break;
       case "RELEASE":
         Database.create('freebirds', {
           id: Database.key(),
           variant: variant.id,
           freedAt: new Date()
-        }).then(() => {
-          Cache.add('cache', 'freebirds', variant.id);
         });
-
-        if (data.birdypet) {
-          promises.push(Cache.remove('aviary', member.id, birdypet.id));
-          promises.push(Counters.increment(-1, 'aviary', member.id));
-          promises.push(Counters.increment(-1, 'species', member.id, variant.bird.code, true));
-        }
 
         break;
     }
-
-    promises.push(Search.invalidate(member.id));
 
     Promise.all(promises).then(resolve);
   });

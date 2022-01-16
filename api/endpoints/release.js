@@ -28,8 +28,6 @@ module.exports = async (req, res) => {
   }
 
   if (variant) {
-    await Counters.increment(-1, 'birdypets', req.body.loggedInUser, variant);
-
     await PubSub.publish('background', 'RELEASE', {
       member: req.body.loggedInUser,
       birdypet: req.body.birdypet,

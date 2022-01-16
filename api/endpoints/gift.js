@@ -49,12 +49,6 @@ module.exports = async (req, res) => {
           }]
         }));
 
-        promises.push(PubSub.publish('background', 'GIFT', {
-          member: fromMember.id,
-          birdypet: birdypet.id,
-          variant: birdypet.variant.id
-        }));
-
         promises.push(PubSub.publish('background', 'COLLECT', {
           member: toMember.id,
           birdypet: birdypet.id,

@@ -192,6 +192,90 @@ const datastore = new Datastore({
         await conn.query('DROP TABLE IF EXISTS squawkdata.freebirds');
         await conn.query('CREATE TABLE squawkdata.freebirds (id VARCHAR(50) NOT NULL PRIMARY KEY, variant VARCHAR(50), freedAt DATETIME DEFAULT NOW())');
         break;
+	    case "counters":
+		    await conn.query('USE squawkdata');
+		    await conn.query('DROP TABLE IF EXISTS squawkdata.counters');
+		    await conn.query('CREATE TABLE squawkdata.counters (`member` VARCHAR(50), `type` VARCHAR(25), `id` VARCHAR(50), `count` INT DEFAULT 0, PRIMARY KEY(`member`, `type`, `id`))');
+
+		    await conn.query('DROP TRIGGER IF EXISTS squawk_counters_insert');
+		    await conn.query(
+		    'CREATE TRIGGER \`squawk_counters_insert\` AFTER INSERT ON squawkdata.\`birdypets\` ' +
+		    'FOR EACH ROW BEGIN ' +
+		    '  DECLARE \`v_species\` VARCHAR(50); ' +
+		    '  DECLARE \`v_family\` VARCHAR(50); ' +
+
+                    '  SELECT variants.species INTO v_species FROM variants WHERE id = NEW.variant; ' +
+                    '  SELECT species.family INTO v_family FROM species WHERE code = v_species; ' +
+
+		    '  INSERT INTO squawkdata.counters VALUES (NEW.member, "variant", NEW.variant, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
+		    '  INSERT INTO squawkdata.counters VALUES (NEW.member, "species", v_species, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
+		    '  INSERT INTO squawkdata.counters VALUES (NEW.member, "family", v_family, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
+                    '  INSERT INTO squawkdata.counters VALUES (NEW.member, "aviary", "total", 1) ON DUPLICATE KEY UPDATE \`count\`= \`count\` + 1; ' +
+                    '  INSERT INTO squawkdata.counters SELECT NEW.member, "eggs", adjective, 1 FROM species_adjectives WHERE species = v_species ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
+		    'END');
+
+
+                    await conn.query('DROP TRIGGER IF EXISTS squawk_counters_update');
+                    await conn.query(
+                    'CREATE TRIGGER \`squawk_counters_update\` AFTER UPDATE ON squawkdata.\`birdypets\` ' +
+                    'FOR EACH ROW BEGIN '+
+                    '  DECLARE \`v_species\` VARCHAR(50); ' +
+                    '  DECLARE \`v_family\` VARCHAR(50); ' +
+		    '  DECLARE \`speciesCount\` INT DEFAULT 0; ' +
+		    '  DECLARE \`familyCount\` INT DEFAULT 0; ' +
+
+                    '  SELECT species INTO v_species FROM variants WHERE id = NEW.variant; ' +
+                    '  SELECT family INTO v_family FROM species WHERE code = v_species; ' +
+
+                    '  INSERT INTO squawkdata.counters VALUES (NEW.member, "variant", NEW.variant, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
+		    '  INSERT INTO squawkdata.counters VALUES (OLD.member, "variant", OLD.variant, 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
+
+                    '  IF NEW.member <> OLD.member THEN ' +
+		    '    SELECT COUNT(DISTINCT birdypets.variant) INTO speciesCount FROM birdypets JOIN variants ON (birdypets.variant = variants.id) WHERE birdypets.member = NEW.member AND variants.species = v_species; ' +
+                    '    SELECT COUNT(DISTINCT species.code) INTO familyCount FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.code) WHERE birdypets.member = NEW.member AND species.family = v_family; ' +
+
+                    '    INSERT INTO squawkdata.counters VALUES (NEW.member, "species", v_species, 1) ON DUPLICATE KEY UPDATE \`count\` = speciesCount; ' +
+                    '    INSERT INTO squawkdata.counters VALUES (NEW.member, "family", v_family, 1) ON DUPLICATE KEY UPDATE \`count\` = familyCount; ' +
+                    '    INSERT INTO squawkdata.counters VALUES (NEW.member, "aviary", "total", 1) ON DUPLICATE KEY UPDATE \`count\`= \`count\` + 1; ' +
+                    '    INSERT INTO squawkdata.counters SELECT NEW.member, "eggs", adjective, 1 FROM species_adjectives WHERE species = v_species ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
+
+                    '    SELECT COUNT(DISTINCT birdypets.variant) INTO speciesCount FROM birdypets JOIN variants ON (birdypets.variant = variants.id) WHERE birdypets.member = OLD.member AND variants.species = v_species; ' +
+                    '    SELECT COUNT(DISTINCT species.code) INTO familyCount FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.code) WHERE birdypets.member = OLD.member AND species.family = v_family; ' +
+
+                    '    INSERT INTO squawkdata.counters VALUES (OLD.member, "species", species, 0) ON DUPLICATE KEY UPDATE \`count\` = speciesCount; ' + 
+                    '    INSERT INTO squawkdata.counters VALUES (OLD.member, "family", family, 0) ON DUPLICATE KEY UPDATE \`count\` = familyCount; ' + 
+                    '    INSERT INTO squawkdata.counters VALUES (OLD.member, "aviary", "total", 0) ON DUPLICATE KEY UPDATE \`count\`= \`count\` - 1; ' +
+                    '    INSERT INTO squawkdata.counters SELECT OLD.member, "eggs", adjective, 1 FROM species_adjectives WHERE species = v_species ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
+                    '  END IF; ' +
+                    'END');
+
+                    await conn.query('DROP TRIGGER IF EXISTS squawk_counters_delete');
+                    await conn.query(
+                    'CREATE TRIGGER \`squawk_counters_delete\` AFTER DELETE ON squawkdata.\`birdypets\` ' +
+                    'FOR EACH ROW BEGIN ' +
+                    '  DECLARE \`v_species\` VARCHAR(50); ' +
+                    '  DECLARE \`v_family\` VARCHAR(50); ' +
+                    '  DECLARE \`speciesCount\` INT DEFAULT 0; ' +
+                    '  DECLARE \`familyCount\` INT DEFAULT 0; ' +
+
+                    '  SELECT species INTO v_species FROM variants WHERE id = OLD.variant; ' +
+                    '  SELECT family INTO v_family FROM species WHERE code = v_species; ' +
+
+                    '  INSERT INTO squawkdata.counters VALUES (OLD.member, "variant", OLD.variant, 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
+
+                    '  SELECT COUNT(DISTINCT birdypets.variant) INTO speciesCount FROM birdypets JOIN variants ON (birdypets.variant = variants.id) WHERE birdypets.member = OLD.member AND variants.species = v_species; ' +
+                    '  SELECT COUNT(DISTINCT species.code) INTO familyCount FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.code) WHERE birdypets.member = OLD.member AND species.family = v_family; ' +
+
+                    '  INSERT INTO squawkdata.counters VALUES (OLD.member, "species", species, 0) ON DUPLICATE KEY UPDATE \`count\` = speciesCount; ' +
+                    '  INSERT INTO squawkdata.counters VALUES (OLD.member, "family", family, 0) ON DUPLICATE KEY UPDATE \`count\` = familyCount; ' +
+                    '  INSERT INTO squawkdata.counters VALUES (OLD.member, "aviary", "total", 0) ON DUPLICATE KEY UPDATE \`count\`= \`count\` - 1; ' +
+                    '  INSERT INTO squawkdata.counters SELECT OLD.member, "eggs", adjective, 0 FROM species_adjectives WHERE species = v_species ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
+                    'END');
+
+		    await conn.query('INSERT INTO squawkdata.counters SELECT `member`, "species", species, COUNT(DISTINCT variant) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) GROUP BY `member`, `species`');
+		    await conn.query('INSERT INTO squawkdata.counters SELECT `member`, "family", family, COUNT(DISTINCT species.code) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.code) GROUP BY `member`, `family`');
+		    await conn.query('INSERT INTO squawkdata.counters SELECT `member`, "aviary", "total", COUNT(*) FROM birdypets GROUP BY `member`');
+		    await conn.query('INSERT INTO squawkdata.counters SELECT `member`, "eggs", adjective, COUNT(DISTINCT variants.species) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species_adjectives ON (variants.species = species_adjectives.species) GROUP BY `member`, `adjective`');
     }
   } catch (err) {
     console.log(err);

@@ -28,8 +28,6 @@ module.exports = (req, res) => {
       member: req.body.loggedInUser
     });
 
-    promises.push(Counters.increment(1, 'birdypets', req.body.loggedInUser, variant));
-
     promises.push(PubSub.publish('background', 'COLLECT', {
       birdypet: birdypet.id,
       member: req.body.loggedInUser,
