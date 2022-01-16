@@ -1,6 +1,5 @@
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
-const Redis = require('../helpers/redis.js');
 
 const Bird = require('./bird.js');
 const BirdyPet = require('./birdypet.js');
@@ -19,6 +18,7 @@ class Member {
         username: data.username,
         avatar: data.avatar,
         tier: data.tier,
+	serverMember: false, // TODO - check?
         bugs: 0,
         joinedAt: new Date(),
         lastLoginAt: new Date(),
@@ -238,8 +238,6 @@ class Member {
           species: bird.speciesCode
         });
       }
-
-      await Redis.connect('cache').del(`wishlist:${this.id}`);
 
       resolve();
     });
