@@ -11,7 +11,9 @@ class Birds {
 
       query[key] = value;
 
-      Database.getOne('species', query, { select: ['code'] }).then((bird) => {
+      Database.getOne('species', query, {
+        select: ['code']
+      }).then((bird) => {
         resolve(new this.model(bird.code));
       });
     });
@@ -21,19 +23,30 @@ class Birds {
     return new Promise((resolve, reject) => {
       let query = {};
 
-      query[key] = value;
+      if (key == '*') {
+        Database.query('SELECT species.*, taxonomy.parent AS `order` FROM species JOIN taxonomy ON (taxonomy.name = species.family) WHERE commonName LIKE ? OR scientificName LIKE ? OR family LIKE ? or parent LIKE ?',
+          Array(4).fill(`%${value}%`)
+        ).then((birds) => {
+          resolve(birds);
+        });
+      } else {
+        query[key] = value;
 
-      Database.get('species', query, { select: ['code'] }).then((birds) => {
-        resolve(birds);
-      });
-
+        Database.get('species', query, {
+          select: ['code']
+        }).then((birds) => {
+          resolve(birds);
+        });
+      }
     });
   }
 
   random(key, value) {
-    var matchingBirds = key && value ? this.fetch(key, value) : [];
+    return new Promise(async (resolve, reject) => {
+      var matchingBirds = key && value ? await this.fetch(key, value) : [];
 
-    return (matchingBirds.length > 0 ? matchingBirds : this.all()).sort(() => .5 - Math.random())[0];
+      resolve((matchingBirds.length > 0 ? matchingBirds : await this.all()).sort(() => .5 - Math.random())[0]);
+    });
   }
 
   all() {

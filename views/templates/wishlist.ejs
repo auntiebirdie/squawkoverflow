@@ -13,12 +13,16 @@
       </div>
       <div class="card-body">
         <h3 class="text-center">
+         <% if (locals.loggedInUser) { %>
           <a
-            <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>${model.variants[0].hatched ? `href="/aviary/<%= loggedInUser.id %>?search=${model.commonName}"` : ``}<% } %>
-            <% if (locals.loggedInUser && loggedInUser.id != member.id) { %>${model.variants[0].hatched ? `href="/members/<%= member.id %>/gift?search=${model.commonName}"` : ``}<% } %>
+            <% if (loggedInUser.id == member.id) { %>${model.variants[0].hatched ? `href="/aviary/<%= loggedInUser.id %>?search=${model.commonName}"` : ``}<% } %>
+            <% if (loggedInUser.id != member.id) { %>${model.variants[0].hatched ? `href="/members/<%= member.id %>/gift?search=${model.commonName}"` : ``}<% } %>
           >
             ${model.commonName}
           </a>
+         <% } else { %>
+           ${model.commonName}
+         <% } %>
         </h3> 
       </div>
     </div>
