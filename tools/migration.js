@@ -272,6 +272,7 @@ const datastore = new Datastore({
                     '  INSERT INTO squawkdata.counters SELECT OLD.member, "eggs", adjective, 0 FROM species_adjectives WHERE species = v_species ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
                     'END');
 
+                    await conn.query('INSERT INTO squawkdata.counters SELECT `member`, "variant", variant, COUNT(*) FROM birdypets GROUP BY `member`, `variant`');
 		    await conn.query('INSERT INTO squawkdata.counters SELECT `member`, "species", species, COUNT(DISTINCT variant) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) GROUP BY `member`, `species`');
 		    await conn.query('INSERT INTO squawkdata.counters SELECT `member`, "family", family, COUNT(DISTINCT species.code) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.code) GROUP BY `member`, `family`');
 		    await conn.query('INSERT INTO squawkdata.counters SELECT `member`, "aviary", "total", COUNT(*) FROM birdypets GROUP BY `member`');

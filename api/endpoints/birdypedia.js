@@ -29,11 +29,11 @@ module.exports = async (req, res) => {
   if (req.query.loggedInUser) {
     switch (req.query.extraInsights) {
       case 'hatched':
-        filters.push('species.code IN (SELECT b.species FROM birdypets a JOIN variants b ON (a.variant = b.id) WHERE a.member = ?)');
+        filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "species" AND id = species.code) > 0');
         params.push(req.query.loggedInUser);
         break;
       case 'unhatched':
-        filters.push('species.code NOT IN (SELECT b.species FROM birdypets a JOIN variants b ON (a.variant = b.id) WHERE a.member = ?)');
+        filters.push('(SELECT IF(`count` = 0, NULL, 1) FROM counters WHERE `member` = ? AND type = "species" AND id = species.code) IS NULL');
         params.push(req.query.loggedInUser);
         break;
     }
