@@ -30,7 +30,7 @@
     <span class="border border-2 border-primary p-1 mx-2">In Flock</span>  <span class="border border-2 border-secondary border-dashed p-1 mx-2">Not In Flock</span>
   </p>
 
-  <div id="lazyLoader" class="row" data-endpoint="/api/aviary" data-params='{"member":"<%= loggedInUser.id %>"}'></div>
+  <div id="lazyLoader" class="row g-0" data-endpoint="/api/aviary" data-params='{"member":"<%= loggedInUser.id %>"}'></div>
 
   <%- include('../scripts/lazyloader.ejs', { skipParams : true }) %>
 

@@ -2,9 +2,9 @@
 
     <%- include('../partials/page-title.ejs', { title : 'Free Birds' }) %>
 
-    <p class="text-center"><em>Look out!  These birds have been released and are running around stealing things for their nests.  Do you have space in your aviary for any of them?</em></p>
+    <p class="text-center mb-5"><em>Look out!  These birds have been released and are running around stealing things for their nests.  Do you have space in your aviary for any of them?</em></p>
 
-    <div id="lazyLoader" class="row mt-5" data-endpoint="/api/freebirds"></div>
+    <div id="lazyLoader" class="row g-0" data-endpoint="/api/freebirds"></div>
 
     <%- include('../scripts/lazyloader.ejs', { template: '../templates/freebird.ejs', paginate: 1, skipParams: true }) %>
 

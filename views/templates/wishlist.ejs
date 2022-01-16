@@ -1,5 +1,5 @@
 <div class="col-6 col-md-4 d-flex align-items-stretch">
-  <div class="w-100 pb-4">
+  <div class="w-100 pb-3 px-2">
     <div class="h-100 card">      
       <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>
       <button class="wishlist-heart btn btn-light btn-sm" data-id="${model.code}" data-action="remove" role="button">
@@ -13,16 +13,16 @@
       </div>
       <div class="card-body">
         <h3 class="text-center">
-         <% if (locals.loggedInUser) { %>
           <a
-            <% if (loggedInUser.id == member.id) { %>${model.variants[0].hatched ? `href="/aviary/<%= loggedInUser.id %>?search=${model.commonName}"` : ``}<% } %>
-            <% if (loggedInUser.id != member.id) { %>${model.variants[0].hatched ? `href="/members/<%= member.id %>/gift?search=${model.commonName}"` : ``}<% } %>
+            <% if (locals.loggedInUser) { %>
+            <% if (loggedInUser.id == member.id) { %>href="${model.variants[0].hatched ? `/aviary/<%= loggedInUser.id %>?search=${model.commonName}` : `/birdypedia/bird/${model.code}`}"<% } %>
+            <% if (loggedInUser.id != member.id) { %>href="${model.variants[0].hatched ? `/members/<%= member.id %>/gift?search=${model.commonName}` : `/birdypedia/bird/${model.code}`}"<% } %>
+            <% } else { %>
+             href="/birdypedia/bird/${model.code}"
+            <% } %>
           >
             ${model.commonName}
           </a>
-         <% } else { %>
-           ${model.commonName}
-         <% } %>
         </h3> 
       </div>
     </div>
