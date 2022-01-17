@@ -1,7 +1,7 @@
 html, body {
   font-family: "Open Sans", sans-serif;
   color: #272829;
-  height: 100%;
+  min-height: 100%;
   overflow-x: hidden;
 }
 
@@ -41,6 +41,8 @@ img {
 #sidebar {
   left: unset;
   right: 0;
+  overflow-y: visible;
+  position: absolute;
 }
 
 #main, #home-banner {
@@ -51,6 +53,8 @@ img {
 @media (max-width: 1399px) {
 	#sidebar {
 		right: -300px;
+		overflow-y: auto;
+		position: fixed;
 	}
 
 	#main, #home-banner {
