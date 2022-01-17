@@ -10,9 +10,9 @@
           <h3>
             <img src="/img/eggs/<%= egg.icon %>.png">
           </h3>
-          <h5><%= egg.adjective %></h5>
+          <h4><%= egg.adjective %></h4>
          <% if (loggedInUser.tier.extraInsights) { %>
-          <div class="small text-muted">
+          <div class="text-muted">
             <small><%= egg.numHatched %>/<%= egg.numSpecies %></small>
           </div>
            <% } %>
