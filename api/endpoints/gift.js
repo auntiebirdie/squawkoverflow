@@ -37,17 +37,19 @@ module.exports = async (req, res) => {
 
         promises.push(Database.query('DELETE FROM birdypet_flocks WHERE birdypet = ?', [birdypet.id]));
 
-        promises.push(Webhook('exchange', {
-          content: `${fromMember.username} has sent <@${toMember.id}> a gift!`,
-          embeds: [{
-            title: birdypet.nickname || birdypet.bird.commonName,
-            description: birdypet.variant.label || " ",
-            url: `https://squawkoverflow.com/birdypet/${birdypet.id}`,
-            image: {
-              url: birdypet.variant.image
-            }
-          }]
-        }));
+        if (process.env.NODE_ENV == "PROD") {
+          promises.push(Webhook('exchange', {
+            content: `${fromMember.username} has sent <@${toMember.id}> a gift!`,
+            embeds: [{
+              title: birdypet.nickname || birdypet.bird.commonName,
+              description: birdypet.variant.label || " ",
+              url: `https://squawkoverflow.com/birdypet/${birdypet.id}`,
+              image: {
+                url: birdypet.variant.image
+              }
+            }]
+          }));
+	}
 
         promises.push(PubSub.publish('background', 'COLLECT', {
           member: toMember.id,

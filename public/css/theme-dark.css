@@ -27,7 +27,7 @@ a:hover, .nav-menu a:hover {
 	background-color: #DDF600 !important;
 }
 
-.text-primary {
+.text-primary, .btn-secondary:hover {
   color: #DDF600 !important;
 }
 
