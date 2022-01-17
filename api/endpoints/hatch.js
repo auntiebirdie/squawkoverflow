@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
 	      include: ['aviary']
       });
 
-      if (member.aviary >= member.tier.aviaryLimit) {
+      if (member.tier.aviaryLimit && member.aviary >= member.tier.aviaryLimit) {
         return res.status(403).json({
 		aviaryFull: true
 	});
