@@ -7,7 +7,7 @@ class Members {
 
   all() {
     return new Promise((resolve, reject) => {
-      Database.get('members', {}).then((results) => {
+      Database.get('members', {}, { order: 'username' }).then((results) => {
         resolve(results);
       });
     });

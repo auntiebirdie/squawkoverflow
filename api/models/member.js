@@ -86,9 +86,9 @@ class Member {
             this.pronouns = tmp;
           }
 
-          let lastMonth = new Date().setMonth(new Date().getMonth() - 1);
+          let inactiveMonths = new Date().setMonth(new Date().getMonth() - 3);
 
-          this.active = true; //this.active = member.lastLogin > lastMonth || member.lastHatchedAt > lastMonth;
+          this.active = member.lastLogin > inactiveMonths || member.lastHatchedAt > inactiveMonths;
           this.joinedAt = member.joinedAt;
           this.lastHatchAt = member.lastHatchAt;
           this.lastRefresh = member.lastRefresh || 0;
