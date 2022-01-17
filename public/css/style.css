@@ -193,9 +193,13 @@ img {
 	padding: 10px;
 	position: absolute;
 	font-size: .8em;
-	bottom: 100px;
+	bottom: 15px;
 	right: 15px;
 	opacity: .75;
+}
+
+#home-banner .attribution {
+	bottom: 100px;
 }
 
 /*--------------------------------------------------------------
