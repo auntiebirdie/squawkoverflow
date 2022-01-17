@@ -51,6 +51,9 @@ router.get('/:member', async (req, res, next) => {
     }, {
       id: 'wishlisted',
       label: "Birds on my wishlist"
+    }, {
+      id: 'duplicated',
+      label: 'Duplicates'
     }]
   });
 });
