@@ -70,6 +70,10 @@ img {
   #main, #home-banner {
     margin-left: 0;
   }
+
+  #home-banner .attribution {
+    bottom: 60px;
+  }
 }
 
 .no-sidebar #sidebar {
@@ -196,10 +200,6 @@ img {
 	bottom: 15px;
 	right: 15px;
 	opacity: .75;
-}
-
-#home-banner .attribution {
-	bottom: 100px;
 }
 
 /*--------------------------------------------------------------
