@@ -83,7 +83,7 @@ router.get('/:flock', async (req, res) => {
     id: flock.member
   });
 
-	console.log(flock.families);
+  console.log(flock.families);
 
   res.render('flocks/flock', {
     page: 'flock',

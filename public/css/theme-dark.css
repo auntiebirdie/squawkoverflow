@@ -1,6 +1,6 @@
 html, body {
 	background-color: #121212;
-	color: #ffffff;
+	color: #eeeeee;
 }
 
 a {
@@ -19,8 +19,12 @@ a:hover, .nav-menu a:hover {
 	color: #2c3100 !important;
 }
 
-.bg-light {
+.bg-light, .card {
 	background-color: #202123 !important;
+}
+
+.text-light, .card {
+	color: #dddddd !important;
 }
 
 .bg-primary, .btn-primary {
@@ -43,8 +47,7 @@ a:hover, .nav-menu a:hover {
 	background-color: #444D00 !important;
 }
 
-.text-secondary, .page-item .page-link,
-.card {
+.text-secondary, .page-item .page-link {
 	color: #444D00 !important;
 }
 

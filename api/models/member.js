@@ -93,6 +93,7 @@ class Member {
           this.lastHatchAt = member.lastHatchAt;
           this.lastRefresh = member.lastRefresh || 0;
           this.birdyBuddy = member.birdyBuddy;
+          this.featuredFlock = member.featuredFlock;
 
           let promises = [];
 

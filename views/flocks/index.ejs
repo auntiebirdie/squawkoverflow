@@ -27,10 +27,10 @@
                 </h3>
               </div>
               <div class="col-12 col-lg-3 text-end">
-                <a class="feature-flock <%= flock.id == loggedInUser.featuredFlock ? "featured" : "" %> btn btn-light border-secondary me-4" role="button" data-id="<%= flock.id %>">
+                <a class="feature-flock <%= flock.id == loggedInUser.featuredFlock ? "featured" : "" %> btn btn-light me-4" role="button" data-id="<%= flock.id %>">
                   ⭐
                 </a>
-                <a class="btn btn-light border-secondary" href="/flocks/<%= flock.id %>/manage" role="button">
+                <a class="btn btn-light" href="/flocks/<%= flock.id %>/manage" role="button">
                   ✏️
                 </a>
               </div>
