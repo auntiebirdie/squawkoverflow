@@ -12,9 +12,9 @@
           </h3>
           <h4><%= egg.adjective %></h4>
          <% if (loggedInUser.tier.extraInsights) { %>
-          <div class="text-muted">
-            <small><%= egg.numHatched %>/<%= egg.numSpecies %></small>
-          </div>
+          <h5 class="text-muted">
+            <%= egg.numHatched %>/<%= egg.numSpecies %>
+          </h5>
            <% } %>
         </a>
       </div>
