@@ -69,3 +69,22 @@ a:hover, .nav-menu a:hover {
 .nav-menu hr {
         background-color: #A0B300 !important;
 }
+
+.birdypet, .birdypets,
+.birdypet.mini,
+.form-control, .form-check-input, .form-select {
+	filter: brightness(.80);
+}
+
+.birdypet.unhatched,
+.birdypet.mini.unhatched {
+        filter: saturate(0%) brightness(.80);
+}
+
+.birdypets .birdypet.mini {
+	filter: none;
+}
+
+.birdypets .birdypet.mini.unhatched {
+	filter: saturate(0%);
+}
