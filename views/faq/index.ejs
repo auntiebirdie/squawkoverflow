@@ -6,7 +6,8 @@
      <% for (var i = 0, len = faqs.length; i < len; i++) { %>
       <% faq = faqs[i] %>
       <div>
-        <h4 class="mb-4"><a name="<%= faq.slug %>"></a><%= faq.question %></h4>
+        <a name="<%= faq.slug %>" class="p-5"></a>
+        <h4><%= faq.question %></h4>
 
         <%- faq.answer %>
       </div>

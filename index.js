@@ -48,8 +48,9 @@ app.use(async function(req, res, next) {
     req.session.loggedInUser = await API.call('member', 'GET', {
       id: req.session.user
     }).catch((err) => {
-      console.log(err);
-      return null;
+	    console.log(err);
+	    delete req.session.user;
+	    delete req.session.loggedInUser;
     });
 
     res.locals.loggedInUser = req.session.loggedInUser;

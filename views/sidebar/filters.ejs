@@ -62,7 +62,7 @@
   </select>
 <% } %>
 
-<% if (locals.extraInsights) { %>
+<% if (locals.extraInsights && locals.loggedInUser?.tier.extraInsights) { %>
   <h5>Extra Insights</h5>
   <div id="extraInsights" class="mb-4">
     <div class="form-check">

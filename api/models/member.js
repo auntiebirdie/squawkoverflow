@@ -18,7 +18,7 @@ class Member {
         username: data.username,
         avatar: data.avatar,
         tier: data.tier,
-	serverMember: false, // TODO - check?
+        serverMember: false, // TODO - check?
         bugs: 0,
         joinedAt: new Date(),
         lastLoginAt: new Date(),
@@ -49,54 +49,19 @@ class Member {
           try {
             this.settings = member.settings ? JSON.parse(member.settings) : {};
           } catch (err) {
-            console.log(member.settings);
             this.settings = {};
           }
 
-          var tier = {
-            name: "Birder",
-            eggTimer: 10,
-            aviaryLimit: 11000,
-            extraInsights: false
-          };
+          this.tier = await Database.query('SELECT * FROM tiers WHERE id = ?', [member.tier]).then(([tier]) => tier);
 
-          switch (`${member.tier}`) {
-            case "1205":
-              tier.name = "Auntie Birdie";
-              tier.eggTimer = 0;
-              tier.aviaryLimit = Infinity;
-              tier.extraInsights = true;
-              break;
-            case "101":
-              tier.name = "Owlpha Squad";
-              tier.eggTimer = 10; // opt-in for timer
-              tier.aviaryLimit = Infinity;
-              tier.extraInsights = true;
-              break;
-            case "100":
-              tier.name = "Owlpha Squad";
-              tier.eggTimer = 0;
-              tier.aviaryLimit = Infinity;
-              tier.extraInsights = true;
-              break;
-            case "3":
-              tier.name = "Bird Fanatic";
-              tier.eggTimer = 0;
-              tier.aviaryLimit = Infinity;
-              tier.extraInsights = true;
-              break;
-            case "2":
-              tier.name = "Bird Collector";
-              tier.eggTimer = 0;
-              tier.aviaryLimit = Infinity;
-              break;
-            case "1":
-              tier.name = "Bird Lover";
-              tier.eggTimer = 0;
-              break;
+          if (typeof this.settings.title != "undefined" && this.settings.title != this.tier.id) {
+            this.title = await Database.getOne('tiers', {
+              id: this.settings.title
+            }).then((title) => title.name);
+          } else {
+            this.title = this.tier.name;
           }
 
-          this.tier = tier;
           this.bugs = member.bugs ? member.bugs * 1 : 0;
 
           if (typeof member.pronouns == "string") {
@@ -184,6 +149,10 @@ class Member {
           });
         }
       });
+    }).catch((err) => {
+      delete this.id;
+
+      return null;
     });
   }
 

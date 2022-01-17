@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
 
       await member.fetch(req.query);
 
-      return res.json(member);
+      return member.username ? res.json(member) : res.sendStatus(404);
       break;
     case "PUT":
       var member = new Member(req.body.loggedInUser);
@@ -32,8 +32,8 @@ module.exports = async (req, res) => {
             toUpdate[key] = JSON.parse(req.body[key]);
             break;
           case "settings":
-            Object.keys(req.body.settings).filter((val) => ["theme", "general", "privacy"].includes(val)).forEach((key) => {
-              if (key == "theme") {
+            Object.keys(req.body.settings).filter((val) => ["theme", "general", "privacy", "title"].includes(val)).forEach((key) => {
+              if (key == "theme" || key == "title") {
                 toUpdate.settings[key] = req.body.settings[key];
               } else {
                 toUpdate.settings[key] = req.body.settings[key].split(',');

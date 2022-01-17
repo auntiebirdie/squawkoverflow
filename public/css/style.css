@@ -342,7 +342,7 @@ span.checkmark {
 
 .loadingData::after {
 	content: " ";
-	position: fixed;
+	position: absolute;
 	z-index: 9999;
 	top: 0;
 	bottom: 0;

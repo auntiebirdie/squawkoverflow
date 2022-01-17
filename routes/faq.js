@@ -52,17 +52,70 @@ router.get('/', async (req, res) => {
       answer: `
         <p>The more birds you get, the more you may want to organize them! You can make as many flocks as you want, and birds can belong to more than one flock.</p>
 
-        <p>In your user dropdown, there is a link to <a href="/flocks" target="_blank">Flocks</a> that will take you to a page with a <a class="btn btn-primary btn-sm">New Flock</a> button, which is how you create new flocks. How you want to name your flocks is completely up to you, and can even include emoji!</p>
+        <p>When logged in, there is a link to <a href="/flocks" target="_blank">Flocks</a> that will take you to a page with a <a class="btn btn-secondary btn-sm">New Flock</a> button, which is how you create new flocks. How you want to name your flocks is completely up to you, and can even include emoji!</p>
 
         <p>Once you've created a flock (or several), the Manage Flocks page will now have them listed out as separate rows that can be click-and-dragged to reorder them however you like.</p>
 
-        <p>Each one will have a <a class="btn btn-secondary btn-sm">✏️</a> button, which brings up a page to rename it, change the description, delete it, and—most of all!—add and remove birds from the flock.</p>
+        <p>Each one will have a <a class="btn btn-light btn-sm">✏️</a> button, which brings up a page to rename it, change the description, delete it, and—most of all!—add and remove birds from the flock.</p>
       `
     },
-	  {
-	  slug: 'extra-insights',
-	  question: 'What are the extra insights available to Bird Fanatics?',
-	  answer: `
+    {
+      slug: 'tier-limits',
+      question: 'Why are there limits and how can I remove them?',
+      answer: `
+		  <p>In order to offset hosting costs, <a href="https://patreon.com/squawkoverflow">we have a Patreon</a>, but we also have what we hope is a very reasonable free tier.  For free, you can hatch an egg every 10 minutes and have up to 11,000 birds in your aviary, which is enough for one of every species plus extra of your favorites!</p>
+
+                  <p>Additionally, every tier will grant the title of that tier and the ones below it.  For example, a Bird Fanatic can choose to display the title Bird Collector on their profile while still enjoying the extra insights!</p>
+
+                  <p>The subscription tiers available through our Patreon are:</p>
+
+		  <div class="row text-center py-3">
+		    <div class="col-sm-6 col-lg-3 pb-5">
+		      <h5><strong>Bird Lover</strong></h5>
+
+		      <h6 class="pb-3"><em>$3/mo</em></h6>
+
+		      <p><small>No time limit on hatching eggs</small></p>
+                      <p><small>Patron-only Discord channel</small></p>
+		    </div>
+                    <div class="col-sm-6 col-lg-3 pb-5">
+                      <h5><strong>Bird Collector</strong></h5>
+
+                      <h6 class="pb-3"><em>$5/mo</em></h6>
+
+		      <p><small>No limit on aviary size</small></p>
+                      <p><small>No time limit on hatching eggs</small></p>
+                      <p><small>Patron-only Discord channel</small></p>
+                    </div>
+                    <div class="col-sm-6 col-lg-3 pb-5">
+                      <h5><strong>Bird Fanatic</strong></h5>
+
+                      <h6 class="pb-3"><em>$10/mo</em></h6>
+
+		      <p><small>Extra insights</small></p>
+		      <p><small>No limit on aviary size</small></p>
+                      <p><small>No time limit on hatching eggs</small></p>
+                      <p><small>Patron-only Discord channel</small></p>
+                    </div>
+                    <div class="col-sm-6 col-lg-3 pb-5">
+                      <h5><strong>V.I.B</strong></h5>
+
+                      <h6 class="pb-3"><em>$25/mo</em></h6>
+
+		      <p><small>A special variant of your pet</small></p>
+		      <p><small>Custom title of your choice</small></p>
+		      <p><small>Extra insights</small></p>
+		      <p><small>No limit on aviary size</small></p>
+                      <p><small>No time limit on hatching eggs</small></p>
+                      <p><small>Patron-only Discord channel</small></p>
+                    </div>
+		  </div>
+		  `
+    },
+    {
+      slug: 'extra-insights',
+      question: 'What are the extra insights available to Bird Fanatics?',
+      answer: `
             <p>Supporting our Patreon at the $10 level gives you extra insights... but what does that mean, exactly?</p>
 
 	    <ul>
@@ -72,7 +125,7 @@ router.get('/', async (req, res) => {
 
 	    <p>This list may change as new ideas come to light. Feel free to suggest some of your own on the Discord server or <a href="mailto:seppukawaii+ideas@gmail.com">send us an email</a>!</p>
 	  `
-	  }
+    }
   ];
 
   res.render('faq/index', {

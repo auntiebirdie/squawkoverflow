@@ -28,6 +28,8 @@ module.exports = (req, res) => {
       member: req.body.loggedInUser
     });
 
+    promises.push(Database.query('UPDATE members SET lastHatchAt = NOW() WHERE id = ?', [req.body.loggedInUser]));
+
     promises.push(PubSub.publish('background', 'COLLECT', {
       birdypet: birdypet.id,
       member: req.body.loggedInUser,

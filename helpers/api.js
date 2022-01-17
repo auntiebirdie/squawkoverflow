@@ -5,7 +5,7 @@ exports.call = (endpoint, method = "GET", data = {}) => {
         method: method
       };
 
-	    console.log(method, endpoint, data);
+      console.log(method, endpoint, data);
 
       if (method == 'GET' || method == 'HEAD') {
         req.query = data;
@@ -18,8 +18,21 @@ exports.call = (endpoint, method = "GET", data = {}) => {
         setHeader: function(header, value) {
           resolve(value);
         },
-        json: resolve,
+        json: function(data) {
+          if (this.code && this.code != 200) {
+            reject({
+              code: this.code,
+              response: {
+                data: data
+              }
+            });
+          } else {
+            resolve(data);
+          }
+        },
         status: function(code) {
+          this.code = code;
+
           return this;
         }
       };

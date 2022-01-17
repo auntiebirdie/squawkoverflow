@@ -192,6 +192,23 @@ const datastore = new Datastore({
         await conn.query('DROP TABLE IF EXISTS squawkdata.freebirds');
         await conn.query('CREATE TABLE squawkdata.freebirds (id VARCHAR(50) NOT NULL PRIMARY KEY, variant VARCHAR(50), freedAt DATETIME DEFAULT NOW())');
         break;
+	    case "tiers":
+		    await conn.query('DROP TABLE IF EXISTS squawkdata.tiers');
+		    await conn.query('CREATE TABLE squawkdata.tiers (`id` INT PRIMARY KEY, `name` VARCHAR(25), `eggTimer` INT, `aviaryLimit` INT, `extraInsights` BOOLEAN, `member` VARCHAR(50) NULL)');
+
+		    await conn.query('INSERT INTO squawkdata.tiers VALUES (0, "Birder", 10, 11000, FALSE, NULL)');
+                    await conn.query('INSERT INTO squawkdata.tiers VALUES (1, "Bird Lover", 0, 11000, FALSE, NULL)');
+                    await conn.query('INSERT INTO squawkdata.tiers VALUES (2, "Bird Fanatic", 0, 0, FALSE, NULL)');
+                    await conn.query('INSERT INTO squawkdata.tiers VALUES (3, "Bird Collector", 0, 0, TRUE, NULL)');
+                    await conn.query('INSERT INTO squawkdata.tiers VALUES (4, "V.I.B.", 0, 0, TRUE, NULL)');
+
+
+                    await conn.query('INSERT INTO squawkdata.tiers VALUES (100, "Owlpha Squad", 0, 0, TRUE, NULL)');
+                    await conn.query('INSERT INTO squawkdata.tiers VALUES (101, "Owlpha Squad", 10, 0, TRUE, NULL)');
+
+
+                    await conn.query('INSERT INTO squawkdata.tiers VALUES (1205, "Auntie Birdie", 0, 0, TRUE, "121294882861088771")');
+		    break;
 	    case "counters":
 		    await conn.query('USE squawkdata');
 		    await conn.query('DROP TABLE IF EXISTS squawkdata.counters');

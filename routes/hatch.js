@@ -10,6 +10,7 @@ router.get('/', async (req, res) => {
   API.call('hatch', "GET", {
       loggedInUser: req.session.user
     }, res).then((response) => {
+	    console.log(response);
       req.session.adjectives = response.map((egg) => egg.name);
 
       return res.render('hatch/index', {
@@ -21,6 +22,7 @@ router.get('/', async (req, res) => {
       });
     })
     .catch((err) => {
+	    console.log(err);
       switch (err.code) {
         case 401:
         case "401":
