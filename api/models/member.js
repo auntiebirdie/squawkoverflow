@@ -31,9 +31,9 @@ class Member {
 
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
-      Database.get('members', {
+      Database.getOne('members', {
         'id': this.id
-      }).then(async ([member]) => {
+      }).then(async (member) => {
         if (!member) {
           if (params.createIfNotExists) {
             Database.query('INSERT INTO members (id) VALUES (?)', [this.id]).then(() => {
@@ -150,8 +150,6 @@ class Member {
         }
       });
     }).catch((err) => {
-      delete this.id;
-
       return null;
     });
   }

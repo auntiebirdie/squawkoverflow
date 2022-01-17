@@ -29,20 +29,18 @@ module.exports = async (req, res) => {
       grantType: 'authorization_code'
     }).then((response) => {
       if (response.access_token) {
-        oauth.getUser(response.access_token).then((user) => {
+        oauth.getUser(response.access_token).then(async (user) => {
           let member = new Member(user.id);
-          member.fetch().then(async (memberData) => {
-		  if (member.id) {
+
+          await member.fetch();
+
+          if (member.joinedAt) {
             await member.set({
               lastLoginAt: new Date()
             });
 
             return res.json(user.id);
-		  }
-		  else {
-			  throw 404;
-		  }
-          }).catch(async (err) => {
+          } else {
             await member.create({
               id: user.id,
               username: user.username,
@@ -54,7 +52,7 @@ module.exports = async (req, res) => {
             });
 
             return res.json(user.id);
-          });
+          }
         });
       } else {
         console.error(response);
