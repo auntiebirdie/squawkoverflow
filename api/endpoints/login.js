@@ -32,11 +32,16 @@ module.exports = async (req, res) => {
         oauth.getUser(response.access_token).then((user) => {
           let member = new Member(user.id);
           member.fetch().then(async (memberData) => {
+		  if (member.id) {
             await member.set({
               lastLoginAt: new Date()
             });
 
             return res.json(user.id);
+		  }
+		  else {
+			  throw 404;
+		  }
           }).catch(async (err) => {
             await member.create({
               id: user.id,
