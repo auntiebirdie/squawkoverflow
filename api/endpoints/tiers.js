@@ -9,7 +9,7 @@ module.exports = async (req, res) => {
   Database.query(`
 	  SELECT *
 	  FROM tiers
-	  WHERE member = ? OR id = ? OR
+	  WHERE \`member\` = ? OR id = ? OR
 	  (id < 4 AND id < ?)
 	  `, [member.id, member.tier.id, member.tier.id]).then((tiers) => {
     res.json(tiers);
