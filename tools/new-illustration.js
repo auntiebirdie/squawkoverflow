@@ -7,38 +7,27 @@ const storage = new Storage();
 const bucket = storage.bucket('squawkoverflow');
 const Jimp = require('jimp');
 const uuid = require('short-uuid');
-const mariadb = require('mariadb');
-const secrets = require('../api/secrets.json');
+
+const Database = require('../api/helpers/database.js');
 
 prompt.start();
 
-var fields = ['prefix', 'alias', 'credit', 'url', 'source', 'code', 'label', 'special'];
+var fields = ['prefix', 'alias', 'credit', 'url', 'source', 'code', 'subspecies', 'label', 'special'];
 
 prompt.get(fields, async (err, result) => {
   if (err) {
     process.exit(0);
   }
 
-  let ENV = process.env.NODE_ENV ? 'PROD' : 'DEV';
-
-  const conn = await mariadb.createConnection({
-    host: secrets.DB[ENV].HOST,
-    socketPath: secrets.DB[ENV].SOCKET,
-    user: secrets.DB[ENV].USER,
-    password: secrets.DB[ENV].PASS
-  });
-
-  conn.query('USE squawkdata');
-
-  conn.query('SELECT name AS family, parent AS `order`, scientificName FROM species JOIN taxonomy ON (species.family = taxonomy.name) WHERE code = ?', [result.code]).then(async ([bird]) => {
-	  console.log(bird);
+  Database.query('SELECT name AS family, parent AS `order`, scientificName FROM species JOIN taxonomy ON (species.family = taxonomy.name) WHERE code = ?', [result.code]).then(async ([bird]) => {
+    console.log(bird);
     if (bird) {
       let existing = null;
 
       if (result.alias == 'NUM') {
-        result.alias = await conn.query('SELECT COUNT(*) AS total FROM variants WHERE prefix = ?', [result.prefix]).then(([result]) => result.total + 1);
+        result.alias = await Database.query('SELECT COUNT(*) AS total FROM variants WHERE prefix = ?', [result.prefix]).then(([result]) => result.total + 1);
       } else {
-        existing = await conn.query('SELECT * FROM variants WHERE prefix = ? AND alias = ?', [result.prefix, isNaN(result.alias) ? result.alias : result.alias * 1]).then(([result]) => result);
+        existing = await Database.query('SELECT * FROM variants WHERE prefix = ? AND alias = ?', [result.prefix, isNaN(result.alias) ? result.alias : result.alias * 1]).then(([result]) => result);
       }
 
       var data = {
@@ -46,7 +35,8 @@ prompt.get(fields, async (err, result) => {
         alias: result.alias,
         url: result.url,
         source: result.source,
-        speciesCode: result.code,
+        species: result.code,
+        subspecies: result.subspecies,
         credit: result.credit,
         special: result.special == 'special',
         filetype: result.url.split('.').pop(),
@@ -71,9 +61,9 @@ prompt.get(fields, async (err, result) => {
           console.log("Saving...");
 
           if (existing) {
-	    await conn.query('UPDATE squawkdata.variants SET url = ?, source = ?, species = ?, credit = ?, special = ?, filetype = ?, label = ? WHERE id = ?', [data.url, data.source, data.credit, data.special, data.filetype, data.label, key]);
-	  } else {
-            await conn.query('INSERT INTO squawkdata.variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [key, data.prefix, data.alias, data.speciesCode, data.label, data.credit, data.source, data.url, data.filetype, true, data.special]);
+            await Database.query('UPDATE squawkdata.variants SET source = ?, species = ?, subspecies = ?, credit = ?, special = ?, filetype = ?, label = ? WHERE id = ?', [data.source, data.species, data.subspecies, data.credit, data.special, data.filetype, data.label, key]);
+          } else {
+            await Database.query('INSERT INTO squawkdata.variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [key, data.prefix, data.alias, data.species, data.subspecies, data.label, data.credit, data.source, data.url, data.filetype, true, data.special]);
           }
 
           let file = bucket.file(`${bird.order}/${bird.family}/${bird.scientificName}/${key}.${data.filetype}`);
@@ -85,9 +75,20 @@ prompt.get(fields, async (err, result) => {
               "png": "PNG"
             };
 
-            await image.autocrop().getBuffer(Jimp[`MIME_${mimes[data.filetype]}`], async (err, buff) => {
-              await file.save(buff);
-            });
+            if (image.bitmap.height > 600) {
+              await image.resize(Jimp.AUTO, 600);
+            }
+
+            await image
+              .autocrop()
+              .quality(90)
+              .getBuffer(Jimp[`MIME_${mimes[data.filetype]}`], async (err, buff) => {
+                await file.save(buff);
+
+		console.log('Done!');
+
+                process.exit(0);
+              });
           });
         }
       });
