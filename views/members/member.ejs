@@ -56,7 +56,7 @@
     <div class="bg-light px-3 py-2 rounded">
       <h4><a class="text-decoration-none" href="/birdypet/<%= member.birdyBuddy.id %>"><%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.bird.commonName %></a></h4>
 
-      <%- include('../partials/friendshipMeter.ejs', { friendship : member.birdyBuddy.friendship }) %>
+      <p>Friendship: <%= member.birdyBuddy.friendshipMeter %></p>
 
        <div>
         <% if (member.birdyBuddy.description) { %>

@@ -138,6 +138,8 @@ Database.query(`SELECT species.code, species.family, taxonomy.parent AS \`order\
           `https://birdsoftheworld.org/bow/species/${result.code}/cur/multimedia?media=illustrations`,
           `https://ebird.org/species/${result.code}`
         );
+
+	      resolve();
       });
     });
   }

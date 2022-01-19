@@ -14,6 +14,8 @@ module.exports = async (req, res) => {
           await member.birdyBuddy.set({
             friendship: Math.min(100, Math.round(member.birdyBuddy.friendship + (req.body.friendship * 1)))
           });
+
+          await member.birdyBuddy.fetch();
         }
 
         return res.send(member.birdyBuddy);

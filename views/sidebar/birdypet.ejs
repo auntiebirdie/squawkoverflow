@@ -4,7 +4,7 @@
             <% if (member.birdyBuddy != birdypet.id) { %>
             <p><a id="makeBirdyBuddy" class="btn btn-secondary">💖 Make Birdy Buddy</a></p>
             <% } else {  %>
-            <%- include('../partials/friendshipMeter.ejs', { friendship : birdypet.friendship || 0 }) %>
+            <p><%= birdypet.friendshipMeter %></p>
             <% } %>
             <p><a href="/birdypet/<%= birdypet.id %>/gift" class="btn btn-secondary">🎁 Gift to Someone</a></p>
             <p><a href="/birdypet/release/<%= birdypet.id %>" class="btn btn-secondary">👋 Release Bird</a></p>

@@ -48,6 +48,8 @@ class BirdyPet {
             this[key] = birdypet[key];
           }
 
+          this.friendshipMeter = this.friendship < 10 ? '🤍' : ['💜', '💙', '💚', '💛', '🧡', '❤️', '💖', '💗', '💕', '💞'].slice(0, Math.floor(friendship / 10) + 1).join("");
+
           this.variant = new Variant(birdypet.variant);
 
           await this.variant.fetch();
@@ -64,8 +66,8 @@ class BirdyPet {
               select: ['flock']
             }).then((results) => results.map((result) => result.flock));
           } catch (err) {
-	    this.flocks = [];
-	  }
+            this.flocks = [];
+          }
 
           resolve(this);
         } else {
@@ -79,6 +81,7 @@ class BirdyPet {
     await Database.set('birdypets', {
       id: this.id
     }, data);
+
     await Cache.refresh('birdypet', this.id);
 
     return true;
