@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
 
         if (member.birdyBuddy?.variant) {
           await member.birdyBuddy.set({
-            friendship: Math.min(100, member.birdyBuddy.friendship + (req.body.friendship * 1));
+            friendship: Math.min(100, Math.round(member.birdyBuddy.friendship + (req.body.friendship * 1)))
           });
         }
 
