@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
           await member.birdyBuddy.fetch();
         }
 
-        return res.send(member.birdyBuddy);
+        return res.json(member.birdyBuddy);
     }
   });
 };
