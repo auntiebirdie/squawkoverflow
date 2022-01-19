@@ -91,7 +91,12 @@ Database.prototype.get = function(type, identifiers, options = {}) {
     }
 
     this.query(query, params).then((results) => {
+	    try {
       resolve(results.map((result) => result));
+	    }
+	    catch (err) {
+		    resolve(results);
+	    }
     });
   });
 }

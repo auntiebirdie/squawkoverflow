@@ -43,7 +43,7 @@ Database.query(`SELECT species.code, species.family, taxonomy.parent AS \`order\
 
         for (let i = 0, len = illustrations.length; i < len; i++) {
           let tmp = $(illustrations[i]);
-          let label = tmp.attr('data-asset-caption').trim();
+          let label = tmp.attr('data-asset-caption').split(';').pop().trim();
           let subspecies = tmp.attr('data-asset-comname').includes(" (") ? tmp.attr('data-asset-comname').split(" (").pop().trim().slice(0, -1) : "";
 
           var key = Database.key();
