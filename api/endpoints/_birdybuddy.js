@@ -13,7 +13,6 @@ module.exports = async (req, res) => {
           friendship: member.birdyBuddy.friendship + (req.query.friendship * 1)
         });
       }
-    }
 
     return res.send(member.birdyBuddy);
   });
