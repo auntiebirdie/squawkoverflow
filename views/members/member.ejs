@@ -80,7 +80,7 @@
  </div>
 <% } %>
 
-<% if (member.featuredFlock && member.featuredFlock != "NULL") { %>
+<% if (member.featuredFlock?.name) { %>
   <div class="page-title my-5 pt-3">
     <h1 class="text-center">
       <a href="/flocks/<%= member.featuredFlock.id %>">
