@@ -13,7 +13,7 @@ const storage = new Storage();
 const bucket = storage.bucket('squawkoverflow');
 const Jimp = require('jimp');
 
-Database.query('SELECT species.code, species.family, taxonomy.parent AS `order`, species.scientificName FROM species JOIN taxonomy ON (species.family = taxonomy.name) ORDER BY species.commonName LIMIT 400, 200').then(async (results) => {
+Database.query(`SELECT species.code, species.family, taxonomy.parent AS \`order\`, species.scientificName FROM species JOIN taxonomy ON (species.family = taxonomy.name) ORDER BY species.commonName LIMIT ${process.argv[3]}, 1000`).then(async (results) => {
   let i = 0;
   let len = results.length;
 
@@ -61,6 +61,7 @@ Database.query('SELECT species.code, species.family, taxonomy.parent AS `order`,
           };
 
           let existing = await Database.query('SELECT * FROM variants WHERE prefix = ? AND alias = ?', [data.prefix, isNaN(data.alias) ? data.alias : data.alias * 1]).then(([result]) => result);
+          var newImage = false;
 
           if (existing) {
             var key = existing.id;
@@ -68,6 +69,7 @@ Database.query('SELECT species.code, species.family, taxonomy.parent AS `order`,
 
             if (data.species != existing.species) {
               anyChanges = true;
+              newImage = true;
               console.log('SPECIES', existing.species, " -> ", data.species);
             }
 
@@ -89,9 +91,12 @@ Database.query('SELECT species.code, species.family, taxonomy.parent AS `order`,
             if (!anyChanges) {
               continue;
             }
+
+            console.log(`UPDATE (${key})`);
           } else {
             var key = Database.key();
-            console.log("NEW");
+            newImage = true;
+            console.log(`NEW (${key})`);
           }
 
           if (existing) {
@@ -100,26 +105,28 @@ Database.query('SELECT species.code, species.family, taxonomy.parent AS `order`,
             await Database.query('INSERT INTO squawkdata.variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [key, data.prefix, data.alias, data.species, data.subspecies, data.label, data.credit, data.source, data.url, data.filetype, true, data.special]);
           }
 
-          let file = bucket.file(`${result.order}/${result.family}/${result.scientificName}/${key}.${data.filetype}`);
+          if (newImage) {
+            let file = bucket.file(`${result.order}/${result.family}/${result.scientificName}/${key}.${data.filetype}`);
 
-          await Jimp.read(data.url).then(async (image) => {
-            var mimes = {
-              "jpg": "JPEG",
-              "jpeg": "JPEG",
-              "png": "PNG"
-            };
+            await Jimp.read(data.url).then(async (image) => {
+              var mimes = {
+                "jpg": "JPEG",
+                "jpeg": "JPEG",
+                "png": "PNG"
+              };
 
-            if (image.bitmap.height > 600) {
-              await image.resize(Jimp.AUTO, 600);
-            }
+              if (image.bitmap.height > 600) {
+                await image.resize(Jimp.AUTO, 600);
+              }
 
-            await image
-              .autocrop()
-              .quality(90)
-              .getBuffer(Jimp[`MIME_${mimes[data.filetype]}`], async (err, buff) => {
-                await file.save(buff);
-              });
-          });
+              await image
+                .autocrop()
+                .quality(90)
+                .getBuffer(Jimp[`MIME_${mimes[data.filetype]}`], async (err, buff) => {
+                  await file.save(buff);
+                });
+            });
+          }
         }
 
         resolve();
@@ -131,7 +138,6 @@ Database.query('SELECT species.code, species.family, taxonomy.parent AS `order`,
           `https://birdsoftheworld.org/bow/species/${result.code}/cur/multimedia?media=illustrations`,
           `https://ebird.org/species/${result.code}`
         );
-        return resolve();
       });
     });
   }
