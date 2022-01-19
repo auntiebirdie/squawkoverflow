@@ -2,18 +2,21 @@ const Member = require('../models/member.js');
 
 module.exports = async (req, res) => {
   return new Promise(async (resolve, reject) => {
-      let member = new Member(req.query.loggedInUser);
+    switch (req.method) {
+      case "POST":
+        let member = new Member(req.body.loggedInUser);
 
-      member.fetch({
-        include: 'birdyBuddy'
-      });
-
-      if (member.birdyBuddy?.variant) {
-        await member.birdyBuddy.set({
-          friendship: member.birdyBuddy.friendship + (req.query.friendship * 1)
+        member.fetch({
+          include: ['birdyBuddy']
         });
-      }
 
-    return res.send(member.birdyBuddy);
+        if (member.birdyBuddy?.variant) {
+          await member.birdyBuddy.set({
+            friendship: Math.min(100, member.birdyBuddy.friendship + (req.body.friendship * 1));
+          });
+        }
+
+        return res.send(member.birdyBuddy);
+    }
   });
 };
