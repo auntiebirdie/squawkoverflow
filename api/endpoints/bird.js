@@ -1,4 +1,5 @@
 const Bird = require('../models/bird.js');
+const Birds = require('../collections/birds.js');
 const Counters = require('../helpers/counters.js');
 const Members = require('../collections/members.js');
 
