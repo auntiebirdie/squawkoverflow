@@ -95,7 +95,7 @@ Database.prototype.get = function(type, identifiers, options = {}) {
         results = [results];
       }
 
-      resolve(results.map((result) => result));
+      resolve(Object.values(results).map((result) => result));
     });
   });
 }
