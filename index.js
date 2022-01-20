@@ -13,7 +13,7 @@ app.get('/_ah/warmup', (req, res) => {
   });
 });
 
-const DB = secrets.REDIS[process.env.NODE_ENV ? process.env.NODE_ENV : 'DEV'];
+const DB = secrets.REDIS[process.env.NODE_ENV ? 'PROD' : 'DEV'];
 
 const RedisStore = connectRedis(session);
 const RedisClient = redis.createClient({
@@ -53,7 +53,7 @@ app.use(async function(req, res, next) {
       delete req.session.loggedInUser;
     });
 
-    res.locals.ENV = process.env.NODE_ENV ? process.env.NODE_ENV : 'DEV';
+    res.locals.ENV = process.env.NODE_ENV ? 'PROD' : 'DEV';
     res.locals.loggedInUser = req.session.loggedInUser;
 
     menu.push({
