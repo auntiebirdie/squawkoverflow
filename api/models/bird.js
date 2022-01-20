@@ -12,7 +12,6 @@ class Bird {
       Database.getOne('species', {
         code: this.id
       }).then(async (bird) => {
-
         for (let key in bird) {
           if (!params.fields || params.fields.includes(key)) {
             this[key] = bird[key];

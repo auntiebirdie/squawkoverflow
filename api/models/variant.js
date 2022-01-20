@@ -1,6 +1,6 @@
 const Bird = require('./bird.js');
-const Cache = require('../helpers/cache.js');
 const Counters = require('../helpers/counters.js');
+const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
 
 class Variant {
@@ -10,7 +10,7 @@ class Variant {
 
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
-      Cache.get('variant', this.id).then(async (variant) => {
+      Database.getOne('variants', { id : this.id }).then( async (variant) => {
         let bird = null;
 
         if (!params.bird) {

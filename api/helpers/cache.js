@@ -170,7 +170,7 @@ class Cache {
           break;
         case "s":
           if (results.length > 0) {
-            await Redis.connect().sadd(`${kind}:${id}`, results);
+            await Redis.connect().sadd(`${kind}:${id}`, results.filter((result) => result));
           }
           break;
         case "z":

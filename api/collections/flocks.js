@@ -13,8 +13,12 @@ class Flocks {
 
   all(member) {
     return new Promise((resolve, reject) => {
-	    Database.get('flocks', { member : member }, { order: 'displayOrder' }).then( (results) => {
-		    resolve(results);
+      Database.get('flocks', {
+        member: member
+      }, {
+        order: 'displayOrder'
+      }).then((results) => {
+        resolve(results);
       });
     });
   }

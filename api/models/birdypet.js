@@ -60,7 +60,7 @@ class BirdyPet {
           await this.bird.fetch(params);
 
           try {
-            this.flocks = await Database.get('birdypet_flocks', {
+            this.flocks = await Database.get('birdypet_flocks JOIN flocks ON birdypet_flocks.flock = flocks.id', {
               birdypet: this.id
             }, {
               select: ['flock']

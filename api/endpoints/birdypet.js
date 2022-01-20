@@ -63,22 +63,44 @@ module.exports = async (req, res) => {
             case 'variant':
               toUpdate[key] = req.body[key];
               break;
+            case 'flocks':
+              var oldFlocks = birdypet.flocks || [];
+              var newFlocks = req.body.flocks || [];
+
+              var toAdd = newFlocks.filter((flock) => !oldFlocks.includes(flock));
+              var toRemove = oldFlocks.filter((flock) => !newFlocks.includes(flock));
+
+              for (let flock of toAdd) {
+                if (flock) {
+                  await Database.query('INSERT INTO birdypet_flocks VALUES (?, ?)', [birdypet.id, flock]);
+                }
+              }
+
+              for (let flock of toRemove) {
+                if (flock) {
+                  await Database.query('DELETE FROM birdypet_flocks WHERE birdypet = ? AND flock = ?', [birdypet.id, flock]);
+                }
+              }
+
+              break;
             case 'flock':
               let flocks = birdypet.flocks || [];
 
               let index = flocks.indexOf(req.body.flock);
 
               if (index !== -1) {
-		await Database.query('DELETE FROM birdypet_flocks WHERE birdypet = ? AND flock = ?', [birdypet.id, req.body.flock]);
+                await Database.query('DELETE FROM birdypet_flocks WHERE birdypet = ? AND flock = ?', [birdypet.id, req.body.flock]);
               } else {
-		      await Database.query('INSERT INTO birdypet_flocks VALUES (?, ?)', [birdypet.id, req.body.flock]);
+                await Database.query('INSERT INTO birdypet_flocks VALUES (?, ?)', [birdypet.id, req.body.flock]);
               }
+
+              break;
           }
         }
 
-	if (Object.values(toUpdate).length > 0) {
-          	await birdypet.set(toUpdate);
-	}
+        if (Object.values(toUpdate).length > 0) {
+          await birdypet.set(toUpdate);
+        }
 
         return res.sendStatus(200);
       } else {

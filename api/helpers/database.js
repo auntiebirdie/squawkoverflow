@@ -30,6 +30,8 @@ Database.prototype.query = function(query, params = []) {
         if (query.endsWith(' LIMIT 1')) {
           resolve(results[0]);
         } else {
+		delete results.meta;
+
           resolve(results);
         }
       });
@@ -95,7 +97,7 @@ Database.prototype.get = function(type, identifiers, options = {}) {
         results = [results];
       }
 
-      resolve(Object.values(results).map((result) => result));
+      resolve(results);
     });
   });
 }
