@@ -1,8 +1,0 @@
-indexes:
-
-- kind: BirdyPet
-  properties:
-  - name: member
-  - name: hatchedAt
-  - name: commonName
-  - name: family

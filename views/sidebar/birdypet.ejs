@@ -36,7 +36,7 @@
         <% } %>
 
         <h6>Hatch Date</h6>
-        <p class="ms-2"><%= new Date(birdypet.hatchedAt.split('T').shift()).toLocaleString('en-US', { dateStyle: "long" }) %></p>
+        <p class="ms-2"><%= birdypet.hatchedAt %></p>
 
         <h6>Belongs To</h6>
         <p class="ms-2"><a href="/members/<%= member.id %>"><%= member.username %></a></p>
