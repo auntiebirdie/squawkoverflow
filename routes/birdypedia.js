@@ -65,30 +65,30 @@ router.get('/eggs/:egg', async (req, res) => {
       egg: egg,
       currentPage: (req.query.page || 1) * 1,
       sidebar: 'filters',
-    sortFields: [{
-        value: 'commonName-ASC',
-        label: 'Common Name (A-Z)'
-      },
-      {
-        value: 'commonName-DESC',
-        label: 'Common Name (Z-A)'
-      },
-      {
-        value: 'scientificName-ASC',
-        label: 'Scientific Name (A-Z)'
-      },
-      {
-        value: 'scientificName-DESC',
-        label: 'Scientific Name (Z-A)'
-      }
-    ],
-    extraInsights: [{
-      id: 'hatched',
-      label: 'Hatched species',
-    }, {
-      id: 'unhatched',
-      label: 'Unhatched species'
-    }]
+      sortFields: [{
+          value: 'commonName-ASC',
+          label: 'Common Name (A-Z)'
+        },
+        {
+          value: 'commonName-DESC',
+          label: 'Common Name (Z-A)'
+        },
+        {
+          value: 'scientificName-ASC',
+          label: 'Scientific Name (A-Z)'
+        },
+        {
+          value: 'scientificName-DESC',
+          label: 'Scientific Name (Z-A)'
+        }
+      ],
+      extraInsights: [{
+        id: 'hatched',
+        label: 'Hatched species',
+      }, {
+        id: 'unhatched',
+        label: 'Unhatched species'
+      }]
     });
   } else {
     res.redirect('/error');
@@ -102,7 +102,7 @@ router.get('/bird/:code', async (req, res) => {
     include: ['members']
   }).then((bird) => {
     if (bird && bird.variants.length > 0) {
-      var selectedVariant = req.query.variant;
+      bird.variants.sort((a, b) => req.query.variant == `${a.prefix}-${a.alias}` ? -1 : 1);
 
       res.render('birdypedia/bird', {
         page: 'birdypedia/bird',
