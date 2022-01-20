@@ -10,13 +10,11 @@ module.exports = (req, res) => {
     }
 
     if (req.query.include?.includes('birdData')) {
-      let bird = new Bird(req.query.bird);
-
       for (let member of members) {
-	      promises.push(bird.fetchMemberData(member.id).then( (data) => {
-		      member.owned = data.owned;
-		      member.wishlisted = data.wishlisted;
-	      }));
+        promises.push(new Bird(req.query.bird).fetchMemberData(member.id).then((data) => {
+          member.owned = data.owned;
+          member.wishlisted = data.wishlisted;
+        }));
       }
     }
 
