@@ -75,13 +75,15 @@ a:hover, .nav-menu a:hover {
 
 .birdypet, .birdypets,
 .birdypet.mini,
-.form-control, .form-check-input, .form-select {
+.form-control, .form-check-input, .form-select,
+.dropdown-menu,
+span.twitter-typeahead .tt-menu {
 	filter: brightness(.80);
 }
 
 .birdypet.unhatched,
 .birdypet.mini.unhatched {
-        filter: saturate(0%) brightness(.80);
+	filter: saturate(0%) brightness(.80);
 }
 
 .birdypets .birdypet.mini {

@@ -11,14 +11,24 @@ router.get('/:birdypet/gift', Middleware.isLoggedIn, async (req, res) => {
   });
 
   let members = await API.call('members', 'GET', {
-    privacy: 'gifts'
+    privacy: 'gifts',
+    include: ['birdData'],
+    bird: birdypet.bird.code
   });
 
   if (birdypet.member == req.session.user) {
     res.render('birdypet/gift', {
       birdypet: birdypet,
-      members: members,
-      selectedMember: req.query.member ? req.query.member : null
+      members: members.filter((member) => member.id != req.session.user).map((member) => {
+        return {
+          id: member.id,
+          username: member.username,
+          avatar: member.avatar,
+          wishlisted: member.wishlisted,
+          owned: member.owned
+        };
+      }),
+      selectedMember: req.query.member ? members.find((member) => member.id == req.query.member) : null
     });
   } else {
     res.redirect(`/birdypet/${req.params.birdypet}`);

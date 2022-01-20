@@ -1,83 +1,125 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { title : birdypet.nickname ? birdypet.nickname : birdypet.bird.name }) %>
+  <%- include('../partials/page-title.ejs', { title : birdypet.nickname ? birdypet.nickname : birdypet.bird.commonName }) %>
 
-    <div class="row">
-      <div class="col-md-6">
-        <div class="mb-4 text-center">
-          <img class="birdypet full" src="<%= birdypet.variant.image %>">
-        </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="mb-4 text-center">
+        <img class="birdypet full" src="<%= birdypet.variant.image %>">
       </div>
-      <div class="col-md-6">
-        <h4>Who is the lucky person to receive this bird?</h4>
-        <h6>&nbsp;</h6>
+    </div>
+    <div class="col-md-6">
+      <h4>Who is the lucky person to receive this bird?</h4>
+      <h6>&nbsp;</h6>
 
-        <div>
-          <select id="memberList" class="form-select">
-            <option></option>
-          <% for (var member of members) { %>
-            <option data-avatar="<%= member.avatar %>" data-username="<%= member.username %>" value="<%= member.id %>">
-              <%= member.username %>
-            </option>
-          <% } %>
-          </select>
+      <div>
+        <div id="memberSearch">
+          <input class="typeahead form-control" type="text">
+        </div>
 
-          <div id="memberDisplay" class="my-5"></div>
+        <div id="memberDisplay" class="my-5">
+        <% if (locals.selectedMember) { %>
+          <h3><img src="<%= selectedMember.avatar %>" class="rounded-circle" width="75" data-id="<%= selectedMember.id %>" onerror="missingMemberAvatar(this)"> <%= selectedMember.username %></h3>
+        <% } %>
+        </div>
 
-          <div class="text-center">
-            <button id="actionButton" class="btn btn-secondary" type="button" disabled>Send Gift!</button>
-          </div>
+        <div class="text-center">
+          <button id="actionButton" class="btn btn-secondary" type="button" <%= locals.selectedMember ? "" : "disabled" %>>Send Gift!</button>
         </div>
       </div>
     </div>
+  </div>
 
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@2.3.7/dist/latest/bootstrap-autocomplete.min.js"></script>
   <script type="text/javascript">
-    var actionButton = $('#actionButton');
-    var memberDisplay = $('#memberDisplay');
+    $(document).ready(function () {
+      var actionButton = $('#actionButton');
+      var memberDisplay = $('#memberDisplay');
+      var members = <%- JSON.stringify(members) %>;
 
-    $('#memberList').on('change', function () {
-      var option = this.options[this.options.selectedIndex];
-      var memberId = option.value;
+      var substringMatcher = function(strs) {
+        return function findMatches(q, cb) {
+          var matches, substringRegex;
 
-      if (memberId) {
-        memberDisplay.html(`<h3><img src="${option.getAttribute('data-avatar')}" class="rounded-circle" width="75" data-id="${memberId}" onerror="missingMemberAvatar(this)"> ${option.getAttribute('data-username')}</h3>`);
-        actionButton.attr('disabled', false);
-      }
-      else {
-        memberDisplay.html("");
-        actionButton.attr('disabled', true);
-      }
-    });
+          matches = [];
 
-    actionButton.on('click', function (event) {
-      var button = event.target;
+          substrRegex = new RegExp(q, 'i');
 
-      if (!button.disabled) { 
-        button.parentNode.parentNode.classList.add('loadingData'); 
-        button.disabled = true;
+          $.each(strs, function(i, str) {
+            if (substrRegex.test(str.username)) {
+              matches.push(str);
+            }
+          });
 
-        var member = $('#memberList').val();
+          cb(matches);
+        };
+      };
 
-        $.ajax({
-          url: '/api/gift',
-          data: JSON.stringify({
-            member: member,
-            birdypet: '<%= birdypet.id %>'
-          }),
-          method: 'POST',
-          dataType: "json",
-          contentType: 'application/json',
-          success: function() {
-            window.location.replace('/birdypet/<%= birdypet.id %>');
+      $('#memberSearch .typeahead').typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 0,
+        items: 100
+      },
+      {
+        name: 'members',
+        displayKey: 'username',
+        source: substringMatcher(members),
+        templates: {
+          suggestion: function (data) {
+            var text = '<div class="px-1 py-2">';
+
+            text += `<img src="${data.avatar}" class="rounded-circle" width="42" onerror="missingMemberAvatar(this)"> ${data.username}`;
+
+            if (data.wishlisted) {
+              text += `<div class="small ms-5">❤️ <em>Wishlisted</em></div>`;
+            }
+
+            if (data.owned > 1) {
+              text += `<div class="small ms-5"><span class="checkmark"></span><span class="checkmark"></span> <em>Multiple in aviary</em></div>`;
+            }
+            else if (data.owned == 1) {
+              text += `<div class="small ms-5"><span class="checkmark"></span> <em>In aviary</em></div>`;
+            }
+
+            text += '</div>';
+
+            return text;
           }
-        });
-      }
-    });
+        }
+      }).on('typeahead:selected', function (obj, member) {
+        if (member) {
+          memberDisplay.html(`<h3><img src="${member.avatar}" class="rounded-circle" width="75" data-id="${member.id}" onerror="missingMemberAvatar(this)"> ${member.username}</h3>`);
+          actionButton.attr('disabled', false);
+        }
+        else {
+          memberDisplay.html("");
+          actionButton.attr('disabled', true);
+        }
+      });
 
-    <% if (locals.selectedMember) { %>
-      $('#memberList').val("<%= selectedMember %>").trigger('change');
-    <% } %>
+      actionButton.on('click', function (event) {
+        var button = event.target;
+
+        if (!button.disabled) { 
+          button.parentNode.parentNode.classList.add('loadingData'); 
+          button.disabled = true;
+
+          $.ajax({
+            url: '/api/gift',
+            data: JSON.stringify({
+              member: $('img', '#memberDisplay').attr('data-id'),
+              birdypet: '<%= birdypet.id %>'
+            }),
+            method: 'POST',
+            dataType: "json",
+            contentType: 'application/json',
+            success: function() {
+              window.location.replace('/birdypet/<%= birdypet.id %>');
+            }
+          });
+        }
+      });
+    });
   </script>
 
 <%- include('../footer.ejs') %>

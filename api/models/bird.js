@@ -58,8 +58,8 @@ class Bird {
 
   fetchMemberData(memberId) {
     return new Promise(async (resolve, reject) => {
-      this.wishlisted = await Database.count('wishlist', { member : memberId, species: this.code });
-      this.owned = await Counters.get('species', memberId, this.code);
+      this.wishlisted = await Database.count('wishlist', { member : memberId, species: this.id });
+      this.owned = await Counters.get('species', memberId, this.id);
 
       resolve({
         wishlisted: this.wishlisted,
