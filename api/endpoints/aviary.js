@@ -81,7 +81,10 @@ module.exports = async (req, res) => {
     for (let i = page, len = Math.min(page + birdsPerPage, results.length); i < len; i++) {
       let result = new BirdyPet(results[i].id);
 
-      promises.push(result.fetch({}));
+      promises.push(result.fetch({
+	      include: req.query.memberData ? ['memberData'] : [],
+	      member: req.query.memberData
+      }));
 
       output.push(result);
     }

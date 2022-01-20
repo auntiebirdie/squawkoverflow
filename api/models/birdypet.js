@@ -42,13 +42,19 @@ class BirdyPet {
 
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
-	    Database.getOne('birdypets', { id : this.id }).then( async (birdypet) => {
+      Database.getOne('birdypets', {
+        id: this.id
+      }).then(async (birdypet) => {
         if (birdypet) {
           for (let key in birdypet) {
             this[key] = birdypet[key];
           }
 
-		this.hatchedAt = new Date(this.hatchedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+          this.hatchedAt = new Date(this.hatchedAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
           this.friendshipMeter = this.friendship < 10 ? '🤍' : ['💜', '💙', '💚', '💛', '🧡', '❤️', '💖', '💗', '💕', '💞'].slice(0, Math.floor(this.friendship / 10) + 1).join("");
 
           this.variant = new Variant(birdypet.variant);
