@@ -5,7 +5,7 @@ const Members = require('../collections/members.js');
 
 module.exports = async (req, res) => {
   if (req.query.taxonomy) {
-    var birds = await Birds.fetch('*', req.query.taxnomy);
+    var birds = await Birds.fetch('*', req.query.taxonomy);
 
     if (birds.length > 0) {
       birds.shuffle();
