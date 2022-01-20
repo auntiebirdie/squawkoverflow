@@ -57,13 +57,13 @@
       $('#memberSearch .typeahead').typeahead({
         hint: true,
         highlight: true,
-        minLength: 0,
-        items: 100
+        minLength: 0
       },
       {
         name: 'members',
         displayKey: 'username',
         source: substringMatcher(members),
+        limit: 100,
         templates: {
           suggestion: function (data) {
             var text = '<div class="px-1 py-2">';
@@ -87,6 +87,15 @@
           }
         }
       }).on('typeahead:selected', function (obj, member) {
+        if (member) {
+          memberDisplay.html(`<h3><img src="${member.avatar}" class="rounded-circle" width="75" data-id="${member.id}" onerror="missingMemberAvatar(this)"> ${member.username}</h3>`);
+          actionButton.attr('disabled', false);
+        }
+        else {
+          memberDisplay.html("");
+          actionButton.attr('disabled', true);
+        }
+      }).on('typeahead:autocomplete', function (obj, member) {
         if (member) {
           memberDisplay.html(`<h3><img src="${member.avatar}" class="rounded-circle" width="75" data-id="${member.id}" onerror="missingMemberAvatar(this)"> ${member.username}</h3>`);
           actionButton.attr('disabled', false);
