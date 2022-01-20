@@ -19,6 +19,11 @@
         <h6>Scientific Name</h6>
         <p class="ms-2"><%= birdypet.bird.scientificName %></p>
 
+       <% if (birdypet.variant.subspecies) { %>
+        <h6>Subspecies</h6>
+        <p class="ms-2"><%= birdypet.variant.subspecies %></p>
+       <% } %>
+
         <h6>Family</h6>
         <p class="ms-2"><a href="/birdypedia?family=<%= birdypet.bird.family %>"><%= birdypet.bird.family %></a></p>
 
