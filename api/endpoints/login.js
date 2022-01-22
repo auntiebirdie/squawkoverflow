@@ -48,7 +48,7 @@ module.exports = async (req, res) => {
               joinedAt: new Date(),
               lastLoginAt: new Date(),
               settings: {},
-              tier: 100
+              tier: 0
             });
 
             return res.json(user.id);
