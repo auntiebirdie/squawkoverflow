@@ -10,7 +10,6 @@ router.get('/', async (req, res) => {
   API.call('hatch', "GET", {
       loggedInUser: req.session.user
     }, res).then((response) => {
-	    console.log(response);
       req.session.adjectives = response.map((egg) => egg.name);
 
       return res.render('hatch/index', {

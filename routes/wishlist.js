@@ -4,6 +4,10 @@ const Middleware = require('../helpers/middleware.js');
 const express = require('express');
 const router = express.Router();
 
+router.get('/', Middleware.isLoggedIn, (req, res, next) => {
+  res.redirect(`/wishlist/${req.session.user}`);
+});
+
 router.get('/mine', Middleware.isLoggedIn, (req, res, next) => {
   res.redirect(`/wishlist/${req.session.user}`);
 });
@@ -12,7 +16,14 @@ router.get('/:member', async (req, res, next) => {
   let member = null;
 
   if (req.params.member == req.session.user) {
+	  res.set('Cache-Control', 'no-store');
+
     member = res.locals.loggedInUser;
+
+    member.baitUsed = await API.call('counters', 'GET', {
+      member: member.id,
+      kind: 'bait'
+    });
   } else {
     member = await API.call('member', 'GET', {
       id: req.params.member

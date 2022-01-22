@@ -1,8 +1,10 @@
 const secrets = require('./secrets.json');
+const chance = require('chance').Chance();
 const express = require('express');
 const session = require('express-session');
-const redis = require('redis');
-const connectRedis = require('connect-redis');
+const {
+  createClient
+} = require('redis');
 const app = express();
 
 const API = require('./helpers/api.js');
@@ -15,8 +17,8 @@ app.get('/_ah/warmup', (req, res) => {
 
 const DB = secrets.REDIS[process.env.NODE_ENV ? 'PROD' : 'DEV'];
 
-const RedisStore = connectRedis(session);
-const RedisClient = redis.createClient({
+const RedisStore = require('connect-redis')(session);
+const RedisClient = createClient({
   host: DB.HOST,
   port: DB.PORT,
   password: DB.PASS
@@ -65,6 +67,16 @@ app.use(async function(req, res, next) {
       "label": "Free Birds",
       "href": `/freebirds`
     });
+
+    if (chance.bool({
+        likelihood: 5
+      })) {
+
+      res.locals.bugFound = await API.call('bug', 'PUT', {
+        members: [req.session.user],
+        bugs: 1
+      });
+    }
   }
 
   menu.push({

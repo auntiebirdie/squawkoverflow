@@ -8,6 +8,22 @@
           }
     }) %>
 
+    <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>
+      <div class="bg-secondary rounded w-50 mx-auto mb-4 p-4 text-center">
+      <% if (member.bugs > 0) { %>
+        <% if (member.baitUsed) { %>
+          <p class="mb-0"><em>You have already attracted a bird to your aviary today.  Try again tomorrow!</em></p>
+        <% } else { %>
+          <p><em>You have <strong><%= member.bugs %> bug<%= member.bugs == 1 ? "" : "s" %></strong> available.  Once per day, you can use one to attract a random bird from your wishlist to live in your aviary!</em></p>
+
+          <button id="useBait" class="btn btn-dark text-primary">🐛  Here, birdy, birdy...</button>
+        <% } %>
+      <% } else { %>
+        <p class="mb-0"><em>You don't have any bugs available to use as bait! You can find them randomly while wandering the site or receive them as a reward for <a href="https://trello.com/add-card?name=%22Bug%20reported%20by%20<%= loggedInUser.id %>!%22&idList=616863d9071f1c88feb22769">reporting a bug</a>.</em></p>
+      <% } %>
+      </div>
+    <% } %>
+
     <%- include('../partials/pagination.ejs') %>
 
     <div id="lazyLoader" class="row g-0" data-endpoint="/api/wishlist" data-params='{"id":"<%= member.id  %>"}'></div>
@@ -15,5 +31,34 @@
     <%- include('../partials/pagination.ejs') %>
 
     <%- include('../scripts/lazyloader.ejs', { template: '../templates/wishlist.ejs', paginate: currentPage }) %>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#useBait').on('click', function (event) {
+        var button = this;
+
+        if (!button.style.opacity) {
+          button.style.opacity = .5;
+
+          $.ajax({
+            cache: false,
+            url: '/api/bait',
+            method: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function(data) {
+              if (!data.error) {
+                window.location.href = `/birdypet/${data}`;
+              }
+              else {
+                button.innerText = data.error;
+                button.disabled = true;
+              }
+            }
+          });
+        }
+      });
+    });
+  </script>
 
 <%- include('../footer.ejs') %>

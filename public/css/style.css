@@ -195,6 +195,7 @@ img {
   position: relative;
   text-align: center;
   top: -65px;
+  margin-bottom: -65px;
 }
 
 #home-text h1,
