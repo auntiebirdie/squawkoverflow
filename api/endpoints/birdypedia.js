@@ -42,7 +42,7 @@ module.exports = async (req, res) => {
           params.push(req.query.loggedInUser);
           break;
         case 'somewhere':
-          filters.push('(SELECT `count` FROM counters WHERE type = "species" AND id = species.code) > 0');
+          filters.push('(SELECT MAX(`count`) FROM counters WHERE type = "species" AND id = species.code) > 0');
           break;
       }
     }
