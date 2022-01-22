@@ -89,6 +89,7 @@ class Member {
           let inactiveMonths = new Date().setMonth(new Date().getMonth() - 3);
 
           this.active = member.lastLogin > inactiveMonths || member.lastHatchedAt > inactiveMonths;
+          this.serverMember = member.serverMember;
           this.joinedAt = member.joinedAt;
           this.lastHatchAt = member.lastHatchAt;
           this.lastRefresh = member.lastRefresh || 0;
