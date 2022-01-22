@@ -8,9 +8,9 @@ module.exports = async (req, res) => {
     var birds = await Birds.fetch('*', req.query.taxonomy);
 
     if (birds.length > 0) {
-      birds.shuffle();
+      birds.sort(() => Math.random() - .5);
 
-      var bird = new Bird(birds[0]);
+      var bird = new Bird(birds[0].code);
     } else {
       return res.json(null);
     }
