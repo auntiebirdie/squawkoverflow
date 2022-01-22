@@ -63,9 +63,11 @@
         </form>
       <% } else { %>
         <% if (birdypet.description) { %>
+          <div class="w-75 mx-auto mt-4 mb-2 bg-light rounded p-3">
           <% for (var para of birdypet.description.split("\r\n")) { %>
             <p><%= para %></p>
           <% } %>
+          </div>
         <% } %>
       <% } %>
 
