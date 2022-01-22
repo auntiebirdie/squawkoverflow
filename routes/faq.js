@@ -25,6 +25,13 @@ router.get('/', async (req, res) => {
       `
     },
     {
+      slug: 'copyright-infringement',
+      question: 'Artwork of mine is on this site and I want it removed.',
+      answer: `
+		  <p>Please send an email to <a href="mailto:seppukawaii+copyright@gmail.com">seppukawaii+copyright@gmail.com</a> for takedown requests and they will be removed. We are genuinely sorry and will resolve this issue as soon as possible!</p>
+		  `
+    },
+    {
       slug: 'discord-authentication',
       question: 'Why is authentication through Discord?',
       answer: `
