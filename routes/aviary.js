@@ -37,6 +37,14 @@ router.get('/:member', async (req, res, next) => {
       {
         value: 'scientificName-DESC',
         label: 'Scientific Name (Z-A)'
+      },
+      {
+        value: 'friendship-DESC',
+        label: 'Friendship (Highest)'
+      },
+      {
+        value: 'friendship-ASC',
+        label: 'Friendship (Lowest)'
       }
     ],
     extraInsights: member.id == req.session.user ? [{
@@ -44,16 +52,16 @@ router.get('/:member', async (req, res, next) => {
       label: 'Duplicates'
     }] : [{
       id: 'hatched',
-      label: "Birds I have",
+      label: "In My Aviary",
     }, {
       id: 'unhatched',
-      label: "Birds I don't have"
+      label: "Not In My Aviary"
     }, {
       id: 'wishlisted',
-      label: "Birds on my wishlist"
+      label: "In my Wishlist"
     }, {
       id: 'duplicated',
-      label: 'Duplicates'
+      label: "Duplicates"
     }]
   });
 });

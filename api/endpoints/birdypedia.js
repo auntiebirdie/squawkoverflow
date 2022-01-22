@@ -26,16 +26,25 @@ module.exports = async (req, res) => {
   }
 
   // TODO: validate user has access to extra insights
-  if (req.query.loggedInUser) {
-    switch (req.query.extraInsights) {
-      case 'hatched':
-        filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "species" AND id = species.code) > 0');
-        params.push(req.query.loggedInUser);
-        break;
-      case 'unhatched':
-        filters.push('(SELECT IF(`count` = 0, NULL, 1) FROM counters WHERE `member` = ? AND type = "species" AND id = species.code) IS NULL');
-        params.push(req.query.loggedInUser);
-        break;
+  if (req.query.loggedInUser && Array.isArray(req.query.extraInsights)) {
+    for (let insight of req.query.extraInsights) {
+      switch (insight) {
+        case 'hatched':
+          filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "species" AND id = species.code) > 0');
+          params.push(req.query.loggedInUser);
+          break;
+        case 'unhatched':
+          filters.push('(SELECT IF(`count` = 0, NULL, 1) FROM counters WHERE `member` = ? AND type = "species" AND id = species.code) IS NULL');
+          params.push(req.query.loggedInUser);
+          break;
+        case 'wishlisted':
+          filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ?)');
+          params.push(req.query.loggedInUser);
+          break;
+        case 'somewhere':
+          filters.push('(SELECT `count` FROM counters WHERE type = "species" AND id = species.code) > 0');
+          break;
+      }
     }
   }
 

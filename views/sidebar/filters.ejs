@@ -65,15 +65,9 @@
 <% if (locals.extraInsights && locals.loggedInUser?.tier.extraInsights) { %>
   <h5>Extra Insights</h5>
   <div id="extraInsights" class="mb-4">
-    <div class="form-check">
-      <input class="form-check-input" type="radio" id="extraInsights-none" value="" name="extraInsights" checked>
-      <label class="form-check-label" for="extraInsights-none">
-        All birds
-      </label>
-    </div>
     <% for (var insight of extraInsights) { %>
     <div class="form-check">
-      <input class="form-check-input" type="radio" id="extraInsights-<%= insight.id %>" value="<%= insight.id %>" name="extraInsights">
+      <input class="form-check-input" type="checkbox" id="extraInsights-<%= insight.id %>" value="<%= insight.id %>" name="extraInsights[]">
       <label class="form-check-label" for="extraInsights-<%= insight.id %>">
         <%= insight.label %>
       </label>

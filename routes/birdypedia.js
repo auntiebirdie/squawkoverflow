@@ -84,10 +84,16 @@ router.get('/eggs/:egg', async (req, res) => {
       ],
       extraInsights: [{
         id: 'hatched',
-        label: 'Hatched species',
+        label: 'In My Aviary',
       }, {
         id: 'unhatched',
-        label: 'Unhatched species'
+        label: 'Not In My Aviary'
+      }, {
+        id: 'somewhere',
+        label: "In Someone's Aviary"
+      }, {
+        id: 'wishlisted',
+        label: 'In My Wishlist'
       }]
     });
   } else {

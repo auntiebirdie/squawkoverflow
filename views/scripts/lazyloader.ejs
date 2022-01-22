@@ -24,7 +24,7 @@
 
     $('select', '#sidebar').on('change', resetResults);
 
-    $('input[type="radio"]', '#extraInsights').on('click', function (e) {
+    $('input[type="checkbox"]', '#extraInsights').on('click', function (e) {
       resetResults();
     });
 
@@ -87,7 +87,7 @@
         family : $('#family').is(':visible') ? $('#family').val() : "",
         flock : flock && !flock.attr('data-special') ? flock.val() : "",
         search : $('#search').val(),
-        extraInsights: $('input:checked', '#extraInsights').val(),
+        extraInsights: Array.from($('input:checked', '#extraInsights')).map((checkbox) => checkbox.value),
         <%- locals.egg ? `adjectives : "${egg.name}",` : "" %>
         },
         container.getAttribute('data-params') ? JSON.parse(container.getAttribute('data-params')) : {}

@@ -33,24 +33,26 @@ module.exports = async (req, res) => {
   }
 
   // TODO: validate user has access to extra insights
-  if (req.query.loggedInUser) {
-    switch (req.query.extraInsights) {
-      case 'hatched':
-        filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "species" AND id = variants.species) > 0');
-        params.push(req.query.loggedInUser);
-        break;
-      case 'unhatched':
-        filters.push('(SELECT IF(`count` = 0, NULL, 1) FROM counters WHERE `member` = ? AND type = "species" AND id = variants.species) IS NULL');
-        params.push(req.query.loggedInUser);
-        break;
-      case 'duplicated':
-        filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "species" AND id = variants.species) > 1');
-        params.push(req.query.loggedInUser);
-        break;
-      case 'wishlisted':
-        filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ?)');
-        params.push(req.query.memberData || req.query.loggedInUser);
-        break;
+  if (req.query.loggedInUser && Array.isArray(req.query.extraInsights)) {
+    for (let insight of req.query.extraInsights) {
+      switch (insight) {
+        case 'hatched':
+          filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "species" AND id = variants.species) > 0');
+          params.push(req.query.loggedInUser);
+          break;
+        case 'unhatched':
+          filters.push('(SELECT IF(`count` = 0, NULL, 1) FROM counters WHERE `member` = ? AND type = "species" AND id = variants.species) IS NULL');
+          params.push(req.query.loggedInUser);
+          break;
+        case 'duplicated':
+          filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "species" AND id = variants.species) > 1');
+          params.push(req.query.loggedInUser);
+          break;
+        case 'wishlisted':
+          filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ?)');
+          params.push(req.query.memberData || req.query.loggedInUser);
+          break;
+      }
     }
   }
 
@@ -67,6 +69,9 @@ module.exports = async (req, res) => {
     case 'commonName':
       query += 'species.commonName';
       break;
+    case 'friendship':
+      query += 'birdypets.friendship';
+      break;
     case 'hatchedAt':
     default:
       query += 'birdypets.hatchedAt';
@@ -82,8 +87,8 @@ module.exports = async (req, res) => {
       let result = new BirdyPet(results[i].id);
 
       promises.push(result.fetch({
-	      include: req.query.memberData ? ['memberData'] : [],
-	      member: req.query.memberData
+        include: req.query.memberData ? ['memberData'] : [],
+        member: req.query.memberData
       }));
 
       output.push(result);
