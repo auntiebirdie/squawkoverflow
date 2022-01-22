@@ -70,6 +70,8 @@ app.use(async function(req, res, next) {
 
     if (chance.bool({
         likelihood: 5
+      }) && chance.bool({
+        likelihood: 5
       })) {
 
       res.locals.bugFound = await API.call('bug', 'PUT', {
