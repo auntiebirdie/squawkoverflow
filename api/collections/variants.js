@@ -9,6 +9,10 @@ class Variants {
     return new Promise((resolve, reject) => {
       Cache.get('variants', key + ':' + value).then((ids) => {
         Promise.all(ids.map((id) => this.get(id, params))).then((variants) => {
+          if (params.artist) {
+            variants = variants.filter((variant) => variant.credit == params.artist);
+          }
+
           resolve(variants);
         });
       });

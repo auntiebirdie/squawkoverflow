@@ -86,6 +86,7 @@
         sortDir: sort.val() && sort.val().includes('-') ? sort.val().split('-').pop() : 'ASC',
         family : $('#family').is(':visible') ? $('#family').val() : "",
         flock : flock && !flock.attr('data-special') ? flock.val() : "",
+        artist : $('#artist').is(':visible') ? $('#artist').val() : "",
         search : $('#search').val(),
         extraInsights: Array.from($('input:checked', '#extraInsights')).map((checkbox) => checkbox.value),
         <%- locals.egg ? `adjectives : "${egg.name}",` : "" %>

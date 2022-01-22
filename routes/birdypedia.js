@@ -4,11 +4,14 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  var families = require('../public/data/families.json');
+  var families = await API.call('families', 'GET');
+	var artists = await API.call('artists', 'GET');
 
   res.render('birdypedia', {
     page: 'birdypedia',
-    families: families.map((family) => family.value),
+    allFamilies: families,
+    families: families.map( (family) => family.name),
+	  artists: artists,
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
     sortFields: [{

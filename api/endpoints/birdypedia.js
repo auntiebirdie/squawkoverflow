@@ -19,6 +19,11 @@ module.exports = async (req, res) => {
     params.push(req.query.adjectives);
   }
 
+	if (req.query.artist) {
+		filters.push('species.code IN (SELECT a.species FROM variants a WHERE a.credit = ?)');
+		params.push(req.query.artist);
+	}
+
   if (req.query.search) {
     filters.push('(species.commonName LIKE ? OR species.scientificName LIKE ?)');
     params.push(`%${req.query.search}%`);
@@ -75,7 +80,8 @@ module.exports = async (req, res) => {
 
       promises.push(bird.fetch({
         include: ['variants', 'memberData'],
-        member: req.query.loggedInUser
+        member: req.query.loggedInUser,
+	      artist: req.query.artist
       }));
 
       output.push(bird);

@@ -1,5 +1,3 @@
-<% var allFamilies = JSON.parse(include('../../public/data/families.json')); %>
-
 <% if (locals.page == "birdypedia") { %>
   <h5>Guides</h5>
 
@@ -27,9 +25,9 @@
   <select id="family" class="form-select mb-4">
     <option value="">[ALL]</option>
     <% for (var family of allFamilies) { %>
-     <% if (families.includes(family.value)) { %>
-      <option value="<%= family.value %>" <%= locals.selectedFamily && selectedFamily.toLowerCase() == family.value.toLowerCase() ? "selected" : "" %>>
-        <%= family.label %>
+     <% if (families.includes(family.name)) { %>
+      <option value="<%= family.name %>" <%= locals.selectedFamily && selectedFamily.toLowerCase() == family.name.toLowerCase() ? "selected" : "" %>>
+        <%= family.display %>
       </option>
      <% } %>
     <% } %>
@@ -46,6 +44,18 @@
    <% for (var flock of flocks) { %>
     <option value="<%= flock.id %>" <%= locals.selectedFlock && selectedFlock == flock.id ? "selected" : "" %>>
       <%= flock.name %>
+    </option>
+   <% } %>
+  </select>
+<% } %>
+
+<% if (locals.artists) { %>
+  <h5>Artist</h5>
+  <select id="artist" class="form-select mb-4">
+    <option value="">[ALL]</option>
+   <% for (var artist of artists) { %>
+    <option value="<%= artist.name %>" <%= locals.selectedArtist && selectedArtist.toLowerCase() == artist.name.toLowerCase() ? "selected" : "" %>>
+      <%= artist.name %>
     </option>
    <% } %>
   </select>

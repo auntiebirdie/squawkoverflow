@@ -33,7 +33,8 @@ class Bird {
           this.variants = await Variants.fetch('species', this.code, {
             bird: this,
             include: params.include,
-            member: params.member
+            member: params.member,
+		  artist: params.artist
           });
 
           this.variants.sort((a, b) => (a.hatched === b.hatched) ? 0 : a.hatched ? -1 : 1);
