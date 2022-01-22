@@ -57,8 +57,7 @@ exports.receive = function(message, context) {
         }
 
         if (data.adjective) {
-          if (process.env.NODE_ENV == "PROD" && (!member.settings.privacy?.includes('activity') || data.source == "DISCORD")) {
-            // TODO: check that user is a valid server member
+          if (process.env.NODE_ENV == "PROD" && member.serverMember && (!member.settings.privacy?.includes('activity') || data.source == "DISCORD")) {
             promises.push(Webhook('egg-hatchery', {
               content: " ",
               embeds: [{

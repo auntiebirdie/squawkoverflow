@@ -43,12 +43,14 @@
   </h3>
 
   <div class="p-3 m-3 mb-5 d-inline">
+   <% if (loggedInUser.serverMember) { %>
     <div class="form-check form-switch mb-3">
       <span>
         <input type="checkbox" class="form-check-input" name="privacy" value="activity" id="privacy_activity" <%= loggedInUser.settings.privacy?.includes('activity') ? "checked" : "" %>>
       </span>
       <label class="form-check-label" for="privacy_activity">Don't post my on-site activity to the Discord server</label>
     </div>
+   <% } %>
 
     <div class="form-check form-switch mb-3">
       <span>
