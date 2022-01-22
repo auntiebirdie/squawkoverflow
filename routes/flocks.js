@@ -37,6 +37,7 @@ router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
     member: member,
     flock: flock,
     flocks: member.flocks,
+    allFamilies: await API.call('families', 'GET'),
     families: member.families,
     selectedFlock: flock.id,
     sidebar: 'filters',
@@ -62,13 +63,13 @@ router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
       label: 'Duplicates'
     }] : [{
       id: 'hatched',
-      label: "Birds I have",
+      label: "In My Aviary",
     }, {
       id: 'unhatched',
-      label: "Birds I don't have"
+      label: "Not In My Aviary"
     }, {
       id: 'wishlisted',
-      label: "Birds on my wishlist"
+      label: "In My Wishlist"
     }]
   });
 });

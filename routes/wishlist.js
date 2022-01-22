@@ -30,6 +30,7 @@ router.get('/:member', async (req, res, next) => {
   res.render('wishlist/index', {
     page: 'wishlist',
     member: member,
+    allFamilies: await API.call('families', 'GET'),
     families: families,
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',

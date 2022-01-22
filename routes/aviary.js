@@ -9,9 +9,12 @@ router.get('/:member', async (req, res, next) => {
     include: ['flocks', 'families']
   });
 
+  var families = await API.call('families', 'GET');
+
   res.render('aviary/index', {
     page: 'aviary',
     member: member,
+    allFamilies: families,
     families: member.families.filter((family) => family.owned > 0).map((family) => family.name),
     flocks: member.flocks,
     currentPage: (req.query.page || 1) * 1,

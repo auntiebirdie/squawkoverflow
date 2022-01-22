@@ -33,10 +33,10 @@ router.get('/', async (req, res) => {
     ],
     extraInsights: [{
       id: 'hatched',
-      label: 'Hatched species',
+      label: 'In My Aviary',
     }, {
       id: 'unhatched',
-      label: 'Unhatched species'
+      label: 'Not In My Aviary'
     }]
   });
 });

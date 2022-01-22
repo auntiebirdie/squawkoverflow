@@ -43,11 +43,12 @@ router.get('/:member/gift', Middleware.isLoggedIn, async (req, res) => {
     API.call('member', 'GET', {
       id: req.session.user,
       include: ['flocks', 'families']
-    }).then((loggedInUser) => {
+    }).then(async (loggedInUser) => {
       res.render('members/gift', {
         page: 'gift',
         member: member,
         flocks: loggedInUser.flocks,
+        allFamilies: await API.call('families', 'GET'),
         families: loggedInUser.families.filter((family) => family.owned > 0).map((family) => family.name),
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
