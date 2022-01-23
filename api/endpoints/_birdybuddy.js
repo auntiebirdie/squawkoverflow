@@ -4,11 +4,15 @@ module.exports = async (req, res) => {
   return new Promise(async (resolve, reject) => {
     switch (req.method) {
       case "POST":
+		    console.log(req.body);
+
         let member = new Member(req.body.loggedInUser);
 
         member.fetch({
           include: ['birdyBuddy']
         });
+
+		    console.log(member);
 
         if (member.birdyBuddy?.variant) {
           await member.birdyBuddy.set({
