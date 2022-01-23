@@ -27,13 +27,13 @@
         <div class="col-md-3 mb-3">
           <div class="row">
           <div class="col-3 text-center">
-            <a href="/aviary/<%= bird.members[i].id %>?search=<%= bird.commonName %>">
+            <a href="/aviary/<%= bird.members[i].id %>?search=%22<%= bird.commonName %>%22">
               <img class="rounded-circle" src="<%= bird.members[i].avatar %>" data-id="<%= bird.members[i].id %>" onerror="missingMemberAvatar(this)">
             </a>
           </div>
           <div class="col-8 mb-3">
             <h5 class="pt-2">
-              <a href="/aviary/<%= bird.members[i].id %>?search=<%= bird.commonName %>">
+              <a href="/aviary/<%= bird.members[i].id %>?search=%22<%= bird.commonName %>%22">
                 <%= bird.members[i].username %>
               </a>
             </h5>

@@ -15,8 +15,8 @@
         <h3 class="text-center">
           <a
             <% if (locals.loggedInUser) { %>
-            <% if (loggedInUser.id == member.id) { %>href="${model.variants[0].hatched ? `/aviary/<%= loggedInUser.id %>?search=${model.commonName}` : `/birdypedia/bird/${model.code}`}"<% } %>
-            <% if (loggedInUser.id != member.id) { %>href="${model.variants[0].hatched ? `/members/<%= member.id %>/gift?search=${model.commonName}` : `/birdypedia/bird/${model.code}`}"<% } %>
+            <% if (loggedInUser.id == member.id) { %>href="${model.variants[0].hatched ? `/aviary/<%= loggedInUser.id %>?search=%22${model.commonName}%22` : `/birdypedia/bird/${model.code}`}"<% } %>
+            <% if (loggedInUser.id != member.id) { %>href="${model.variants[0].hatched ? `/members/<%= member.id %>/gift?search=%22${model.commonName}%22` : `/birdypedia/bird/${model.code}`}"<% } %>
             <% } else { %>
              href="/birdypedia/bird/${model.code}"
             <% } %>
