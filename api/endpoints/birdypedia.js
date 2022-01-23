@@ -6,9 +6,17 @@ module.exports = async (req, res) => {
   var page = (--req.query.page || 0) * birdsPerPage;
   var output = [];
 
-  let query = 'SELECT species.code FROM species';
+  let query = 'SELECT species.code';
   let filters = [];
   let params = [];
+
+  if (req.query.search) {
+    query += ', MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)';
+    filters.push('MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)');
+
+    Array(2).fill(`${req.query.search}*`).forEach((param) => params.push(param));
+  }
+  query += ' FROM species';
 
   if (req.query.family) {
     filters.push('species.family = ?');
@@ -19,15 +27,9 @@ module.exports = async (req, res) => {
     params.push(req.query.adjectives);
   }
 
-	if (req.query.artist) {
-		filters.push('species.code IN (SELECT a.species FROM variants a WHERE a.credit = ?)');
-		params.push(req.query.artist);
-	}
-
-  if (req.query.search) {
-    filters.push('(species.commonName LIKE ? OR species.scientificName LIKE ?)');
-    params.push(`%${req.query.search}%`);
-    params.push(`%${req.query.search}%`);
+  if (req.query.artist) {
+    filters.push('species.code IN (SELECT a.species FROM variants a WHERE a.credit = ?)');
+    params.push(req.query.artist);
   }
 
   // TODO: validate user has access to extra insights
@@ -81,7 +83,7 @@ module.exports = async (req, res) => {
       promises.push(bird.fetch({
         include: ['variants', 'memberData'],
         member: req.query.loggedInUser,
-	      artist: req.query.artist
+        artist: req.query.artist
       }));
 
       output.push(bird);

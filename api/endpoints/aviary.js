@@ -6,9 +6,20 @@ module.exports = async (req, res) => {
   var page = (--req.query.page || 0) * birdsPerPage;
   var output = [];
 
-  let query = 'SELECT birdypets.id FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (species.code = variants.species)';
-  let filters = ['birdypets.member = ?'];
-  let params = [req.query.member];
+  let query = 'SELECT birdypets.id';
+  let filters = [];
+  let params = [];
+
+  if (req.query.search) {
+    query += ', MATCH(birdypets.nickname) AGAINST (? IN BOOLEAN MODE), MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)';
+    filters.push('(MATCH(birdypets.nickname) AGAINST (? IN BOOLEAN MODE) OR MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE))');
+
+    Array(4).fill(`${req.query.search}*`).forEach((param) => params.push(param));
+  }
+
+  query += ' FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (species.code = variants.species)';
+  filters.push('birdypets.member = ?');
+  params.push(req.query.member);
 
   if (req.query.family) {
     filters.push('species.family = ?');
@@ -23,13 +34,6 @@ module.exports = async (req, res) => {
       filters.push('birdypet_flocks.flock = ?');
       params.push(req.query.flock);
     }
-  }
-
-  if (req.query.search) {
-    filters.push('(birdypets.nickname LIKE ? OR species.commonName LIKE ? OR species.scientificName LIKE ?)');
-    params.push(`%${req.query.search}%`);
-    params.push(`%${req.query.search}%`);
-    params.push(`%${req.query.search}%`);
   }
 
   // TODO: validate user has access to extra insights

@@ -20,9 +20,20 @@ module.exports = async (req, res) => {
       var page = (--req.query.page || 0) * birdsPerPage;
       var output = [];
 
-      let query = 'SELECT species.code FROM wishlist JOIN species ON (wishlist.species = species.code)';
-      let filters = ['wishlist.member = ?'];
-      let params = [req.query.id];
+      let query = 'SELECT species.code';
+      let filters = [];
+      let params = [];
+
+      if (req.query.search) {
+        query += ', MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)';
+        filters.push('MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)');
+
+        Array(2).fill(`${req.query.search}*`).forEach((param) => params.push(param));
+      }
+
+      query += ' FROM wishlist JOIN species ON (wishlist.species = species.code)';
+      filters.push('wishlist.member = ?');
+      params.push(req.query.id);
 
       if (req.query.family) {
         filters.push('species.family = ?');
