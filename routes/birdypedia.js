@@ -5,13 +5,13 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   var families = await API.call('families', 'GET');
-	var artists = await API.call('artists', 'GET');
+  var artists = await API.call('artists', 'GET');
 
   res.render('birdypedia', {
     page: 'birdypedia',
     allFamilies: families,
-    families: families.map( (family) => family.name),
-	  artists: artists,
+    families: families.map((family) => family.name),
+    artists: artists,
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
     sortFields: [{

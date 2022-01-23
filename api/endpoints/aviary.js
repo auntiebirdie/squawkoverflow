@@ -11,10 +11,11 @@ module.exports = async (req, res) => {
   let params = [];
 
   if (req.query.search) {
-    query += ', MATCH(birdypets.nickname) AGAINST (? IN BOOLEAN MODE), MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)';
     filters.push('(MATCH(birdypets.nickname) AGAINST (? IN BOOLEAN MODE) OR MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE))');
 
-    Array(4).fill(`${req.query.search}*`).forEach((param) => params.push(param));
+    var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
+
+    Array(2).fill(req.query.search).forEach((param) => params.push(param.replace(regex, '$1*')));
   }
 
   query += ' FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (species.code = variants.species)';

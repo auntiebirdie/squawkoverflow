@@ -11,11 +11,13 @@ module.exports = async (req, res) => {
   let params = [];
 
   if (req.query.search) {
-    query += ', MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)';
     filters.push('MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)');
 
-    Array(2).fill(`${req.query.search}*`).forEach((param) => params.push(param));
+    var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
+
+    Array(1).fill(req.query.search).forEach((param) => params.push(param.replace(regex, '$1*')));
   }
+
   query += ' FROM species';
 
   if (req.query.family) {
