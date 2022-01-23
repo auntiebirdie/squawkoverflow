@@ -1,4 +1,4 @@
-const Cache = require('../helpers/cache.js');
+const Database = require('../helpers/database.js');
 
 class Variants {
   constructor() {
@@ -7,8 +7,19 @@ class Variants {
 
   fetch(key, value, params = {}) {
     return new Promise((resolve, reject) => {
-      Cache.get('variants', key + ':' + value).then((ids) => {
-        Promise.all(ids.map((id) => this.get(id, params))).then((variants) => {
+      let filters = [];
+
+      if (key == 'prefix-alias') {
+        filters.prefix = value.split('-').shift();
+        filters.alias = value.split('-').pop();
+      } else {
+        filters[key] = value;
+      }
+
+      Database.get('variants', filters, {
+        select: ['id']
+      }).then((variants) => {
+        Promise.all(variants.map((variant) => this.get(variant.id, params))).then((variants) => {
           if (params.artist) {
             variants = variants.filter((variant) => variant.credit == params.artist);
           }
