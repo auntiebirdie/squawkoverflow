@@ -89,7 +89,7 @@
         artist : $('#artist').is(':visible') ? $('#artist').val() : "",
         search : $('#search').val(),
         extraInsights: Array.from($('input:checked', '#extraInsights')).map((checkbox) => checkbox.value),
-        <%- locals.egg ? `adjectives : "${egg.name}",` : "" %>
+        <%- locals.egg ? `adjectives : "${egg.adjective}",` : "" %>
         },
         container.getAttribute('data-params') ? JSON.parse(container.getAttribute('data-params')) : {}
       ),

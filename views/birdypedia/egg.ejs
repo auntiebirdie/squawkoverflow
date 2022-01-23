@@ -1,6 +1,6 @@
 <%- include('../header.ejs') %>
 
-  <%- include('../partials/page-title.ejs', { title : { text : `${egg.name} Egg`, prepend : `<img class="me-2" style="height: 4rem;" src="/img/eggs/${egg.icon ? egg.name : 'default'}.png"><span class="text-capitalize">`, append : '</span>' } }) %>
+  <%- include('../partials/page-title.ejs', { title : { text : `${egg.adjective} Egg`, prepend : `<img class="me-2" style="height: 4rem;" src="/img/eggs/${egg.icon}.png"><span class="text-capitalize">`, append : '</span>' } }) %>
 
   <%- include('../partials/pagination.ejs') %>
 

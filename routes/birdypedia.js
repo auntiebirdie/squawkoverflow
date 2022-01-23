@@ -1,5 +1,6 @@
 const API = require('../helpers/api.js');
 
+const fs = require('fs');
 const express = require('express');
 const router = express.Router();
 
@@ -58,50 +59,53 @@ router.get('/eggs/:letter([A-Za-z]{1})?', async (req, res) => {
 });
 
 router.get('/eggs/:egg', async (req, res) => {
-  var egg = require('../public/data/eggs.json')[req.params.egg];
+  API.call('eggs', 'GET', {
+    loggedInUser: req.session.user,
+    adjective: req.params.egg
+  }).then((egg) => {
+    if (egg) {
+      egg.icon = fs.existsSync(`${__dirname}/../public/img/eggs/${egg.adjective}.png`) ? egg.adjective : 'default';
 
-  if (egg) {
-    egg.name = req.params.egg;
-
-    res.render('birdypedia/egg', {
-      page: 'birdypedia',
-      egg: egg,
-      currentPage: (req.query.page || 1) * 1,
-      sidebar: 'filters',
-      sortFields: [{
-          value: 'commonName-ASC',
-          label: 'Common Name (A-Z)'
-        },
-        {
-          value: 'commonName-DESC',
-          label: 'Common Name (Z-A)'
-        },
-        {
-          value: 'scientificName-ASC',
-          label: 'Scientific Name (A-Z)'
-        },
-        {
-          value: 'scientificName-DESC',
-          label: 'Scientific Name (Z-A)'
-        }
-      ],
-      extraInsights: [{
-        id: 'hatched',
-        label: 'In My Aviary',
-      }, {
-        id: 'unhatched',
-        label: 'Not In My Aviary'
-      }, {
-        id: 'somewhere',
-        label: "In Someone's Aviary"
-      }, {
-        id: 'wishlisted',
-        label: 'In My Wishlist'
-      }]
-    });
-  } else {
-    res.redirect('/error');
-  }
+      res.render('birdypedia/egg', {
+        page: 'birdypedia',
+        egg: egg,
+        currentPage: (req.query.page || 1) * 1,
+        sidebar: 'filters',
+        sortFields: [{
+            value: 'commonName-ASC',
+            label: 'Common Name (A-Z)'
+          },
+          {
+            value: 'commonName-DESC',
+            label: 'Common Name (Z-A)'
+          },
+          {
+            value: 'scientificName-ASC',
+            label: 'Scientific Name (A-Z)'
+          },
+          {
+            value: 'scientificName-DESC',
+            label: 'Scientific Name (Z-A)'
+          }
+        ],
+        extraInsights: [{
+          id: 'hatched',
+          label: 'In My Aviary',
+        }, {
+          id: 'unhatched',
+          label: 'Not In My Aviary'
+        }, {
+          id: 'somewhere',
+          label: "In Someone's Aviary"
+        }, {
+          id: 'wishlisted',
+          label: 'In My Wishlist'
+        }]
+      });
+    } else {
+      res.redirect('/error');
+    }
+  });
 });
 
 router.get('/bird/:code', async (req, res) => {
