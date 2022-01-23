@@ -24,6 +24,7 @@
       </div>
     <% } %>
 
+  <% if (member.hasWishlist) { %>
     <%- include('../partials/pagination.ejs') %>
 
     <div id="lazyLoader" class="row g-0" data-endpoint="/api/wishlist" data-params='{"id":"<%= member.id  %>"}'></div>
@@ -31,6 +32,13 @@
     <%- include('../partials/pagination.ejs') %>
 
     <%- include('../scripts/lazyloader.ejs', { template: '../templates/wishlist.ejs', paginate: currentPage }) %>
+  <% } else { %>
+    <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>
+      <p class="text-center"><em>You haven't added any birds to your wishlist yet!  You can do so by visiting <a href="/birdypedia">the Birdypedia</a> and clicking on the heart icons of birds you want!</em></p>
+    <% } else { %>
+      <p class="text-center"><em>This user hasn't added any birds to their wishlist... yet!</em></p>
+    <% } %>
+  <% } %>
 
   <script type="text/javascript">
     $(document).ready(function () {
