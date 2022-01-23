@@ -90,6 +90,7 @@ router.get('/:flock', async (req, res) => {
     page: 'flock',
     member: member,
     flock: flock,
+    allFamilies: await API.call('families', 'GET'),
     families: flock.families,
     sidebar: 'filters',
     sortFields: [{
