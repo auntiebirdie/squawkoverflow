@@ -13,22 +13,19 @@ router.get('/mine', Middleware.isLoggedIn, (req, res, next) => {
 });
 
 router.get('/:member', async (req, res, next) => {
-  let member = null;
+  let member = await API.call('member', 'GET', {
+	  id: req.params.member,
+	  include: ['hasWishlist']
+  });;
 
   if (req.params.member == req.session.user) {
 	  res.set('Cache-Control', 'no-store');
-
-    member = res.locals.loggedInUser;
 
     member.baitUsed = await API.call('counters', 'GET', {
       member: member.id,
       kind: 'bait'
     });
   } else {
-    member = await API.call('member', 'GET', {
-      id: req.params.member
-    });
-
     if (member.settings.privacy?.includes('wishlist')) {
       return res.redirect('/error');
     }

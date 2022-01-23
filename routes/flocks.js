@@ -38,7 +38,7 @@ router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
     flock: flock,
     flocks: member.flocks,
     allFamilies: await API.call('families', 'GET'),
-    families: member.families,
+    families: member.families.map((family) => family.name),
     selectedFlock: flock.id,
     sidebar: 'filters',
     sortFields: [{

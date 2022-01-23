@@ -8,7 +8,7 @@
           }
     }) %>
 
-    <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>
+    <% if (locals.loggedInUser && loggedInUser.id == member.id && member.hasWishlist) { %>
       <div class="bg-light rounded w-50 mx-auto mb-4 p-4 text-center">
       <% if (member.bugs > 0) { %>
         <% if (member.baitUsed) { %>

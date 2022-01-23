@@ -121,15 +121,7 @@ class Member {
                 this.flocks = await Flocks.all(this.id);
                 break;
               case 'families':
-                await Database.query('SELECT name, display FROM taxonomy WHERE type = "family" ORDER BY name').then((results) => {
-                  this.families = results.map((result) => {
-                    promises.push(Counters.get('family', this.id, result.name).then((value) => {
-                      result.owned = value;
-                    }));
-
-                    return result;
-                  });
-                });
+                this.families = await Database.query('SELECT taxonomy.name, taxonomy.display, IF(counters.count IS NULL, 0, counters.count) owned FROM taxonomy JOIN counters ON (taxonomy.name = counters.id) WHERE taxonomy.type = "family" AND counters.member = ? AND counters.count > 0 ORDER BY taxonomy.name', [this.id]);
                 break;
               case 'hasWishlist':
                 this.hasWishlist = await Database.getOne('wishlist', {
