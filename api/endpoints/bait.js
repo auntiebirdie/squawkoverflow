@@ -12,6 +12,7 @@ module.exports = (req, res) => {
 
         await member.fetch();
 
+	    if (member.bugs > 0) {
         promises.push(
           member.set({
             bugs: (member.bugs * 1) - 1
@@ -37,5 +38,9 @@ module.exports = (req, res) => {
           await Promise.all(promises).then(() => {
             res.json(birdypet.id);
           });
+	    }
+	    else {
+		    res.status(404).send("You have no bugs!");
+	    }
         });
     };
