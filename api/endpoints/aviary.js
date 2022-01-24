@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
           break;
         case 'duplicated':
           filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "species" AND id = variants.species) > 1');
-          params.push(req.query.loggedInUser);
+          params.push(req.query.member);
           break;
         case 'wishlisted':
           filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ?)');
@@ -83,6 +83,8 @@ module.exports = async (req, res) => {
   }
 
   query += ' ' + (req.query.sortDir == 'DESC' ? 'DESC' : 'ASC');
+
+	console.log(query);
 
   Database.query(query, params).then((results) => {
     var totalPages = results.length;
