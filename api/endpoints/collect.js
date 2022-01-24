@@ -21,10 +21,9 @@ module.exports = (req, res) => {
       promises.push(Database.delete('freebirds', {
         id: req.body.freebird
       }));
+    } else {
+      promises.push(Database.query('UPDATE members SET lastHatchAt = NOW() WHERE id = ?', [req.body.loggedInUser]));
     }
-	  else {
-		  promises.push(Database.query('UPDATE members SET lastHatchAt = NOW() WHERE id = ?', [req.body.loggedInUser]));
-	  }
 
     await birdypet.create({
       variant: variant,
