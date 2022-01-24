@@ -39,7 +39,7 @@ var Database = require('../api/helpers/database.js');
     '  INSERT INTO squawkdata.counters VALUES (OLD.member, "variant", OLD.variant, 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
 
     '  IF NEW.member <> OLD.member THEN ' +
-    '    SELECT COUNT(*) INTO v_speciesCount FROM birdypets JOIN variants ON (birdypets.variant = variants.id) WHERE variants.species = v_species AND `member` = OLD.member; ' +
+    '    SELECT COUNT(*) INTO v_speciesCount FROM birdypets JOIN variants ON (birdypets.variant = variants.id) WHERE variants.species = v_species AND `member` = NEW.member; ' +
 
     '    INSERT INTO squawkdata.counters VALUES (NEW.member, "aviary", "total", 1) ON DUPLICATE KEY UPDATE \`count\`= \`count\` + 1; ' +
 
@@ -49,7 +49,7 @@ var Database = require('../api/helpers/database.js');
     '      INSERT INTO squawkdata.counters SELECT NEW.member, "eggs", adjective, 1 FROM species_adjectives WHERE species = v_species ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
     '    END IF; ' +
 
-    '    SELECT COUNT(*) INTO v_speciesCount FROM birdypets JOIN variants ON (birdypets.variant = variants.id) WHERE variants.species = v_species AND `member` = NEW.member; ' +
+    '    SELECT COUNT(*) INTO v_speciesCount FROM birdypets JOIN variants ON (birdypets.variant = variants.id) WHERE variants.species = v_species AND `member` = OLD.member; ' +
 
     '    IF v_speciesCount = 1 THEN ' +
     '      INSERT INTO squawkdata.counters VALUES (OLD.member, "species", v_species, 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
