@@ -21,7 +21,6 @@ router.get('/', async (req, res) => {
       });
     })
     .catch((err) => {
-	    console.log(err);
       switch (err.code) {
         case 401:
         case "401":
