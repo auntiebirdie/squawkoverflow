@@ -29,6 +29,7 @@ class Variant {
         this.credit = variant.credit;
         this.source = variant.source;
         this.special = variant.special == '1';
+	this.filetype = variant.filetype;
 
         this.image = `https://storage.googleapis.com/squawkoverflow/${bird.order}/${bird.family}/${bird.scientificName.replace(/\s/g, '%20')}/${this.id}.${variant.filetype ? variant.filetype : "jpg"}`;
 
