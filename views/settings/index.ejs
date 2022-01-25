@@ -19,23 +19,32 @@
     General
   </h3>
 
-  <div class="mt-3 form-inline">
-    Display the title 
-    <span>
-      <select name="title" id="title" class="form-select d-inline-block w-auto">
-        <% for (let tier of tiers) { %>
-          <option value="<%= tier.id %>" <%= tier.id == loggedInUser.settings.title ? "selected" : "" %>><%= tier.name %></option>
-        <% } %>
-      </select>
-    </span>
-    on my profile
-  </div>
+  <div class="p-3 m-3 mb-5 d-inline">
+    <div class="form-inline">
+      Display the title 
+      <span>
+        <select name="title" id="title" class="form-select d-inline-block w-auto">
+          <% for (let tier of tiers) { %>
+            <option value="<%= tier.id %>" <%= tier.id == loggedInUser.settings.title ? "selected" : "" %>><%= tier.name %></option>
+          <% } %>
+        </select>
+      </span>
+      on my profile
+    </div>
 
-  <div class="form-check form-switch mt-3 mb-5">
-    <span>
-      <input type="checkbox" class="form-check-input" name="general" value="updateWishlist" id="general_updateWishlist" <%= loggedInUser.settings.general?.includes('updateWishlist') ? "checked" : "" %>>
-    </span>
-    <label class="form-check-label" for="updateWishlist">Remove newly obtained birds from my wishlist automatically</label>
+    <div class="form-check form-switch mt-3 mb-3">
+      <span>
+        <input type="checkbox" class="form-check-input" name="general" value="updateWishlist" id="general_updateWishlist" <%= loggedInUser.settings.general?.includes('updateWishlist') ? "checked" : "" %>>
+      </span>
+      <label class="form-check-label" for="general_updateWishlist">Remove newly obtained birds from my wishlist automatically</label>
+    </div>
+
+    <div class="form-check form-switch mb-3">
+      <span>
+        <input type="checkbox" class="form-check-input" name="general" value="removeCompleted" id="general_removeCompleted" <%= loggedInUser.settings.general?.includes('removeCompleted') ? "checked" : "" %>>
+      </span>
+      <label class="form-check-label" for="general_removeCompleted">Remove completed eggs from the hatching pool</label>
+    </div>
   </div>
 
   <h3>

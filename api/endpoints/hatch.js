@@ -31,13 +31,23 @@ module.exports = async (req, res) => {
             timeUntil: member.tier.eggTimer - timeUntil
           });
         } else {
-          var eggs = await Database.query('SELECT adjective, numSpecies FROM adjectives ORDER BY RAND() LIMIT 6');
+          var query = 'SELECT adjective, numSpecies FROM adjectives';
+          var params = [];
+
+          if (member.settings.general?.includes('removeCompleted')) {
+            query += ' WHERE adjective NOT IN (SELECT id FROM counters WHERE counters.id = adjectives.adjective AND counters.member = ? AND counters.count = adjectives.numSpecies)';
+            params.push(member.id);
+          }
+
+          query += ' ORDER BY RAND() LIMIT 6';
+
+          var eggs = await Database.query(query, params);
 
           for (let egg of eggs) {
             egg.numHatched = member.tier?.extraInsights ? await Counters.get('eggs', member.id, egg.adjective) : 0;
           };
 
-          return res.status(200).json(eggs);
+          return res.status(200).json([]);
         }
       }
       break;
