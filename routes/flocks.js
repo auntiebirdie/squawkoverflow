@@ -129,7 +129,8 @@ router.get('/:flock', async (req, res) => {
               id: 'needed',
               label: "In my Wishlist (Need It)"
             }
-          });
+	  ]
       });
+});
 
     module.exports = router;

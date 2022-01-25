@@ -85,7 +85,7 @@ router.get('/:member/gift', Middleware.isLoggedIn, async (req, res) => {
                   id: 'needed',
                   label: "In Their Wishlist (Need It)"
                 }
-              }]
+              ]
           });
       });
   });
