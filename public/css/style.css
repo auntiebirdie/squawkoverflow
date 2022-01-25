@@ -344,11 +344,7 @@ button.wishlist-heart:hover {
   background-color: #e81224 !important;
 }
 
-.birdybuddy {
-  position: relative;
-}
-
-.birdybuddy .message {
+.birdymessage {
   position: absolute;
   top: -50px;
   right: 0;
@@ -359,7 +355,7 @@ button.wishlist-heart:hover {
   color: #000000;
 }
 
-.birdybuddy .message::before {
+.birdymessage::before {
   content: '💬';
   position: absolute;
   bottom: -10px;

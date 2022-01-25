@@ -8,12 +8,13 @@
 
         <div class="text-center">
           <span class="h-100 d-inline-block position-relative">
-           <% if (locals.loggedInUser) { %>
+           <% if (locals.loggedInUser && loggedInUser.id != birdypet.member) { %>
             <button class="wishlist-heart btn btn-sm" data-id="<%= birdypet.bird.code %>" role="button">
               <%= birdypet.bird.wishlisted ? (birdypet.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
             </button>
            <% } %>
             <img id="birdy" src="<%= birdypet.variant.image %>" class="birdypet full">
+            <span class="birdymessage border border-1 border-secondary" style="display: none;"></span>
           </span>
         </div>
 

@@ -47,16 +47,16 @@
  <% if (member.birdyBuddy?.variant) { %>
   <div class="row mt-3">
     <div class="col-lg-7 text-center">
-      <div class="birdybuddy birdypet full mb-3">
-        <img src="<%= member.birdyBuddy.variant.image %>">
-        <span class="message border border-1 border-secondary" style="display: none;"></span>
+      <div class="position-relative mb-3">
+        <img src="<%= member.birdyBuddy.variant.image %>" class="birdypet full">
+        <span class="birdymessage border border-1 border-secondary" style="display: none;"></span>
       </div>
     </div>
   <div class="col-lg-5">
     <div class="bg-light px-3 py-2 rounded">
       <h4><a class="text-decoration-none" href="/birdypet/<%= member.birdyBuddy.id %>"><%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.bird.commonName %></a></h4>
 
-      <p>Friendship: <%= member.birdyBuddy.friendshipMeter %></p>
+      <p class="friendshipMeter"><%= member.birdyBuddy.friendshipMeter %></p>
 
        <div>
         <% if (member.birdyBuddy.description) { %>
@@ -92,47 +92,5 @@
 
   <%- include('../scripts/lazyloader.ejs') %>
 <% } %>
-
- <% if (locals.loggedInUser && member.birdyBuddy?.variant) { %>
-  <script type="text/javascript">
-    var message = $('.birdybuddy .message');
-
-    $('#feedBug').on('click', function (event) {
-      var button = this;
-
-      if (!button.style.opacity) {
-        button.style.opacity = .5;
-
-        $.ajax({
-          cache: false,
-          url: `/api/nomnomnom`,
-          method: 'POST',
-          dataType: "json",
-          contentType: 'application/json',
-          data: JSON.stringify({
-            birdypet: "<%= member.birdyBuddy.id %>"
-          }),
-          success: function(data) {
-            if (!data.error) {
-              message.text(data.response).show();
-              button.childNodes[1].innerText = data.bugs;
-
-              if (data.bugs == 0) {
-                button.disabled = true;
-              }
-              else {
-                button.style.opacity = null;
-              }
-            }
-            else {
-              button.innerText = data.error;
-              button.disabled = true;
-            }
-          }
-        });
-      }
-    });
-  </script>
- <% } %>
 
 <%- include('../footer.ejs') %>

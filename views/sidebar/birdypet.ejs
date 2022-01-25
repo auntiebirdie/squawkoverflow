@@ -1,15 +1,21 @@
 <% if (locals.page == "birdypet") { %>
+        <div class="text-center">
+          <p class="friendshipMeter"><%= birdypet.friendshipMeter %></p>
+
+        <% if (locals.loggedInUser && loggedInUser.bugs > 0) { %>
+          <% if (birdypet.friendship < 100) { %>
+           <p><button id="feedBug" class="btn btn-secondary" role="button" data-birdypet="<%= birdypet.id %>">🐛 Feed a Bug (you have <span><%= loggedInUser.bugs %></span>)</button></p>
+          <% } %>
+        <% } %>
+
         <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
-          <div class="text-center mt-4">
             <% if (member.birdyBuddy != birdypet.id) { %>
             <p><a id="makeBirdyBuddy" class="btn btn-secondary">💖 Make Birdy Buddy</a></p>
-            <% } else {  %>
-            <p><%= birdypet.friendshipMeter %></p>
             <% } %>
             <p><a href="/birdypet/<%= birdypet.id %>/gift" class="btn btn-secondary">🎁 Gift to Someone</a></p>
             <p><a href="/birdypet/release/<%= birdypet.id %>" class="btn btn-secondary">👋 Release Bird</a></p>
-          </div>
         <% } %>
+        </div>
 
         <h6 class="mt-4">Common Name</h6>
         <p class="ms-2">

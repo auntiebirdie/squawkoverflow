@@ -88,8 +88,6 @@ module.exports = async (req, res) => {
 
   query += ' ' + (req.query.sortDir == 'DESC' ? 'DESC' : 'ASC');
 
-	console.log(query);
-
   Database.query(query, params).then((results) => {
     var totalPages = results.length;
     var promises = [];

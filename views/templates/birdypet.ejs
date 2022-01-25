@@ -6,13 +6,17 @@
           ${model.bird.wishlisted ? (model.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍'}
         </button>
       <% } %>
-      <div>
+      <div class="h100">
         <a href="/birdypet/${model.id}">
           <div class="bg-white lazy birdypet <% if ((locals.page && page != 'aviary') || (locals.loggedInUser && loggedInUser.id != member.id)) { %>checkmark${model.bird.owned == 2 ? 2 : model.bird.owned}<% } %>"
                data-id="${model.id}"
                data-bg="${model.variant.image}"
-          ></div>
+          >
+          </div>
         </a>
+        <h6 class="p-1 bg-white birdypets text-center">
+          ${model.friendship > 0 ? model.friendshipMeter : '&nbsp;'}
+        </h6>
       </div>
       <div class="card-body">
         <h3 class="text-center"><a href="/birdypet/${model.id}">${model.nickname ? model.nickname : model.bird.commonName}</a></h3>

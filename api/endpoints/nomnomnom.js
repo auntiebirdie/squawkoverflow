@@ -24,8 +24,11 @@ module.exports = async (req, res) => {
         })
       ]);
 
+      await birdypet.fetch();
+
       res.json({
         bugs: member.bugs,
+        friendshipMeter: birdypet.friendshipMeter,
         response: [
           "Mmm!  Tastes like... bug.",
           "Tasty!",

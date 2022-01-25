@@ -6,7 +6,15 @@ module.exports = (req, res) => {
     let promises = [];
 
     if (req.query.privacy) {
-      members = members.filter((member) => !member.settings.privacy?.includes(req.query.privacy));
+      members = members.filter((member) => {
+        try {
+          member.settings = JSON.parse(member.settings);
+
+          return !member.settings.privacy?.includes(req.query.privacy)
+        } catch (err) {
+          return true;
+        }
+      });
     }
 
     if (req.query.include?.includes('birdData')) {
