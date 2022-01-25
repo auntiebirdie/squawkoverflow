@@ -39,7 +39,6 @@ router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
     flocks: member.flocks,
     allFamilies: await API.call('families', 'GET'),
     families: member.families.map((family) => family.name),
-    selectedFlock: flock.id,
     sidebar: 'filters',
     sortFields: [{
         value: 'commonName-ASC',
@@ -56,6 +55,14 @@ router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
       {
         value: 'scientificName-DESC',
         label: 'Scientific Name (Z-A)'
+      },
+      {
+        value: 'friendship-DESC',
+        label: 'Friendship (Highest)'
+      },
+      {
+        value: 'friendship-ASC',
+        label: 'Friendship (Lowest)'
       }
     ],
     extraInsights: member.id == req.session.user ? [{
@@ -111,7 +118,15 @@ router.get('/:flock', async (req, res) => {
             {
               value: 'scientificName-DESC',
               label: 'Scientific Name (Z-A)'
-            }
+            },
+      {
+        value: 'friendship-DESC',
+        label: 'Friendship (Highest)'
+      },
+      {
+        value: 'friendship-ASC',
+        label: 'Friendship (Lowest)'
+      }
           ],
           extraInsights: member.id == req.session.user ? [{
             id: 'duplicated',
