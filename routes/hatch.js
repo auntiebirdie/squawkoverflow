@@ -10,14 +10,8 @@ router.get('/', async (req, res) => {
   API.call('hatch', "GET", {
       loggedInUser: req.session.user
     }, res).then((response) => {
-      req.session.adjectives = response.map((egg) => egg.name);
-
       return res.render('hatch/index', {
-        eggs: response.map((egg) => {
-          egg.icon = fs.existsSync(`${__dirname}/../public/img/eggs/${egg.adjective}.png`) ? egg.adjective : 'default';
-
-          return egg;
-        })
+        eggs: response
       });
     })
     .catch((err) => {

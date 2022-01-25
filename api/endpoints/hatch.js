@@ -4,7 +4,11 @@ const Database = require('../helpers/database.js');
 const Member = require('../models/member.js');
 const Variant = require('../models/variant.js');
 
-const fs = require('fs');
+const {
+  Storage
+} = require('@google-cloud/storage');
+const storage = new Storage();
+const bucket = storage.bucket('squawkoverflow');
 
 module.exports = async (req, res) => {
   if (!req.body?.loggedInUser && !req.query?.loggedInUser) {
@@ -31,7 +35,7 @@ module.exports = async (req, res) => {
             timeUntil: member.tier.eggTimer - timeUntil
           });
         } else {
-          var query = 'SELECT adjective, numSpecies FROM adjectives';
+          var query = 'SELECT adjective, numSpecies, icon FROM adjectives';
           var params = [];
 
           if (member.settings.general?.includes('removeCompleted')) {
