@@ -55,7 +55,8 @@ class BirdyPet {
             month: 'short',
             day: 'numeric'
           });
-          this.friendshipMeter = this.friendship < 10 ? '🤍' : ['💜', '💙', '💚', '💛', '🧡', '❤️', '💖', '💗', '💕', '💞'].slice(0, Math.floor(this.friendship / 10) + 1).join("");
+
+          this.friendshipMeter = this.friendship < 10 ? '🤍' : ['💜', '💙', '💚', '💛', '🧡', '❤️', '💖', '💗', '💕', '💞'].slice(0, Math.floor(this.friendship / 10)).join("");
 
           this.variant = new Variant(birdypet.variant);
 
