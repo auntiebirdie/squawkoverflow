@@ -15,9 +15,6 @@ module.exports = (req, res) => {
     let variant = req.body.variant;
 
     if (req.body.freebird) {
-      variant = await Database.getOne('freebirds', {
-        id: req.body.freebird
-      }).then((result) => result.variant);
       promises.push(Database.delete('freebirds', {
         id: req.body.freebird
       }));

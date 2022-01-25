@@ -65,7 +65,7 @@ module.exports = async (req, res) => {
               params.push(req.query.loggedInUser);
               break;
             case 'somewhere':
-              filters.push('(SELECT MAX(`count`) FROM counters WHERE type = "species" AND id = species.code) > 0');
+              filters.push('code IN (SELECT id FROM counters WHERE type = "species" AND \`count\` > 0)');
               break;
           }
         }
