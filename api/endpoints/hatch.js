@@ -47,7 +47,7 @@ module.exports = async (req, res) => {
             egg.numHatched = member.tier?.extraInsights ? await Counters.get('eggs', member.id, egg.adjective) : 0;
           };
 
-          return res.status(200).json([]);
+          return res.status(200).json(eggs);
         }
       }
       break;

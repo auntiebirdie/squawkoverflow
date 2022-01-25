@@ -22,6 +22,8 @@
         <% } %>
       <% } else if (loggedInUser.settings.general?.includes('removeCompleted')) { %>
         <p><em>You appear to have collected every species from every egg!  To hatch more eggs anyway, head to <a href="/settings">Settings</a> and uncheck the "remove completed eggs" option.</em></p>
+      <% } else { %>
+        <p><em>Something went wrong!  Please <a href="https://trello.com/add-card?name=%22Bug%20reported%20by%20<%= loggedInUser.id %>!%22&idList=616863d9071f1c88feb22769" target="_blank">submit a bug report</a> so someone can look into it.</em></p>
       <% } %>
     </div>
 
@@ -149,7 +151,7 @@
               },
               error: function(XMLHttpRequest, textStatus, errorThrown) {
                 actions.classList.remove('loadingData');
-                actions.innerHTML = '<em>Something went wrong... uvu</em>';
+                actions.innerHTML = '<em>Something went wrong!  Please <a href="https://trello.com/add-card?name=%22Bug%20reported%20by%20<%= loggedInUser.id %>!%22&idList=616863d9071f1c88feb22769" target="_blank">submit a bug report</a> so someone can look into it.</em>';
               }
             });
             break;
