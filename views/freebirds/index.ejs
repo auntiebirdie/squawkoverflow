@@ -16,20 +16,21 @@
 
       this.style.cursor = 'default';
 
-      if (!image.parentNode.classList.contains('loadingData') && image.hasAttribute('data-id')) {
+      if (!image.parentNode.classList.contains('loadingData') && image.hasAttribute('data-freebird')) {
         image.parentNode.classList.add('loadingData');
 
         $.ajax({
           cache: false,
           url: `/api/collect`,
           data: JSON.stringify({
-            freebird: `${image.getAttribute('data-id')}`,
+            freebird: `${image.getAttribute('data-freebird')}`,
+            variant: `${image.getAttribute('data-variant')}`
           }),
           dataType: 'json',
           contentType: 'application/json',
           method: 'POST',
           success: function(birdypet) {
-            image.removeAttribute('data-id');
+            image.removeAttribute('data-freebird');
             image.parentNode.classList.remove('loadingData');
             image.style.opacity = .5;
 

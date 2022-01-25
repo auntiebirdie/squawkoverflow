@@ -3,12 +3,8 @@
     <div class="h-100 card">      
      <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>
       <button class="wishlist-heart btn btn-sm" data-id="${model.code}" role="button">
-        ${model.wishlisted == 2 ? '🌟' : '❤️'}
+        ${model.wishlisted ? (model.wishlisted == 2 ? '🌟' : '❤️') : '🤍'}
       </button>
-     <% } else { %>
-      <a class="wishlist-heart">
-        ${model.wishlisted == 2 ? '🌟' : '❤️'}
-      </a>
      <% } %>
       <div>
         <div class="bg-white lazy birdypet ${model.variants[0].hatched ? "hatched" : "unhatched"}"
