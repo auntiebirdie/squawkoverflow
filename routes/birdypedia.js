@@ -38,6 +38,15 @@ router.get('/', async (req, res) => {
     }, {
       id: 'unhatched',
       label: 'Not In My Aviary'
+    }, {
+      id: 'somewhere',
+      label: "In Someone's Aviary"
+    }, {
+      id: 'wishlisted',
+      label: 'In My Wishlist'
+    }, {
+      id: 'unwishlisted',
+      label: 'Not In My Wishlist'
     }]
   });
 });
