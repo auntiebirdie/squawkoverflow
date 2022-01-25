@@ -59,7 +59,7 @@ router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
       }
     ],
     extraInsights: member.id == req.session.user ? [{
-      id: 'duplicates',
+      id: 'duplicated',
       label: 'Duplicates'
     }] : [{
       id: 'hatched',
@@ -68,62 +68,68 @@ router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
       id: 'unhatched',
       label: "Not In My Aviary"
     }, {
-      id: 'wishlisted',
-      label: "In My Wishlist"
+      id: 'wanted',
+      label: "In my Wishlist (Want It)"
+    }, {
+      id: 'needed',
+      label: "In my Wishlist (Need It)"
     }]
   });
 });
 
 router.get('/:flock', async (req, res) => {
-  let flock = await API.call('flock', 'GET', {
-    id: req.params.flock,
-    include: ['families']
-  });
+      let flock = await API.call('flock', 'GET', {
+        id: req.params.flock,
+        include: ['families']
+      });
 
-  let member = await API.call('member', 'GET', {
-    id: flock.member
-  });
+      let member = await API.call('member', 'GET', {
+        id: flock.member
+      });
 
-  console.log(flock.families);
+      console.log(flock.families);
 
-  res.render('flocks/flock', {
-    page: 'flock',
-    member: member,
-    flock: flock,
-    allFamilies: await API.call('families', 'GET'),
-    families: flock.families,
-    sidebar: 'filters',
-    sortFields: [{
-        value: 'commonName-ASC',
-        label: 'Common Name (A-Z)'
-      },
-      {
-        value: 'commonName-DESC',
-        label: 'Common Name (Z-A)'
-      },
-      {
-        value: 'scientificName-ASC',
-        label: 'Scientific Name (A-Z)'
-      },
-      {
-        value: 'scientificName-DESC',
-        label: 'Scientific Name (Z-A)'
-      }
-    ],
-    extraInsights: member.id == req.session.user ? [{
-      id: 'duplicated',
-      label: 'Duplicates'
-    }] : [{
-      id: 'hatched',
-      label: "Birds I have",
-    }, {
-      id: 'unhatched',
-      label: "Birds I don't have"
-    }, {
-      id: 'wishlisted',
-      label: "Birds on my wishlist"
-    }]
-  });
-});
+      res.render('flocks/flock', {
+          page: 'flock',
+          member: member,
+          flock: flock,
+          allFamilies: await API.call('families', 'GET'),
+          families: flock.families,
+          sidebar: 'filters',
+          sortFields: [{
+              value: 'commonName-ASC',
+              label: 'Common Name (A-Z)'
+            },
+            {
+              value: 'commonName-DESC',
+              label: 'Common Name (Z-A)'
+            },
+            {
+              value: 'scientificName-ASC',
+              label: 'Scientific Name (A-Z)'
+            },
+            {
+              value: 'scientificName-DESC',
+              label: 'Scientific Name (Z-A)'
+            }
+          ],
+          extraInsights: member.id == req.session.user ? [{
+            id: 'duplicated',
+            label: 'Duplicates'
+          }] : [{
+              id: 'hatched',
+              label: "In My Aviary",
+            }, {
+              id: 'unhatched',
+              label: "Not In My Aviarye"
+            }, {
+              id: 'wanted',
+              label: "In my Wishlist (Want It)"
+            }, {
+              id: 'needed',
+              label: "In my Wishlist (Need It)"
+            }
+          });
+      });
 
-module.exports = router;
+    module.exports = router;

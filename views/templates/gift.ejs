@@ -1,8 +1,8 @@
 <div class="col-6 col-md-4 d-flex align-items-stretch">
   <div class="w-100 pb-3 px-2">
-    <div class="h-100 card">      
+    <div class="h-100 card">
       <a class="wishlist-heart">
-        ${model.bird.wishlisted ? '❤️' : ''}
+        ${model.bird.wishlisted ? (model.bird.wishlisted == 2 ? '🌟' : '❤️') : ''}
       </a>
       <div>
         <a href="/birdypet/${model.id}/gift?member=<%= member.id %>">

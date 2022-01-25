@@ -340,7 +340,7 @@ span.checkmark {
   z-index: 100;
 }
 
-.wishlist-heart:hover {
+button.wishlist-heart:hover {
   background-color: #e81224 !important;
 }
 

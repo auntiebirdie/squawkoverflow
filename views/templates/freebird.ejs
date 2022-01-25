@@ -2,7 +2,7 @@
   <div class="w-100 pb-3 px-2">
     <div class="h-100 card" style="cursor: pointer">
       <a class="wishlist-heart">
-        ${model.wishlisted ? '❤️' : '' }
+        ${model.bird.wishlisted ? (model.bird.wishlisted == 2 ? '🌟' : '❤️') : ''}
       </a>
       <div>
         <div class="bg-white lazy birdypet checkmark${model.bird.owned > 2 ? 2 : model.bird.owned}"

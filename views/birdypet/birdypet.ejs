@@ -9,8 +9,8 @@
         <div class="text-center">
           <span class="h-100 d-inline-block position-relative">
            <% if (locals.loggedInUser) { %>
-            <button class="wishlist-heart btn btn-light btn-sm" data-id="<%= birdypet.bird.code %>" data-action="<%= birdypet.bird.wishlisted ? 'remove' : 'add' %>" role="button">
-              <%= birdypet.bird.wishlisted ? '❤️' : '🤍' %>
+            <button class="wishlist-heart btn btn-sm" data-id="<%= bird.code %>" role="button">
+              <%= birdypet.bird.wishlisted ? (birdypet.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
             </button>
            <% } %>
             <img id="birdy" src="<%= birdypet.variant.image %>" class="birdypet full">

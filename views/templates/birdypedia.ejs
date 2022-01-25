@@ -2,8 +2,8 @@
   <div class="w-100 pb-3 px-2">
     <div class="h-100 card">
       <% if (locals.loggedInUser) { %>
-        <button class="wishlist-heart btn btn-light btn-sm" data-id="${model.code}" data-action="${model.wishlisted ? 'remove' : 'add'}" role="button">
-          ${model.wishlisted ? '❤️' : '🤍'}
+        <button class="wishlist-heart btn btn-sm" data-id="${model.code}" role="button">
+          ${model.wishlisted ? (model.wishlisted == 2 ? '🌟' : '❤️') : '🤍'}
         </button>
       <% } %>
       <div class="h100">

@@ -24,7 +24,7 @@
 
     $('select', '#sidebar').on('change', resetResults);
 
-    $('input[type="checkbox"]', '#extraInsights').on('click', function (e) {
+    $('input[type="checkbox"]', '#sidebar').on('click', function (e) {
       resetResults();
     });
 
@@ -89,6 +89,7 @@
         artist : $('#artist').is(':visible') ? $('#artist').val() : "",
         search : $('#search').val(),
         extraInsights: Array.from($('input:checked', '#extraInsights')).map((checkbox) => checkbox.value),
+        <%- locals.page == "wishlist" ? `intensity: Array.from($('input:checked', '#intensity')).map((checkbox) => checkbox.value),` : "" %>
         <%- locals.egg ? `adjectives : "${egg.adjective}",` : "" %>
         },
         container.getAttribute('data-params') ? JSON.parse(container.getAttribute('data-params')) : {}

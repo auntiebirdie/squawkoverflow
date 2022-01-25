@@ -92,7 +92,13 @@
           var text = "";
 
           if (data.wishlisted) {
-            text += `<div class="small">❤️ <em>This bird is on your wishlist</em></div>`;
+            switch (data.wishlisted) {
+              case 2:
+                text += `<div class="small">🌟 <em>You need this bird!/em></div>`;
+                break;
+              case 1:
+                text += `<div class="small">❤️ <em>You want this bird!/em></div>`;
+            }
           }
 
           if (data.owned > 1) {

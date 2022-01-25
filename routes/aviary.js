@@ -60,8 +60,11 @@ router.get('/:member', async (req, res, next) => {
       id: 'unhatched',
       label: "Not In My Aviary"
     }, {
-      id: 'wishlisted',
-      label: "In my Wishlist"
+      id: 'wanted',
+      label: "In my Wishlist (Want It)"
+    }, {
+      id: 'needed',
+      label: "In my Wishlist (Need It)"
     }, {
       id: 'duplicated',
       label: "Duplicates"

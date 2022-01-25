@@ -1,11 +1,15 @@
 <div class="col-6 col-md-4 d-flex align-items-stretch">
   <div class="w-100 pb-3 px-2">
     <div class="h-100 card">      
-      <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>
-      <button class="wishlist-heart btn btn-light btn-sm" data-id="${model.code}" data-action="remove" role="button">
-        ❤️
+     <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>
+      <button class="wishlist-heart btn btn-sm" data-id="${model.code}" role="button">
+        ${model.wishlisted == 2 ? '🌟' : '❤️'}
       </button>
-      <% } %>
+     <% } else { %>
+      <a class="wishlist-heart">
+        ${model.wishlisted == 2 ? '🌟' : '❤️'}
+      </a>
+     <% } %>
       <div>
         <div class="bg-white lazy birdypet ${model.variants[0].hatched ? "hatched" : "unhatched"}"
              data-bg="${model.variants[0].image}"

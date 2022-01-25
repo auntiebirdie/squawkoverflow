@@ -5,8 +5,8 @@
         <div class="text-center">
           <span class="h-100 d-inline-block position-relative">
            <% if (locals.loggedInUser) { %>
-            <button class="wishlist-heart btn btn-light btn-sm" data-id="<%= bird.code %>" data-action="<%= bird.wishlisted ? 'remove' : 'add' %>" role="button">
-              <%= bird.wishlisted ? '❤️' : '🤍' %>
+            <button class="wishlist-heart btn btn-sm" data-id="<%= bird.code %>" role="button">
+              <%= bird.wishlisted ? (bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
             </button>
            <% } %>
             <img id="birdy" src="<%= bird.variants[0].image %>" class="birdypet full <%= bird.variants[0].hatched ? "hatched" : "unhatched" %>">

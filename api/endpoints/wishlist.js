@@ -24,13 +24,13 @@ module.exports = async (req, res) => {
       let filters = [];
       let params = [];
 
-  if (req.query.search) {
-    filters.push('MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)');
+      if (req.query.search) {
+        filters.push('MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)');
 
-    var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
+        var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
 
-    Array(1).fill(req.query.search).forEach((param) => params.push(param.replace(regex, '$1*')));
-  }
+        Array(1).fill(req.query.search).forEach((param) => params.push(param.replace(regex, '$1*')));
+      }
 
       query += ' FROM wishlist JOIN species ON (wishlist.species = species.code)';
       filters.push('wishlist.member = ?');
@@ -45,6 +45,11 @@ module.exports = async (req, res) => {
         filters.push('(species.commonName LIKE ? OR species.scientificName LIKE ?)');
         params.push(`%${req.query.search}%`);
         params.push(`%${req.query.search}%`);
+      }
+
+      if (Array.isArray(req.query.intensity)) {
+        filters.push('intensity IN (?)');
+        params.push(req.query.intensity);
       }
 
       // TODO: validate user has access to extra insights
@@ -109,15 +114,35 @@ module.exports = async (req, res) => {
         });
       });
       break;
-    case "POST":
-    case "DELETE":
+    case "PUT":
       if (!req.body.loggedInUser) {
         return res.sendStatus(401);
       }
 
-      await member.updateWishlist(req.body.speciesCode, req.method == "DELETE" ? "remove" : "add");
+      Database.getOne('wishlist', {
+        member: req.body.loggedInUser,
+        species: req.body.species
+      }).then((wishlist) => {
+        let emoji = '❤️';
+        let intensity = 1;
 
-      return res.sendStatus(200);
+        if (wishlist) {
+          switch (wishlist.intensity) {
+            case 2:
+              emoji = '🤍';
+              intensity = 0;
+              break;
+            case 1:
+              intensity = 2;
+              emoji = '🌟';
+              break;
+          }
+        }
+
+        Database.query('INSERT INTO wishlist VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE intensity = ?', [req.body.loggedInUser, req.body.species, intensity, intensity]).then(() => {
+          res.json(emoji);
+        });
+      });
       break;
     default:
       return res.sendStatus(405);

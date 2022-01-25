@@ -46,8 +46,12 @@ module.exports = async (req, res) => {
           filters.push('(SELECT IF(`count` = 0, NULL, 1) FROM counters WHERE `member` = ? AND type = "species" AND id = species.code) IS NULL');
           params.push(req.query.loggedInUser);
           break;
-        case 'wishlisted':
-          filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ?)');
+        case 'wanted':
+          filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity = 1)');
+          params.push(req.query.loggedInUser);
+          break;
+        case 'needed':
+          filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity = 2)');
           params.push(req.query.loggedInUser);
           break;
         case 'somewhere':

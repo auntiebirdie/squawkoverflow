@@ -71,7 +71,14 @@
             text += `<img src="${data.avatar}" class="rounded-circle" width="42" onerror="missingMemberAvatar(this)"> ${data.username}`;
 
             if (data.wishlisted) {
-              text += `<div class="small ms-5">❤️ <em>Wishlisted</em></div>`;
+              switch (data.wishlisted) {
+                case 2:
+                  text += `<div class="small ms-5">🌟 <em>Needs it</em></div>`;
+                  break;
+                case 1:
+                  text += `<div class="small ms-5">❤️ <em>Wants it</em></div>`;
+                  break;
+              }
             }
 
             if (data.owned > 1) {
