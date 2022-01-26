@@ -27,6 +27,7 @@ module.exports = async (req, res) => {
 
       if (birdypet.member == fromMember.id) {
         await fromMember.fetch();
+        await toMember.fetch();
 
         let promises = [];
 
@@ -34,6 +35,10 @@ module.exports = async (req, res) => {
           member: toMember.id,
           friendship: 0
         });
+
+        if (toMember.settings.general?.includes('updateWishlist')) {
+          promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND member = ?', [birdypet.bird.code, toMember.id]));
+        }
 
         promises.push(Database.query('DELETE FROM birdypet_flocks WHERE birdypet = ?', [birdypet.id]));
 
@@ -49,7 +54,7 @@ module.exports = async (req, res) => {
               }
             }]
           }));
-	}
+        }
 
         promises.push(PubSub.publish('background', 'COLLECT', {
           member: toMember.id,

@@ -1,4 +1,5 @@
 const BirdyPet = require('../models/birdypet.js');
+const Member = require('../models/member.js');
 
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
@@ -10,6 +11,7 @@ module.exports = (req, res) => {
       resolve(res.status(401).send());
     }
 
+    let member = new Member(req.body.loggedInUser);
     let birdypet = new BirdyPet();
     let promises = [];
     let variant = req.body.variant;
@@ -20,6 +22,12 @@ module.exports = (req, res) => {
       }));
     } else {
       promises.push(Database.query('UPDATE members SET lastHatchAt = NOW() WHERE id = ?', [req.body.loggedInUser]));
+    }
+
+    await member.fetch();
+
+    if (member.settings.general?.includes('updateWishlist')) {
+      promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND member = ?', [variant.bird.code, member.id]));
     }
 
     await birdypet.create({

@@ -49,10 +49,6 @@ exports.receive = function(message, context) {
 
     switch (data.action) {
       case "COLLECT":
-        if (member.settings.general?.includes('updateWishlist')) {
-          promises.push(member.updateWishlist(variant.bird.code, "remove"));
-        }
-
         if (data.adjective) {
           if (process.env.NODE_ENV == "PROD" && member.serverMember && (!member.settings.privacy?.includes('activity') || data.source == "DISCORD")) {
             promises.push(Webhook('egg-hatchery', {
