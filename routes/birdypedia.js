@@ -73,8 +73,6 @@ router.get('/eggs/:egg', async (req, res) => {
     adjective: req.params.egg
   }).then((egg) => {
     if (egg) {
-      egg.icon = fs.existsSync(`${__dirname}/../public/img/eggs/${egg.adjective}.png`) ? egg.adjective : 'default';
-
       res.render('birdypedia/egg', {
         page: 'birdypedia',
         egg: egg,

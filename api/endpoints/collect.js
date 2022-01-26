@@ -26,14 +26,14 @@ module.exports = (req, res) => {
 
     await member.fetch();
 
-    if (member.settings.general?.includes('updateWishlist')) {
-      promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND member = ?', [variant.bird.code, member.id]));
-    }
-
     await birdypet.create({
       variant: variant,
       member: req.body.loggedInUser
     });
+
+    if (member.settings.general?.includes('updateWishlist')) {
+      promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [birdypet.bird.code, member.id]));
+    }
 
     promises.push(PubSub.publish('background', 'COLLECT', {
       birdypet: birdypet.id,

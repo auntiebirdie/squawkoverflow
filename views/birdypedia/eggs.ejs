@@ -7,7 +7,10 @@
     <div class="col-12 col-md-4">
       <div class="row">
         <div class="col-5 offset-1">
-          <a href="/birdypedia/eggs/<%= egg.adjective %>"><%= egg.adjective %></a>
+          <a href="/birdypedia/eggs/<%= egg.adjective %>">
+            <img src="https://storage.googleapis.com/squawkoverflow/<%= egg.icon || 'eggs/D/default.png' %>" width="18px">
+            <%= egg.adjective %>
+          </a>
         </div>
         <div class="col-5 text-end">
           <small class="text-muted">

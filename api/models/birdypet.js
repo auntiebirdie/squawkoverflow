@@ -21,6 +21,7 @@ class BirdyPet {
       if (variant) {
         this.id = Database.key();
         this.variant = variant;
+	this.bird = this.variant.bird;
         this.member = data.member;
 
         Database.create('birdypets', {

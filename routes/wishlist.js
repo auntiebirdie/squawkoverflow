@@ -14,12 +14,12 @@ router.get('/mine', Middleware.isLoggedIn, (req, res, next) => {
 
 router.get('/:member', async (req, res, next) => {
   let member = await API.call('member', 'GET', {
-	  id: req.params.member,
-	  include: ['hasWishlist']
+    id: req.params.member,
+    include: ['hasWishlist']
   });;
 
   if (req.params.member == req.session.user) {
-	  res.set('Cache-Control', 'no-store');
+    res.set('Cache-Control', 'no-store');
 
     member.baitUsed = await API.call('counters', 'GET', {
       member: member.id,
@@ -59,15 +59,24 @@ router.get('/:member', async (req, res, next) => {
         label: 'Scientific Name (Z-A)'
       }
     ],
-    extraInsights: [{
+    extraInsights: req.session.user == req.params.member ? [{
       id: 'hatched',
-      label: 'In My Aviary',
+      label: 'In My Aviary'
     }, {
       id: 'unhatched',
       label: 'Not In My Aviary'
     }, {
       id: 'somewhere',
-      label: "In Someone's Aviary"
+      label: 'In Someone\'s Aviary'
+    }] : [{
+      id: 'hatched',
+      label: 'In My Aviary',
+    }, {
+      id: 'duplicated',
+      label: 'I Have Multiple'
+    }, {
+      id: 'unhatched',
+      label: 'Not In My Aviary'
     }]
   });
 });

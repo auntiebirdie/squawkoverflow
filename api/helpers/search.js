@@ -26,12 +26,18 @@ class Search {
         case 'bird':
           query += ' species.code FROM species';
           break;
+        case 'wishlist':
+          query += ' species.code FROM species JOIN wishlist ON (species.code = wishlist.species AND wishlist.member = ? AND wishlist.intensity > 0)';
+          params.push(input.id);
+          break;
       }
 
       if (input.family) {
         filters.push('species.family = ?');
         params.push(input.family);
-      } else if (input.adjectives) {
+      }
+
+      if (input.adjectives) {
         query += ' JOIN species_adjectives ON (species.code = species_adjectives.species)';
         filters.push('species_adjectives.adjective = ?');
         params.push(input.adjectives);
@@ -40,6 +46,11 @@ class Search {
       if (input.artist) {
         filters.push('species.code IN (SELECT a.species FROM variants a WHERE a.credit = ?)');
         params.push(input.artist);
+      }
+
+      if (input.intensity) {
+        filters.push('wishlist.intensity IN (?)');
+        params.push(input.intensity);
       }
 
       // TODO: validate user has access to extra insights
@@ -52,6 +63,10 @@ class Search {
               break;
             case 'unhatched':
               filters.push('(SELECT IF(`count` = 0, NULL, 1) FROM counters WHERE `member` = ? AND type = "species" AND id = species.code) IS NULL');
+              params.push(input.memberData || input.loggedInUser);
+              break;
+            case 'duplicated':
+              filters.push('species.code IN (SELECT id FROM counters WHERE type = "species" AND `member` = ? AND `count` > 1)');
               params.push(input.memberData || input.loggedInUser);
               break;
             case 'wanted':
@@ -71,7 +86,7 @@ class Search {
               params.push(input.memberData || input.loggedInUser);
               break;
             case 'somewhere':
-              filters.push('code IN (SELECT id FROM counters WHERE type = "species" AND \`count\` > 0)');
+              filters.push('species.code IN (SELECT id FROM counters WHERE type = "species" AND `count` > 0)');
               break;
           }
         }
