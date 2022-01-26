@@ -8,6 +8,7 @@ module.exports = async (req, res) => {
   }
 
   let variant = null;
+	let hatchedAt = new Date();
 
   if (req.body.variant) {
     variant = req.body.variant;
@@ -23,6 +24,7 @@ module.exports = async (req, res) => {
     }
 
     variant = birdypet.variant.id;
+    hatchedAt = birdypet.hatchedAt;
 
     await birdypet.delete();
   }
@@ -30,8 +32,8 @@ module.exports = async (req, res) => {
   if (variant) {
     await PubSub.publish('background', 'RELEASE', {
       member: req.body.loggedInUser,
-      birdypet: req.body.birdypet,
-      variant: variant
+      variant: variant,
+      hatchedAt: hatchedAt
     });
 
     return res.sendStatus(200);

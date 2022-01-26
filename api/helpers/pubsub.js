@@ -29,8 +29,6 @@ exports.publish = function(topic, action, body) {
 
 exports.receive = function(message, context) {
   return new Promise(async (resolve, reject) => {
-    const Bird = require(__dirname + '/../models/bird.js');
-    const BirdyPet = require(__dirname + '/../models/birdypet.js');
     const Variant = require(__dirname + '/../models/variant.js');
     const Member = require(__dirname + '/../models/member.js');
 
@@ -39,7 +37,6 @@ exports.receive = function(message, context) {
 
     var data = JSON.parse(Buffer.from(message.data, 'base64').toString());
 
-    var birdypet = new BirdyPet(data.birdypet);
     var member = new Member(data.member);
     var variant = new Variant(data.variant);
 
@@ -76,7 +73,8 @@ exports.receive = function(message, context) {
         Database.create('freebirds', {
           id: Database.key(),
           variant: variant.id,
-          freedAt: new Date()
+          freedAt: new Date(),
+	  hatchedAt: data.hatchedAt ? new Date(data.hatchedAt) : new Date()
         });
 
         break;

@@ -1,155 +1,125 @@
-const Cache = require('./cache.js');
-const Database = require('./database.js');
-const Redis = require('./redis.js');
-
-const ObjectHash = require('object-hash');
-const ObjectSorter = require('sort-objects-array');
-
-const birdsPerPage = 24;
+const Database = require('../helpers/database.js');
 
 class Search {
-  get(args) {
-    this.model = require(`../models/birdypet.js`);
-    this.identifier = args.member;
+  query(kind, input) {
+    return new Promise((resolve, reject) => {
+      var birdsPerPage = 24;
+      var page = (--input.page || 0) * birdsPerPage;
+      var output = [];
 
-    return new Promise(async (resolve, reject) => {
-      var query = {
-        member: args.member,
-        flock: args.flock,
-        family: args.family,
-        sort: args.sort,
-        search: args.search
-      };
-
-      var hash = ObjectHash(query);
-
-      Redis.connect().sendCommand('ZCOUNT', [`search:${this.identifier}:${hash}`, '-inf', '+inf'], async (err, totalResults) => {
-        if (err || !totalResults) {
-          var totalResults = await this.refresh(hash, query);
-        }
-
-        let promises = [];
-        let totalPages = Math.ceil(totalResults / birdsPerPage);
-
-        if (args.page) {
-          var page = (args.page - 1) * birdsPerPage;
-
-          if (args.sortDir == 'ASC') {
-            var start = page;
-            var end = (page + birdsPerPage) - 1;
-          } else {
-            var end = (page * -1) - 1;
-            var start = end - birdsPerPage + 1;
-          }
-        } else {
-          var start = 0;
-          var end = totalResults;
-        }
-
-        Redis.connect().sendCommand('ZRANGE', [`search:${this.identifier}:${hash}`, start, end], (err, results) => {
-          results = results.map((result) => {
-            let model = new this.model(result);
-
-            promises.push(model.fetch({
-              include: ['memberData'],
-              member: args.memberData || args.member
-            }));
-
-            return model;
-          });
-
-          return Promise.all(promises).then(() => {
-            if (args.sortDir == 'DESC') {
-              results.reverse();
-            }
-
-            resolve({
-              totalPages,
-              results
-            });
-          });
-        });
-      });
-    });
-  }
-
-  refresh(hash, args) {
-    return new Promise(async (resolve, reject) => {
-      let query = '';
+      let query = 'SELECT ';
       let filters = [];
       let params = [];
 
-      /*
-       *   page: '1',
-        sort: 'hatchedAt',
-        sortDir: 'DESC',
-        family: '',
-        flock: '',
-        search: '',
-        member: '121294882861088771',
-        memberData: '121294882861088771',
-        loggedInUser: '121294882861088771'
-        */
+      if (input.search) {
+        filters.push('MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)');
 
-      query = 'SELECT birdypets.id FROM birdypets';
+        var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
 
-      if (args.family) {
-        query += ' JOIN variants ON (birdypets.variant = variants.id)';
-	      query += ' JOIN species ON (variants.species = species.code)';
-        filters.push('species.family = ?');
-        params.push(args.family);
+        Array(1).fill(input.search).forEach((param) => params.push(param.replace(regex, '$1*')));
       }
 
-      if (args.flock) {
-        query += ' JOIN birdypet_flocks ON (birdypets.id = birdypet_flocks.birdypet)';
-        filters.push('birdypet_flocks.flock = ?');
-        params.push(args.flock);
-      }
-
-      query += ' WHERE ';
-
-      filters.push('birdypets.member = ?');
-      params.push(args.member);
-
-      query += filters.join(' AND ');
-
-      switch (args.sort) {
-        case "hatchedAt":
-          query += ` ORDER BY ${args.sort} ASC`;
+      switch (kind) {
+        case 'freebird':
+          query += ' freebirds.id, freebirds.variant FROM freebirds JOIN variants ON (freebirds.variant = variants.id) JOIN species ON (variants.species = species.code)';
+          break;
+        case 'bird':
+          query += ' species.code FROM species';
           break;
       }
 
-      Database.query(query, params).then(async (results) => {
-        var start = 0;
-        var end = results.length;
-
-        resolve(results.map((result) => result.id));
-      });
-    }).then((results) => {
-      Redis.connect().del(`search:${this.identifier}:${hash}`);
-      Redis.connect().sadd(`search:${this.identifier}`, hash);
-
-      for (let i = 0, len = results.length; i < len; i++) {
-        Redis.connect().zadd(`search:${this.identifier}:${hash}`, i, results[i]);
+      if (input.family) {
+        filters.push('species.family = ?');
+        params.push(input.family);
+      } else if (input.adjectives) {
+        query += ' JOIN species_adjectives ON (species.code = species_adjectives.species)';
+        filters.push('species_adjectives.adjective = ?');
+        params.push(input.adjectives);
       }
 
-      Redis.connect().sendCommand('EXPIRE', [`search:${this.identifier}:${hash}`, 86400]);
+      if (input.artist) {
+        filters.push('species.code IN (SELECT a.species FROM variants a WHERE a.credit = ?)');
+        params.push(input.artist);
+      }
 
-      return results.length;
-    });
-  }
+      // TODO: validate user has access to extra insights
+      if (input.loggedInUser && Array.isArray(input.extraInsights)) {
+        for (let insight of input.extraInsights) {
+          switch (insight) {
+            case 'hatched':
+              filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "species" AND id = species.code) > 0');
+              params.push(input.memberData || input.loggedInUser);
+              break;
+            case 'unhatched':
+              filters.push('(SELECT IF(`count` = 0, NULL, 1) FROM counters WHERE `member` = ? AND type = "species" AND id = species.code) IS NULL');
+              params.push(input.memberData || input.loggedInUser);
+              break;
+            case 'wanted':
+              filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity = 1)');
+              params.push(input.memberData || input.loggedInUser);
+              break;
+            case 'needed':
+              filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity = 2)');
+              params.push(input.memberData || input.loggedInUser);
+              break;
+            case 'wishlisted':
+              filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity > 0)');
+              params.push(input.memberData || input.loggedInUser);
+              break;
+            case 'unwishlisted':
+              filters.push('species.code NOT IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity > 0)');
+              params.push(input.memberData || input.loggedInUser);
+              break;
+            case 'somewhere':
+              filters.push('code IN (SELECT id FROM counters WHERE type = "species" AND \`count\` > 0)');
+              break;
+          }
+        }
+      }
 
-  invalidate(identifier) {
-    return new Promise((resolve, reject) => {
-      Redis.connect().smembers(`search:${identifier}`, async (err, results) => {
+      if (filters.length > 0) {
+        query += ' WHERE ' + filters.join(' AND ');
+      }
 
-        for (let result of results) {
-          await Redis.connect().del(`search:${identifier}:${result}`);
+      query += ' ORDER BY ';
+
+      switch (input.sort) {
+        case 'scientificName':
+          query += 'species.scientificName';
+          break;
+        case 'friendship':
+          query += 'birdypets.friendship';
+          break;
+        case 'hatchedAt':
+          query += 'birdypets.hatchedAt';
+          break;
+        case 'freedAt':
+          query += 'freebirds.freedAt';
+          break;
+        case 'commonName':
+          query += 'species.commonName';
+          break;
+        default:
+          if (kind == 'birdypet') {
+            query += 'birdypets.hatchedAt';
+          } else {
+            query += 'species.commonName';
+          }
+      }
+
+      query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC');
+
+      Database.query(query, params).then((birds) => {
+        var totalPages = birds.length;
+
+        for (let i = page, len = Math.min(page + birdsPerPage, birds.length); i < len; i++) {
+          output.push(birds[i]);
         }
 
-        await Redis.connect().del(`search:${identifier}`);
-
-        resolve();
+        resolve({
+          totalPages: Math.ceil(totalPages / birdsPerPage),
+          results: output
+        });
       });
     });
   }

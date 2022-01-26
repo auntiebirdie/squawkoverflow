@@ -4,9 +4,13 @@
 
     <p class="text-center mb-5"><em>Look out!  These birds have been released and are running around stealing things for their nests.  Do you have space in your aviary for any of them?</em></p>
 
+    <%- include('../partials/pagination.ejs') %>
+
     <div id="lazyLoader" class="row g-0" data-endpoint="/api/freebirds"></div>
 
-    <%- include('../scripts/lazyloader.ejs', { template: '../templates/freebird.ejs', paginate: 1, skipParams: true }) %>
+    <%- include('../partials/pagination.ejs') %>
+
+    <%- include('../scripts/lazyloader.ejs', { template: '../templates/freebird.ejs', paginate: currentPage }) %>
 
   <script>
     $('#lazyLoader').on('click', '.card', function () {

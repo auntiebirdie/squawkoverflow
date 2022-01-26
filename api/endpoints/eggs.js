@@ -1,7 +1,9 @@
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 
-const {Storage} = require('@google-cloud/storage');
+const {
+  Storage
+} = require('@google-cloud/storage');
 const storage = new Storage();
 const bucket = storage.bucket('squawkoverflow');
 
@@ -12,8 +14,8 @@ module.exports = (req, res) => {
         for (let egg of eggs) {
           let icon = `/eggs/${egg.adjective.slice(0, 1).toUpperCase()}/${egg.adjective}.png`;
 
-	  egg.icon = await bucket.file(icon).exists() ? icon : '/eggs/D/default.png';
-		console.log(egg.icon);
+          egg.icon = await bucket.file(icon).exists() ? icon : '/eggs/D/default.png';
+          console.log(egg.icon);
           egg.memberTotal = await Counters.get('eggs', req.query.loggedInUser, egg.adjective);
         }
       }
