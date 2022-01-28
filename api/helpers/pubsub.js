@@ -70,6 +70,23 @@ exports.receive = function(message, context) {
               })
             }));
           }
+        } else if (data.freebird) {
+          if (process.env.NODE_ENV == "PROD" && member.serverMember && !member.settings.privacy?.includes('activity')) {
+            Webhook('birdwatching', {
+              content: " ",
+              embeds: [{
+                title: variant.bird.commonName,
+                description: `<@${member.id}> excitedly adds a new bird to ${member.fetchPronoun('determiner')} aviary!`,
+                url: `https://squawkoverflow.com/birdypet/${data.birdypet}`,
+                image: {
+                  url: variant.image
+                },
+                thumbnail: {
+                  url: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/282/hatching-chick_1f423.png'
+                }
+              }]
+            });
+          }
         }
         break;
       case "RELEASE":

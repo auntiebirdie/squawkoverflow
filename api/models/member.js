@@ -182,6 +182,22 @@ class Member {
     });
   }
 
+  fetchPronoun (pronounCase) {
+    var pronouns = require('../data/pronouns.json');
+
+    try {
+      for (let key in this.pronouns) {
+        if (this.pronouns[key] == "yes") {
+          return pronouns[key].cases[pronounCase];
+        }
+      }
+    } catch (err) {
+	    console.log(err);
+    }
+
+    return pronouns["they"].cases[pronounCase];
+  }
+
   updateWishlist(speciesCode, action) {
     let birds = require('../data/birds.json');
     let bird = birds.find((bird) => bird.speciesCode == speciesCode);

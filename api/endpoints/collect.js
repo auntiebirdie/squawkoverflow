@@ -42,6 +42,7 @@ module.exports = (req, res) => {
       member: req.body.loggedInUser,
       variant: variant,
       adjective: req.body.adjective,
+      freebird: req.body.freebird,
       source: req.headers && req.headers['x-forwarded-for'] == '35.208.110.100' ? 'DISCORD' : 'WEB'
     }));
 
