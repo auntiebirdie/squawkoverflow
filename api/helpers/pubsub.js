@@ -51,16 +51,23 @@ exports.receive = function(message, context) {
       case "COLLECT":
         if (data.adjective) {
           if (process.env.NODE_ENV == "PROD" && member.serverMember && (!member.settings.privacy?.includes('activity') || data.source == "DISCORD")) {
-            promises.push(Webhook('egg-hatchery', {
-              content: " ",
-              embeds: [{
-                title: variant.bird.commonName,
-                description: `<@${member.id}> hatched the ${data.adjective} egg!`,
-                url: `https://squawkoverflow.com/birdypet/${data.birdypet}`,
-                image: {
-                  url: variant.image
-                }
-              }]
+            promises.push(Database.getOne('adjectives', {
+              adjective: data.adjective
+            }).then((egg) => {
+              Webhook('egg-hatchery', {
+                content: " ",
+                embeds: [{
+                  title: variant.bird.commonName,
+                  description: `<@${member.id}> hatched the ${data.adjective} egg!`,
+                  url: `https://squawkoverflow.com/birdypet/${data.birdypet}`,
+                  image: {
+                    url: variant.image
+                  },
+                  thumbnail: {
+                    url: `https://storage.googleapis.com/squawkoverflow/${ egg.icon || '/eggs/D/default.png' }`
+                  }
+                }]
+              })
             }));
           }
         }
@@ -70,7 +77,7 @@ exports.receive = function(message, context) {
           id: Database.key(),
           variant: variant.id,
           freedAt: new Date(),
-	  hatchedAt: data.hatchedAt ? new Date(data.hatchedAt) : new Date()
+          hatchedAt: data.hatchedAt ? new Date(data.hatchedAt) : new Date()
         });
 
         break;

@@ -24,7 +24,9 @@ module.exports = async (req, res) => {
     image.getBuffer(Jimp[`MIME_PNG`], async (err, buff) => {
       await file.save(buff);
 
-      res.sendStatus(200);
+      Database.query('SELECT COUNT(DISTINCT icon) - 1 art, COUNT(*) total FROM adjectives').then((counts) => {
+        res.json(counts[0]);
+      });
     });
   });
 };

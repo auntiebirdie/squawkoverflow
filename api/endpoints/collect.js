@@ -25,7 +25,7 @@ module.exports = (req, res) => {
     }
 
     await member.fetch({
-	    createIfNotExists: req.headers && req.headers['x-forwarded-for'] == '35.208.110.100' ? true : false
+      createIfNotExists: req.headers && req.headers['x-forwarded-for'] == '35.208.110.100' ? true : false
     });
 
     await birdypet.create({
@@ -47,7 +47,12 @@ module.exports = (req, res) => {
 
     Promise.all(promises).then(() => {
       if (birdypet.id) {
-        resolve(res.json(birdypet));
+        Database.getOne('adjectives', {
+          adjective: req.body.adjective
+        }).then((egg) => {
+          birdypet.egg = egg;
+          resolve(res.json(birdypet));
+        });
       } else {
         resolve(res.sendStatus(404));
       }
