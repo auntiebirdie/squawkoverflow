@@ -47,12 +47,16 @@ module.exports = (req, res) => {
 
     Promise.all(promises).then(() => {
       if (birdypet.id) {
-        Database.getOne('adjectives', {
-          adjective: req.body.adjective
-        }).then((egg) => {
-          birdypet.egg = egg;
-          resolve(res.json(birdypet));
-        });
+        if (req.body.adjective) {
+          Database.getOne('adjectives', {
+            adjective: req.body.adjective
+          }).then((egg) => {
+            birdypet.egg = egg;
+            resolve(res.json(birdypet));
+          });
+        } else {
+          res.json(birdypet);
+        }
       } else {
         resolve(res.sendStatus(404));
       }

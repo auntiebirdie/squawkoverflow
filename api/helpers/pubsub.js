@@ -54,7 +54,7 @@ exports.receive = function(message, context) {
             promises.push(Database.getOne('adjectives', {
               adjective: data.adjective
             }).then((egg) => {
-              Webhook('egg-hatchery', {
+              Webhook('birdwatching', {
                 content: " ",
                 embeds: [{
                   title: variant.bird.commonName,

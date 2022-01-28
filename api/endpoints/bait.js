@@ -1,4 +1,5 @@
 const BirdyPet = require('../models/birdypet.js');
+const Chance = require('chance').Chance();
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 const Member = require('../models/member.js');
@@ -43,7 +44,7 @@ module.exports = (req, res) => {
       }));
 
       if (process.env.NODE_ENV == "PROD") {
-        promises.push(Webhook('egg-hatchery', {
+        promises.push(Webhook('birdwatching', {
           content: " ",
           embeds: [{
             title: variant.bird.commonName,
@@ -51,6 +52,9 @@ module.exports = (req, res) => {
             url: `https://squawkoverflow.com/birdypet/${birdypet.id}`,
             image: {
               url: variant.image
+            },
+            thumbnail: {
+              url: Chance.pickone(require('../data/bugs.json'))
             }
           }]
         }));
