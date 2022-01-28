@@ -68,7 +68,6 @@ var Database = require('../api/helpers/database.js');
   await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "variant"');
   await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "variant", birdypets.variant, COUNT(*) FROM birdypets GROUP BY \`member\`, \`variant\`');
 
-
   await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "species"');
   await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "species", variants.species, COUNT(*) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) GROUP BY \`member\`, variants.species');
 
@@ -76,9 +75,9 @@ var Database = require('../api/helpers/database.js');
   await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "family", species.family, COUNT(*) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.code) GROUP BY \`member\`, species.family');
 
   await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "eggs"');
-	await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "eggs", `adjective`, COUNT(DISTINCT species.code) FROM species_adjectives JOIN species ON (species_adjectives.species = species.code) JOIN variants ON (variants.species = species.code) JOIN birdypets ON (birdypets.variant = variants.id) GROUP BY \`member\`, adjective');
+  await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "eggs", `adjective`, COUNT(DISTINCT species.code) FROM species_adjectives JOIN species ON (species_adjectives.species = species.code) JOIN variants ON (variants.species = species.code) JOIN birdypets ON (birdypets.variant = variants.id) GROUP BY \`member\`, adjective');
 
-	await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "aviary", "total", COUNT(*) FROM birdypets GROUP BY birdypets.member');
+  await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "aviary", "total", COUNT(*) FROM birdypets GROUP BY birdypets.member');
 
 
   process.exit(0);

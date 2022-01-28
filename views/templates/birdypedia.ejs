@@ -7,7 +7,7 @@
         </button>
       <% } %>
       <div class="h100">
-        <div class="bg-white lazy birdypet ${model.variants[0].hatched ? "hatched" : "unhatched"}"
+        <div class="bg-white lazy birdypet ${model.variants[0].hatched ? "hatched" : "unhatched"} checkmark${model.owned == 2 ? 2 : model.owned}"
                data-bg="${model.variants[0].image}"
         ></div>
         <h6 class="p-1 bg-white birdypets text-center d-none d-sm-block">

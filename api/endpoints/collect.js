@@ -24,7 +24,9 @@ module.exports = (req, res) => {
       promises.push(Database.query('UPDATE members SET lastHatchAt = NOW() WHERE id = ?', [req.body.loggedInUser]));
     }
 
-    await member.fetch();
+    await member.fetch({
+	    createIfNotExists: req.headers && req.headers['x-forwarded-for'] == '35.208.110.100' ? true : false
+    });
 
     await birdypet.create({
       variant: variant,
@@ -51,7 +53,6 @@ module.exports = (req, res) => {
       }
     });
   }).catch((err) => {
-    console.error("uwu crash");
     console.error(err);
   });
 };

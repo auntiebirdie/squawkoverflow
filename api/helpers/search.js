@@ -20,14 +20,19 @@ class Search {
       }
 
       switch (kind) {
-        case 'freebird':
-          query += ' freebirds.id, freebirds.variant FROM freebirds JOIN variants ON (freebirds.variant = variants.id) JOIN species ON (variants.species = species.code)';
-          break;
         case 'bird':
-          query += ' species.code FROM species';
+          query += 'species.code FROM species';
+          break;
+        case 'birdypet':
+          query += 'birdypets.id FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.code)';
+          filters.push('birdypets.member = ?');
+          params.push(input.member);
+          break;
+        case 'freebird':
+          query += 'freebirds.id, freebirds.variant FROM freebirds JOIN variants ON (freebirds.variant = variants.id) JOIN species ON (variants.species = species.code)';
           break;
         case 'wishlist':
-          query += ' species.code FROM species JOIN wishlist ON (species.code = wishlist.species AND wishlist.member = ? AND wishlist.intensity > 0)';
+          query += 'species.code FROM species JOIN wishlist ON (species.code = wishlist.species AND wishlist.member = ? AND wishlist.intensity > 0)';
           params.push(input.id);
           break;
       }
@@ -35,6 +40,15 @@ class Search {
       if (input.family) {
         filters.push('species.family = ?');
         params.push(input.family);
+      }
+
+      if (input.flock) {
+        if (input.flock == "NONE") {
+          filters.push('birdypets.id NOT IN (SELECT a.birdypet FROM birdypet_flocks AS a)');
+        } else {
+          filters.push('birdypets.id IN (SELECT a.birdypet FROM birdypet_flocks AS a WHERE a.flock = ?)');
+          params.push(input.flock);
+        }
       }
 
       if (input.adjectives) {
@@ -55,6 +69,8 @@ class Search {
 
       // TODO: validate user has access to extra insights
       if (input.loggedInUser && Array.isArray(input.extraInsights)) {
+        var intensity = [];
+
         for (let insight of input.extraInsights) {
           switch (insight) {
             case 'hatched':
@@ -67,15 +83,19 @@ class Search {
               break;
             case 'duplicated':
               filters.push('species.code IN (SELECT id FROM counters WHERE type = "species" AND `member` = ? AND `count` > 1)');
-              params.push(input.memberData || input.loggedInUser);
+              if (kind == "wishlist") {
+                params.push(input.loggedInUser);
+              } else if (kind == "birdypet") {
+                params.push(input.member);
+              } else {
+                params.push(input.memberData || input.loggedInUser);
+              }
               break;
             case 'wanted':
-              filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity = 1)');
-              params.push(input.memberData || input.loggedInUser);
+              intensity.push(1);
               break;
             case 'needed':
-              filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity = 2)');
-              params.push(input.memberData || input.loggedInUser);
+              intensity.push(2);
               break;
             case 'wishlisted':
               filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity > 0)');
@@ -89,6 +109,11 @@ class Search {
               filters.push('species.code IN (SELECT id FROM counters WHERE type = "species" AND `count` > 0)');
               break;
           }
+        }
+
+        if (intensity.length > 0) {
+          filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity IN (?))');
+          params.push(input.memberData || input.loggedInUser, intensity);
         }
       }
 

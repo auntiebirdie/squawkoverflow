@@ -32,7 +32,8 @@
               <select name="variant" class="form-select">
                 <% for (let variant of birdypet.bird.variants) { %>
                 <option value="<%= variant.id %>" data-src="<%= variant.image %>" <%= variant.id == birdypet.variant.id ? "selected" : "" %>>
-                  <%= variant.label %>
+                  <%= variant.subspecies %> <%= variant.label %>
+                  by <%= variant.credit %>
                   <%= variant.id == birdypet.variant.id ? "[current]" : "" %>
                 </option>
                 <% } %>

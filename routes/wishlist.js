@@ -35,6 +35,23 @@ router.get('/:member', async (req, res, next) => {
     id: req.params.member
   });
 
+  let timeUntilTommorrow = null;
+
+  if (member.baitUsed) {
+    let now = new Date();
+    let midnight = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 24, 00);
+
+    let seconds = (midnight - now.getTime()) / 1000;
+    let minutes = Math.round(seconds / 60);
+    let hours = Math.round(minutes / 60);
+
+    if (hours > 1) {
+      timeUntilTomorrow = `${hours} hours`;
+    } else {
+      timeUntilTomorrow = `${minutes} minutes`;
+    }
+  }
+
   res.render('wishlist/index', {
     page: 'wishlist',
     member: member,

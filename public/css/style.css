@@ -2,7 +2,7 @@ html,
 body {
   font-family: "Open Sans", sans-serif;
   color: #272829;
-  min-height: 100vh;
+  height: 100%;
   position: relative;
 }
 
@@ -56,10 +56,12 @@ img {
   position: absolute;
 }
 
-#main,
-#home-banner {
-  margin-left: 300px;
-  margin-right: 300px;
+#main {
+	height: 100%;
+}
+
+#main, #home-banner  {
+	margin: 0 300px;
 }
 
 @media (max-width: 1399px) {
@@ -192,6 +194,10 @@ img {
 #home-banner {
   position: relative;
   height: 600px;
+}
+
+.full-image-background {
+	background-position: center center;
 }
 
 #home-text {

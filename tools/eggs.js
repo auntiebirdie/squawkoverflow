@@ -23,29 +23,42 @@ client.login(secrets.DISCORD.BOT_TOKEN);
 client.on('ready', () => {
   client.guilds.fetch(secrets.EGGS[process.argv[2]]).then((guild) => {
     guild.emojis.fetch().then(async (emojis) => {
-      emojis.each(async (emoji) => {
-        let icon = `eggs/${emoji.name.slice(0, 1).toUpperCase()}/${emoji.name}.png`;
+      let total = emojis.size;
+      let i = 0;
 
-        await Database.set('adjectives', {
-          adjective: emoji.name
-        }, {
-          icon: icon
-        });
+      if (total > 0) {
+        emojis.each(async (emoji) => {
+          let icon = `eggs/${emoji.name.slice(0, 1).toUpperCase()}/${emoji.name}.png`;
 
-        let file = bucket.file(icon);
+          await Database.set('adjectives', {
+            adjective: emoji.name
+          }, {
+            icon: icon
+          });
 
-        await new Promise((resolve, reject) => {
-          Jimp.read(`https://cdn.discordapp.com/emojis/${emoji.id}.png`).then(async (image) => {
-            image.getBuffer(Jimp[`MIME_PNG`], async (err, buff) => {
-              console.log(emoji.id, emoji.name);
+          let file = bucket.file(icon);
 
-              await file.save(buff);
+          await new Promise((resolve, reject) => {
+            Jimp.read(`https://cdn.discordapp.com/emojis/${emoji.id}.png`).then(async (image) => {
+              image.getBuffer(Jimp[`MIME_PNG`], async (err, buff) => {
+                console.log(emoji.id, emoji.name);
 
-              resolve();
+                await file.save(buff);
+
+                i++;
+
+                resolve();
+              });
             });
+          }).then(() => {
+            if (i >= total) {
+              process.exit(0);
+            }
           });
         });
-      });
+      } else {
+        process.exit(0);
+      }
     });
   });
 });
