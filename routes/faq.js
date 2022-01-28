@@ -25,10 +25,10 @@ router.get('/', async (req, res) => {
       `
     },
     {
-      slug: 'copyright-infringement',
-      question: 'Artwork of mine is on this site and I want it removed.',
+      slug: 'bug',
+      question: 'I found an error or issue with the site, what do I do?',
       answer: `
-		  <p>Please send an email to <a href="mailto:seppukawaii+copyright@gmail.com">seppukawaii+copyright@gmail.com</a> for takedown requests and they will be removed. We are genuinely sorry and will resolve this issue as soon as possible!</p>
+		  <p>You can submit <a href="https://bugs.squawkoverflow.com">a bug report</a> to alert the developer and receive a bug for your troubles!</p>
 		  `
     },
     {

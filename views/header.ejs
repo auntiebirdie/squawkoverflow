@@ -43,7 +43,7 @@
  <% } %>
 
   <div id="navbar" class="bg-dark">
-    <div class="d-flex flex-column pt-3 ps-3 ps-sm-0">
+    <div class="pt-3 ps-3 ps-sm-0">
 
       <div class="ps-3 ps-sm-0">
         <img src="/img/SQUAWK.png" alt="logo" class="img-fluid d-none d-sm-block mb-2">
@@ -120,7 +120,8 @@
     </div>
   </div>
 
-  <% if (locals.page && locals.page == "home") { %> 
+  <main id="main">
+   <% if (locals.page && locals.page == "home") { %> 
     <div id="home-banner" class="full-image-background">
       <a class="attribution bg-light"></a>
     </div>
@@ -130,20 +131,19 @@
       <p class="text-center"><em>the ultimate bird collecting game</em></p>
     </div>
     <script type="text/javascript" src="/js/full-background-image.js" image="banner"></script>
-  <% } %>
+   <% } %>
 
-  <% if (locals.bugFound) { %>
-    <div class="bg-light w-50 mx-auto my-4 d-flex rounded p-3 align-items-start">
+   <% if (locals.bugFound) { %>
+    <div class="bg-light w-75 mx-auto my-4 d-flex rounded p-3 align-items-start">
       <img src="<%= locals.bugFound %>">
 
       <div>
         <h4>You found a bug!!</h4>
 
         <p>This little bugger was chewing on some data, but thankfully you caught it before it did any real damage!</p>
-        <p>You can feed it to your Birdy Buddy or use it as bait to attract <a href="/wishlist">a bird on your wishlist</a>.</p>
+        <p>You can feed it to your birds to increase their friendship or use it as bait to attract <a href="/wishlist">a bird on your wishlist</a>.</p>
       </div>
     </div>
-  <% } %>
+   <% } %>
 
-  <main id="main" class="pt-3 pb-4">
-    <div class="container">
+  <div class="container">

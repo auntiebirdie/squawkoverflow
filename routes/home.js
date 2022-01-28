@@ -35,4 +35,8 @@ router.get('/logout', (req, res) => {
   });
 });
 
+router.get('/privacy-policy', (req, res) => {
+  res.render('home/privacy');
+});
+
 module.exports = router;
