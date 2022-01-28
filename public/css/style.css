@@ -91,6 +91,8 @@ img {
     overflow-y: auto;
     position: fixed;
     bottom: 0;
+    flex-basis: 0;
+    width: 300px;
   }
 
   #main {
