@@ -19,12 +19,16 @@ a:hover, .nav-menu a:hover {
 	color: #2c3100 !important;
 }
 
-.bg-light, .card {
+.bg-light, .card, .page-link {
 	background-color: #202123 !important;
 }
 
 .text-light, .card {
 	color: #dddddd !important;
+}
+
+.border-light, .page-link {
+	border-color: #202123 !important;
 }
 
 .bg-primary, .btn-primary {
@@ -41,13 +45,14 @@ a:hover, .nav-menu a:hover {
 
 .bg-secondary, .btn-secondary,
 .page-item.active .page-link,
+.page-link:hover,
 .form-check-input:checked,
 .btn-check:active+.btn-outline-secondary, .btn-check:checked+.btn-outline-secondary,
 .btn-outline-secondary:hover {
 	background-color: #444D00 !important;
 }
 
-.text-secondary, .page-item .page-link {
+.text-secondary {
 	color: #444D00 !important;
 }
 
@@ -57,12 +62,13 @@ a:hover, .nav-menu a:hover {
 
 .border-secondary, .btn-secondary, .btn-outline-secondary,
 .page-item.active .page-link,
+.page-link:hover,
 .form-check-input:checked {
 	border-color: #444D00 !important;
 }
 
-.page-item.active .page-link {
-	color: #ffffff !important;
+.page-item .page-link {
+	color: #eeeeee !important;
 }
 
 .page-title h1::after {

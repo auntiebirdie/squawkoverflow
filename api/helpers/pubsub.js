@@ -71,7 +71,7 @@ exports.receive = function(message, context) {
             }));
           }
         } else if (data.freebird) {
-          if (process.env.NODE_ENV == "PROD" && member.serverMember && !member.settings.privacy?.includes('activity')) {
+          if (process.env.NODE_ENV == "PROD" && member.serverMember && (!member.settings.privacy?.includes('activity') || data.source == "DISCORD")) {
             Webhook('birdwatching', {
               content: " ",
               embeds: [{
