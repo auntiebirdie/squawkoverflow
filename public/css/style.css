@@ -284,6 +284,10 @@ img {
   margin-bottom: 0;
 }
 
+.card.disabled {
+	filter: brightness(0.5) grayscale(1);
+}
+
 .birdypet {
   height: 300px;
   background-size: contain;

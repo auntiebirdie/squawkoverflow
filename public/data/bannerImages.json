@@ -22,7 +22,8 @@
 }, {
   "image": "https://images.unsplash.com/photo-1490718720478-364a07a997cd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNTk0OTB8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2NDgxODY&ixlib=rb-1.2.1&q=80&w=1080",
   "attribution": "Ray Hennessy",
-  "source": "https://unsplash.com/photos/mpw37yXc_WQ"
+  "source": "https://unsplash.com/photos/mpw37yXc_WQ",
+  "position": "center 15%"
 }, {
   "image": "https://images.unsplash.com/photo-1557401622-cfc0aa5d146c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNTk0OTB8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2NDgxODY&ixlib=rb-1.2.1&q=80&w=1080",
   "attribution": "Mathew Schwartz",

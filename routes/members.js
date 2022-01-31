@@ -79,7 +79,7 @@ router.get('/:member/gift', Middleware.isLoggedIn, async (req, res) => {
         ],
         extraInsights: [{
           id: 'duplicated',
-          label: 'Duplicates'
+          label: 'I Have Multiple'
         }, {
           id: 'wanted',
           label: "In Their Wishlist (Want It)"

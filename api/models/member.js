@@ -109,6 +109,9 @@ class Member {
                   await this.birdyBuddy.fetch();
                 }
                 break;
+              case 'exchangeData':
+                this.exchangeData = await Counters.get('exchanges', this.id, "waitingOnMe");
+                break;
               case 'featuredFlock':
                 if (member.featuredFlock) {
                   this.featuredFlock = new Flock(member.featuredFlock);
@@ -182,7 +185,7 @@ class Member {
     });
   }
 
-  fetchPronoun (pronounCase) {
+  fetchPronoun(pronounCase) {
     var pronouns = require('../data/pronouns.json');
 
     try {
@@ -192,7 +195,7 @@ class Member {
         }
       }
     } catch (err) {
-	    console.log(err);
+      console.log(err);
     }
 
     return pronouns["they"].cases[pronounCase];

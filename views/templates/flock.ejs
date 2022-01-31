@@ -1,6 +1,6 @@
 <div class="col-6 col-md-4 d-flex align-items-stretch">
   <div class="w-100 pb-3 px-2">
-    <div class="h-100 card <% if (locals.loggedInUser && locals.page && page == 'manageFlock' && loggedInUser.id == member.id) { %>${model.flocks.includes('<%= flock.id %>') ? 'border-primary' : 'border-secondary border-dashed border-2'}<% } %>">
+    <div class="h-100 card <% if (locals.loggedInUser && locals.page && page == 'manageFlock' && loggedInUser.id == member.id) { %>${model.flocks.includes('<%= flock.id %>') ? 'p-1 border-primary' : 'p-1 border-secondary border-dashed border-2'}<% } %>">
       <div class="h-100">
         <div class="bg-white lazy birdypet <% if ((locals.page && page != 'aviary') || (locals.loggedInUser && loggedInUser.id != member.id)) { %>checkmark${model.bird.owned == 2 ? 2 : model.bird.owned}<% } %>"
              data-id="${model.id}"

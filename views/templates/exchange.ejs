@@ -1,0 +1,19 @@
+<div class="col-6 col-md-4 d-flex align-items-stretch">
+  <div class="w-100 pb-3 px-2">
+    <div class="h-100 card p-1 ${model.exchangeData ? (model.exchangeData == '<%= exchange.id %>' ? 'border-primary' : 'disabled') : 'border-secondary border-dashed border-2'}">
+      <a class="wishlist-heart">
+        ${model.bird.wishlisted ? (model.bird.wishlisted == 2 ? '🌟' : '❤️') : ''}
+      </a>
+      <div>
+        <div class="bg-white lazy birdypet checkmark${model.bird.owned > 2 ? 2 : model.bird.owned}"
+             data-id="${model.id}"
+             data-bg="${model.variant.image}"
+        ></div>
+      </div>
+      <div class="card-body align-top">
+        <h3 class="text-center">${model.nickname ? model.nickname : model.bird.commonName}</h3> 
+        <h6 class="text-center">${model.exchangeData == null || model.exchangeData == '<%= exchange.id %>' ? '' : (model.member == '<%= loggedInUser.id %>' ? `<a href="/exchange/${model.exchangeData}">in another exchange</a>` : 'in another exchange')}</h6>
+      </div>
+    </div>
+  </div>
+</div>

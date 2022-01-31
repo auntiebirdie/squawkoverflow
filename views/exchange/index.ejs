@@ -1,0 +1,40 @@
+<%- include('../header.ejs') %>
+
+  <%- include('../partials/page-title.ejs', { title: "Exchanges & Offers" }) %>
+
+  <%- include('../partials/pagination.ejs') %>
+
+  <div id="lazyLoader" class="row g-0" data-endpoint="/api/exchanges"></div>
+
+  <%- include('../partials/pagination.ejs') %>
+
+  <%- include('../scripts/lazyloader.ejs', { paginate : currentPage, template: '../templates/offer.ejs', noResultsFound: "You have no offers or exchange history. Visit a member's profile to start an offer!" }) %>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#lazyLoader').on('click', '.btn-danger', function () {
+        var row = this.parentNode.parentNode.parentNode.parentNode;
+
+        if (!this.style.opacity) {
+          this.style.opacity = .5;
+          $(row).toggleClass('loadingData');
+
+          $.ajax({
+            cache: false,
+            url: '/api/exchanges',
+            data: JSON.stringify({
+              id: this.getAttribute('data-id'),
+            }),
+            dataType: 'json',
+            method: 'DELETE',
+            contentType: 'application/json',
+            success: function(data) {
+              row.remove();
+            }
+          });
+        }
+      });
+    });
+  </script>
+
+<%- include('../footer.ejs') %>

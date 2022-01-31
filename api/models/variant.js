@@ -26,6 +26,7 @@ class Variant {
         this.prefix = variant.prefix;
         this.alias = variant.alias;
         this.label = variant.label;
+	this.subspecies = variant.subspecies;
         this.credit = variant.credit;
         this.source = variant.source;
         this.special = variant.special == '1';

@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
 
       await member.fetch(req.query);
 
-      return member.username ? res.json(member) : res.sendStatus(404);
+      return res.json(member);
       break;
     case "PUT":
       var member = new Member(req.body.loggedInUser);

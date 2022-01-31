@@ -21,7 +21,7 @@ class BirdyPet {
       if (variant) {
         this.id = Database.key();
         this.variant = variant;
-	this.bird = this.variant.bird;
+        this.bird = this.variant.bird;
         this.member = data.member;
 
         Database.create('birdypets', {
@@ -62,6 +62,16 @@ class BirdyPet {
 
           await this.bird.fetch(params);
 
+          if (params.include?.includes('exchangeData')) {
+            this.exchangeData = await Database.query('SELECT exchanges.id FROM exchange_birdypets JOIN exchanges ON (exchange_birdypets.exchange = exchanges.id) WHERE birdypet = ? AND statusA + statusB BETWEEN 0 AND 3 AND (memberA = ? OR (memberB = ? AND statusB > 0) OR id = ?)', [this.id, this.member, this.member, params.exchange]).then(([data]) => {
+              if (data) {
+                return data.id;
+              } else {
+                return null;
+              }
+            });
+          }
+
           try {
             this.flocks = await Database.get('birdypet_flocks JOIN flocks ON birdypet_flocks.flock = flocks.id', {
               birdypet: this.id
@@ -81,19 +91,73 @@ class BirdyPet {
   }
 
   async set(data) {
-    await Database.set('birdypets', {
-      id: this.id
-    }, data);
+    return new Promise(async (resolve, reject) => {
+      if (this.member != data.member) {
+        await Database.delete('birdypet_flocks', {
+          birdypet: this.id
+        });
 
-    await Cache.refresh('birdypet', this.id);
+        await Database.query('SELECT * FROM exchanges WHERE id IN (SELECT exchange FROM exchange_birdypets WHERE birdypet = ? AND statusA + statusB < 4)', [this.id]).then(async (exchanges) => {
+          for (let exchange of exchanges) {
+            let toUpdate = {};
 
-    return true;
+            if (exchange.statusA == 2) {
+              toUpdate.statusA = 1;
+            }
+
+            if (exchange.statusB == 2) {
+              toUpdate.statusB = 1;
+            }
+
+            await Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${this.bird.commonName} was removed from the offer because it was given away.`]);
+
+            await Database.set('exchanges', {
+              id: exchange.id
+            }, toUpdate);
+          }
+
+          await Database.query('DELETE FROM exchange_birdypets WHERE birdypet = ?', [this.id]);
+        });
+      }
+
+      await Database.set('birdypets', {
+        id: this.id
+      }, data);
+
+      await Cache.refresh('birdypet', this.id);
+
+      resolve();
+    });
   }
 
   delete() {
     return Promise.all([
       Database.delete('birdypets', {
         id: this.id
+      }),
+      Database.delete('birdypet_flocks', {
+        birdypet: this.id
+      }),
+      Database.query('SELECT * FROM exchanges WHERE id IN (SELECT exchange FROM exchange_birdypets WHERE birdypet = ?)', [this.id]).then(async (exchanges) => {
+        for (let exchange of exchanges) {
+          let toUpdate = {};
+
+          if (exchange.statusA == 2) {
+            toUpdate.statusA = 1;
+          }
+
+          if (exchange.statusB == 2) {
+            toUpdate.statusB = 1;
+          }
+
+          await Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${this.bird.commonName} was removed from the offer because it was released.`]);
+
+          await Database.set('exchanges', {
+            id: exchange.id
+          }, toUpdate);
+        }
+
+        await Database.query('DELETE FROM exchange_birdypets WHERE birdypet = ?', [this.id]);
       }),
       Redis.connect("cache").del(`birdypet:${this.id}`),
     ]);

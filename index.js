@@ -48,7 +48,8 @@ app.use(async function(req, res, next) {
 
   if (req.session.user) {
     req.session.loggedInUser = await API.call('member', 'GET', {
-      id: req.session.user
+      id: req.session.user,
+      include: ['exchangeData']
     }).catch((err) => {
       console.log(err);
       delete req.session.user;
@@ -65,11 +66,17 @@ app.use(async function(req, res, next) {
     }, {
       "icon": "🐣",
       "label": "Free Birds",
-      "href": `/freebirds`
+      "href": "/freebirds"
+    }, {
+      "icon": "🤝",
+      "label": "Exchange",
+      "href": "/exchange",
+	    "notif" : req.session.loggedInUser.exchangeData
     });
 
+    // computers are bad at rnadom so this helps keep it from triggering too often
     if (chance.bool({
-        likelihood: 5
+        likelihood: 10
       }) && chance.bool({
         likelihood: 5
       })) {
@@ -118,6 +125,7 @@ app.use('/flocks', require('./routes/flocks.js'));
 app.use('/freebirds', require('./routes/freebirds.js'));
 app.use('/birdypedia', require('./routes/birdypedia.js'));
 app.use('/members', require('./routes/members.js'));
+app.use('/exchange', require('./routes/exchange.js'));
 app.use('/settings', require('./routes/settings.js'));
 app.use('/faq', require('./routes/faq.js'));
 app.use('/api', require('./routes/api.js'));

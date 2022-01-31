@@ -1,0 +1,219 @@
+<%- include('../header.ejs') %>
+
+  <%- include('../partials/page-title.ejs', {
+        title: `Exchange with ${exchange.member.username}`
+      }) %>
+
+ <% if (exchange.statusA + exchange.statusB >= 0 && exchange.statusA + exchange.statusB < 4) { %>
+  <div id="errorMessage" class="bg-warning text-dark p-3 w-50 mx-auto rounded mb-3 d-none"></div>
+
+  <div id="exchange" class="row">
+    <div class="col-12 col-md-6">
+      <div class="bg-light m-3 pt-3 px-3 rounded h-100">
+        <div class="row pb-4">
+          <div class="col-6">
+            <h4>
+              <% if (exchange.memberA == loggedInUser.id) { %>
+                I'll give ...
+              <% } else { %>
+                They'll give ...
+              <% } %>
+            </h4>
+          </div>
+         <% if (exchange.mutable) { %>
+          <div class="col-6 text-end">
+            <a class="btn btn-dark btn-sm" href="/exchange/<%= exchange.id %>/<%= exchange.memberA == loggedInUser.id ? "offer" : "request" %>">
+              + <%= exchange.memberA == loggedInUser.id ? "offer" : "request" %> birds
+            </a>
+          </div>
+         <% } %>
+        </div>
+
+        <div class="row">
+         <% if (exchange.birdypetsA.length > 0) { %>
+           <% for (let birdypet of exchange.birdypetsA) { %>
+           <div class="col-12 col-lg-6 d-flex align-items-stretch">
+             <div class="w-100 pb-3 px-2">
+               <div class="h-100 card">
+                <% if (loggedInUser.id != exchange.memberA) { %>
+                 <a class="wishlist-heart">
+                   <%= birdypet.bird.wishlisted ? (birdypet.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
+                 </a>
+                <% } %>
+                 <div class="h100">
+                   <div class="bg-white lazy birdypet <% if (loggedInUser.id != exchange.memberA) { %>checkmark<%= birdypet.bird.owned == 2 ? 2 : birdypet.bird.owned %><% } %>"
+                        data-id="<%= birdypet.id %>"
+                        data-bg="<%= birdypet.variant.image %>"
+                   >
+                   </div>
+                 </div>
+                 <div class="card-body">
+                   <h4 class="text-center"><a href="/birdypet/<%= birdypet.id %>"><%= birdypet.nickname ? birdypet.nickname : birdypet.bird.commonName %></a></h4>
+                   <h6 class="text-center"><%= birdypet.nickname ? birdypet.bird.commonName : "" %></h6>
+                 </div>
+               </div>
+             </div>
+           </div>
+          <% } %>
+         <% } else { %>
+           <p class="text-center"><em>
+             <% if (exchange.memberA == loggedInUser.id) { %>
+               <% if (exchange.mutable) { %>
+                 If you make this offer without selecting any birds, it indicates to <%= exchange.member.username %> that they should pick what birds they want from your aviary in exchange.
+               <% } else { %>
+                 <%= exchange.member.username %> hasn't decided what birds from your aviary they want.
+               <% } %>
+             <% } else { %>
+               Please pick what birds you want from <%= exchange.member.username %>'s aviary in exchange for the birds they're interested in.
+             <% } %>
+           </em></p>
+         <% } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+      <div class="bg-light m-3 pt-3 px-3 rounded h-100">
+        <div class="row pb-4">
+          <div class="col-6">
+            <h4>
+              ... for these
+            </h4>
+          </div>
+         <% if (exchange.mutable) { %>
+          <div class="col-6 text-end">
+            <a class="btn btn-dark btn-sm" href="/exchange/<%= exchange.id %>/<%= exchange.memberA == loggedInUser.id ? "request" : "offer" %>">
+              + <%= exchange.memberA == loggedInUser.id ? "request" : "offer" %> birds
+            </a>
+          </div>
+         <% } %>
+        </div>
+
+        <div class="row">
+         <% if (exchange.birdypetsB.length > 0) { %>
+          <% for (let birdypet of exchange.birdypetsB) { %>
+           <div class="col-12 col-md-6 d-flex align-items-stretch">
+             <div class="w-100 pb-3 px-2">
+               <div class="h-100 card">
+                <% if (loggedInUser.id != exchange.memberB) { %>
+                 <a class="wishlist-heart">
+                   <%= birdypet.bird.wishlisted ? (birdypet.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
+                 </a>
+                <% } %>
+                 <div class="h100">
+                   <div class="bg-white lazy birdypet <% if (loggedInUser.id != exchange.memberB) { %>checkmark<%= birdypet.bird.owned == 2 ? 2 : birdypet.bird.owned %><% } %>"
+                        data-id="<%= birdypet.id %>"
+                        data-bg="<%= birdypet.variant.image %>"
+                   >
+                   </div>
+                 </div>
+                 <div class="card-body">
+                   <h4 class="text-center"><a href="/birdypet/<%= birdypet.id %>"><%= birdypet.nickname ? birdypet.nickname : birdypet.bird.commonName %></a></h4>
+                   <h6 class="text-center"><%= birdypet.nickname ? birdypet.bird.commonName : "" %></h6>
+                 </div>
+               </div>
+             </div>
+           </div>
+          <% } %>
+         <% } else { %>
+           <p class="text-center"><em>
+             <% if (exchange.memberB == loggedInUser.id) { %>
+               If you make this offer without selecting any birds, it indicates to <%= exchange.member.username %> that they should pick what birds they want from your aviary in exchange.
+             <% } else { %>
+               Please pick what birds you want from <%= exchange.member.username %>'s aviary.
+             <% } %>
+           </em></p>
+         <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center pt-5">
+   <% if (exchange.mutable) { %>
+    <button id="makeOffer" class="btn btn-secondary btn-lg">Make Offer</button>
+
+    <script type="text/javascript">
+      var errorMessage = document.getElementById('errorMessage');
+
+      $('#exchange').on('click', '.card', function (e) {
+        if (e.target.nodeName != 'A') {
+          var image = e.currentTarget.querySelector('.birdypet');
+
+          if (!image.style.opacity) {
+            image.style.opacity = .5;
+            $(image.parentNode.parentNode).toggleClass('loadingData');
+
+            $.ajax({
+              cache: false,
+              url: '/api/exchanges',
+              data: JSON.stringify({
+                birdypet: image.getAttribute('data-id'),
+                exchange: '<%= exchange.id %>'
+              }),
+              dataType: 'json',
+              method: 'POST',
+              contentType: 'application/json',
+              success: function(data) {
+                image.style.opacity = null;
+                image.innerHTML = "";
+
+                $(image.parentNode.parentNode).toggleClass('disabled loadingData');
+              }
+            });
+          }
+        }
+      });
+
+      $('#makeOffer').on('click', function () {
+        let button = this;
+
+        if (!button.style.opacity) {
+          button.style.opacity = .5;
+
+          let container = button.parentNode.parentNode;
+          container.classList.add('loadingData');
+          errorMessage.classList.add('d-none');
+
+          $.ajax({
+            cache: false,
+            url: '/api/exchanges',
+            data: JSON.stringify({
+              id: '<%= exchange.id %>'
+            }),
+            dataType: 'json',
+            method: 'PUT',
+            contentType: 'application/json',
+            success: function(data) {
+              if (data.error) {
+                button.style.opacity = null;
+                container.classList.remove('loadingData');
+                errorMessage.classList.remove('d-none');
+                errorMessage.innerHTML = '⚠️ ' + data.error;
+              }
+              else {
+                window.location.reload();
+              }
+            }
+          });
+        }
+      });
+    </script>
+   <% } else { %>
+    <em><%= exchange.member.username %> has not yet made a decision. You cannot make any changes to the offer until they do.</em>
+   <% } %>
+  </div>
+ <% } %>
+
+ <% if (exchange.logs.length > 0) { %>
+  <div class="bg-light p-3 mt-5 rounded w-50 mx-auto">
+    <h6 class="mb-3"><em>Recent activity:</em></h6>
+    <div class="small">
+     <% for (let activity of exchange.logs) { %>
+      <p><%= activity.log %></p>
+     <% } %>
+    </div>
+  </div>
+ <% } %>
+
+<%- include('../footer.ejs') %>

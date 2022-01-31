@@ -2,7 +2,7 @@
 
   <%- include('../partials/page-title.ejs', {
         title : birdypet.nickname ? birdypet.nickname : birdypet.bird.commonName,
-        subtitle : (birdypet.nickname ? birdypet.bird.commonName : birdypet.bird.scientificName) + ' ' + birdypet.variant.label
+        subtitle : birdypet.nickname ? birdypet.bird.commonName : birdypet.bird.scientificName
     })
   %>
 
@@ -32,7 +32,7 @@
               <select name="variant" class="form-select">
                 <% for (let variant of birdypet.bird.variants) { %>
                 <option value="<%= variant.id %>" data-src="<%= variant.image %>" <%= variant.id == birdypet.variant.id ? "selected" : "" %>>
-                  <%= variant.subspecies %> <%= variant.label %>
+                  <%= variant.label %> <%= variant.subspecies ? `${variant.subspecies} subspecies` : '' %>
                   by <%= variant.credit %>
                   <%= variant.id == birdypet.variant.id ? "[current]" : "" %>
                 </option>

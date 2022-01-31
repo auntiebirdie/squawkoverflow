@@ -25,20 +25,18 @@
         <h6>Scientific Name</h6>
         <p class="ms-2"><%= birdypet.bird.scientificName %></p>
 
-       <% if (birdypet.variant.subspecies) { %>
-        <h6>Subspecies</h6>
-        <p class="ms-2"><%= birdypet.variant.subspecies %></p>
-       <% } %>
-
         <h6>Family</h6>
         <p class="ms-2"><a href="/birdypedia?family=<%= birdypet.bird.family %>"><%= birdypet.bird.family %></a></p>
 
         <h6>Order</h6>
         <p class="ms-2"><%= birdypet.bird.order %></p>
 
-        <% if (birdypet.variant.label) { %>
+        <% if (birdypet.variant.label || birdypet.variant.subspecies) { %>
         <h6>Variant</h6>
-        <p class="ms-2"><%= birdypet.variant.label %></p>
+        <p class="ms-2">
+          <%= birdypet.variant.label %>
+          <%= birdypet.variant.subspecies ? `${birdypet.variant.subspecies} subspecies` : '' %>
+        </p>
         <% } %>
 
         <h6>Hatch Date</h6>
