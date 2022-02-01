@@ -17,6 +17,14 @@ module.exports = (req, res) => {
       });
     }
 
+    if (req.query.search) {
+      let substrRegex = new RegExp(req.query.search, 'i');
+
+	    members = members.filter((member) => {
+		    return substrRegex.test(member.username);
+	    });
+    }
+
     if (req.query.include?.includes('birdData')) {
       for (let member of members) {
         promises.push(new Bird(req.query.bird).fetchMemberData(member.id).then((data) => {

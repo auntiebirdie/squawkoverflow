@@ -4,7 +4,7 @@
         title: `Exchange with ${exchange.member.username}`
       }) %>
 
- <% if (exchange.statusA + exchange.statusB >= 0 && exchange.statusA + exchange.statusB < 4) { %>
+ <% if (exchange.statusA >= 0 && exchange.statusB >= 0 && exchange.statusA + exchange.statusB < 4) { %>
   <div id="errorMessage" class="bg-warning text-dark p-3 w-50 mx-auto rounded mb-3 d-none"></div>
 
   <div id="exchange" class="row">
@@ -131,7 +131,7 @@
 
   <div class="text-center pt-5">
    <% if (exchange.mutable) { %>
-    <button id="makeOffer" class="btn btn-secondary btn-lg">Make Offer</button>
+    <button id="makeOffer" class="btn btn-secondary btn-lg me-2">Make Offer</button>
 
     <script type="text/javascript">
       var errorMessage = document.getElementById('errorMessage');
@@ -200,8 +200,37 @@
       });
     </script>
    <% } else { %>
-    <em><%= exchange.member.username %> has not yet made a decision. You cannot make any changes to the offer until they do.</em>
+    <p><em><%= exchange.member.username %> has not yet made a decision. You cannot make any changes to the offer until they do.</em></p>
    <% } %>
+
+    <button id="deleteOffer" class="btn btn-danger btn-lg"><%= exchange.memberA == loggedInUser.id ? 'Rescind' : 'Decline' %> Offer</button>
+
+    <script type="text/javascript">
+      $('#deleteOffer').on('click', function () {
+        let button = this;
+
+        if (!this.style.opacity) {
+          button.style.opacity = .5;
+
+          let container = button.parentNode.parentNode;
+          container.classList.add('loadingData');
+
+          $.ajax({
+            cache: false,
+            url: '/api/exchanges',
+            data: JSON.stringify({
+              id: '<%= exchange.id %>'
+            }),
+            dataType: 'json',
+            method: 'DELETE',
+            contentType: 'application/json',
+            success: function(data) {
+              window.location.reload();
+            }
+          });
+        }
+      });
+    </script>
   </div>
  <% } %>
 

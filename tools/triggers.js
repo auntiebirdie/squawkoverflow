@@ -123,7 +123,7 @@ var Database = require('../api/helpers/database.js');
     '  INSERT INTO squawkdata.counters VALUES (NEW.memberA, "exchanges", "waitingOnMe", 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
     '  INSERT INTO squawkdata.counters VALUES (NEW.memberB, "exchanges", "waitingOnMe", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
 
-    ' ELSEIF v_statusOld = "10" AND v_statusNew IN ("-10", "0-1") THEN ' +
+    ' ELSEIF v_statusOld = "10" AND v_statusNew IN ("-10", "1-1") THEN ' +
     '  INSERT INTO squawkdata.counters VALUES (NEW.memberB, "exchanges", "waitingOnMe", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
 
     ' ELSEIF v_statusOld = "00" AND v_statusNew IN ("20", "10") THEN ' +

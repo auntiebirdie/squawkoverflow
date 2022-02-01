@@ -111,9 +111,11 @@ class BirdyPet {
 
             await Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${this.bird.commonName} was removed from the offer because it was given away.`]);
 
-            await Database.set('exchanges', {
-              id: exchange.id
-            }, toUpdate);
+            if (toUpdate.statusA || toUpdate.statusB) {
+              await Database.set('exchanges', {
+                id: exchange.id
+              }, toUpdate);
+            }
           }
 
           await Database.query('DELETE FROM exchange_birdypets WHERE birdypet = ?', [this.id]);

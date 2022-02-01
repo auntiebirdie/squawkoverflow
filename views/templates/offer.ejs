@@ -2,11 +2,9 @@
   <div class="row">
     <div class="col-12">
       <h3>
-       ${model.statusA + model.statusB < 4 ? `<a href="/exchange/${model.id}">` : ''}
         <img class="rounded-circle me-2" src="${model.member.avatar}" data-id="${model.memberB.id}" onerror="missingMemberAvatar(this)" width="42">
 
         Offer ${model.memberA == '<%= loggedInUser.id %>' ? "to" : "from"} ${model.member.username}
-       ${model.statusA + model.statusB < 4 ? '</a>' : ''}
       </h3>
     </div>
     <div class="col-6">
@@ -32,7 +30,7 @@
     </div>
     <div class="col-6 text-end">
       <p>
-        <a data-id="${model.id}" class="btn btn-danger">Delete</a>
+        <a href="/exchange/${model.id}" class="btn btn-secondary">View</a>
       </p>
     </div>
   </div>

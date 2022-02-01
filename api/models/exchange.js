@@ -52,6 +52,7 @@ class Exchange {
               this.state = 'Completed!';
               break;
             case '11':
+		  case '12':
               this.state = `Pending (waiting on ${this.memberA == params.loggedInUser ? "me" : "them"})`;
               break;
             case '10':

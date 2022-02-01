@@ -2,36 +2,34 @@
 
   <%- include('../partials/page-title.ejs', { title: "Exchanges & Offers" }) %>
 
+  <div id="memberSearch" class="text-center">
+    Start an exchange with:
+    <div class="d-block d-md-inline-block m-3" style="min-width: 25%;">
+      <input class="typeahead form-control" type="text">
+    </div>
+    <button id="actionButton" class="btn btn-secondary" disabled>Make Offer</button>
+  </div>
+
   <%- include('../partials/pagination.ejs') %>
 
   <div id="lazyLoader" class="row g-0" data-endpoint="/api/exchanges"></div>
 
   <%- include('../partials/pagination.ejs') %>
 
-  <%- include('../scripts/lazyloader.ejs', { paginate : currentPage, template: '../templates/offer.ejs', noResultsFound: "You have no offers or exchange history. Visit a member's profile to start an offer!" }) %>
+  <%- include('../scripts/lazyloader.ejs', { paginate : currentPage, template: '../templates/offer.ejs', noResultsFound: "You have no offers or exchange history." }) %>
+
+  <%- include('../scripts/membersearch.ejs') %>
 
   <script type="text/javascript">
     $(document).ready(function () {
-      $('#lazyLoader').on('click', '.btn-danger', function () {
-        var row = this.parentNode.parentNode.parentNode.parentNode;
+      $('#actionButton').on('click', function () {
+        var button = this;
 
-        if (!this.style.opacity) {
-          this.style.opacity = .5;
-          $(row).toggleClass('loadingData');
+        if (!button.disabled && selectedMember) { 
+          button.parentNode.parentNode.classList.add('loadingData'); 
+          button.disabled = true;
 
-          $.ajax({
-            cache: false,
-            url: '/api/exchanges',
-            data: JSON.stringify({
-              id: this.getAttribute('data-id'),
-            }),
-            dataType: 'json',
-            method: 'DELETE',
-            contentType: 'application/json',
-            success: function(data) {
-              row.remove();
-            }
-          });
+          window.location.href = `/exchange/${selectedMember.id}/new`;
         }
       });
     });

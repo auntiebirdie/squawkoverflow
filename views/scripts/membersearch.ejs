@@ -1,0 +1,90 @@
+<script type="text/javascript">
+  var selectedMember = null;
+
+  $(document).ready(function () {
+    var actionButton = $('#actionButton');
+    var memberDisplay = $('#memberDisplay');
+
+    $('#memberSearch .typeahead').typeahead({
+      hint: true,
+      highlight: true,
+      minLength: 0
+    },
+    {
+      name: 'members',
+      displayKey: 'username',
+      async: true,
+      source: function (query, syncResults, asyncResults) {
+        let cache = sessionStorage.getItem(`members-${query}`);
+ 
+        if (cache) {
+          syncResults(JSON.parse(cache));
+        }
+        else {
+          $.ajax({
+            url: '/api/members',
+            data: {
+              search: query
+            },
+            success: function (data) {
+              sessionStorage.setItem(`members-${query}`, JSON.stringify(data));
+              asyncResults(data);
+            }
+          });
+        }
+      },
+      limit: 100,
+      templates: {
+        suggestion: function (data) {
+          var text = '<div class="px-1 py-2">';
+
+          text += `<img src="${data.avatar}" class="rounded-circle" width="42" onerror="missingMemberAvatar(this)"> ${data.username}`;
+
+          if (data.wishlisted) {
+            switch (data.wishlisted) {
+              case 2:
+                text += `<div class="small ms-5">🌟 <em>Needs it</em></div>`;
+                break;
+              case 1:
+                text += `<div class="small ms-5">❤️ <em>Wants it</em></div>`;
+                break;
+            }
+          }
+
+          if (data.owned > 1) {
+            text += `<div class="small ms-5"><span class="checkmark"></span><span class="checkmark"></span> <em>Multiple in aviary</em></div>`;
+          }
+          else if (data.owned == 1) {
+            text += `<div class="small ms-5"><span class="checkmark"></span> <em>In aviary</em></div>`;
+          }
+
+          text += '</div>';
+
+          return text;
+        }
+      }
+    }).on('typeahead:selected', function (obj, member) {
+      selectedMember = member;
+
+      if (member) {
+        memberDisplay.html(`<h3><img src="${member.avatar}" class="rounded-circle" width="75" data-id="${member.id}" onerror="missingMemberAvatar(this)"> ${member.username}</h3>`);
+        actionButton.attr('disabled', false);
+      }
+      else {
+        memberDisplay.html("");
+        actionButton.attr('disabled', true);
+      }
+    }).on('typeahead:autocomplete', function (obj, member) {
+      selectedMember = member;
+
+      if (member) {
+        memberDisplay.html(`<h3><img src="${member.avatar}" class="rounded-circle" width="75" data-id="${member.id}" onerror="missingMemberAvatar(this)"> ${member.username}</h3>`);
+        actionButton.attr('disabled', false);
+      }
+      else {
+        memberDisplay.html("");
+        actionButton.attr('disabled', true);
+      }
+    });
+  });
+</script>

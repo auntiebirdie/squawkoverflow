@@ -24,7 +24,7 @@ router.get('/login', (req, res) => {
       });
     });
   } else {
-    var redirectUri = process.env.DEV ? 'http%3A%2F%2F35.188.77.88' : 'https%3A%2F%2Fsquawkoverflow.com';
+    var redirectUri = process.env.DEV ? 'http%3A%2F%2Fdev.squawkoverflow.com' : 'https%3A%2F%2Fsquawkoverflow.com';
     res.redirect(`https://discord.com/api/oauth2/authorize?client_id=885956624777351199&redirect_uri=${redirectUri}%2Flogin&response_type=code&scope=identify`);
   }
 });
