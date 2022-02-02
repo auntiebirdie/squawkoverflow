@@ -47,23 +47,43 @@ class Exchange {
             return reject(null);
           }
 
-          switch (state) {
-            case '22':
-              this.state = 'Completed!';
-              break;
-            case '11':
-		  case '12':
-              this.state = `Pending (waiting on ${this.memberA == params.loggedInUser ? "me" : "them"})`;
-              break;
-            case '10':
-              this.state = this.memberA == params.loggedInUser ? 'Pending (waiting on them)' : 'New!';
-              break;
-            case '00':
-              this.state = 'Not sent';
-              break;
-            default:
-              this.state = `Pending (waiting on ${this.memberA == params.loggedInUser ? "them" : "me"})`;
-              break;
+          let latestLog = await Database.getOne('exchange_logs', {
+            exchange: this.id
+          }, {
+            order: 'loggedAt DESC'
+          })
+
+          if (latestLog?.log == 'The offer was accepted by both parties!') {
+            this.state = 'Completed!';
+          } else {
+            switch (state) {
+              case '22':
+                this.state = 'Completed!';
+                break;
+              case '11':
+              case '12':
+                this.state = `Pending (waiting on ${this.memberA == params.loggedInUser ? "me" : "them"})`;
+                break;
+              case '10':
+                this.state = this.memberA == params.loggedInUser ? 'Pending (waiting on them)' : 'New!';
+                break;
+              case '00':
+                this.state = 'Not sent';
+                break;
+              case '-12':
+              case '-11':
+              case '-10':
+                this.state = 'Rescinded';
+                break;
+              case '2-1':
+              case '1-1':
+              case '0-1':
+                this.state = 'Declined';
+                break;
+              default:
+                this.state = `Pending (waiting on ${this.memberA == params.loggedInUser ? "them" : "me"})`;
+                break;
+            }
           }
 
           await this.member.fetch();
@@ -105,17 +125,23 @@ class Exchange {
 
   delete(member) {
     return new Promise((resolve, reject) => {
+      let completed = this.statusA + this.statusB == 4;
+
       if (this.memberA == member) {
         this.set({
           statusA: -1
         }).then(() => {
-          Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [this.id, 'The offer was rescinded.']).then(resolve);
+          if (!completed) {
+            Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [this.id, 'The offer was rescinded.']).then(resolve);
+          }
         });
       } else if (this.memberB == member) {
         this.set({
           statusB: -1
         }).then(() => {
-          Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [this.id, 'The offer was declined.']).then(resolve);
+          if (!completed) {
+            Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [this.id, 'The offer was declined.']).then(resolve);
+          }
         });
       } else {
         reject();

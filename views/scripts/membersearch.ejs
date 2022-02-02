@@ -18,7 +18,8 @@
         let data = {
           search: query,
           include: <%- JSON.stringify(locals.include ? include : []) %>,
-          bird: <%- JSON.stringify(locals.bird ? bird : '') %>
+          bird: <%- JSON.stringify(locals.bird ? bird : '') %>,
+          privacy: <%- JSON.stringify(locals.privacy ? privacy : []) %>
         };
 
         let cache = sessionStorage.getItem(`members-${JSON.stringify(data)}`);

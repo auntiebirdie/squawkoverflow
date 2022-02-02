@@ -7,6 +7,12 @@
  <% if (exchange.statusA >= 0 && exchange.statusB >= 0 && exchange.statusA + exchange.statusB < 4) { %>
   <div id="errorMessage" class="bg-warning text-dark p-3 w-50 mx-auto rounded mb-3 d-none"></div>
 
+  <% if (exchange.mutable) { %>
+    <div class="text-center small">
+      <em>You can click on any bird on this screen to remove it from the offer or request.</em>
+    </div>
+  <% } %>
+
   <div id="exchange" class="row">
     <div class="col-12 col-md-6">
       <div class="bg-light m-3 pt-3 px-3 rounded h-100">
@@ -172,7 +178,7 @@
   <div class="text-center pt-5">
    <% if (exchange.mutable) { %>
     <button id="makeOffer" class="btn btn-secondary btn-lg me-2">
-      <% if (exchange.statusA == 2 || exchange.statusB == 2) { %>
+      <% if (exchange.statusA == 2 || exchange.statusB == 2 || (exchange.statusA == 1 && exchange.statusB == 1)) { %>
         Accept Offer
       <% } else if (exchange.statusA == 0 & exchange.statusB == 0) { %>
         Make Offer

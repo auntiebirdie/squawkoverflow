@@ -86,8 +86,8 @@ var Database = require('../api/helpers/database.js');
   await Database.query(
     'CREATE TRIGGER \`squawk_exchanges_update\` AFTER UPDATE ON squawkdata.\`exchanges\` ' +
     'FOR EACH ROW BEGIN ' +
-    '  DECLARE \`v_statusOld\` VARCHAR(3); ' +
-    '  DECLARE \`v_statusNew\` VARCHAR(3); ' +
+    '  DECLARE \`v_statusOld\` VARCHAR(4); ' +
+    '  DECLARE \`v_statusNew\` VARCHAR(4); ' +
 
     ' SET v_statusOld := CONCAT(OLD.statusA, OLD.statusB); ' +
     ' SET v_statusNew := CONCAT(NEW.statusA, NEW.statusB); ' +

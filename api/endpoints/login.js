@@ -8,7 +8,9 @@ const secrets = require('../secrets.json');
 
 module.exports = async (req, res) => {
   if (req.body.konami) {
-    let konami = req.body.konami * 1;
+    let konami = req.body.konami;
+
+	  console.log(konami);
 
     await Database.query('SELECT * FROM konami WHERE code = ?', [konami]).then(([code]) => {
       if (code.used) {

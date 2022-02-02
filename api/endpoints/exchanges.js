@@ -17,7 +17,7 @@ module.exports = (req, res) => {
           res.json(null);
         });
       } else {
-        Database.query('SELECT id FROM exchanges WHERE statusA >= 0 AND statusB >= 0 AND (memberA = ? OR (memberB = ? AND statusA > 0)) ORDER BY updatedAt DESC', [req.query.loggedInUser, req.query.loggedInUser]).then((exchanges) => {
+        Database.query('SELECT id FROM exchanges WHERE (memberA = ? AND statusA >= 0) OR (memberB = ? AND statusA != 0 AND statusB >= 0) ORDER BY updatedAt DESC', [req.query.loggedInUser, req.query.loggedInUser]).then((exchanges) => {
           let results = [];
           let page = (((req.query.page * 1) - 1) || 0) * 10;
 
@@ -57,20 +57,35 @@ module.exports = (req, res) => {
             if (birdypet.exchangeData == exchange.id) {
               Database.delete('exchange_birdypets', {
                 exchange: exchange.id,
-                birdypet: req.body.birdypet
+                birdypet: birdypet.id
               }).then(() => {
                 Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${birdypet.bird.commonName} was removed from the ${birdypet.member == exchange.memberA ? 'request' : 'offer'}.`]).then(() => {
-
-                  res.sendStatus(200);
+                  Database.set('exchanges', {
+                    id: exchange.id
+                  }, {
+                    statusA: Math.min(1, exchange.statusA),
+                    statusB: Math.min(1, exchange.statusB),
+                    updatedAt: new Date()
+                  }).then(() => {
+                    res.sendStatus(200);
+                  });
                 });
               });
             } else if (!birdypet.exchangeData) {
               Database.create('exchange_birdypets', {
-                exchange: req.body.exchange,
-                birdypet: req.body.birdypet
+                exchange: exchange.id,
+                birdypet: birdypet.id
               }).then(() => {
                 Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${birdypet.bird.commonName} was added to the ${birdypet.member == exchange.memberA ? 'offer' : 'request'}.`]).then(() => {
-                  res.sendStatus(200);
+                  Database.set('exchanges', {
+                    id: exchange.id
+                  }, {
+                    statusA: Math.min(1, exchange.statusA),
+                    statusB: Math.min(1, exchange.statusB),
+                    updatedAt: new Date()
+                  }).then(() => {
+                    res.sendStatus(200);
+                  });
                 });
               });
             } else {
@@ -96,9 +111,9 @@ module.exports = (req, res) => {
               throw `Please pick at least one bird to either request or offer.`;
             } else {
               if (exchange.memberA == req.body.loggedInUser) {
-                exchange.statusA = Math.max(2, exchange.statusA + 1);
+                exchange.statusA = exchange.birdypetsA.length > 0 ? 2 : 1;
               } else {
-                exchange.statusB = Math.max(2, exchange.statusB + 1);
+                exchange.statusB = exchange.birdypetsB.length > 0 ? 2 : 1;
               }
 
               Database.set('exchanges', {
@@ -145,14 +160,24 @@ module.exports = (req, res) => {
           });
         });
       } else if (req.body.member) {
-        let key = Database.key();
+        let member = new Member(req.body.member);
 
-        Database.create('exchanges', {
-          id: key,
-          memberA: req.body.loggedInUser,
-          memberB: req.body.member
-        }).then(() => {
-          res.json(key);
+        member.fetch().then(() => {
+          if (member.settings.privacy?.includes('exchanges')) {
+            res.json({
+              error: "This member isn't accepting offers at this time."
+            });
+          } else {
+            let key = Database.key();
+
+            Database.create('exchanges', {
+              id: key,
+              memberA: req.body.loggedInUser,
+              memberB: req.body.member
+            }).then(() => {
+              res.json(key);
+            });
+          }
         });
       } else {
         res.sendStatus(404);

@@ -49,7 +49,7 @@
           <a href="" target="_blank"></a>
         </h3>
         <h5></h5>
-        <h6></h6>
+        <h6 class="my-3"></h6>
 
         <div id="actions" class="mt-5 text-center">
           <a data-action="keep" class="btn btn-lg btn-secondary mb-3" role="button">❤️&nbsp;Keep</a>
@@ -100,18 +100,18 @@
           if (data.wishlisted) {
             switch (data.wishlisted) {
               case 2:
-                text += `<div class="small">🌟 <em>You need this bird!/em></div>`;
+                text += `<div><span class="badge p-1 badge bg-warning">🌟</span> <em>You need this bird!/em></div>`;
                 break;
               case 1:
-                text += `<div class="small">❤️ <em>You want this bird!</em></div>`;
+                text += `<div><span class="badge p-1 badge bg-danger">❤️</span> <em>You want this bird!</em></div>`;
             }
           }
 
           if (data.owned > 1) {
-            text += `<div class="small"><span class="checkmark"></span><span class="checkmark"></span> <em>You have more than one of this species</em></div>`;
+            text += `<div><span class="badge p-1 badge bg-secondary"><span class="checkmark"></span><span class="checkmark"></span></span> <em>You have more than one of this species</em></div>`;
           }
           else if (data.owned == 1) {
-            text += `<div class="small"><span class="checkmark"></span> <em>You have this species</em></div>`;
+            text += `<div><span class="badge p-1 badge bg-secondary"><span class="checkmark"></span></span> <em>You have this species</em></div>`;
           }
 
           h6.innerHTML = text;

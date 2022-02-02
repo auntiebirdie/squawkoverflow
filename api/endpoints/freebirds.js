@@ -7,7 +7,7 @@ module.exports = (req, res) => {
     case "GET":
       new Promise((resolve, reject) => {
         if (req.headers && req.headers['x-forwarded-for'] == '35.208.110.100') {
-          Database.get('freebirds', {}, {
+          Database.get('freebirds', [], {
             order: 'RAND()',
             limit: req.query?.limit || 24
           }).then(async (results) => {

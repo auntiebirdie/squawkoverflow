@@ -132,6 +132,9 @@ class Member {
                   member: this.id
                 });
                 break;
+		    case 'incubator':
+			    this.incubator = await Database.get('member_variants', { member: this.id });
+			    break;
               case 'wishlist':
                 this.wishlist = await Database.get('wishlist', {
                   member: this.id
