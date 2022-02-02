@@ -12,11 +12,19 @@ class Search {
       let params = [];
 
       if (input.search) {
-        filters.push('MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)');
+        if (kind == 'birdypet') {
+          filters.push('(MATCH(birdypets.nickname) AGAINST (? IN BOOLEAN MODE) OR MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE))');
 
-        var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
+          var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
 
-        Array(1).fill(input.search).forEach((param) => params.push(param.replace(regex, '$1*')));
+          Array(2).fill(input.search).forEach((param) => params.push(param.replace(regex, '$1*')));
+        } else {
+          filters.push('MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)');
+
+          var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
+
+          Array(1).fill(input.search).forEach((param) => params.push(param.replace(regex, '$1*')));
+        }
       }
 
       switch (kind) {

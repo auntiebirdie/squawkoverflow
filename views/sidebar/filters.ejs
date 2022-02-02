@@ -57,9 +57,7 @@
   <h5>Flock</h5>
   <select id="flock" class="form-select mb-4">
     <option value="">[ALL]</option>
-   <% if (locals.loggedInUser && member.id == loggedInUser.id) { %>
     <option value="NONE">[FLOCKLESS]</option>
-   <% } %>
    <% for (var flock of flocks) { %>
     <option value="<%= flock.id %>" <%= locals.selectedFlock && selectedFlock == flock.id ? "selected" : "" %>>
       <%= flock.name %>

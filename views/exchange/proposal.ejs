@@ -14,9 +14,21 @@
           <div class="col-6">
             <h4>
               <% if (exchange.memberA == loggedInUser.id) { %>
-                I'll give ...
+                I'll give
               <% } else { %>
-                They'll give ...
+                They'll give
+              <% } %>
+
+              <% if (exchange.mutable) { %>
+                <span>
+                  <select id="giveA" class="form-select d-inline-block w-auto mt-1">
+                   <% for (let offer of offers) { %>
+                    <option <%= exchange.giveA == offer ? 'selected' : '' %>><%= offer %></option>
+                   <% } %>
+                  </select>
+                </span>
+              <% } else { %>
+                <%= exchange.giveA %>
               <% } %>
             </h4>
           </div>
@@ -56,17 +68,23 @@
            </div>
           <% } %>
          <% } else { %>
-           <p class="text-center"><em>
-             <% if (exchange.memberA == loggedInUser.id) { %>
-               <% if (exchange.mutable) { %>
-                 If you make this offer without selecting any birds, it indicates to <%= exchange.member.username %> that they should pick what birds they want from your aviary in exchange.
-               <% } else { %>
-                 <%= exchange.member.username %> hasn't decided what birds from your aviary they want.
-               <% } %>
+           <div class="text-center"><em>
+            <% if (exchange.memberA == loggedInUser.id) { %>
+             <% if (exchange.mutable) { %>
+              <p>Please pick what birds you want to offer.</p>
+              <p>If you make this offer without selecting any birds, it indicates to <%= exchange.member.username %> that they should pick what birds they want from your aviary.</p>
              <% } else { %>
-               Please pick what birds you want from <%= exchange.member.username %>'s aviary in exchange for the birds they're interested in.
+              <p><%= exchange.member.username %> hasn't decided what birds from you aviary they want.</p>
              <% } %>
-           </em></p>
+            <% } else { %>
+             <% if (exchange.mutable) { %>
+              <p>Please pick what birds you want from <%= exchange.member.username %>'s aviary.</p>
+              <p>If you make this offer without selecting any birds, it indicates to <%= exchange.member.username %> that they should pick what birds they are willing to offer from their aviary.</p>
+             <% } else { %>
+              <p><%= exchange.member.username %> hasn't decided what birds from their aviary they want to offer.</p>
+             <% } %>
+            <% } %>
+           </em></div>
          <% } %>
         </div>
       </div>
@@ -77,7 +95,19 @@
         <div class="row pb-4">
           <div class="col-6">
             <h4>
-              ... for these
+              for
+
+              <% if (exchange.mutable) { %>
+                <span>
+                  <select id="forB" class="form-select d-inline-block w-auto mt-1">
+                   <% for (let offer of offers) { %>
+                    <option <%= exchange.forB == offer ? 'selected' : '' %>><%= offer %></option>
+                   <% } %>
+                 </select>
+               </span>
+              <% } else { %>
+                <%= exchange.forB %>
+              <% } %>
             </h4>
           </div>
          <% if (exchange.mutable) { %>
@@ -116,13 +146,23 @@
            </div>
           <% } %>
          <% } else { %>
-           <p class="text-center"><em>
-             <% if (exchange.memberB == loggedInUser.id) { %>
-               If you make this offer without selecting any birds, it indicates to <%= exchange.member.username %> that they should pick what birds they want from your aviary in exchange.
+           <div class="text-center"><em>
+            <% if (exchange.memberA == loggedInUser.id) { %>
+             <% if (exchange.mutable) { %>
+              <p>Please pick what birds you want from <%= exchange.member.username %>'s aviary.</p>
+              <p>If you make this offer without selecting any birds, it indicates to <%= exchange.member.username %> that they should pick what birds they are willing to offer from their aviary.</p>
              <% } else { %>
-               Please pick what birds you want from <%= exchange.member.username %>'s aviary.
+              <p><%= exchange.member.username %> hasn't decided what birds from their aviary to offer.</p>
              <% } %>
-           </em></p>
+            <% } else { %>
+             <% if (exchange.mutable) { %>
+              <p>Please pick what birds you want to offer.</p>
+              <p>If you make this offer without selecting any birds, it indicates to <%= exchange.member.username %> that they should pick what birds they want from your aviary.</p>
+             <% } else { %>
+              <p><%= exchange.member.username %> hasn't decided what birds from your aviary they want.</p>
+             <% } %>
+            <% } %>
+           </em></div>
          <% } %>
         </div>
       </div>
@@ -131,7 +171,15 @@
 
   <div class="text-center pt-5">
    <% if (exchange.mutable) { %>
-    <button id="makeOffer" class="btn btn-secondary btn-lg me-2">Make Offer</button>
+    <button id="makeOffer" class="btn btn-secondary btn-lg me-2">
+      <% if (exchange.statusA == 2 || exchange.statusB == 2) { %>
+        Accept Offer
+      <% } else if (exchange.statusA == 0 & exchange.statusB == 0) { %>
+        Make Offer
+      <% } else {  %>
+        Update Offer
+      <% } %>
+    </button>
 
     <script type="text/javascript">
       var errorMessage = document.getElementById('errorMessage');
@@ -159,6 +207,8 @@
                 image.innerHTML = "";
 
                 $(image.parentNode.parentNode).toggleClass('disabled loadingData');
+
+                $('#makeOffer').text('Update Offer');
               }
             });
           }
@@ -179,7 +229,9 @@
             cache: false,
             url: '/api/exchanges',
             data: JSON.stringify({
-              id: '<%= exchange.id %>'
+              id: '<%= exchange.id %>',
+              giveA: $('#giveA').val(),
+              forB: $('#forB').val()
             }),
             dataType: 'json',
             method: 'PUT',

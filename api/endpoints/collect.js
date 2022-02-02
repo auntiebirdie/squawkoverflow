@@ -17,6 +17,18 @@ module.exports = (req, res) => {
     let variant = req.body.variant;
 
     if (req.body.freebird) {
+      let freebird = await Database.getOne('freebirds', {
+        id: req.body.freebird
+      });
+
+      if (!freebird) {
+        return res.json({
+          error: 'Oops!  Someone already added this bird to their aviary!'
+        });
+      }
+
+      variant = freebird.variant;
+
       promises.push(Database.delete('freebirds', {
         id: req.body.freebird
       }));
@@ -32,10 +44,6 @@ module.exports = (req, res) => {
       variant: variant,
       member: req.body.loggedInUser
     });
-
-    if (member.settings.general?.includes('updateWishlist')) {
-      promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [birdypet.bird.code, member.id]));
-    }
 
     promises.push(PubSub.publish('background', 'COLLECT', {
       birdypet: birdypet.id,
@@ -63,6 +71,8 @@ module.exports = (req, res) => {
       }
     });
   }).catch((err) => {
-    console.error(err);
+    res.json({
+      error: err
+    });
   });
 };

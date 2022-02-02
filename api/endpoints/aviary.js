@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
       promises.push(result.fetch({
         include: includes,
         member: req.query.memberData,
-	      exchange: req.query.exchangeData
+        exchange: req.query.exchangeData
       }));
 
       return result;

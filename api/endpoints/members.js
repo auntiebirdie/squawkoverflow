@@ -20,9 +20,9 @@ module.exports = (req, res) => {
     if (req.query.search) {
       let substrRegex = new RegExp(req.query.search, 'i');
 
-	    members = members.filter((member) => {
-		    return substrRegex.test(member.username);
-	    });
+      members = members.filter((member) => {
+        return substrRegex.test(member.username);
+      });
     }
 
     if (req.query.include?.includes('birdData')) {

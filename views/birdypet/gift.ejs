@@ -30,7 +30,7 @@
     </div>
   </div>
 
-  <%- include('../scripts/membersearch.ejs') %>
+  <%- include('../scripts/membersearch.ejs', { include: ['birdData'], bird : birdypet.bird.code }) %>
 
   <script type="text/javascript">
     $(document).ready(function () {

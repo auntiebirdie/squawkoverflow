@@ -42,7 +42,7 @@ class Exchange {
             this.mutable = state == '00' || state == '11' || state == '12';
           } else if (this.memberB == params.loggedInUser) {
             this.member = new Member(this.memberA);
-            this.mutable = state == '10' || state == '21';
+            this.mutable = state == '10' || state == '21' || state == '20';
           } else {
             return reject(null);
           }

@@ -2,7 +2,6 @@ const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 
 const Bird = require('./bird.js');
-const BirdyPet = require('./birdypet.js');
 const Flocks = require('../collections/flocks.js');
 const Flock = require('./flock.js');
 
@@ -105,6 +104,8 @@ class Member {
                 break;
               case 'birdyBuddy':
                 if (member.birdyBuddy) {
+			const BirdyPet = require('./birdypet.js');
+
                   this.birdyBuddy = new BirdyPet(member.birdyBuddy);
                   await this.birdyBuddy.fetch();
                 }
@@ -199,28 +200,6 @@ class Member {
     }
 
     return pronouns["they"].cases[pronounCase];
-  }
-
-  updateWishlist(speciesCode, action) {
-    let birds = require('../data/birds.json');
-    let bird = birds.find((bird) => bird.speciesCode == speciesCode);
-
-    return new Promise(async (resolve, reject) => {
-      if (action == "add") {
-        await Database.create('wishlist', {
-          member: this.id,
-          species: bird.speciesCode,
-          intensity: 1
-        });
-      } else if (action == "remove") {
-        await Database.delete('wishlist', {
-          member: this.id,
-          species: bird.speciesCode
-        });
-      }
-
-      resolve();
-    });
   }
 }
 

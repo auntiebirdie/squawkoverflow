@@ -36,12 +36,6 @@ module.exports = async (req, res) => {
           friendship: 0
         });
 
-        if (toMember.settings.general?.includes('updateWishlist')) {
-          promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND member = ?', [birdypet.bird.code, toMember.id]));
-        }
-
-        promises.push(Database.query('DELETE FROM birdypet_flocks WHERE birdypet = ?', [birdypet.id]));
-
         if (process.env.NODE_ENV == "PROD") {
           promises.push(Webhook('exchange', {
             content: `${fromMember.username} has sent <@${toMember.id}> a gift!`,

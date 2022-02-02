@@ -17,7 +17,7 @@ module.exports = (req, res) => {
           res.json(null);
         });
       } else {
-        Database.query('SELECT id FROM exchanges WHERE memberA = ? AND statusA >= 0 OR (memberB = ? AND statusA > 0 AND statusB >= 0) ORDER BY updatedAt DESC', [req.query.loggedInUser, req.query.loggedInUser]).then((exchanges) => {
+        Database.query('SELECT id FROM exchanges WHERE statusA >= 0 AND statusB >= 0 AND (memberA = ? OR (memberB = ? AND statusA > 0)) ORDER BY updatedAt DESC', [req.query.loggedInUser, req.query.loggedInUser]).then((exchanges) => {
           let results = [];
           let page = (((req.query.page * 1) - 1) || 0) * 10;
 
@@ -52,7 +52,7 @@ module.exports = (req, res) => {
           birdypet.fetch({
             include: ['exchangeData'],
             member: req.body.member,
-		  exchange: exchange.id
+            exchange: exchange.id
           }).then(() => {
             if (birdypet.exchangeData == exchange.id) {
               Database.delete('exchange_birdypets', {
@@ -69,7 +69,7 @@ module.exports = (req, res) => {
                 exchange: req.body.exchange,
                 birdypet: req.body.birdypet
               }).then(() => {
-                Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${birdypet.bird.commonName} was added to the ${birdypet.member == exchange.memberA ? 'request' : 'offer'}.`]).then(() => {
+                Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${birdypet.bird.commonName} was added to the ${birdypet.member == exchange.memberA ? 'offer' : 'request'}.`]).then(() => {
                   res.sendStatus(200);
                 });
               });
@@ -91,54 +91,51 @@ module.exports = (req, res) => {
         exchange.fetch({
           loggedInUser: req.body.loggedInUser
         }).then(() => {
-          if (exchange.mutable) {
-            if (exchange.memberA == req.body.loggedInUser) {
-              if (exchange.birdypetsB.length == 0) {
-                throw `Please pick what birds you want from ${exchange.member.username}'s aviary.`;
-              }
-
-              exchange.statusA = exchange.birdypetsA.length > 0 ? 2 : 1;
-            } else if (exchange.memberB == req.body.loggedInUser) {
-              if (exchange.birdypetsB.length == 0) {
-                throw `Please pick what birds you are willing to offer in this exchange.`;
-              }
-
-              exchange.statusB = 2;
+          if (exchange.mutable && (exchange.memberA == req.body.loggedInUser || exchange.memberB == req.body.loggedInUser)) {
+            if (exchange.birdypetsA.length == 0 && exchange.birdypetsB.length == 0) {
+              throw `Please pick at least one bird to either request or offer.`;
             } else {
-              return res.sendStatus(403);
+              if (exchange.memberA == req.body.loggedInUser) {
+                exchange.statusA = Math.max(2, exchange.statusA + 1);
+              } else {
+                exchange.statusB = Math.max(2, exchange.statusB + 1);
+              }
+
+              Database.set('exchanges', {
+                id: req.body.id
+              }, {
+                statusA: exchange.statusA,
+                statusB: exchange.statusB,
+                giveA: req.body.giveA,
+                forB: req.body.forB,
+                updatedAt: new Date()
+              }).then(() => {
+                if (exchange.statusA + exchange.statusB == 4) {
+                  let promises = [];
+
+                  for (let birdypet of exchange.birdypetsA) {
+                    promises.push(birdypet.set({
+                      member: exchange.memberB
+                    }));
+                  }
+
+                  for (let birdypet of exchange.birdypetsB) {
+                    promises.push(birdypet.set({
+                      member: exchange.memberA
+                    }));
+                  }
+
+                  promises.push(Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, 'The offer was accepted by both parties!']));
+
+                  Promise.all(promises).then(() => {
+                    res.sendStatus(200);
+                  });
+                } else {
+                  res.sendStatus(200);
+                }
+              });
             }
 
-            Database.set('exchanges', {
-              id: req.body.id
-            }, {
-              statusA: exchange.statusA,
-              statusB: exchange.statusB,
-              updatedAt: new Date()
-            }).then(() => {
-              if (exchange.statusA + exchange.statusB == 4) {
-                let promises = [];
-
-                for (let birdypet of exchange.birdypetsA) {
-                  promises.push(birdypet.set({
-                    member: exchange.memberB
-                  }));
-                }
-
-                for (let birdypet of exchange.birdypetsB) {
-                  promises.push(birdypet.set({
-                    member: exchange.memberA
-                  }));
-                }
-
-                promises.push(Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, 'The offer was accepted by both parties!']));
-
-                Promise.all(promises).then(() => {
-                  res.sendStatus(200);
-                });
-              } else {
-                res.sendStatus(200);
-              }
-            });
           } else {
             throw `${exchange.member.username} has not yet made a decision. You cannot make any changes to the offer until they do.`;
           }
@@ -148,20 +145,14 @@ module.exports = (req, res) => {
           });
         });
       } else if (req.body.member) {
-        Database.query('SELECT id FROM exchanges WHERE memberA = ? AND memberB = ? AND statusA BETWEEN 0 AND 2 AND statusB BETWEEN 0 AND 2 AND statusA + statusB < 4', [req.body.loggedInUser, req.body.member]).then(([exchange]) => {
-          if (exchange) {
-            res.json(exchange.id);
-          } else {
-            let key = Database.key();
+        let key = Database.key();
 
-            Database.create('exchanges', {
-              id: key,
-              memberA: req.body.loggedInUser,
-              memberB: req.body.member
-            }).then(() => {
-              res.json(key);
-            });
-          }
+        Database.create('exchanges', {
+          id: key,
+          memberA: req.body.loggedInUser,
+          memberB: req.body.member
+        }).then(() => {
+          res.json(key);
         });
       } else {
         res.sendStatus(404);

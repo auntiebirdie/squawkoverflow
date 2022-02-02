@@ -22,8 +22,11 @@ router.get('/:id', Middleware.isLoggedIn, async (req, res) => {
     res.redirect('/error');
   }
 
+  res.set('Cache-Control', 'no-store');
+
   res.render('exchange/proposal', {
-    exchange: exchange
+    exchange: exchange,
+    offers: ['this', 'one of these', 'any of these', 'all of these', 'anything'],
   });
 });
 
@@ -43,12 +46,21 @@ router.get(['/:id/offer', '/:id/request'], Middleware.isLoggedIn, async (req, re
   });
 
   if (exchange.mutable) {
-
     let page = `exchange/${req.path.split('/').pop()}`;
+
+    let member = await API.call('member', 'GET', {
+      id: page == "exchange/offer" ? req.session.user : exchange.member.id,
+      include: ['families', 'flocks']
+    });
+
+    var families = await API.call('families', 'GET');
 
     res.render('exchange/add', {
       page: page,
       exchange: exchange,
+      allFamilies: families,
+      families: member.families.filter((family) => family.owned > 0).map((family) => family.name),
+      flocks: member.flocks,
       currentPage: (req.query.page || 1) * 1,
       sidebar: 'filters',
       sortFields: [{

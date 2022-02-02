@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
       slug: 'bug',
       question: 'I found an error or issue with the site, what do I do?',
       answer: `
-		  <p>You can submit <a href="https://bugs.squawkoverflow.com">a bug report</a> to alert the developer and receive a bug for your troubles!</p>
+		  <p>You can submit <a href="https://bugs.squawkoverflow.com${req.session.user ? '/?member=' + req.session.user : ''}">a bug report</a> to alert the developer and receive a bug for your troubles!</p>
 		  `
     },
     {

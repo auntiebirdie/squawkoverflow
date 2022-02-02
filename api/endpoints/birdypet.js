@@ -28,10 +28,6 @@ module.exports = async (req, res) => {
       if (birdypet.id) {
         await member.fetch();
 
-        if (member.settings.general?.includes('updateWishlist')) {
-          member.updateWishlist(birdypet.speciesCode, "remove");
-        }
-
         if (req.body.adjective) {
           await member.set({
             lastHatchedAt: Date.now()

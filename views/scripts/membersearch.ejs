@@ -15,7 +15,13 @@
       displayKey: 'username',
       async: true,
       source: function (query, syncResults, asyncResults) {
-        let cache = sessionStorage.getItem(`members-${query}`);
+        let data = {
+          search: query,
+          include: <%- JSON.stringify(locals.include ? include : []) %>,
+          bird: <%- JSON.stringify(locals.bird ? bird : '') %>
+        };
+
+        let cache = sessionStorage.getItem(`members-${JSON.stringify(data)}`);
  
         if (cache) {
           syncResults(JSON.parse(cache));
@@ -23,12 +29,10 @@
         else {
           $.ajax({
             url: '/api/members',
-            data: {
-              search: query
-            },
-            success: function (data) {
-              sessionStorage.setItem(`members-${query}`, JSON.stringify(data));
-              asyncResults(data);
+            data: data,
+            success: function (results) {
+              sessionStorage.setItem(`members-${query}-${JSON.stringify(data)}`, JSON.stringify(results));
+              asyncResults(results);
             }
           });
         }
