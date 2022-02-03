@@ -47,51 +47,64 @@ module.exports = (req, res) => {
         loggedInUser: req.body.loggedInUser
       }).then(() => {
         if (exchange.mutable) {
-          let birdypet = new BirdyPet(req.body.birdypet);
+          if (req.body.birdypet) {
+            let birdypet = new BirdyPet(req.body.birdypet);
 
-          birdypet.fetch({
-            include: ['exchangeData'],
-            member: req.body.member,
-            exchange: exchange.id
-          }).then(() => {
-            if (birdypet.exchangeData == exchange.id) {
-              Database.delete('exchange_birdypets', {
-                exchange: exchange.id,
-                birdypet: birdypet.id
-              }).then(() => {
-                Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${birdypet.bird.commonName} was removed from the ${birdypet.member == exchange.memberA ? 'request' : 'offer'}.`]).then(() => {
-                  Database.set('exchanges', {
-                    id: exchange.id
-                  }, {
-                    statusA: Math.min(1, exchange.statusA),
-                    statusB: Math.min(1, exchange.statusB),
-                    updatedAt: new Date()
-                  }).then(() => {
-                    res.sendStatus(200);
+            birdypet.fetch({
+              include: ['exchangeData'],
+              member: req.body.member,
+              exchange: exchange.id
+            }).then(() => {
+              if (birdypet.exchangeData == exchange.id) {
+                Database.delete('exchange_birdypets', {
+                  exchange: exchange.id,
+                  birdypet: birdypet.id
+                }).then(() => {
+                  Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${birdypet.bird.commonName} was removed from the ${birdypet.member == exchange.memberA ? 'request' : 'offer'}.`]).then(() => {
+                    Database.set('exchanges', {
+                      id: exchange.id
+                    }, {
+                      statusA: Math.min(1, exchange.statusA),
+                      statusB: Math.min(1, exchange.statusB),
+                      updatedAt: new Date()
+                    }).then(() => {
+                      res.sendStatus(200);
+                    });
                   });
                 });
-              });
-            } else if (!birdypet.exchangeData) {
-              Database.create('exchange_birdypets', {
-                exchange: exchange.id,
-                birdypet: birdypet.id
-              }).then(() => {
-                Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${birdypet.bird.commonName} was added to the ${birdypet.member == exchange.memberA ? 'offer' : 'request'}.`]).then(() => {
-                  Database.set('exchanges', {
-                    id: exchange.id
-                  }, {
-                    statusA: Math.min(1, exchange.statusA),
-                    statusB: Math.min(1, exchange.statusB),
-                    updatedAt: new Date()
-                  }).then(() => {
-                    res.sendStatus(200);
+              } else if (!birdypet.exchangeData) {
+                Database.create('exchange_birdypets', {
+                  exchange: exchange.id,
+                  birdypet: birdypet.id
+                }).then(() => {
+                  Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${birdypet.bird.commonName} was added to the ${birdypet.member == exchange.memberA ? 'offer' : 'request'}.`]).then(() => {
+                    Database.set('exchanges', {
+                      id: exchange.id
+                    }, {
+                      statusA: Math.min(1, exchange.statusA),
+                      statusB: Math.min(1, exchange.statusB),
+                      updatedAt: new Date()
+                    }).then(() => {
+                      res.sendStatus(200);
+                    });
                   });
                 });
-              });
-            } else {
-              res.sendStatus(409);
-            }
-          });
+              } else {
+                res.sendStatus(409);
+              }
+            });
+          } else {
+            Database.set('exchanges', {
+              id: exchange.id,
+            }, {
+              giveA: req.body.giveA || exchange.giveA || "",
+              forB: req.body.forB || exchange.forB || "",
+              noteA: exchange.memberA == req.body.loggedInUser ? (req.body.noteA || exchange.noteA) : exchange.noteA || "",
+              noteB: exchange.memberB == req.body.loggedInUser ? (req.body.noteB || exchange.noteB) : exchange.noteB || ""
+            }).then(() => {
+              res.sendStatus(200);
+            });
+          }
         } else {
           res.sendStatus(403);
         }

@@ -47,6 +47,7 @@
          <% } %>
         </div>
 
+
         <div class="row">
          <% if (exchange.birdypetsA.length > 0) { %>
            <% for (let birdypet of exchange.birdypetsA) { %>
@@ -92,6 +93,17 @@
             <% } %>
            </em></div>
          <% } %>
+          <div class="col-12 pt-4">
+            <% if (exchange.memberA == loggedInUser.id) { %>
+              <p><em>Notes for them: (optional)</em></p>
+              <textarea id="noteA" class="form-control w-100" maxlength="100"><%= exchange.noteA %></textarea>
+            <% } else if (exchange.noteA) { %>
+              <p><em>Notes from them:</em></p>
+             <% for (var para of exchange.noteA.split("\r\n")) { %>
+              <p><%= para %></p>
+             <% } %>
+            <% } %>
+          </div>
         </div>
       </div>
     </div>
@@ -170,6 +182,17 @@
             <% } %>
            </em></div>
          <% } %>
+          <div class="col-12 pt-4">
+            <% if (exchange.memberB == loggedInUser.id) { %>
+              <p><em>Notes for them: (optional)</em></p>
+              <textarea id="noteB" class="form-control w-100" maxlength="100"><%= exchange.noteB %></textarea>
+            <% } else if (exchange.noteB) { %>
+              <p><em>Notes from them:</em></p>
+             <% for (var para of exchange.noteB.split("\r\n")) { %>
+              <p><%= para %></p>
+             <% } %>
+            <% } %>
+          </div>
         </div>
       </div>
     </div>
@@ -221,6 +244,26 @@
         }
       });
 
+      $('#giveA, #forB, #noteA, #noteB').on('change', function (e) {
+        let data = {
+          exchange: '<%= exchange.id %>'
+        };
+
+        data[this.getAttribute('id')] = $(this).val();
+
+        $.ajax({
+          cache: false,
+          url: '/api/exchanges',
+          data: JSON.stringify(data),
+          dataType: 'json',
+          method: 'POST',
+          contentType: 'application/json',
+          success: function (data) {
+            console.log(data);
+          }
+        });
+      });
+
       $('#makeOffer').on('click', function () {
         let button = this;
 
@@ -237,7 +280,12 @@
             data: JSON.stringify({
               id: '<%= exchange.id %>',
               giveA: $('#giveA').val(),
-              forB: $('#forB').val()
+              forB: $('#forB').val(),
+             <% if (exchange.memberA == loggedInUser.id) { %>
+              noteA: $('#noteA').val()
+             <% } else { %>
+              noteB: $('#noteB').val()
+             <% } %>
             }),
             dataType: 'json',
             method: 'PUT',
