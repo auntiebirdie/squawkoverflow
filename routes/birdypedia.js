@@ -106,7 +106,7 @@ router.get('/eggs/:egg', async (req, res) => {
           label: "In Someone's Aviary"
         }, {
           id: 'wishlisted',
-          label: 'In My Wishlist'
+          label: 'On My Wishlist'
         }]
       });
     } else {

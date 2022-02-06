@@ -43,6 +43,9 @@ module.exports = async (req, res) => {
               title: birdypet.nickname || birdypet.bird.commonName,
               description: birdypet.variant.label || " ",
               url: `https://squawkoverflow.com/birdypet/${birdypet.id}`,
+              thumbnail: {
+                url: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/google/313/wrapped-gift_1f381.png'
+              },
               image: {
                 url: birdypet.variant.image
               }

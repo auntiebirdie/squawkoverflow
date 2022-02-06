@@ -16,12 +16,16 @@ router.get('/', async (req, res) => {
 router.get('/login', (req, res) => {
   if (req.query.code || req.query.konami) {
     API.call('login', 'POST', req.query).then((id) => {
+	    console.log(id);
+
       req.session.user = id;
 
       req.session.save((err) => {
-
         res.redirect('/');
       });
+    }).catch( (err) => {
+	    console.log(err);
+	    res.redirect('/');
     });
   } else {
     var redirectUri = process.env.DEV ? 'http%3A%2F%2Fdev.squawkoverflow.com' : 'https%3A%2F%2Fsquawkoverflow.com';

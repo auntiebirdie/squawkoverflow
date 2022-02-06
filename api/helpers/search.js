@@ -113,6 +113,9 @@ class Search {
               filters.push('species.code NOT IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity > 0)');
               params.push(input.memberData || input.loggedInUser);
               break;
+            case 'someone':
+              filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE intensity > 0)');
+              break;
             case 'somewhere':
               filters.push('species.code IN (SELECT id FROM counters WHERE type = "species" AND `count` > 0)');
               break;
@@ -166,6 +169,7 @@ class Search {
 
         resolve({
           totalPages: Math.ceil(totalPages / birdsPerPage),
+          totalResults: birds.length,
           results: output
         });
       });

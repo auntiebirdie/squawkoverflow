@@ -11,8 +11,9 @@
         ></div>
       </div>
       <div class="card-body align-top">
-        <h3 class="text-center">${model.nickname ? model.nickname : model.bird.commonName}</h3> 
-        <h6 class="text-center">${model.exchangeData == null || model.exchangeData == '<%= exchange.id %>' ? '' : (model.member == '<%= loggedInUser.id %>' ? `<a href="/exchange/${model.exchangeData}">in another exchange</a>` : 'in another exchange')}</h6>
+        <h3 class="text-center">${model.bird.commonName}</h3> 
+        <h5 class="text-center">${model.nickname ? model.nickname : '&nbsp;'}</h5>
+        <p class="text-center">${model.exchangeData == null || model.exchangeData == '<%= exchange.id %>' ? '' : (model.member == '<%= loggedInUser.id %>' ? `<a href="/exchange/${model.exchangeData}">in another exchange</a>` : 'in another exchange')}</p>
       </div>
     </div>
   </div>

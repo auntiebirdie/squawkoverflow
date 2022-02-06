@@ -5,6 +5,10 @@ module.exports = (req, res) => {
   return Members.all().then(async (members) => {
     let promises = [];
 
+    if (!req.query.include?.includes('self') && req.query.loggedInUser) {
+      members = members.filter((member) => member.id != req.query.loggedInUser);
+    }
+
     if (req.query.privacy) {
       members = members.filter((member) => {
         try {
@@ -18,11 +22,14 @@ module.exports = (req, res) => {
     }
 
     if (req.query.search) {
+	    try {
       let substrRegex = new RegExp(req.query.search, 'i');
 
       members = members.filter((member) => {
         return substrRegex.test(member.username);
       });
+	    }
+	    catch (err) { }
     }
 
     if (req.query.include?.includes('birdData')) {

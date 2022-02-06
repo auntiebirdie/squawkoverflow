@@ -7,6 +7,7 @@
   var paginations = document.querySelectorAll('.pagination');
   var currentPage = <%= locals.paginate || 1 %>;
   var totalPages = 0;
+  var totalResults = 0;
   var timeout;
 
   function template (model) {
@@ -45,7 +46,7 @@
     container.innerHTML = "";
    <% if (locals.paginate) { %>
     for (let pagination of paginations) {
-      pagination.style.visibility = 'hidden';
+      pagination.parentNode.style.visibility = 'hidden';
     }
    <% } %>
     currentPage = page * 1;
@@ -98,6 +99,7 @@
       dataType: "json",
       success: function (data) {
         totalPages = data.totalPages * 1;
+        totalResults = typeof data.totalResults == "undefined" ? null : data.totalResults * 1;
 
         if (data.results.length > 0 ) {
           for (var result of data.results) {
@@ -161,7 +163,16 @@
 
     for (let pagination of paginations) {
       pagination.innerHTML = content;
-      pagination.style.visibility = 'visible';
+
+      if (totalResults != null) {
+        pagination.nextElementSibling.innerHTML = `${totalResults.toLocaleString("en-US")} birds found`;
+      }
+      else {
+        pagination.nextElementSibling.innerHTML = '';
+      }
+
+      pagination.parentNode.style.visibility = 'visible';
     }
+
   }
 </script>

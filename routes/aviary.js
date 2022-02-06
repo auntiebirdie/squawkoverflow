@@ -53,6 +53,9 @@ router.get('/:member', async (req, res, next) => {
     extraInsights: member.id == req.session.user ? [{
       id: 'duplicated',
       label: 'I Have Multiple'
+    }, {
+      id: 'someone',
+      label: "On Someone's Wishlist"
     }] : [{
       id: 'hatched',
       label: "In My Aviary",

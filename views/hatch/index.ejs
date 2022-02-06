@@ -97,21 +97,21 @@
           var h6 = hatched.querySelector('h6');
           var text = "";
 
+          if (data.owned > 1) {
+            text += `<div><pan class="checkplus"></span> <em>You have more than one of this species</em></div>`;
+          }
+          else if (data.owned == 1) {
+            text += `<div><span class="checkmark"></span> <em>You have this species</em></div>`;
+          }
+
           if (data.wishlisted) {
             switch (data.wishlisted) {
               case 2:
-                text += `<div><span class="badge p-1 badge bg-warning">🌟</span> <em>You need this bird!/em></div>`;
+                text += `<div>🌟 <em>You need this bird!/em></div>`;
                 break;
               case 1:
-                text += `<div><span class="badge p-1 badge bg-danger">❤️</span> <em>You want this bird!</em></div>`;
+                text += `<div>❤️ <em>You want this bird!</em></div>`;
             }
-          }
-
-          if (data.owned > 1) {
-            text += `<div><span class="badge p-1 badge bg-secondary"><span class="checkmark"></span><span class="checkmark"></span></span> <em>You have more than one of this species</em></div>`;
-          }
-          else if (data.owned == 1) {
-            text += `<div><span class="badge p-1 badge bg-secondary"><span class="checkmark"></span></span> <em>You have this species</em></div>`;
           }
 
           h6.innerHTML = text;

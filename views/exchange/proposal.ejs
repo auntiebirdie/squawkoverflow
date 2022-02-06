@@ -15,8 +15,7 @@
 
   <div id="exchange" class="row">
     <div class="col-12 col-md-6">
-      <div class="bg-light m-3 pt-3 px-3 rounded h-100">
-        <div class="row pb-4">
+      <div class="row bg-light m-3 p-3 rounded h-100">
           <div class="col-6">
             <h4>
               <% if (exchange.memberA == loggedInUser.id) { %>
@@ -45,10 +44,9 @@
             </a>
           </div>
          <% } %>
-        </div>
 
+         <div class="col-12"></div>
 
-        <div class="row">
          <% if (exchange.birdypetsA.length > 0) { %>
            <% for (let birdypet of exchange.birdypetsA) { %>
            <div class="col-12 col-lg-6 d-flex align-items-stretch">
@@ -75,7 +73,7 @@
            </div>
           <% } %>
          <% } else { %>
-           <div class="text-center"><em>
+           <div class="text-center pt-3"><em>
             <% if (exchange.memberA == loggedInUser.id) { %>
              <% if (exchange.mutable) { %>
               <p>Please pick what birds you want to offer.</p>
@@ -93,24 +91,23 @@
             <% } %>
            </em></div>
          <% } %>
-          <div class="col-12 pt-4">
-            <% if (exchange.memberA == loggedInUser.id) { %>
-              <p><em>Notes for them: (optional)</em></p>
-              <textarea id="noteA" class="form-control w-100" maxlength="100"><%= exchange.noteA %></textarea>
-            <% } else if (exchange.noteA) { %>
-              <p><em>Notes from them:</em></p>
-             <% for (var para of exchange.noteA.split("\r\n")) { %>
-              <p><%= para %></p>
-             <% } %>
-            <% } %>
-          </div>
+
+        <div class="w-75 mx-auto pt-4 align-self-end">
+          <% if (exchange.memberA == loggedInUser.id) { %>
+            <p><em>Notes for them: (optional)</em></p>
+            <textarea id="noteA" class="form-control w-100" maxlength="250" <%= exchange.mutable ? '' : 'disabled' %>><%= exchange.noteA %></textarea>
+          <% } else if (exchange.noteA) { %>
+            <p><em>Notes from them:</em></p>
+          <% for (var para of exchange.noteA.split("\r\n")) { %>
+            <p><%= para %></p>
+           <% } %>
+          <% } %>
         </div>
       </div>
     </div>
 
     <div class="col-12 col-md-6">
-      <div class="bg-light m-3 pt-3 px-3 rounded h-100">
-        <div class="row pb-4">
+      <div class="row bg-light m-3 p-3 rounded h-100">
           <div class="col-6">
             <h4>
               for
@@ -135,9 +132,9 @@
             </a>
           </div>
          <% } %>
-        </div>
 
-        <div class="row">
+         <div class="col-12"></div>
+
          <% if (exchange.birdypetsB.length > 0) { %>
           <% for (let birdypet of exchange.birdypetsB) { %>
            <div class="col-12 col-md-6 d-flex align-items-stretch">
@@ -164,7 +161,7 @@
            </div>
           <% } %>
          <% } else { %>
-           <div class="text-center"><em>
+           <div class="text-center pt-3"><em>
             <% if (exchange.memberA == loggedInUser.id) { %>
              <% if (exchange.mutable) { %>
               <p>Please pick what birds you want from <%= exchange.member.username %>'s aviary.</p>
@@ -182,17 +179,20 @@
             <% } %>
            </em></div>
          <% } %>
-          <div class="col-12 pt-4">
-            <% if (exchange.memberB == loggedInUser.id) { %>
-              <p><em>Notes for them: (optional)</em></p>
-              <textarea id="noteB" class="form-control w-100" maxlength="100"><%= exchange.noteB %></textarea>
-            <% } else if (exchange.noteB) { %>
-              <p><em>Notes from them:</em></p>
-             <% for (var para of exchange.noteB.split("\r\n")) { %>
-              <p><%= para %></p>
-             <% } %>
-            <% } %>
-          </div>
+
+        <div class="w-75 mx-auto pt-4 align-self-end">
+          <% if (exchange.memberB == loggedInUser.id) { %>
+            <p><em>Notes for them: (optional)</em></p>
+            <textarea id="noteB" class="form-control w-100" maxlength="250" <%= exchange.mutable ? '' : 'disabled' %>><%= exchange.noteB %></textarea>
+          <% } else if (exchange.noteB) { %>
+            <p><em>Notes from them:</em></p>
+          <% for (var para of exchange.noteB.split("\r\n")) { %>
+            <p><%= para %></p>
+           <% } %>
+          <% } else { %>
+            <p class="hidden">&nbsp;</p>
+            <textarea class="form-control w-100 hidden"></textarea>
+          <% } %>
         </div>
       </div>
     </div>

@@ -96,7 +96,10 @@ class Exchange {
           for (let i = 0, len = birdypets.length; i < len; i++) {
             let birdypet = new BirdyPet(birdypets[i].id);
 
-            await birdypet.fetch();
+            await birdypet.fetch({
+              include: ['memberData'],
+              member: birdypet.member == this.memberA ? this.memberB : this.memberA
+            });
 
             this[birdypet.member == this.memberA ? 'birdypetsA' : 'birdypetsB'].push(birdypet);
           }
@@ -124,8 +127,14 @@ class Exchange {
   }
 
   delete(member) {
-    return new Promise((resolve, reject) => {
-      let completed = this.statusA + this.statusB == 4;
+    return new Promise(async (resolve, reject) => {
+      let latestLog = await Database.getOne('exchange_logs', {
+        exchange: this.id
+      }, {
+        order: 'loggedAt DESC'
+      })
+
+      let completed = latestLog?.log == 'The offer was accepted by both parties!';
 
       if (this.memberA == member) {
         this.set({
@@ -134,6 +143,8 @@ class Exchange {
           if (!completed) {
             Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [this.id, 'The offer was rescinded.']).then(resolve);
           }
+
+          resolve();
         });
       } else if (this.memberB == member) {
         this.set({
@@ -142,6 +153,8 @@ class Exchange {
           if (!completed) {
             Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [this.id, 'The offer was declined.']).then(resolve);
           }
+
+          resolve();
         });
       } else {
         reject();

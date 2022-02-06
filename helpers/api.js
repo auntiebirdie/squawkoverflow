@@ -14,7 +14,16 @@ exports.call = (endpoint, method = "GET", data = {}) => {
       }
 
       let res = {
-        sendStatus: resolve,
+        sendStatus: function(code) {
+          if (code != 200) {
+            reject({
+              code: code,
+              response: {}
+            });
+          } else {
+            resolve(code);
+          }
+        },
         setHeader: function(header, value) {
           resolve(value);
         },

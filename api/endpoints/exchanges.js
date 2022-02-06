@@ -2,6 +2,7 @@ const BirdyPet = require('../models/birdypet.js');
 const Database = require('../helpers/database.js');
 const Exchange = require('../models/exchange.js');
 const Member = require('../models/member.js');
+const Webhook = require('../helpers/webhook.js');
 
 module.exports = (req, res) => {
   let promises = [];
@@ -124,9 +125,9 @@ module.exports = (req, res) => {
               throw `Please pick at least one bird to either request or offer.`;
             } else {
               if (exchange.memberA == req.body.loggedInUser) {
-                exchange.statusA = exchange.birdypetsA.length > 0 ? 2 : 1;
+                exchange.statusA = exchange.statusA == 0 ? (exchange.birdypetsA.length == 0 ? 1 : 2) : 2;
               } else {
-                exchange.statusB = exchange.birdypetsB.length > 0 ? 2 : 1;
+                exchange.statusB = 2;
               }
 
               Database.set('exchanges', {
@@ -136,34 +137,103 @@ module.exports = (req, res) => {
                 statusB: exchange.statusB,
                 giveA: req.body.giveA,
                 forB: req.body.forB,
+                noteA: req.body.noteA || exchange.noteA,
+                noteB: req.body.noteB || exchange.noteB,
                 updatedAt: new Date()
               }).then(() => {
-                if (exchange.statusA + exchange.statusB == 4) {
-                  let promises = [];
+                let memberA = new Member(exchange.memberA);
+                let memberB = new Member(exchange.memberB);
 
-                  for (let birdypet of exchange.birdypetsA) {
-                    promises.push(birdypet.set({
-                      member: exchange.memberB
-                    }));
-                  }
+                Promise.all([
+                  memberA.fetch(),
+                  memberB.fetch(),
+                  exchange.fetch({
+                    loggedInUser: req.body.loggedInUser
+                  })
+                ]).then(() => {
+                  if (exchange.statusA + exchange.statusB == 4) {
+                    let promises = [];
 
-                  for (let birdypet of exchange.birdypetsB) {
-                    promises.push(birdypet.set({
-                      member: exchange.memberA
-                    }));
-                  }
+                    for (let birdypet of exchange.birdypetsA) {
+                      promises.push(birdypet.set({
+                        member: exchange.memberB
+                      }));
+                    }
 
-                  promises.push(Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, 'The offer was accepted by both parties!']));
+                    for (let birdypet of exchange.birdypetsB) {
+                      promises.push(birdypet.set({
+                        member: exchange.memberA
+                      }));
+                    }
 
-                  Promise.all(promises).then(() => {
+                    promises.push(Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, 'The offer was accepted by both parties!']));
+
+                    Promise.all(promises).then(() => {
+                      if (memberA.serverMember && memberB.serverMember) {
+                        Webhook('exchange', {
+                          content: req.body.loggedInUser == memberA.id ? `${memberA.username} and <@${memberB.id}> have come to an agreement!` : `${memberB.username} has accepted <@${memberA.id}>'s offer!`,
+                          embeds: [{
+                            description: 'The offer was accepted by both parties!',
+                            thumbnail: {
+                              url: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/google/313/handshake_1f91d.png'
+                            }
+                          }]
+                        }).then(() => {
+                          res.sendStatus(200);
+                        });
+                      } else {
+                        res.sendStatus(200);
+                      }
+                    });
+                  } else if ((exchange.statusA == 1 || exchange.statusA == 2) && exchange.statusB == 0) {
+                    if (memberA.serverMember && memberB.serverMember) {
+                      let giveA = exchange.birdypetsA.map((birdypet) => birdypet.bird.commonName).join(', ');
+
+                      if (giveA.length > 1000) {
+                        giveA = giveA.slice(0, 1000) + "...";
+                      } else if (giveA == "") {
+                        giveA = "*You decide!*";
+                      }
+
+                      let forB = exchange.birdypetsB.map((birdypet) => birdypet.bird.commonName).join(', ');
+
+                      if (forB.length > 1000) {
+                        forB = forB.slice(0, 1000) + "...";
+                      } else if (forB == "") {
+                        forB = "*You decide!*";
+                      }
+
+                      Webhook('exchange', {
+                        content: `${memberA.username} has sent <@${memberB.id}> an offer!`,
+                        embeds: [{
+                          title: 'View Offer',
+                          description: req.body.noteA || exchange.noteA || " ",
+                          url: `https://squawkoverflow.com/exchange/${exchange.id}`,
+                          fields: [{
+                            name: `I'll give ${req.body.giveA || exchange.giveA}`,
+                            value: giveA,
+                            inline: false
+                          }, {
+                            name: `for ${req.body.forB || exchange.forB}`,
+                            value: forB,
+                            inline: false
+                          }],
+                          thumbnail: {
+                            url: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/google/313/handshake_1f91d.png'
+                          }
+                        }]
+                      }).then(() => {
+                        res.sendStatus(200);
+                      });
+                    } else {
+                      res.sendStatus(200);
+                    }
+                  } else {
                     res.sendStatus(200);
-                  });
-                } else {
-                  res.sendStatus(200);
-                }
+                  }
+                });
               });
             }
-
           } else {
             throw `${exchange.member.username} has not yet made a decision. You cannot make any changes to the offer until they do.`;
           }

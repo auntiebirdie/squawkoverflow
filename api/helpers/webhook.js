@@ -1,25 +1,22 @@
 const secrets = require('../secrets.json');
-const https = require('https');
+
+const {
+  WebhookClient
+} = require('discord.js');
 
 module.exports = function(webhook, data) {
-  data = JSON.stringify(data);
+  if (!process.env.NODE_ENV || process.env.NODE_ENV != "PROD") {
+    webhook = "testing";
+  }
 
   return new Promise((resolve, reject) => {
-    const request = https.request({
-        host: 'discord.com',
-        path: `/api/webhooks/${secrets.DISCORD.WEBHOOK[webhook].ID}/${secrets.DISCORD.WEBHOOK[webhook].TOKEN}`,
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': data.length
-        }
-      },
-      (response) => {
-          resolve();
-      });
+    const webhookClient = new WebhookClient({
+      id: secrets.DISCORD.WEBHOOK[webhook].ID,
+      token: secrets.DISCORD.WEBHOOK[webhook].TOKEN
+    });
 
-    request.write(data);
-
-    request.end();
+    webhookClient.send(data).then(() => {
+      resolve();
+    });
   });
 }
