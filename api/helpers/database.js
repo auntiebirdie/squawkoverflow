@@ -30,7 +30,7 @@ Database.prototype.query = function(query, params = []) {
         if (query.endsWith(' LIMIT 1')) {
           resolve(results[0]);
         } else {
-		delete results.meta;
+          delete results.meta;
 
           resolve(results);
         }
@@ -144,6 +144,27 @@ Database.prototype.key = function() {
 Database.prototype.create = function(type, data) {
   return new Promise((resolve, reject) => {
     let query = `INSERT INTO ${type} (`;
+    let fields = [];
+    let values = [];
+    let params = [];
+
+    for (let d in data) {
+      fields.push(`\`${d}\``);
+      values.push('?');
+      params.push(data[d]);
+    }
+
+    query += fields.join(', ') + ') VALUES (' + values.join(', ') + ')';
+
+    this.query(query, params).then((results) => {
+      resolve(results);
+    });
+  });
+}
+
+Database.prototype.replace = function(type, data) {
+  return new Promise((resolve, reject) => {
+    let query = `REPLACE INTO ${type} (`;
     let fields = [];
     let values = [];
     let params = [];

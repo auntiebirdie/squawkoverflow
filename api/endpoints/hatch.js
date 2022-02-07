@@ -38,7 +38,7 @@ module.exports = async (req, res) => {
           var query = 'SELECT adjective, numSpecies, icon FROM adjectives';
           var params = [];
 
-          if (member.settings.general?.includes('removeCompleted')) {
+          if (member.settings.general_removeCompleted) {
             query += ' WHERE adjective NOT IN (SELECT id FROM counters WHERE counters.id = adjectives.adjective AND counters.member = ? AND counters.count = adjectives.numSpecies)';
             params.push(member.id);
           }

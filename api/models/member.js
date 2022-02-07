@@ -20,8 +20,7 @@ class Member {
         serverMember: false, // TODO - check?
         bugs: 0,
         joinedAt: new Date(),
-        lastLoginAt: new Date(),
-        settings: JSON.stringify({}),
+        lastLoginAt: new Date()
       }).then(() => {
         resolve();
       });
@@ -46,8 +45,18 @@ class Member {
           this.avatar = member.avatar;
 
           try {
-            this.settings = member.settings ? JSON.parse(member.settings) : {};
+            this.settings = await Database.get('member_settings', {
+              member: this.id
+            }).then((settings) =>
+              settings.reduce((obj, item) => {
+                return {
+                  ...obj,
+                  [item.setting]: item.value
+                }
+              }, {}));
+
           } catch (err) {
+            console.log(err);
             this.settings = {};
           }
 
@@ -104,7 +113,7 @@ class Member {
                 break;
               case 'birdyBuddy':
                 if (member.birdyBuddy) {
-			const BirdyPet = require('./birdypet.js');
+                  const BirdyPet = require('./birdypet.js');
 
                   this.birdyBuddy = new BirdyPet(member.birdyBuddy);
                   await this.birdyBuddy.fetch();
@@ -132,9 +141,11 @@ class Member {
                   member: this.id
                 });
                 break;
-		    case 'incubator':
-			    this.incubator = await Database.get('member_variants', { member: this.id });
-			    break;
+              case 'incubator':
+                this.incubator = await Database.get('member_variants', {
+                  member: this.id
+                });
+                break;
               case 'wishlist':
                 this.wishlist = await Database.get('wishlist', {
                   member: this.id

@@ -201,8 +201,10 @@
   <div class="text-center pt-5">
    <% if (exchange.mutable) { %>
     <button id="makeOffer" class="btn btn-secondary btn-lg me-2">
-      <% if (exchange.statusA == 2 || exchange.statusB == 2 || (exchange.statusA == 1 && exchange.statusB == 1)) { %>
+      <% if (exchange.statusA == 2 || exchange.statusB == 2) { %>
         Accept Offer
+      <% } else if (exchange.statusA == 1 && exchange.statusB == 1) { %>
+        Submit Offer
       <% } else if (exchange.statusA == 0 & exchange.statusB == 0) { %>
         Make Offer
       <% } else {  %>

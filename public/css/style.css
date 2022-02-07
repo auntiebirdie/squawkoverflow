@@ -341,7 +341,7 @@ span.checkmark, span.checkplus {
   width: 25px;
   height: 25px;
   background-size: contain;
-  background-image: url('/img/checkmark.plus');
+  background-image: url('/img/checkmark.png');
   background-repeat: no-repeat;
 }
 

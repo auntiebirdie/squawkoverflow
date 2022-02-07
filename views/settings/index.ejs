@@ -39,14 +39,14 @@
 
         <div class="form-check form-switch mt-3 mb-3">
           <span>
-            <input type="checkbox" class="form-check-input" name="general" value="updateWishlist" id="general_updateWishlist" <%= loggedInUser.settings.general?.includes('updateWishlist') ? "checked" : "" %>>
+            <input type="checkbox" class="form-check-input" name="general_updateWishlist" value="1" id="general_updateWishlist" <%= loggedInUser.settings.general_updateWishlist ? "checked" : "" %>>
           </span>
           <label class="form-check-label" for="general_updateWishlist">Remove newly obtained birds from my wishlist automatically</label>
         </div>
 
         <div class="form-check form-switch mb-3">
           <span>
-            <input type="checkbox" class="form-check-input" name="general" value="removeCompleted" id="general_removeCompleted" <%= loggedInUser.settings.general?.includes('removeCompleted') ? "checked" : "" %>>
+            <input type="checkbox" class="form-check-input" name="general_removeCompleted" value="1" id="general_removeCompleted" <%= loggedInUser.settings.general_removeCompleted ? "checked" : "" %>>
           </span>
           <label class="form-check-label" for="general_removeCompleted">Remove completed eggs from the hatching pool</label>
         </div>
@@ -62,7 +62,7 @@
        <% if (loggedInUser.serverMember) { %>
         <div class="form-check form-switch mb-3">
           <span>
-            <input type="checkbox" class="form-check-input" name="privacy" value="activity" id="privacy_activity" <%= loggedInUser.settings.privacy?.includes('activity') ? "checked" : "" %>>
+            <input type="checkbox" class="form-check-input" name="privacy_activity" value="1" id="privacy_activity" <%= loggedInUser.settings.privacy_activity ? "checked" : "" %>>
           </span>
           <label class="form-check-label" for="privacy_activity">Don't post my on-site activity to the Discord server</label>
         </div>
@@ -70,28 +70,28 @@
 
         <div class="form-check form-switch mb-3">
           <span>
-            <input type="checkbox" class="form-check-input" name="privacy" value="profile" id="privacy_profile" <%= loggedInUser.settings.privacy?.includes('profile') ? "checked" : "" %>>
+            <input type="checkbox" class="form-check-input" name="privacy_profile" value="1" id="privacy_profile" <%= loggedInUser.settings.privacy_profile ? "checked" : "" %>>
           </span>
           <label class="form-check-label" for="privacy_profile">Don't allow other members to see my profile</label>
         </div>
 
         <div class="form-check form-switch mb-3">
           <span>
-            <input type="checkbox" class="form-check-input" name="privacy" value="exchanges" id="privacy_exchanges" <%= loggedInUser.settings.privacy?.includes('exchanges') ? "checked" : "" %>>
+            <input type="checkbox" class="form-check-input" name="privacy_exchange" value="1" id="privacy_exchange" <%= loggedInUser.settings.privacy_exchange ? "checked" : "" %>>
           </span>
           <label class="form-check-label" for="privacy_exchanges">Don't allow other members to send me exchange offers</label>
         </div>
 
         <div class="form-check form-switch mb-3">
           <span>
-            <input type="checkbox" class="form-check-input" name="privacy" value="gifts" id="privacy_gifts" <%= loggedInUser.settings.privacy?.includes('gifts') ? "checked" : "" %>>
+            <input type="checkbox" class="form-check-input" name="privacy_gifts" value="1" id="privacy_gifts" <%= loggedInUser.settings.privacy_gifts ? "checked" : "" %>>
           </span>
           <label class="form-check-label" for="privacy_gifts">Don't allow other members to send me gifts</label>
         </div>
 
         <div class="form-check form-switch mb-3">
           <span>
-            <input type="checkbox" class="form-check-input" name="privacy" value="wishlist" id="privacy_wishlist" <%= loggedInUser.settings.privacy?.includes('wishlist') ? "checked" : "" %>>
+            <input type="checkbox" class="form-check-input" name="privacy_wishlist" value="1" id="privacy_wishlist" <%= loggedInUser.settings.privacy_wishlist ? "checked" : "" %>>
           </span>
           <label class="form-check-label" for="privacy_wishlist">Don't allow other members to see my wishlist</label>
         </div>
@@ -106,40 +106,33 @@
         var input = this;
 
         if (!input.parentNode.classList.contains('loadingData')) {
-          var settings = {};
-          var type = input.type;
           var key = input.name;
           var value = input.value;
 
           input.parentNode.classList.add('loadingData');
 
-          switch (type) {
+          switch (input.type) {
             case 'radio':
-              settings[key] = value;
-              break;
             case 'checkbox':
-              let tmp = [];
-
-              $(`input[name="${key}"]:checked`).each(function (index, input) {
-                tmp.push(input.value);
-              });
-
-              settings[key] = tmp.join(',');
+              var value = input.value;
+              var action = input.checked ? "PUT" : "DELETE";
               break;
             case 'select-one':
-              settings[key] = input.options[input.selectedIndex].value;
+              var value = input.options[input.selectedIndex].value;
+              var action = value ? "PUT" : "DELETE";
               break;
           }
 
           $.ajax({
             cache: false,
-            url: '/api/member',
+            url: '/api/settings',
             data: JSON.stringify({
-              settings: settings
+              setting: key,
+              value: value
             }),
             dataType: 'json',
             contentType: 'application/json',
-            method: 'PUT',
+            method: action,
             success: function(data) {
               if (key == 'theme') {
                 window.location.reload();

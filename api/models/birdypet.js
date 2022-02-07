@@ -39,7 +39,7 @@ class BirdyPet {
 
           await member.fetch();
 
-          if (member.settings.general?.includes('updateWishlist')) {
+          if (member.settings.general_updateWishlist) {
             await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [variant.bird.code, member.id]);
           }
 
@@ -111,7 +111,7 @@ class BirdyPet {
 
         await member.fetch();
 
-        if (member.settings.general?.includes('updateWishlist')) {
+        if (member.settings.general_updateWishlist) {
           promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [this.bird.code, member.id]));
         }
 

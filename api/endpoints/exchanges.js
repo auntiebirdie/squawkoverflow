@@ -246,7 +246,7 @@ module.exports = (req, res) => {
         let member = new Member(req.body.member);
 
         member.fetch().then(() => {
-          if (member.settings.privacy?.includes('exchanges')) {
+          if (member.settings.privacy_exchange) {
             res.json({
               error: "This member isn't accepting offers at this time."
             });

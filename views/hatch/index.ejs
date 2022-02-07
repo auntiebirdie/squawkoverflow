@@ -20,7 +20,7 @@
           </a>
         </div>
         <% } %>
-      <% } else if (loggedInUser.settings.general?.includes('removeCompleted')) { %>
+      <% } else if (loggedInUser.settings.general_removeCompleted) { %>
         <p><em>You appear to have collected every species from every egg!  To hatch more eggs anyway, head to <a href="/settings">Settings</a> and uncheck the "remove completed eggs" option.</em></p>
       <% } else { %>
         <p><em>Something went wrong!  Please <a href="https://bugs.squawkoverflow.com/?member=<%= loggedInUser.id %>" target="_blank">submit a bug report</a> so someone can look into it.</em></p>
@@ -98,7 +98,7 @@
           var text = "";
 
           if (data.owned > 1) {
-            text += `<div><pan class="checkplus"></span> <em>You have more than one of this species</em></div>`;
+            text += `<div><span class="checkplus"></span> <em>You have more than one of this species</em></div>`;
           }
           else if (data.owned == 1) {
             text += `<div><span class="checkmark"></span> <em>You have this species</em></div>`;

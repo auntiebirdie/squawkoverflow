@@ -14,6 +14,8 @@ module.exports = async (req, res) => {
       var member = new Member(req.body.loggedInUser);
       var toUpdate = {};
 
+      let promises = [];
+
       await member.fetch({
         include: ['profile']
       });
@@ -31,21 +33,14 @@ module.exports = async (req, res) => {
           case "pronouns":
             toUpdate[key] = JSON.parse(req.body[key]);
             break;
-          case "settings":
-            Object.keys(req.body.settings).filter((val) => ["theme", "general", "privacy", "title"].includes(val)).forEach((key) => {
-              if (key == "theme" || key == "title") {
-                toUpdate.settings[key] = req.body.settings[key];
-              } else {
-                toUpdate.settings[key] = req.body.settings[key].split(',');
-              }
-            });
-            break;
         }
       }
 
-      await member.set(toUpdate);
+      promises.push(member.set(toUpdate));
 
-      return res.sendStatus(200);
+      Promise.all(promises).then(() => {
+        return res.sendStatus(200);
+      });
       break;
     default:
       return res.sendStatus(405);

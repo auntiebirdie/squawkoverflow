@@ -43,7 +43,7 @@ module.exports = (req, res) => {
         intensity: 0
       }));
 
-      if (process.env.NODE_ENV == "PROD" && member.serverMember && !member.settings.privacy?.includes('activity')) {
+      if (member.serverMember && !member.settings.privacy_activity) {
         promises.push(Webhook('birdwatching', {
           content: " ",
           embeds: [{

@@ -114,7 +114,7 @@ class Search {
               params.push(input.memberData || input.loggedInUser);
               break;
             case 'someone':
-              filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE intensity > 0)');
+              filters.push('species.code IN (SELECT a.species FROM wishlist a JOIN members b ON (a.member = b.id) WHERE intensity > 0 AND b.id NOT IN (SELECT `member` FROM member_settings WHERE setting = "privacy_gifts"))');
               break;
             case 'somewhere':
               filters.push('species.code IN (SELECT id FROM counters WHERE type = "species" AND `count` > 0)');

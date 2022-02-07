@@ -26,7 +26,7 @@ router.get('/:member', async (req, res, next) => {
       kind: 'bait'
     });
   } else {
-    if (member.settings.privacy?.includes('wishlist')) {
+    if (member.settings.privacy_wishlist) {
       return res.redirect('/error');
     }
   }

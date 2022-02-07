@@ -49,7 +49,6 @@ module.exports = async (req, res) => {
               avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`,
               joinedAt: new Date(),
               lastLoginAt: new Date(),
-              settings: {},
               tier: 0
             });
 

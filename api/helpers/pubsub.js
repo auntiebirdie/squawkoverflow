@@ -50,7 +50,7 @@ exports.receive = function(message, context) {
     switch (data.action) {
       case "COLLECT":
         if (data.adjective) {
-          if (process.env.NODE_ENV == "PROD" && member.serverMember && (!member.settings.privacy?.includes('activity') || data.source == "DISCORD")) {
+          if (member.serverMember && (!member.settings.privacy_activity || data.source == "DISCORD")) {
             promises.push(Database.getOne('adjectives', {
               adjective: data.adjective
             }).then((egg) => {
@@ -71,7 +71,7 @@ exports.receive = function(message, context) {
             }));
           }
         } else if (data.freebird) {
-          if (process.env.NODE_ENV == "PROD" && member.serverMember && (!member.settings.privacy?.includes('activity') || data.source == "DISCORD")) {
+          if (member.serverMember && (!member.settings.privacy_activity || data.source == "DISCORD")) {
             Webhook('birdwatching', {
               content: " ",
               embeds: [{

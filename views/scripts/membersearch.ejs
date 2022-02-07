@@ -1,5 +1,6 @@
 <script type="text/javascript">
   var selectedMember = null;
+  var _TRAPCARD = false;
 
   $(document).ready(function () {
     var memberSearch = $('#memberSearch .typeahead');
@@ -17,8 +18,8 @@
       async: true,
       source: function (query, syncResults, asyncResults) {
         return new Promise((resolve, reject) => {
-          if (query == "     ") {
-            // YOU ACTIVATED MY TRAP CARD
+          if (_TRAPCARD) {
+            _TRAPCARD = false;
             return resolve([]);
           }
 
@@ -68,7 +69,7 @@
           text += `<img src="${data.avatar}" class="rounded-circle" width="42" onerror="missingMemberAvatar(this)"> ${data.username}`;
 
           if (data.owned > 1) {
-            text += `<div class="small ms-5"><span class="checkmarkplus"></span> <em>Multiple in aviary</em></div>`;
+            text += `<div class="small ms-5"><span class="checkplus"></span> <em>Multiple in aviary</em></div>`;
           }
           else if (data.owned == 1) {
             text += `<div class="small ms-5"><span class="checkmark"></span> <em>In aviary</em></div>`;
@@ -117,7 +118,9 @@
     $('#memberSearch').on('change', 'input[type="checkbox"]', function () {
       let query = memberSearch.typeahead('val');
 
-      memberSearch.typeahead('val', '     ').typeahead('val', query);
+      _TRAPCARD = true;
+
+      memberSearch.typeahead('val', '.').typeahead('val', query);
     });
   });
 </script>

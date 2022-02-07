@@ -11,13 +11,7 @@ module.exports = (req, res) => {
 
     if (req.query.privacy) {
       members = members.filter((member) => {
-        try {
-          member.settings = JSON.parse(member.settings);
-
-          return !member.settings.privacy?.includes(req.query.privacy)
-        } catch (err) {
-          return true;
-        }
+        return !member.settings[`privacy_${req.query.privacy}`];
       });
     }
 

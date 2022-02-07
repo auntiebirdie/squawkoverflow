@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
 
     await Members.all().then((members) => {
       for (let member of members) {
-        if (!member.settings?.privacy?.includes('profile')) {
+        if (!member.settings.privacy_profile) {
           promises.push(Counters.get('species', member.id, bird.code).then((result) => {
             return {
               member: member,

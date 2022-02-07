@@ -37,14 +37,14 @@
       <% if (member.aviary > 0) { %>
         <p><a href="/aviary/<%= member.id %>" class="btn btn-secondary">🐦 View Aviary</a></p>
       <% } %>
-      <% if (member.hasWishlist && !member.settings.privacy?.includes('wishlist')) { %>
+      <% if (member.hasWishlist && !member.settings.privacy_wishlist) { %>
         <p><a href="/wishlist/<%= member.id %>" class="btn btn-secondary">❤️ View Wishlist</a></p>
       <% } %>
       <% if (locals.loggedInUser && loggedInUser.id != member.id) { %>
-       <% if (!member.settings.privacy?.includes('exchanges')) { %>
+       <% if (!member.settings.privacy_exchanges) { %>
         <p><a href="/exchange/<%= member.id %>/new" class="btn btn-secondary">🤝 Offer Exchange</a></p>
        <% } %>
-       <% if (!member.settings.privacy?.includes('gifts')) { %>
+       <% if (!member.settings.privacy_gifts) { %>
         <p><a href="/members/<%= member.id %>/gift" class="btn btn-secondary">🎁 Send Gift</a></p>
        <% } %>
       <% } %>

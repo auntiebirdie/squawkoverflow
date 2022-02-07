@@ -17,7 +17,7 @@ router.get('/:member', async (req, res) => {
     id: req.params.member,
     include: ['aviary', 'birdyBuddy', 'families', 'featuredFlock', 'flocks', 'hasWishlist']
   }).then(async (member) => {
-    if (member.id != req.session.user && member.settings?.privacy?.includes('profile')) {
+    if (member.id != req.session.user && member.settings?.privacy_profile) {
       return res.render('members/private', {
         member: member
       });
@@ -38,7 +38,7 @@ router.get('/:member/gift', Middleware.isLoggedIn, async (req, res) => {
   API.call('member', 'GET', {
     id: req.params.member
   }).then(async (member) => {
-    if (member.settings.privacy?.includes('gifts')) {
+    if (member.settings.privacy_gifts) {
       return res.redirect('/error');
     }
 
