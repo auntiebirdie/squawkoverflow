@@ -48,7 +48,7 @@ var Database = require('../api/helpers/database.js');
     '    INSERT INTO squawkdata.counters VALUES (OLD.member, "family", v_family, 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
     '    INSERT INTO squawkdata.counters VALUES (OLD.member, "aviary", "total", 0) ON DUPLICATE KEY UPDATE \`count\`= \`count\` - 1; ' +
     '    REPLACE INTO squawkdata.counters SELECT OLD.member, "species", "total", COUNT(DISTINCT variants.species) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) WHERE birdypets.member = OLD.member; ' +
-    '    REPLACE INTO squawkdata.counters SELECT OLD.member, "eggs", `adjective`, COUNT(DISTINCT variants.species) FROM species_adjectives JOIN variants ON (variants.species = species_adjectives.speciese) JOIN birdypets ON (birdypets.variant = variants.id) WHERE birdypets.member = OLD.member GROUP BY adjective; ' +
+    '    REPLACE INTO squawkdata.counters SELECT OLD.member, "eggs", `adjective`, COUNT(DISTINCT variants.species) FROM species_adjectives JOIN variants ON (variants.species = species_adjectives.species) JOIN birdypets ON (birdypets.variant = variants.id) WHERE birdypets.member = OLD.member GROUP BY adjective; ' +
     '  END IF; ' +
     'END');
 
