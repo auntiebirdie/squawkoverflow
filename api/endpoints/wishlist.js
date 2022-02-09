@@ -59,7 +59,7 @@ module.exports = async (req, res) => {
           }
         }
 
-        Database.query('INSERT INTO wishlist VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE intensity = ?', [req.body.loggedInUser, req.body.species, intensity, intensity]).then(() => {
+        Database.query('INSERT INTO wishlist VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE intensity = ?', [req.body.loggedInUser, req.body.species, intensity, intensity]).then(() => {
           res.json(emoji);
         });
       });

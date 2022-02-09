@@ -96,7 +96,7 @@ class Member {
 
           let inactiveMonths = new Date().setMonth(new Date().getMonth() - 3);
 
-          this.active = member.lastLogin > inactiveMonths || member.lastHatchedAt > inactiveMonths;
+          this.active = true; //member.lastLogin > inactiveMonths || member.lastHatchedAt > inactiveMonths;
           this.serverMember = member.serverMember;
           this.joinedAt = member.joinedAt;
           this.lastHatchAt = member.lastHatchAt;
@@ -136,15 +136,21 @@ class Member {
               case 'families':
                 this.families = await Database.query('SELECT taxonomy.name, taxonomy.display, IF(counters.count IS NULL, 0, counters.count) owned FROM taxonomy JOIN counters ON (taxonomy.name = counters.id) WHERE taxonomy.type = "family" AND counters.member = ? AND counters.count > 0 ORDER BY taxonomy.name', [this.id]);
                 break;
+              case 'hasIncubator':
+                this.hasIncubator = await Database.count('member_variants', {
+                  member: this.id
+                });
+                break;
               case 'hasWishlist':
                 this.hasWishlist = await Database.getOne('wishlist', {
                   member: this.id
                 });
                 break;
-              case 'incubator':
-                this.incubator = await Database.get('member_variants', {
-                  member: this.id
-                });
+              case 'totals':
+                this.totals = {
+                  aviary: await Counters.get('aviary', this.id, 'total'),
+                  species: await Counters.get('species', this.id, 'total')
+                };
                 break;
               case 'wishlist':
                 this.wishlist = await Database.get('wishlist', {

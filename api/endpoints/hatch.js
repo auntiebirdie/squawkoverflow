@@ -20,10 +20,10 @@ module.exports = async (req, res) => {
       let member = new Member(req.query.loggedInUser);
 
       await member.fetch({
-        include: ['aviary']
+        include: ['totals']
       });
 
-      if (member.tier.aviaryLimit && member.aviary >= member.tier.aviaryLimit) {
+      if (member.tier.aviaryLimit && member.totals.aviary >= member.tier.aviaryLimit) {
         return res.status(403).json({
           aviaryFull: true
         });
@@ -59,21 +59,25 @@ module.exports = async (req, res) => {
       var birdypets = [];
       var species = await Database.query('SELECT species FROM species_adjectives WHERE adjective = ? ORDER BY RAND() LIMIT 10', [req.body.egg]);
 
-      for (let bird of species) {
-        try {
-          var variant = new Variant(await Database.query('SELECT id FROM variants WHERE species = ? AND special = FALSE ORDER BY RAND() LIMIT 1', [bird.species]).then((result) => result.id));
+      if (species.length > 0) {
+        for (let bird of species) {
+          try {
+            var variant = new Variant(await Database.query('SELECT id FROM variants WHERE species = ? AND special = FALSE ORDER BY RAND() LIMIT 1', [bird.species]).then((result) => result.id));
 
-          break;
-        } catch (err) {
-          continue;
+            break;
+          } catch (err) {
+            continue;
+          }
         }
+
+        await variant.fetch();
+
+        await variant.fetchMemberData(req.body.loggedInUser);
+
+        return res.status(200).json(variant);
+      } else {
+        return res.sendStatus(404);
       }
-
-      await variant.fetch();
-
-      await variant.fetchMemberData(req.body.loggedInUser);
-
-      return res.status(200).json(variant);
       break;
     default:
       return res.sendStatus(405);

@@ -10,8 +10,6 @@ module.exports = async (req, res) => {
   if (req.body.konami) {
     let konami = req.body.konami;
 
-	  console.log(konami);
-
     await Database.query('SELECT * FROM konami WHERE code = ?', [konami]).then(([code]) => {
       if (code.used) {
         return res.sendStatus(400);

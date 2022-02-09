@@ -39,7 +39,7 @@ router.get('/', Middleware.isLoggedIn, async (req, res) => {
       label: 'Not In My Aviary'
     }, {
       id: 'wishlisted',
-      label: 'In My Wishlist'
+      label: 'On My Wishlist'
     }]
   });
 });

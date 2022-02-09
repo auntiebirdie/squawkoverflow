@@ -7,7 +7,7 @@ class Members {
 
   all() {
     return new Promise((resolve, reject) => {
-      Database.query('SELECT * FROM members WHERE lastLoginAt >= NOW() - INTERVAL 3 MONTH OR lastHatchAt >= NOW() - INTERVAL 3 MONTH ORDER BY username').then((results) => {
+      Database.query('SELECT * FROM members ORDER BY username').then((results) => {
         resolve(results);
       });
     });

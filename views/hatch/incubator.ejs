@@ -1,51 +1,26 @@
 <%- include('../header.ejs') %>
 
-  <div id="eggs">
-    <%- include('../partials/page-title.ejs', { title : "Hatch Eggs" }) %>
+  <%- include('../partials/page-title.ejs', { title : "Incubator" }) %>
 
-    <div class="row text-center mb-5">
+  <div id="incubator">
+    <div class="row text-center mb-5 align-items-center">
       <% if (eggs.length > 0) { %>
         <% for (var egg of eggs) { %>
         <div class="col-6 col-md-4 col-lg-2 mb-3">
-          <a data-egg="<%= egg.adjective %>" class="mb-2" role="button">
+          <a data-id="<%= egg.id %>" class="mb-2" role="button">
             <h3>
-              <img src="https://storage.googleapis.com/squawkoverflow/<%= egg.icon || 'eggs/D/default.png' %>">
+              <img src="<%= egg.image %>" class="p-5 rounded-circle">
             </h3>
-            <h4><%= egg.adjective %></h4>
-           <% if (loggedInUser.tier.extraInsights) { %>
-            <h5 class="text-muted">
-              <%= egg.numHatched %>/<%= egg.numSpecies %>
-            </h5>
-             <% } %>
           </a>
+          <h4><%= egg.bird.commonName %></h4>
+          <h6><%= egg.label %></h6>
         </div>
         <% } %>
-      <% } else if (loggedInUser.settings.general_removeCompleted) { %>
-        <p><em>You appear to have collected every species from every egg!  To hatch more eggs anyway, head to <a href="/settings">Settings</a> and uncheck the "remove completed eggs" option.</em></p>
-      <% } else { %>
-        <p><em>Something went wrong!  Please <a href="https://bugs.squawkoverflow.com/?member=<%= loggedInUser.id %>" target="_blank">submit a bug report</a> so someone can look into it.</em></p>
       <% } %>
-    </div>
-
-    <% if (hasIncubator) { %>
-      <div class="text-center">
-        <p><em>You can hatch special eggs containing specific birds!  Go to the <a href="/hatch/incubator">incubator</a> to view them.</em></p>
-      </div>
-    <% } %>
-
-    <div class="row text-center mt-5">
-      <div class="col">
-        <p><small><em><a href="/faq#weird-eggs" target="_blank">What's with the weird eggs?</a></em></small></p>
-       <% if (loggedInUser.tier.extraInsights) { %>
-        <p><small><em><a href="/faq#extra-insights" target="_blank">What do the numbers below the eggs mean?</a></em></small></p>
-       <% } %>
-      </div>
     </div>
   </div>
 
   <div id="hatched" class="d-none">
-    <%- include('../partials/page-title.ejs', { title : "You hatch the %adjective% egg to discover..." }) %>
-
     <div class="row">
       <div class="col-md-8 text-center mb-3">
         <img src="" class="birdypet full border border-1 bg-white">
@@ -67,22 +42,22 @@
   </div>
 
   <script>
-    var eggs = document.getElementById('eggs');
+    var incubator = document.getElementById('incubator');
     var hatched = document.getElementById('hatched');
     var actions = document.getElementById('actions');
 
     var egg, variant;
 
-    $(eggs).one('click', 'a[data-egg]', function (e) {
-      egg = e.currentTarget.getAttribute('data-egg');
+    $(incubator).one('click', 'a', function (e) {
+      egg = e.currentTarget.getAttribute('data-id');
 
-      eggs.classList.add('loadingData');
+      incubator.classList.add('loadingData');
 
       $.ajax({
         cache: false,
-        url: `/api/hatch`,
+        url: `/api/incubate`,
         data: JSON.stringify({
-          egg : egg
+          id : egg
         }),
         dataType: "json",
         contentType: 'application/json',
@@ -90,7 +65,6 @@
         success: function(data) {
           variant = data.id;
 
-          hatched.querySelector('h1').innerHTML = hatched.querySelector('h1').innerHTML.replace('%adjective%', egg);
           hatched.querySelector('img').setAttribute('src', data.image);
 
           var h3 = hatched.querySelector('h3').querySelector('a');
@@ -100,30 +74,8 @@
           var h5 = hatched.querySelector('h5');
           // add label to returned data
 
-          var h6 = hatched.querySelector('h6');
-          var text = "";
-
-          if (data.owned > 1) {
-            text += `<div><span class="checkplus"></span> <em>You have more than one of this species</em></div>`;
-          }
-          else if (data.owned == 1) {
-            text += `<div><span class="checkmark"></span> <em>You have this species</em></div>`;
-          }
-
-          if (data.wishlisted) {
-            switch (data.wishlisted) {
-              case 2:
-                text += `<div>🌟 <em>You need this bird!/em></div>`;
-                break;
-              case 1:
-                text += `<div>❤️ <em>You want this bird!</em></div>`;
-            }
-          }
-
-          h6.innerHTML = text;
-
-          eggs.classList.remove('loadingData');
-          eggs.classList.add('d-none');
+          incubator.classList.remove('loadingData');
+          incubator.classList.add('d-none');
 
           hatched.classList.remove('d-none');
         }
@@ -145,8 +97,7 @@
               cache: false,
               url: `/api/collect`,
               data: JSON.stringify({
-                variant: variant,
-                adjective : egg
+                variant: variant
               }),
               dataType: "json",
               contentType: 'application/json',

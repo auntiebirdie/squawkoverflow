@@ -11,22 +11,6 @@ class Search {
       let filters = [];
       let params = [];
 
-      if (input.search) {
-        if (kind == 'birdypet') {
-          filters.push('(MATCH(birdypets.nickname) AGAINST (? IN BOOLEAN MODE) OR MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE))');
-
-          var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
-
-          Array(2).fill(input.search).forEach((param) => params.push(param.replace(regex, '$1*')));
-        } else {
-          filters.push('MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)');
-
-          var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
-
-          Array(1).fill(input.search).forEach((param) => params.push(param.replace(regex, '$1*')));
-        }
-      }
-
       switch (kind) {
         case 'bird':
           query += 'species.code FROM species';
@@ -43,6 +27,22 @@ class Search {
           query += 'species.code FROM species JOIN wishlist ON (species.code = wishlist.species AND wishlist.member = ? AND wishlist.intensity > 0)';
           params.push(input.id);
           break;
+      }
+
+      if (input.search) {
+        if (kind == 'birdypet') {
+          filters.push('(MATCH(birdypets.nickname) AGAINST (? IN BOOLEAN MODE) OR MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE))');
+
+          var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
+
+          Array(2).fill(input.search).forEach((param) => params.push(param.replace(regex, '$1*')));
+        } else {
+          filters.push('MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)');
+
+          var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
+
+          Array(1).fill(input.search).forEach((param) => params.push(param.replace(regex, '"$1"')));
+        }
       }
 
       if (input.family) {
@@ -146,6 +146,9 @@ class Search {
           break;
         case 'freedAt':
           query += 'freebirds.freedAt';
+          break;
+        case 'addedAt':
+          query += 'wishlist.addedAt';
           break;
         case 'commonName':
           query += 'species.commonName';

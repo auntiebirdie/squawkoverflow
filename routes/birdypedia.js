@@ -43,10 +43,10 @@ router.get('/', async (req, res) => {
       label: "In Someone's Aviary"
     }, {
       id: 'wishlisted',
-      label: 'In My Wishlist'
+      label: 'On My Wishlist'
     }, {
       id: 'unwishlisted',
-      label: 'Not In My Wishlist'
+      label: 'Not On My Wishlist'
     }]
   });
 });

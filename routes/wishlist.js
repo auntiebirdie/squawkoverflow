@@ -74,6 +74,14 @@ router.get('/:member', async (req, res, next) => {
       {
         value: 'scientificName-DESC',
         label: 'Scientific Name (Z-A)'
+      },
+      {
+        value: 'addedAt-DESC',
+        label: 'Added to List (Newest)'
+      },
+      {
+        value: 'addedAt-ASC',
+        label: 'Added to List (Oldest)'
       }
     ],
     extraInsights: req.session.user == req.params.member ? [{
@@ -89,11 +97,11 @@ router.get('/:member', async (req, res, next) => {
       id: 'hatched',
       label: 'In My Aviary',
     }, {
-      id: 'duplicated',
-      label: 'I Have Multiple'
-    }, {
       id: 'unhatched',
       label: 'Not In My Aviary'
+    }, {
+      id: 'duplicated',
+      label: 'I Have Multiple'
     }]
   });
 });

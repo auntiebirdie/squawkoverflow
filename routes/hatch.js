@@ -10,8 +10,14 @@ router.get('/', async (req, res) => {
   API.call('hatch', "GET", {
       loggedInUser: req.session.user
     }, res).then((response) => {
-      return res.render('hatch/index', {
-        eggs: response
+      API.call('member', 'GET', {
+        id: req.session.user,
+        include: ['hasIncubator']
+      }).then((member) => {
+        return res.render('hatch/index', {
+          eggs: response,
+          hasIncubator: member.hasIncubator
+        });
       });
     })
     .catch((err) => {
@@ -36,6 +42,16 @@ router.get('/', async (req, res) => {
           return res.redirect('/error');
       }
     });
+});
+
+router.get('/incubator', (req, res) => {
+  API.call('incubate', 'GET', {
+    loggedInUser: req.session.user
+  }).then((eggs) => {
+    return res.render('hatch/incubator', {
+      eggs: eggs
+    });
+  });
 });
 
 module.exports = router;

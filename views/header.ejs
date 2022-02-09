@@ -39,7 +39,7 @@
   <span class="mobile-nav-toggle d-xl-none bg-secondary text-primary">≡</span>
 
  <% if (locals.sidebar) { %>
-  <span class="mobile-sidebar-toggle d-xxl-none bg-secondary text-primary"><%= sidebar == "filters" ? "🝖" : "ℹ" %></span>
+  <span class="mobile-sidebar-toggle d-xxl-none bg-secondary text-primary"><%- sidebar == "filters" ? "&#128269;&#xFE0E;" : "ℹ" %></span>
  <% } %>
 
   <div id="navbar" class="bg-dark">

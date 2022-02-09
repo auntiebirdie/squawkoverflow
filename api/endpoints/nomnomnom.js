@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
   if (birdypet.id) {
     await member.fetch();
 
-    if (member.bugs > 0) {
+    if (member.bugs > 0 && birdypet.friendship < 100) {
       await Promise.all([
         await member.set({
           bugs: --member.bugs
@@ -41,7 +41,7 @@ module.exports = async (req, res) => {
       });
     } else {
       res.json({
-        error: "You don't have any more bugs!"
+        error: member.bugs == 0 ? "You don't have any more bugs!" : `${birdypet.nickname || birdypet.bird.commonName} is full!`
       });
     }
   }
