@@ -18,8 +18,6 @@ module.exports = async (req, res) => {
     });
 
     Promise.all(promises).then(() => {
-      response.results = response.results.filter((bird) => bird.variants.length > 0);
-
       res.json(response);
     });
   });

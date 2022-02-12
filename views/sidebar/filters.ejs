@@ -59,9 +59,11 @@
     <option value="">[ALL]</option>
     <option value="NONE">[FLOCKLESS]</option>
    <% for (var flock of flocks) { %>
-    <option value="<%= flock.id %>" <%= locals.selectedFlock && selectedFlock == flock.id ? "selected" : "" %>>
-      <%= flock.name %>
-    </option>
+    <% if ((locals.loggedInUser && member.id == loggedInUser.id) || !flock.private) { %>
+     <option value="<%= flock.id %>" <%= locals.selectedFlock && selectedFlock == flock.id ? "selected" : "" %>>
+       <%= flock.name %>
+     </option>
+    <% } %>
    <% } %>
   </select>
 <% } %>
@@ -79,24 +81,56 @@
 <% } %>
 
 <% if (locals.sortFields) { %>
+<%
+    var labels = {
+      'commonName-ASC' : 'Common Name (A-Z)',
+      'commonName-DESC' : 'Common Name (Z-A)',
+      'hatchedAt-DESC' : 'Hatched At (Newest)',
+      'hatchedAt-ASC' : 'Hatched At (Oldest)',
+      'scientificName-ASC' : 'Scientific Name (A-Z)',
+      'scientificName-DESC' : 'Scientific Name (Z-A)',
+      'friendship-DESC' : 'Friendship (Highest)',
+      'friendship-ASC' : 'Friendship (Lowest)',
+      'freedAt-DESC' : 'Freed At (Newest)',
+      'freedAt-ASC' : 'Freed At (Oldest)',
+      'addedAt-DESC' : 'Added to List (Newest)',
+      'addedAt-ASC' : 'Added to List (Oldest)'
+    }
+ %>
   <h5>Sort By</h5>
   <select id="sort" class="form-select mb-4">
    <% for (var sort of sortFields) { %>
-    <option value="<%= sort.value %>">
-      <%= sort.label %>
+    <option value="<%= sort %>">
+      <%= labels[sort] %>
     </option>
    <% } %>
   </select>
 <% } %>
 
 <% if (locals.extraInsights && locals.loggedInUser?.tier.extraInsights) { %>
+ <%
+    var labels = {
+      'unhatched' : `Not In % Aviary`,
+      'hatched' : `In % Aviary`,
+      'isolated' : `In % Aviary <span class="checkmark"></span>`,
+      'duplicated' : `In % Aviary <span class="checkplus"></span>`,
+      'duplicatedME' : 'In My Aviary <span class="checkplus"></span>',
+      'somewhere' : 'In Someone\'s Aviary',
+      'unwishlisted' : 'Not On % Wishlist',
+      'wishlisted' : `On % Wishlist`,
+      'wanted' : `On % Wishlist ❤️`,
+      'needed' : `On % Wishlist 🌟`,
+      'someone' : 'On Someone\'s Wishlist',
+    }
+ %>
   <h5>Extra Insights</h5>
   <div id="extraInsights" class="mb-4">
-    <% for (var insight of extraInsights) { %>
+   <% for (var insight of extraInsights) { %>
+    <% let context = insight.split('-').pop() %>
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="extraInsights-<%= insight.id %>" value="<%= insight.id %>" name="extraInsights[]">
-      <label class="form-check-label" for="extraInsights-<%= insight.id %>">
-        <%= insight.label %>
+      <input class="form-check-input" type="checkbox" id="extraInsights-<%= insight %>" value="<%= insight %>" name="extraInsights[]">
+      <label class="form-check-label" for="extraInsights-<%= insight %>">
+        <%- labels[insight.split('-').shift()].replace(/%/, context) %>
       </label>
     </div>
     <% } %>

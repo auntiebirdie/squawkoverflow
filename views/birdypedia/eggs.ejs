@@ -3,30 +3,63 @@
   <%- include('../partials/page-title.ejs', { title : "Birdypedia", subtitle: `Eggs - ${selectedLetter}` }) %> 
 
   <div class="row">
+    <div class="col-12 pb-3 text-end">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="progressDisplay" id="progressDisplayPercent" value="percent">
+        <label class="form-check-label" for="progressDisplayPercent">%</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="progressDisplay" id="progressDisplayFraction" value="fraction">
+        <label class="form-check-label" for="progressDisplayFraction">⁄</label>
+      </div>
+    </div>
    <% for (var egg of eggs) { %>
-    <div class="col-12 col-md-4">
-      <div class="row">
-        <div class="col-5 offset-1">
+    <div class="col-12 col-sm-6 col-md-4">
+      <div class="row align-items-center">
+        <div class="col-6 offset-md-1">
           <a href="/birdypedia/eggs/<%= egg.adjective %>">
             <img src="https://storage.googleapis.com/squawkoverflow/<%= egg.icon || 'eggs/D/default.png' %>" width="18px">
             <%= egg.adjective %>
           </a>
         </div>
-        <div class="col-5 text-end">
+        <div class="col-6 col-md-5 text-start">
+         <% if (locals.loggedInUser) { %>
+          <% var prct = Math.round(egg.memberTotal / egg.numSpecies * 100); %>
+          <div class="progress mx-2">
+            <div class="progress-bar<%= prct == 100 ? " bg-success" : "" %>" style="width: <%= prct %>%" role="progressbar" aria-valuenow="<%= egg.memberTotal %>" aria-valuemin="0" aria-valuemax="<%= egg.numSpecies %>"></div>
+          </div>
+         <% } else { %>
           <small class="text-muted">
-            <% if (locals.loggedInUser) { %>
-              <% if (egg.memberTotal == egg.numSpecies) { %>
-                <span class="checkmark"></span>
-              <% } %>
-              (<%= egg.memberTotal %>/<%= egg.numSpecies %>)
-            <% } else { %>
-              (<%= egg.numSpecies %>)
-            <% } %>
+            (<%= egg.numSpecies %>)
           </small>
+         <% } %>
         </div>
       </div>
     </div>
    <% } %>
   </div>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('input[name="progressDisplay"]').on('change', function () {
+        let display = $('input[name="progressDisplay"]:checked').val();
+
+        sessionStorage.setItem('progressDisplay', display);
+
+        $('.progress-bar').each((i, bar) => {
+          switch (display) {
+            case 'percent':
+               bar.innerHTML = Math.round(bar.getAttribute('aria-valuenow') / bar.getAttribute('aria-valuemax') * 100) + '%';
+               break;
+            case 'fraction':
+              bar.innerHTML = bar.getAttribute('aria-valuenow') + '/' + bar.getAttribute('aria-valuemax') ;
+              break;
+          }
+        });
+      });
+
+      $('input[name="progressDisplay"][value="' + (sessionStorage.getItem('progressDisplay') || 'percent') + '"]').click();
+    });
+  </script>
  
 <%- include('../footer.ejs') %>

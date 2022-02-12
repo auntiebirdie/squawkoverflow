@@ -40,112 +40,33 @@ router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
     allFamilies: await API.call('families', 'GET'),
     families: member.families.map((family) => family.name),
     sidebar: 'filters',
-    sortFields: [{
-        value: 'commonName-ASC',
-        label: 'Common Name (A-Z)'
-      },
-      {
-        value: 'commonName-DESC',
-        label: 'Common Name (Z-A)'
-      },
-      {
-        value: 'scientificName-ASC',
-        label: 'Scientific Name (A-Z)'
-      },
-      {
-        value: 'scientificName-DESC',
-        label: 'Scientific Name (Z-A)'
-      },
-      {
-        value: 'friendship-DESC',
-        label: 'Friendship (Highest)'
-      },
-      {
-        value: 'friendship-ASC',
-        label: 'Friendship (Lowest)'
-      }
-    ],
-    extraInsights: member.id == req.session.user ? [{
-      id: 'duplicated',
-      label: 'Duplicates'
-    }] : [{
-      id: 'hatched',
-      label: "In My Aviary",
-    }, {
-      id: 'unhatched',
-      label: "Not In My Aviary"
-    }, {
-      id: 'wanted',
-      label: "In my Wishlist (Want It)"
-    }, {
-      id: 'needed',
-      label: "In my Wishlist (Need It)"
-    }]
+    sortFields: ['hatchedAt-ASC', 'hatchedAt-DESC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'friendship-DESC', 'friendship-ASC'],
+    extraInsights: ['isolated-My', 'duplicated-My']
   });
 });
 
 router.get('/:flock', async (req, res) => {
-      let flock = await API.call('flock', 'GET', {
-        id: req.params.flock,
-        include: ['families']
-      });
+  let flock = await API.call('flock', 'GET', {
+    id: req.params.flock,
+    include: ['families']
+  });
 
-      let member = await API.call('member', 'GET', {
-        id: flock.member
-      });
+  let member = await API.call('member', 'GET', {
+    id: flock.member
+  });
 
-      console.log(flock.families);
+  console.log(flock.families);
 
-      res.render('flocks/flock', {
-          page: 'flock',
-          member: member,
-          flock: flock,
-          allFamilies: await API.call('families', 'GET'),
-          families: flock.families,
-          sidebar: 'filters',
-          sortFields: [{
-              value: 'commonName-ASC',
-              label: 'Common Name (A-Z)'
-            },
-            {
-              value: 'commonName-DESC',
-              label: 'Common Name (Z-A)'
-            },
-            {
-              value: 'scientificName-ASC',
-              label: 'Scientific Name (A-Z)'
-            },
-            {
-              value: 'scientificName-DESC',
-              label: 'Scientific Name (Z-A)'
-            },
-      {
-        value: 'friendship-DESC',
-        label: 'Friendship (Highest)'
-      },
-      {
-        value: 'friendship-ASC',
-        label: 'Friendship (Lowest)'
-      }
-          ],
-          extraInsights: member.id == req.session.user ? [{
-            id: 'duplicated',
-            label: 'Duplicates'
-          }] : [{
-              id: 'hatched',
-              label: "In My Aviary",
-            }, {
-              id: 'unhatched',
-              label: "Not In My Aviarye"
-            }, {
-              id: 'wanted',
-              label: "In my Wishlist (Want It)"
-            }, {
-              id: 'needed',
-              label: "In my Wishlist (Need It)"
-            }
-	  ]
-      });
+  res.render('flocks/flock', {
+    page: 'flock',
+    member: member,
+    flock: flock,
+    allFamilies: await API.call('families', 'GET'),
+    families: flock.families,
+    sidebar: 'filters',
+    sortFields: ['hatchedAt-ASC', 'hatchedAt-DESC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'friendship-DESC', 'friendship-ASC'],
+    extraInsights: member.id == req.session.user ? ['isolated-My', 'duplicated-My'] : ['unhatched-My', 'wanted-My', 'needed-My']
+  });
 });
 
-    module.exports = router;
+module.exports = router;

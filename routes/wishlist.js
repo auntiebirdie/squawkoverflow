@@ -59,50 +59,8 @@ router.get('/:member', async (req, res, next) => {
     families: families,
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
-    sortFields: [{
-        value: 'commonName-ASC',
-        label: 'Common Name (A-Z)'
-      },
-      {
-        value: 'commonName-DESC',
-        label: 'Common Name (Z-A)'
-      },
-      {
-        value: 'scientificName-ASC',
-        label: 'Scientific Name (A-Z)'
-      },
-      {
-        value: 'scientificName-DESC',
-        label: 'Scientific Name (Z-A)'
-      },
-      {
-        value: 'addedAt-DESC',
-        label: 'Added to List (Newest)'
-      },
-      {
-        value: 'addedAt-ASC',
-        label: 'Added to List (Oldest)'
-      }
-    ],
-    extraInsights: req.session.user == req.params.member ? [{
-      id: 'hatched',
-      label: 'In My Aviary'
-    }, {
-      id: 'unhatched',
-      label: 'Not In My Aviary'
-    }, {
-      id: 'somewhere',
-      label: 'In Someone\'s Aviary'
-    }] : [{
-      id: 'hatched',
-      label: 'In My Aviary',
-    }, {
-      id: 'unhatched',
-      label: 'Not In My Aviary'
-    }, {
-      id: 'duplicated',
-      label: 'I Have Multiple'
-    }]
+    sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'addedAt-DESC', 'addedAt-ASC'],
+    extraInsights: req.session.user == req.params.member ? ['hatched-My', 'unhatched-My', 'somewhere'] : ['hatched-My', 'duplicated-My']
   });
 });
 

@@ -7,7 +7,7 @@
     <div class="d-block d-md-inline-block m-3" style="min-width: 25%;">
       <input class="typeahead form-control" type="text">
     </div>
-    <button id="actionButton" class="btn btn-secondary" disabled>Make Offer</button>
+    <button id="memberButton" class="btn btn-secondary" disabled>Make Offer</button>
   </div>
 
   <%- include('../partials/pagination.ejs') %>
@@ -22,7 +22,7 @@
 
   <script type="text/javascript">
     $(document).ready(function () {
-      $('#actionButton').on('click', function () {
+      $('#memberButton').on('click', function () {
         var button = this;
 
         if (!button.disabled && selectedMember) { 

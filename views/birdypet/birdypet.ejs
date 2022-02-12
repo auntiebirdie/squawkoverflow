@@ -65,9 +65,9 @@
         </form>
       <% } else { %>
         <% if (birdypet.description) { %>
-          <div class="w-75 mx-auto my-4 bg-light rounded p-3 pb-1">
-          <% for (var para of birdypet.description.split("\r\n")) { %>
-            <p><%= para %></p>
+          <div class="w-75 mx-auto my-4 bg-light rounded p-3 pb-1 text-break">
+          <% for (var para of birdypet.descriptionHTML.split("\r\n")) { %>
+            <p><%- para %></p>
           <% } %>
           </div>
         <% } %>

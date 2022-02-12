@@ -14,11 +14,16 @@ class Search {
       switch (kind) {
         case 'bird':
           query += 'species.code FROM species';
+          filters.push('species.code IN (SELECT species FROM variants)');
           break;
         case 'birdypet':
           query += 'birdypets.id FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.code)';
           filters.push('birdypets.member = ?');
           params.push(input.member);
+
+          if (input.member != input.loggedInUser) {
+            filters.push('birdypets.id NOT IN (SELECT birdypet FROM birdypet_flocks JOIN flocks ON (birdypet_flocks.flock = flocks.id) WHERE flocks.private = 1)');
+          }
           break;
         case 'freebird':
           query += 'freebirds.id, freebirds.variant FROM freebirds JOIN variants ON (freebirds.variant = variants.id) JOIN species ON (variants.species = species.code)';
@@ -75,12 +80,20 @@ class Search {
         params.push(input.intensity);
       }
 
+      if (input.exchangeData) {
+        filters.push('birdypets.id NOT IN (SELECT birdypet FROM birdypet_flocks JOIN flocks ON (birdypet_flocks.flock = flocks.id) WHERE flocks.protected = 1)');
+      }
+
       // TODO: validate user has access to extra insights
       if (input.loggedInUser && Array.isArray(input.extraInsights)) {
         var intensity = [];
+        var isolated = false;
+        var duplicated = false;
 
         for (let insight of input.extraInsights) {
-          switch (insight) {
+          let context = insight.split('-').pop();
+
+          switch (insight.split('-').shift()) {
             case 'hatched':
               filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "species" AND id = species.code) > 0');
               params.push(input.memberData || input.loggedInUser);
@@ -89,15 +102,11 @@ class Search {
               filters.push('(SELECT IF(`count` = 0, NULL, 1) FROM counters WHERE `member` = ? AND type = "species" AND id = species.code) IS NULL');
               params.push(input.memberData || input.loggedInUser);
               break;
+            case 'isolated':
+              isolated = context;
+              break;
             case 'duplicated':
-              filters.push('species.code IN (SELECT id FROM counters WHERE type = "species" AND `member` = ? AND `count` > 1)');
-              if (kind == "wishlist") {
-                params.push(input.loggedInUser);
-              } else if (kind == "birdypet") {
-                params.push(input.member);
-              } else {
-                params.push(input.memberData || input.loggedInUser);
-              }
+              duplicated = context;
               break;
             case 'wanted':
               intensity.push(1);
@@ -125,6 +134,16 @@ class Search {
         if (intensity.length > 0) {
           filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity IN (?))');
           params.push(input.memberData || input.loggedInUser, intensity);
+        }
+
+        if (isolated || duplicated) {
+          filters.push('species.code IN (SELECT id FROM counters WHERE type = "species" AND `member` = ? AND `count` ' + (isolated && duplicated ? '>= 1' : (isolated ? '= 1' : '> 1')) + ')');
+
+          if (kind == "wishlist") {
+            params.push(input.loggedInUser);
+          } else {
+            params.push((isolated || duplicated) == 'My' ? input.loggedInUser : input.memberData);
+          }
         }
       }
 

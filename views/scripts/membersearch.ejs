@@ -4,7 +4,7 @@
 
   $(document).ready(function () {
     var memberSearch = $('#memberSearch .typeahead');
-    var actionButton = $('#actionButton');
+    var memberButton = $('#memberButton');
     var memberDisplay = $('#memberDisplay');
 
     memberSearch.typeahead({
@@ -26,7 +26,7 @@
           let data = {
             search: query,
             include: <%- JSON.stringify(locals.include ? include : []) %>,
-            bird: <%- JSON.stringify(locals.bird ? bird : '') %>,
+            bird: <%- locals.bird ? bird : '""' %>,
             privacy: <%- JSON.stringify(locals.privacy ? privacy : []) %>
           };
 
@@ -63,6 +63,9 @@
       },
       limit: Infinity,
       templates: {
+        empty: function () {
+          return '<div class="px-1 py-2"><em>No members found.</em></div>';
+        },
         suggestion: function (data) {
           var text = '<div class="px-1 py-2">';
 
@@ -96,22 +99,22 @@
 
       if (member) {
         memberDisplay.html(`<h3><img src="${member.avatar}" class="rounded-circle" width="75" data-id="${member.id}" onerror="missingMemberAvatar(this)"> ${member.username}</h3>`);
-        actionButton.attr('disabled', false);
+        memberButton.attr('disabled', false);
       }
       else {
         memberDisplay.html("");
-        actionButton.attr('disabled', true);
+        memberButton.attr('disabled', true);
       }
     }).on('typeahead:autocomplete', function (obj, member) {
       selectedMember = member;
 
       if (member) {
         memberDisplay.html(`<h3><img src="${member.avatar}" class="rounded-circle" width="75" data-id="${member.id}" onerror="missingMemberAvatar(this)"> ${member.username}</h3>`);
-        actionButton.attr('disabled', false);
+        memberButton.attr('disabled', false);
       }
       else {
         memberDisplay.html("");
-        actionButton.attr('disabled', true);
+        memberButton.attr('disabled', true);
       }
     });
 

@@ -1,0 +1,134 @@
+<script type="text/javascript">
+  var egg, variant;
+
+  $(document).ready(function () {
+    var eggs = document.getElementById('eggs');
+    var hatched = document.getElementById('hatched');
+    var actions = document.getElementById('actions');
+
+    $(eggs).one('click', 'a[data-egg]', function (e) {
+      egg = e.currentTarget.getAttribute('data-egg');
+
+      eggs.classList.add('loadingData');
+
+      $.ajax({
+        cache: false,
+        url: '<%= page == 'incubate' ? '/api/incubate' : '/api/hatch' %>',
+        data: JSON.stringify({
+          egg : egg
+        }),
+        dataType: "json",
+        contentType: 'application/json',
+        method: "POST",
+        success: function(data) {
+          variant = data;
+
+         <% if (page == 'hatch') { %>
+          hatched.querySelector('h1').innerHTML = hatched.querySelector('h1').innerHTML.replace('%adjective%', egg);
+         <% } %>
+          hatched.querySelector('img').setAttribute('src', variant.image);
+
+          var h3 = hatched.querySelector('h3').querySelector('a');
+          h3.setAttribute('href', `/birdypedia/bird/${variant.bird.code}`);
+          h3.innerHTML = variant.bird.commonName;
+
+          var h5 = hatched.querySelector('h5');
+          // add label to returned data
+
+          var h6 = hatched.querySelector('h6');
+          var text = "";
+
+          if (variant.owned > 1) {
+            text += `<div><span class="checkplus"></span> <em>You have more than one of this species</em></div>`;
+          }
+          else if (variant.owned == 1) {
+            text += `<div><span class="checkmark"></span> <em>You have this species</em></div>`;
+          }
+
+          if (variant.wishlisted) {
+            switch (variant.wishlisted) {
+              case 2:
+                text += `<div>🌟 <em>You need this bird!</em></div>`;
+                break;
+              case 1:
+                text += `<div>❤️ <em>You want this bird!</em></div>`;
+            }
+          }
+
+          h6.innerHTML = text;
+
+          eggs.classList.remove('loadingData');
+          eggs.classList.add('d-none');
+
+          hatched.classList.remove('d-none');
+        }
+      });
+    });
+
+    $(actions).on('click', '[data-action]', function (e) {
+      var button = e.currentTarget;
+
+      if (!button.style.opacity && !button.disabled) { 
+        var action = button.getAttribute('data-action');
+
+        actions.classList.add('loadingData');
+        actions.innerHTML = "";
+
+        switch (button.getAttribute('data-action')) {
+          case "keep":
+            $.ajax({
+              cache: false,
+              url: `/api/collect`,
+              data: JSON.stringify({
+                variant: variant.id,
+                adjective : egg
+              }),
+              dataType: "json",
+              contentType: 'application/json',
+              method: "POST",
+              success: function(birdypet) {
+                actions.classList.remove('loadingData');
+                actions.innerHTML = `<a class="btn btn-lg btn-secondary mb-3" href="/birdypet/${birdypet.id}">🐣 View BirdyPet</a>&nbsp;<a class="btn btn-lg btn-secondary mb-3" href="/hatch">🥚 Hatch Another Egg</a>`;
+              },
+              error: function(XMLHttpRequest, textStatus, errorThrown) {
+                actions.classList.remove('loadingData');
+                actions.innerHTML = '<em>Something went wrong!  Please <a href="https://bugs.squawkoverflow.com/?member=<%= loggedInUser.id %>" target="_blank">submit a bug report</a> so someone can look into it.</em>';
+              }
+            });
+            break;
+          case "release":
+            $.ajax({
+              cache: false,
+              url: `/api/release`,
+              data: JSON.stringify({
+                variant : variant.id
+              }),
+              dataType: "json",
+              contentType: 'application/json',
+              method: "POST",
+              success: function(data) {
+                window.location.reload();
+              }
+            });
+            break;
+          case 'gift':
+            $.ajax({
+              cache: false,
+              url: '/api/gift',
+              data: JSON.stringify({
+                member : selectedMember.id,
+                variant : variant.id
+              }),
+              dataType: "json",
+              contentType: 'application/json',
+              method: "POST",
+              success: function(data) {
+                window.location.reload();
+              }
+            });
+            break;
+        }
+      }
+    }); 
+  });
+</script>

@@ -58,39 +58,8 @@ router.get('/:member/gift', Middleware.isLoggedIn, async (req, res) => {
         families: loggedInUser.families.filter((family) => family.owned > 0).map((family) => family.name),
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
-        sortFields: [{
-            value: 'hatchedAt-DESC',
-            label: 'Hatch Date (Newest)'
-          }, {
-            value: 'hatchedAt-ASC',
-            label: 'Hatch Date (Oldest)'
-          }, {
-            value: 'commonName-ASC',
-            label: 'Common Name (A-Z)'
-          },
-          {
-            value: 'commonName-DESC',
-            label: 'Common Name (Z-A)'
-          },
-          {
-            value: 'scientificName-ASC',
-            label: 'Scientific Name (A-Z)'
-          },
-          {
-            value: 'scientificName-DESC',
-            label: 'Scientific Name (Z-A)'
-          }
-        ],
-        extraInsights: [{
-          id: 'duplicated',
-          label: 'I Have Multiple'
-        }, {
-          id: 'wanted',
-          label: "In Their Wishlist (Want It)"
-        }, {
-          id: 'needed',
-          label: "In Their Wishlist (Need It)"
-        }]
+        sortFields: ['hatchedAt-DESC', 'hatchedAt-ASC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
+        extraInsights: ['unhatched-Their', 'duplicated-My', 'wanted-Their', 'needed-Their']
       });
     });
   });

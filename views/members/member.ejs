@@ -67,9 +67,9 @@
 
        <div>
         <% if (member.birdyBuddy.description) { %>
-         <div class="py-4 ps-4">
-          <% for (var para of member.birdyBuddy.description.split("\r\n")) { %>
-           <p><%= para %></p>
+         <div class="py-4 ps-4 text-break">
+          <% for (var para of member.birdyBuddy.descriptionHTML.split("\r\n")) { %>
+           <p><%- para %></p>
           <% } %>
          </div>
         <% } %>

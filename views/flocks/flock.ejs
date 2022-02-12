@@ -6,6 +6,18 @@
     )
   %>
 
+ <% if (flock.description != "") { %>
+  <div class="row mb-5">
+    <div class="col-lg-6 offset-lg-3">
+      <div class="bg-light px-3 pt-4 pb-3 rounded text-break text-center">
+        <% for (var para of flock.descriptionHTML.split("\r\n")) { %>
+         <p><%= para %></p>
+        <% } %>
+      </div>
+    </div>
+  </div>
+ <% } %>
+
   <div id="lazyLoader" class="row g-0" data-endpoint="/api/aviary" data-params='{"flock":"<%= flock.id %>","member":"<%= member.id %>"}'></div>
 
   <%- include('../scripts/lazyloader.ejs') %>

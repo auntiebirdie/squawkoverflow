@@ -15,39 +15,8 @@ router.get('/', async (req, res) => {
     artists: artists,
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
-    sortFields: [{
-        value: 'commonName-ASC',
-        label: 'Common Name (A-Z)'
-      },
-      {
-        value: 'commonName-DESC',
-        label: 'Common Name (Z-A)'
-      },
-      {
-        value: 'scientificName-ASC',
-        label: 'Scientific Name (A-Z)'
-      },
-      {
-        value: 'scientificName-DESC',
-        label: 'Scientific Name (Z-A)'
-      }
-    ],
-    extraInsights: [{
-      id: 'hatched',
-      label: 'In My Aviary',
-    }, {
-      id: 'unhatched',
-      label: 'Not In My Aviary'
-    }, {
-      id: 'somewhere',
-      label: "In Someone's Aviary"
-    }, {
-      id: 'wishlisted',
-      label: 'On My Wishlist'
-    }, {
-      id: 'unwishlisted',
-      label: 'Not On My Wishlist'
-    }]
+    sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
+    extraInsights: ['unhatched-My', 'isolated-My', 'duplicated-My', 'somewhere', 'unwishlisted-My', 'wanted-My', 'needed-My']
   });
 });
 
@@ -78,36 +47,9 @@ router.get('/eggs/:egg', async (req, res) => {
         egg: egg,
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
-        sortFields: [{
-            value: 'commonName-ASC',
-            label: 'Common Name (A-Z)'
-          },
-          {
-            value: 'commonName-DESC',
-            label: 'Common Name (Z-A)'
-          },
-          {
-            value: 'scientificName-ASC',
-            label: 'Scientific Name (A-Z)'
-          },
-          {
-            value: 'scientificName-DESC',
-            label: 'Scientific Name (Z-A)'
-          }
-        ],
-        extraInsights: [{
-          id: 'hatched',
-          label: 'In My Aviary',
-        }, {
-          id: 'unhatched',
-          label: 'Not In My Aviary'
-        }, {
-          id: 'somewhere',
-          label: "In Someone's Aviary"
-        }, {
-          id: 'wishlisted',
-          label: 'On My Wishlist'
-        }]
+        sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
+	      insightContext: 'My',
+        extraInsights: ['unhatched', 'isolated', 'duplicated', 'somewhere', 'unwishlisted', 'wanted', 'needed']
       });
     } else {
       res.redirect('/error');

@@ -60,47 +60,11 @@ router.get(['/:id/offer', '/:id/request'], Middleware.isLoggedIn, async (req, re
       exchange: exchange,
       allFamilies: families,
       families: member.families.filter((family) => family.owned > 0).map((family) => family.name),
-      flocks: member.flocks,
+      flocks: member.flocks.filter( (flock) => !flock.protected && (member.id == req.session.user || !flock.private)),
       currentPage: (req.query.page || 1) * 1,
       sidebar: 'filters',
-      sortFields: [{
-          value: 'hatchedAt-DESC',
-          label: 'Hatch Date (Newest)'
-        }, {
-          value: 'hatchedAt-ASC',
-          label: 'Hatch Date (Oldest)'
-        }, {
-          value: 'commonName-ASC',
-          label: 'Common Name (A-Z)'
-        },
-        {
-          value: 'commonName-DESC',
-          label: 'Common Name (Z-A)'
-        },
-        {
-          value: 'scientificName-ASC',
-          label: 'Scientific Name (A-Z)'
-        },
-        {
-          value: 'scientificName-DESC',
-          label: 'Scientific Name (Z-A)'
-        }
-      ],
-      extraInsights: [{
-          id: 'duplicated',
-          label: `${page == 'exchange/offer' ? 'I' : 'They'} Have Multiple`
-        }, {
-          id: 'unhatched',
-          label: `Not In ${page == 'exchange/offer' ? 'Their' : 'My'} Aviary`
-        },
-        {
-          id: 'wanted',
-          label: `In ${page == 'exchange/offer' ? 'Their' : 'My'}  Wishlist (Want It)`
-        }, {
-          id: 'needed',
-          label: `In ${page == 'exchange/offer' ? 'Their' : 'My' } Wishlist (Need It)`
-        }
-      ]
+      sortFields: ['hatchedAt-DESC', 'hatchedAt-ASC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'], 
+      extraInsights: page == "exchange/offer" ? ['unhatched-Their', 'isolated-My', 'duplicated-My', 'wanted-Their', 'needed-Their'] : ['unhatched-My', 'isolated-Their', 'duplicated-Their', 'wanted-My', 'needed-My'],
     });
   } else {
     res.redirect(`/exchange/${exchange.id}`);

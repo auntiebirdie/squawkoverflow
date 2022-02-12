@@ -2,12 +2,12 @@
 
   <%- include('../partials/page-title.ejs', { title : "Incubator" }) %>
 
-  <div id="incubator">
+  <div id="eggs" class="incubator">
     <div class="row text-center mb-5 align-items-center">
       <% if (eggs.length > 0) { %>
         <% for (var egg of eggs) { %>
         <div class="col-6 col-md-4 col-lg-2 mb-3">
-          <a data-id="<%= egg.id %>" class="mb-2" role="button">
+          <a data-egg="<%= egg.id %>" class="mb-2" role="button">
             <h3>
               <img src="<%= egg.image %>" class="p-5 rounded-circle">
             </h3>
@@ -21,115 +21,10 @@
   </div>
 
   <div id="hatched" class="d-none">
-    <div class="row">
-      <div class="col-md-8 text-center mb-3">
-        <img src="" class="birdypet full border border-1 bg-white">
-      </div>
-      <div class="col-md-4 text-center text-md-start">
-        <h3>
-          <a href="" target="_blank"></a>
-        </h3>
-        <h5></h5>
-        <h6 class="my-3"></h6>
-
-        <div id="actions" class="mt-5 text-center">
-          <a data-action="keep" class="btn btn-lg btn-secondary mb-3" role="button">❤️&nbsp;Keep</a>
-          &nbsp;
-          <a data-action="release" class="btn btn-lg btn-secondary mb-3" role="button">👋&nbsp;Release</a>
-        </div>
-      </div>
-    </div>
+    <%- include('../partials/hatch.ejs') %>
   </div>
 
-  <script>
-    var incubator = document.getElementById('incubator');
-    var hatched = document.getElementById('hatched');
-    var actions = document.getElementById('actions');
-
-    var egg, variant;
-
-    $(incubator).one('click', 'a', function (e) {
-      egg = e.currentTarget.getAttribute('data-id');
-
-      incubator.classList.add('loadingData');
-
-      $.ajax({
-        cache: false,
-        url: `/api/incubate`,
-        data: JSON.stringify({
-          id : egg
-        }),
-        dataType: "json",
-        contentType: 'application/json',
-        method: "POST",
-        success: function(data) {
-          variant = data.id;
-
-          hatched.querySelector('img').setAttribute('src', data.image);
-
-          var h3 = hatched.querySelector('h3').querySelector('a');
-          h3.setAttribute('href', `/birdypedia/bird/${data.bird.code}`);
-          h3.innerHTML = data.bird.commonName;
-
-          var h5 = hatched.querySelector('h5');
-          // add label to returned data
-
-          incubator.classList.remove('loadingData');
-          incubator.classList.add('d-none');
-
-          hatched.classList.remove('d-none');
-        }
-      });
-    });
-
-    $(actions).on('click', 'a[data-action]', function (e) {
-      var button = e.currentTarget;
-
-      if (!button.style.opacity) { 
-        var action = button.getAttribute('data-action');
-
-        actions.classList.add('loadingData');
-        actions.innerHTML = "";
-
-        switch (button.getAttribute('data-action')) {
-          case "keep":
-            $.ajax({
-              cache: false,
-              url: `/api/collect`,
-              data: JSON.stringify({
-                variant: variant
-              }),
-              dataType: "json",
-              contentType: 'application/json',
-              method: "POST",
-              success: function(birdypet) {
-                actions.classList.remove('loadingData');
-                actions.innerHTML = `<a class="btn btn-lg btn-secondary mb-3" href="/birdypet/${birdypet.id}">🐣 View BirdyPet</a>&nbsp;<a class="btn btn-lg btn-secondary mb-3" href="/hatch">🥚 Hatch Another Egg</a>`;
-              },
-              error: function(XMLHttpRequest, textStatus, errorThrown) {
-                actions.classList.remove('loadingData');
-                actions.innerHTML = '<em>Something went wrong!  Please <a href="https://bugs.squawkoverflow.com/?member=<%= loggedInUser.id %>" target="_blank">submit a bug report</a> so someone can look into it.</em>';
-              }
-            });
-            break;
-          case "release":
-            $.ajax({
-              cache: false,
-              url: `/api/release`,
-              data: JSON.stringify({
-                variant : variant
-              }),
-              dataType: "json",
-              contentType: 'application/json',
-              method: "POST",
-              success: function(data) {
-                window.location.reload();
-              }
-            });
-            break;
-        }
-      }
-    }); 
-  </script>
+  <%- include('../scripts/hatch.ejs', { page : 'incubate' }) %>
+  <%- include('../scripts/membersearch.ejs', { privacy: ['gifts'], include: ['birdData'], bird : 'variant.bird.code' }) %>
 
 <%- include('../footer.ejs') %>

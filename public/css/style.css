@@ -400,11 +400,16 @@ button.wishlist-heart:hover {
   filter: grayscale(0);
 }
 
-#incubator h3 {
+.incubator h3 {
 	background-image: url('https://storage.googleapis.com/squawkoverflow/eggs/D/default.png');
 	background-repeat: no-repeat;
 	background-size: contain;
 	background-position: center center;
+}
+
+.progress-bar {
+	overflow: visible;
+	text-shadow: 1px 1px 1px black, -1px -1px 1px black, -1px 1px 1px black, 1px -1px 1px black;
 }
 
 span.twitter-typeahead .tt-menu {

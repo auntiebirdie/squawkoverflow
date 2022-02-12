@@ -53,7 +53,7 @@
         <h6>Flocks</h6>
         <p class="ms-2">
         <% for (var flock of member.flocks) { %>
-          <% if (birdypet.flocks.includes(flock.id)) { %>
+          <% if (birdypet.flocks.includes(flock.id) && ((locals.loggedInUser && member.id == locals.loggedInUser.id) || !flock.private)) { %>
           <a href="/flocks/<%= flock.id %>"><%= flock.name %></a><br>
           <% } %>
         <% } %>

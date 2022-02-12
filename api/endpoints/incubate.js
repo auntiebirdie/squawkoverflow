@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
       });
       break;
     case "POST":
-      var variant = new Variant(req.body.id);
+      var variant = new Variant(req.body.egg);
 
       await variant.fetch();
 

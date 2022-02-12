@@ -4,7 +4,9 @@ class Flock {
   static schema = {
     name: String,
     description: String,
-    displayOrder: Number
+    displayOrder: Number,
+    protected: Boolean,
+    private: Boolean
   }
 
   constructor(id) {
@@ -35,10 +37,13 @@ class Flock {
         if (!flock) {
           resolve(null);
         } else {
-          this.name = flock.name;
-          this.description = flock.description;
-          this.member = flock.member;
-          this.displayOrder = flock.displayOrder;
+          for (let key in flock) {
+            if (!params.fields || params.fields.includes(key)) {
+              this[key] = flock[key];
+            }
+          }
+
+          this.descriptionHTML = this.description.replace(/\</g, '&lt;').replace(/\>g/, '&gt;').replace(/(\bhttps?:\/\/(www.)?(twitter|instagram|youtube|youtu.be|tumblr|facebook)[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim, '<a href="$1" target="_blank">$1</a>');
 
           this.families = await Database.query(`
 	  SELECT DISTINCT species.family

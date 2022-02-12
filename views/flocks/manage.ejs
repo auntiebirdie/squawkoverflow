@@ -10,16 +10,34 @@
     )
   %>
 
-  <div>
-    <h5><label>Name</label></h5>
-    <input type="text" id="flockName" class="form-control mb-3" value="<%= flock.name %>" style="width: 100%">
+  <div id="flock" class="row">
+    <div class="col-12">
+      <h5><label>Name</label></h5>
+      <input type="text" id="flock_name" name="name" class="form-control mb-3" value="<%= flock.name %>" style="width: 100%">
+    </div>
 
-    <h5><label>Description</label></h5>
-    <textarea id="flockDescription" maxlength="500" class="form-control mb-3" style="height: 150px; width: 100%;"><%= flock.description %></textarea>
+    <div class="col-8">
+      <h5><label>Description</label></h5>
+      <textarea id="flock_description" name="description" maxlength="500" class="form-control mb-3" style="height: 150px; width: 100%;"><%= flock.description %></textarea>
+    </div>
+    <div class="col-4">
+      <div class="form-check form-switch mb-3">
+        <span>
+          <input type="checkbox" class="form-check-input" id="flock_protected" name="protected" value="1" <%= flock.protected ? "checked" : "" %>>
+        </span>
+        <label class="form-check-label" for="flock_protected">Protected<br><small>(unavailable for exchanges)</small></label>
+      </div>
+      <div class="form-check form-switch mb-3">
+        <span>
+          <input type="checkbox" class="form-check-input" id="flock_private" name="private" value="1" <%= flock.private ? "checked" : "" %>>
+        </span>
+        <label class="form-check-label" for="flock_private">Private<br><small>(hidden from other members)</small></label>
+      </div>
+    </div>
 
-    <button id="updateFlock" class="btn btn-secondary" type="button">Save Changes</button>
-
-    <button id="deleteFlock" class="btn btn-danger float-end" type="button">Delete</button>
+    <div class="col-12">
+      <button id="deleteFlock" class="btn btn-danger float-end" type="button">Delete</button>
+    </div>
   </div>
 
   <%- include('../partials/spacer.ejs') %>
@@ -64,19 +82,21 @@
       }
     });
 
-    $('#updateFlock').on('click', function (e) {
-      var container = e.currentTarget.parentNode;
+    $('#flock').on('change', 'input', function (e) {
+      var container = document.getElementById('flock');
 
       if (!container.classList.contains('loadingData')) {
         toggleFields(container, true);
 
         $.ajax({
           cache: false,
-          url: `/api/flock`,
+          url: '/api/flock',
           data: JSON.stringify({
-           id: "<%= flock.id %>",
-           name: $('#flockName').val(),
-           description: $('#flockDescription').val()
+           id: '<%= flock.id %>',
+           name: $('#flock_name').val(),
+           description: $('#flock_description').val(),
+           protected: $('#flock_protected').is(':checked'),
+           private: $('#flock_private').is(':checked')
           }),
           dataType: "json",
           method: "PUT",
