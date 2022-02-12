@@ -8,4 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Post notification
-      run: curl -I https://www.keycdn.com
+      run: curl -X POST -D '{"content": "Deployment started"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/${{ secrets.WEBHOOK_ID }}/${{ secrets.WEBHOOK_TOKEN }}"
