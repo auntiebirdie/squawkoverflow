@@ -7,7 +7,5 @@ jobs:
   notify-begin:
     runs-on: ubuntu-latest
     steps:
-    - name: curl
-      uses: wei/curl@master
-      with:
-        args: -H "Content-Type: application/json" -d '{"content":"Deployment started"}' "https://discord.com/api/webhooks/${{ secrets.WEBHOOK_ID }}/${{ secrets.WEBHOOK_TOKEN }}"
+    - name: Post notification
+      run: curl -I https://www.keycdn.com
