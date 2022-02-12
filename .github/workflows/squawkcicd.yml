@@ -13,4 +13,4 @@ jobs:
         WEBHOOK_TOKEN: ${{ secrets.WEBHOOK_TOKEN }}
       uses: wei/curl@master
       with:
-        args: -H "Content-Type: application/json" -d '{"content":"Deployment started"}' "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
+        args: -H "Content-Type: application/json" -d '{"content":"Deployment started"}' "https://discord.com/api/webhooks/${WEBHOOK_ID}/${WEBHOOK_TOKEN}"
