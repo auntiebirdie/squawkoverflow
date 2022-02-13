@@ -18,7 +18,9 @@ jobs:
         curl -X POST -d '{"content":":information_source: <@&913767546048630785>  A new deployment has started!  This should only take a couple minutes to complete.\r\n\r\n-----Release Notes-----\r\n'"$CONTENT"'\r\n\r\n*(to opt in/out of this notification role, please use `/squawkoverflow notifications`)*"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
 
   deploy-app:
+    needs: notify-squawkers
     if: github.event.pull_request.merged == false
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: google-github-actions/auth@v0
