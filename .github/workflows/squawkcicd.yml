@@ -23,6 +23,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: 'echo "$API_SECRETS" > ./api/secrets.json && echo "$APP_SECRETS" > ./secrets.json'
+        shell: bash
+        env:
+          API_SECRETS: ${{ secrets.API_SECCRETS }}
+          APP_SECRETS: ${{ secrets.APP_SECRETS}}
       - uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
