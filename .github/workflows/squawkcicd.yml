@@ -14,6 +14,6 @@ jobs:
         WEBHOOK_ID: ${{ secrets.WEBHOOK_ID }}
         WEBHOOK_TOKEN: ${{ secrets.WEBHOOK_TOKEN }}
       run: |
-        RELEASE_NOTES=$(echo "${{ github.event.pull_request.body }}" | sed 's/\r\n/\\r\\n/')
+        RELEASE_NOTES=$(echo "${{ github.event.pull_request.body }}" | sed 's/\r\n/\\\r\\\n/')
         echo "$RELEASE_NOTES"
-        curl -X POST -d '{"content":"abc\r\n123"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
+        curl -X POST -d '{"content":"'"$RELEASE_NOTES"'"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
