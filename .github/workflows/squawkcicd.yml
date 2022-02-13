@@ -1,0 +1,45 @@
+name: SQUAWKcicd
+
+on:
+  pull_request:
+    types: [opened, edited]
+
+jobs:
+  notify-squawkers:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - env:
+        WEBHOOK_ID: ${{ secrets.WEBHOOK_ID }}
+        WEBHOOK_TOKEN: ${{ secrets.WEBHOOK_TOKEN }}
+        RELEASE_NOTES: ${{ github.event.pull_request.body }}
+      run: |
+        CONTENT=$(echo "$RELEASE_NOTES" | sed -z 's/\r\n/\\r\\n/g;s/\"/\\\"/g')
+        curl -X POST -d '{"content":":information_source: <@&913767546048630785>  A new deployment has started!  This should only take a couple minutes to complete.\r\n\r\n🥚🐣🐤🐓 Release Notes 🐓🐤🐣🥚\r\n'"$CONTENT"'\r\n\r\n*(to opt in/out of this notification role, please use `/squawkoverflow notifications`)*"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
+
+  deploy-app:
+    needs: notify-squawkers
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - uses: google-github-actions/setup-gcloud@v0
+      - run: gcloud functions deploy api
+        working-directory: ./api
+      - run: |
+          gcloud app deploy
+          gcloud app versions list --format='value(version.id)' --sort-by='~version.createTime' | tail -n +3 | xargs -r gcloud app versions delete --quiet
+
+  notify-complete:
+    needs: deploy-app
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - env:
+        WEBHOOK_ID: ${{ secrets.WEBHOOK_ID }}
+        WEBHOOK_TOKEN: ${{ secrets.WEBHOOK_TOKEN }}
+      run: |
+        curl -X POST -d '{"content":":information_source: Deployment is complete!  :duckparty: :tielbounce: :GooseDance:  Please report anything amiss using `/bug`.  Thank you!"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
