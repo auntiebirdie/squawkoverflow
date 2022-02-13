@@ -12,4 +12,4 @@ jobs:
         WEBHOOK_ID: ${{ secrets.WEBHOOK_ID }}
         WEBHOOK_TOKEN: ${{ secrets.WEBHOOK_TOKEN }}
       run: |
-        curl -X POST -d {"content": "Deployment started"} -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
+        curl -X POST -d '{"content": "Deployment started"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
