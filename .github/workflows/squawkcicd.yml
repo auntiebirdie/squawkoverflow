@@ -5,7 +5,7 @@ on:
     types: [opened, edited]
 
 jobs:
-  notify-begin:
+  notify-squawkers:
     if: github.event.pull_request.merged == false
     runs-on: ubuntu-latest
     steps:
@@ -16,4 +16,4 @@ jobs:
         RELEASE_NOTES: ${{ github.event.pull_request.body }}
       run: |
         CONTENT=$(echo "$RELEASE_NOTES" | sed -z 's/\r\n/\\r\\n/g;s/\"/\\\"/g')
-        curl -X POST -d '{"content":"'"$CONTENT"'"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
+        curl -X POST -d '{"content":"<@913767546048630785>  A new deployment has started!\r\n-----Release Notes-----\r\n\r\n'"$CONTENT"'"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
