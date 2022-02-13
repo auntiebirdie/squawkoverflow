@@ -17,29 +17,22 @@ jobs:
         CONTENT=$(echo "$RELEASE_NOTES" | sed -z 's/\r\n/\\r\\n/g;s/\"/\\\"/g')
         curl -X POST -d '{"content":":information_source: <@&913767546048630785>  A new deployment has started!  This should only take a couple minutes to complete.\r\n\r\n-----Release Notes-----\r\n'"$CONTENT"'\r\n\r\n*(to opt in/out of this notification role, please use `/squawkoverflow notifications`)*"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
 
-  deploy-api:
-    if: github.event.pull_request.merged == false
-    steps:
-    - uses: actions/checkout@latest
-    - uses: google-github-actions/deploy-cloud-functions@latest
-      working-directory: ./api
-      with:
-        name: api
-        runtime: nodejs12
-        project: squawkoverflow
-        credentials: ${{ secrets.GCP_CREDENTIALS }}
-
   deploy-app:
     if: github.event.pull_request.merged == false
     steps:
-      - uses: actions/checkout@latest
-      - uses: google-github-actions/auth@latest
+      - uses: actions/checkout@v2
+      - uses: google-github-actions/auth@v0
         with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
-      - uses: google-github-actions/deploy-appengine
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - uses: google-github-actions/setup-gcloud@v0
+      - run: gcloud functions deploy api
+        working-directory: ./api
+      - run: |
+          gcloud app deploy
+          gcloud app versions list --format='value(version.id)' --sort-by='~version.createTime' | tail -n +3 | xargs -r gcloud app versions delete --quiet
 
   notify-complete:
-    needs: [deploy-api, deploy-ap]
+    needs: deploy-app
     if: github.event.pull_request.merged == false
     runs-on: ubuntu-latest
     steps:
