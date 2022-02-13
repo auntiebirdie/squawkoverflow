@@ -1,0 +1,27 @@
+name: SQUAWKtest
+
+on:
+  pull_request:
+    types: [opened, edited]
+
+jobs:
+  deploy-app:
+    needs: notify-squawkers
+    if: github.event.pull_request.merged == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: 'echo "$API_SECRETS" > ./api/secrets.json && echo "$APP_SECRETS" > ./secrets.json'
+        shell: bash
+        env:
+          API_SECRETS: ${{ secrets.API_SECCRETS }}
+          APP_SECRETS: ${{ secrets.APP_SECRETS}}
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - uses: google-github-actions/setup-gcloud@v0
+      - run: gcloud functions deploy api
+        working-directory: ./api
+      - run: |
+          gcloud app deploy -q
+          gcloud app versions list --format='value(version.id)' --sort-by='~version.createTime' | tail -n +3 | xargs -r gcloud app versions delete --quiet
