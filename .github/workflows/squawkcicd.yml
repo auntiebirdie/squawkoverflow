@@ -15,7 +15,7 @@ jobs:
         RELEASE_NOTES: ${{ github.event.pull_request.body }}
       run: |
         CONTENT=$(echo "$RELEASE_NOTES" | sed -z 's/\r\n/\\r\\n/g;s/\"/\\\"/g')
-        curl -X POST -d '{"content":":information_source: <@&913767546048630785>  A new deployment has started!  This should only take a couple minutes to complete.\r\n\r\n**Release Notes**\r\n🐓🐤🐣🥚\r\n\r\n'"$CONTENT"'\r\n\r\n*(to opt in/out of this notification role, please use `/squawkoverflow notifications`)*"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
+        curl -X POST -d '{"content":":information_source:  <@&913767546048630785>  A new deployment has started!  This should only take 3-5 minutes to complete.\r\n\r\n**[ Release Notes ]**\r\n\r\n'"$CONTENT"'\r\n\r\n*(to opt in/out of this notification role, please use `/squawkoverflow notifications`)*"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
 
   deploy-app:
     needs: notify-squawkers
@@ -23,6 +23,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: 'echo "$API_SECRETS" > ./api/secrets.json && echo "$APP_SECRETS" > ./secrets.json'
+        shell: bash
+        env:
+          API_SECRETS: ${{ secrets.API_SECRETS }}
+          APP_SECRETS: ${{ secrets.APP_SECRETS }}
       - uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
@@ -42,4 +47,4 @@ jobs:
         WEBHOOK_ID: ${{ secrets.WEBHOOK_ID }}
         WEBHOOK_TOKEN: ${{ secrets.WEBHOOK_TOKEN }}
       run: |
-        curl -X POST -d '{"content":":information_source: Deployment is complete!  :tada:  Please report anything amiss using `/bug`.  Thank you!"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
+        curl -X POST -d '{"content":":tada:  Deployment is complete!  Please report anything amiss using `/bug`.  Thank you!"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
