@@ -16,4 +16,4 @@ jobs:
       run: |
         CONTENT=$(echo "${{ github.event.pull_request.body }}" | tr -d '\r\n')
         echo "$CONTENT"
-        curl -X POST -d '{"contnet":"test'"$CONTENT"'"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
+        curl -X POST -d '{"content":"'"$CONTENT"'"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
