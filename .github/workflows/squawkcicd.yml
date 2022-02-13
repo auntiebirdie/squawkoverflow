@@ -1,15 +1,18 @@
 name: SQUAWKcicd
 
 on:
-  push
+  pull_request:
+    types: [opened, edited]
 
 jobs:
   notify-begin:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
     - name: Post notification
       env:
         WEBHOOK_ID: ${{ secrets.WEBHOOK_ID }}
         WEBHOOK_TOKEN: ${{ secrets.WEBHOOK_TOKEN }}
+        RELEASE_NOTES: ${{ github.event.pull_request.body }}
       run: |
-        curl -X POST -d '{"content": "Deployment started"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
+        curl -X POST -d '{"content": "Deployment has started!\r\n\r\n ```$RELEASE_NOTES```"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
