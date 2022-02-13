@@ -20,8 +20,8 @@ jobs:
   deploy-api:
     if: github.event.pull_request.merged == false
     steps:
-    - uses: actions/checkout
-    - uses: google-github-actions/deploy-cloud-functions
+    - uses: actions/checkout@latest
+    - uses: google-github-actions/deploy-cloud-functions@latest
       working-directory: ./api
       with:
         name: api
@@ -32,8 +32,8 @@ jobs:
   deploy-app:
     if: github.event.pull_request.merged == false
     steps:
-      - uses: actions/checkout@v1
-      - uses: google-github-actions/auth
+      - uses: actions/checkout@latest
+      - uses: google-github-actions/auth@latest
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
       - uses: google-github-actions/deploy-appengine
