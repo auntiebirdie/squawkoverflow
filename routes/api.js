@@ -10,7 +10,7 @@ router.all('/*', async (req, res) => {
 
     data.loggedInUser = req.session.user;
 
-    API.call(endpoint, req.method, data).then((response) => {
+    API.call(endpoint, req.method, data, req.headers).then((response) => {
       if (req.method == 'POST' || req.method == 'PUT') {
         delete req.session.loggedInUser;
       }

@@ -1,7 +1,17 @@
 exports.api = (req, res) => {
-  if (req.query?.sort && req.query.sort == "[null]") {
-    delete req.query.sort;
-  }
+  const bunyan = require('bunyan');
+  const {
+    LoggingBunyan
+  } = require('@google-cloud/logging-bunyan');
+  const loggingBunyan = new LoggingBunyan();
+
+  req.logger = bunyan.createLogger({
+    name: process.env.NODE_ENV == 'PROD' ? 'squawkoverflow' : 'squawkdev',
+    streams: [{
+      stream: process.stdout,
+      level: 'info'
+    }, loggingBunyan.stream('info')]
+  });
 
   try {
     let route = req.path.match(/\/?(\b[A-Za-z\_]+\b)/)[0];
@@ -12,7 +22,14 @@ exports.api = (req, res) => {
       data[key] = JSON.parse(data[key]);
     }
 
-    console.log(req.method, route, data);
+    req.logger.info({
+      req: {
+	      method: req.method,
+	      url: req.path,
+	      headers: req.headers,
+	      data: data
+      }
+    });
 
     require(`./endpoints/${route}.js`)(req, res);
   } catch (err) {

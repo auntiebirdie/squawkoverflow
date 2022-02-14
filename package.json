@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "deploy": "gcloud app deploy && gcloud app versions list --format='value(version.id)' --sort-by='~version.createTime' | tail -n +3 | xargs -r gcloud app versions delete --quiet",
-    "dev": "DEV=true node --trace-warnings index.js"
+    "dev": "DEV=true node index.js | bunyan"
   },
   "author": "seppykawaii",
   "license": "ISC",

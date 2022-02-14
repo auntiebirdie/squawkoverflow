@@ -1,11 +1,14 @@
-exports.call = (endpoint, method = "GET", data = {}) => {
+exports.call = (endpoint, method = "GET", data = {}, headers = {}) => {
   return new Promise(async (resolve, reject) => {
     if (process.env.DEV) {
       let req = {
-        method: method
+        method: method,
+        path: endpoint
       };
 
-      console.log(method, endpoint, data);
+      for (let key in data) {
+        data[key] = JSON.stringify(data[key]);
+      }
 
       if (method == 'GET' || method == 'HEAD') {
         req.query = data;
@@ -46,7 +49,7 @@ exports.call = (endpoint, method = "GET", data = {}) => {
         }
       };
 
-      require(`../api/endpoints/${endpoint}.js`)(req, res);
+      require('../api/index.js').api(req, res);
     } else {
       const {
         GoogleAuth
@@ -58,9 +61,12 @@ exports.call = (endpoint, method = "GET", data = {}) => {
       const client = await auth.getIdTokenClient(apiPath);
       const url = `${apiPath}/${endpoint}`;
 
+      const allowedHeaders = ['x-patreon-signature', 'x-patreon-event'];
+
       const options = {
         url,
         method: method,
+        headers: Object.fromEntries(Object.entries(headers).filter(([key]) => allowedHeaders.includes(key)))
       };
 
       for (let key in data) {
