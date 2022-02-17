@@ -15,14 +15,18 @@
 
   <%- include('../scripts/lazyloader.ejs', { template: '../templates/exchange.ejs', paginate: currentPage }) %>
 
+  <script src="https://cdn.socket.io/4.4.1/socket.io.min.js" integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous"></script>
   <script type="text/javascript">
+    const socket = io();
+
     $('#lazyLoader').on('click', '.card', function (e) {
       if (e.target.nodeName != 'A') {
         var image = e.currentTarget.querySelector('.birdypet');
+        var container = image.parentNode.parentNode;
 
         if (!image.style.opacity) {
           image.style.opacity = .5;
-          $(image.parentNode.parentNode).toggleClass('loadingData');
+          container.classList.add('loadingData');
 
           $.ajax({
             cache: false,
@@ -38,7 +42,12 @@
               image.style.opacity = null;
               image.innerHTML = "";
 
-              $(image.parentNode.parentNode).toggleClass('border-primary border-secondary border-dashed loadingData');
+              container.classList.toggle('border-primary');
+              container.classList.toggle('border-secondary');
+              container.classList.toggle('border-dashed');
+              container.classList.remove('loadingData');
+
+              socket.emit('update', { birdypet : image.getAttribute('data-id'), disabled: container.classList.contains('border-dashed'), member: '<%= page == 'exchange/offer' ? loggedInUser.id : exchange.member.id %>' });
             }
           });
         }

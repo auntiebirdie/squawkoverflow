@@ -18,7 +18,7 @@ module.exports = (req, res) => {
           res.json(null);
         });
       } else {
-        Database.query('SELECT id FROM exchanges WHERE (memberA = ? AND statusA >= 0) OR (memberB = ? AND statusA != 0 AND statusB >= 0) ORDER BY updatedAt DESC', [req.query.loggedInUser, req.query.loggedInUser]).then((exchanges) => {
+        Database.query('SELECT id FROM exchanges WHERE (memberA = ? AND statusA >= 0) OR (memberB = ? AND statusA > 0 AND statusB >= 0) OR (memberB = ? AND statusA < 0 AND statusB > 0) ORDER BY updatedAt DESC', [req.query.loggedInUser, req.query.loggedInUser, req.query.loggedInUser]).then((exchanges) => {
           let results = [];
           let page = (((req.query.page * 1) - 1) || 0) * 10;
 
@@ -59,9 +59,11 @@ module.exports = (req, res) => {
               if (birdypet.exchangeData == exchange.id) {
                 Database.delete('exchange_birdypets', {
                   exchange: exchange.id,
-                  birdypet: birdypet.id
+                  birdypet: birdypet.id,
+		  variant: birdypet.variant.id,
+		  member: birdypet.member
                 }).then(() => {
-                  Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${birdypet.bird.commonName} was removed from the ${birdypet.member == exchange.memberA ? 'request' : 'offer'}.`]).then(() => {
+                  Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `<${req.body.loggedInUser}> removed ${birdypet.bird.commonName} from the ${birdypet.member == exchange.memberA ? 'offer' : 'request'}.`]).then(() => {
                     Database.set('exchanges', {
                       id: exchange.id
                     }, {
@@ -76,9 +78,11 @@ module.exports = (req, res) => {
               } else if (!birdypet.exchangeData) {
                 Database.create('exchange_birdypets', {
                   exchange: exchange.id,
-                  birdypet: birdypet.id
+                  birdypet: birdypet.id,
+		  variant: birdypet.variant.id,
+		  member: birdypet.member
                 }).then(() => {
-                  Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${birdypet.bird.commonName} was added to the ${birdypet.member == exchange.memberA ? 'offer' : 'request'}.`]).then(() => {
+                  Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `<${req.body.loggedInUser}> added ${birdypet.bird.commonName} to the ${birdypet.member == exchange.memberA ? 'offer' : 'request'}.`]).then(() => {
                     Database.set('exchanges', {
                       id: exchange.id
                     }, {

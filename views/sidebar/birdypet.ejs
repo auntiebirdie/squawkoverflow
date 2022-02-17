@@ -31,13 +31,19 @@
         <h6>Order</h6>
         <p class="ms-2"><%= birdypet.bird.order %></p>
 
-        <% if (birdypet.variant.label || birdypet.variant.subspecies) { %>
+       <% if (birdypet.variant.subspecies) { %>
+        <h6>Subspecies</h6>
+        <p class="ms-2">
+          <%= birdypet.variant.subspecies %>
+        </p>
+       <% } %>
+
+       <% if (birdypet.variant.label) { %>
         <h6>Variant</h6>
         <p class="ms-2">
           <%= birdypet.variant.label %>
-          <%= birdypet.variant.subspecies ? `${birdypet.variant.subspecies} subspecies` : '' %>
         </p>
-        <% } %>
+       <% } %>
 
         <h6>Hatch Date</h6>
         <p class="ms-2"><%= new Date(birdypet.hatchedAt).toLocaleDateString('en-US', {
@@ -60,8 +66,10 @@
         </p>
         <% } %>
 
-        <p>Art By</p>
-        <a href="<%= birdypet.variant.source %>" target="_blank">
-          <%= birdypet.variant.credit %>
-        </a>
+        <h6>Art By</h6>
+        <p class="ms-2">
+          <a href="<%= birdypet.variant.source %>" target="_blank">
+            <%= birdypet.variant.credit %>
+          </a>
+        </p>
 <% } %>
