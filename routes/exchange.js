@@ -19,7 +19,10 @@ router.get('/:id', Middleware.isLoggedIn, async (req, res) => {
   });
 
   if (exchange.memberA != req.session.user && exchange.memberB != req.session.user) {
-    res.redirect('/error');
+    res.status(404);
+    return res.render('error/404', {
+      error: true
+    });
   }
 
   res.set('Cache-Control', 'no-store');
@@ -58,12 +61,13 @@ router.get(['/:id/offer', '/:id/request'], Middleware.isLoggedIn, async (req, re
     res.render('exchange/add', {
       page: page,
       exchange: exchange,
+      member: member,
       allFamilies: families,
       families: member.families.filter((family) => family.owned > 0).map((family) => family.name),
-      flocks: member.flocks.filter( (flock) => !flock.protected && (member.id == req.session.user || !flock.private)),
+      flocks: member.flocks.filter((flock) => !flock.protected && (member.id == req.session.user || !flock.private)),
       currentPage: (req.query.page || 1) * 1,
       sidebar: 'filters',
-      sortFields: ['hatchedAt-DESC', 'hatchedAt-ASC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'], 
+      sortFields: ['hatchedAt-DESC', 'hatchedAt-ASC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
       extraInsights: page == "exchange/offer" ? ['unhatched-Their', 'isolated-My', 'duplicated-My', 'wanted-Their', 'needed-Their'] : ['unhatched-My', 'isolated-Their', 'duplicated-Their', 'wanted-My', 'needed-My'],
     });
   } else {

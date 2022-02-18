@@ -4,27 +4,47 @@ const crypto = require('crypto');
 const secrets = require('../secrets.json');
 
 module.exports = (req, res) => {
-	console.log(req.headers['x-patreon-signature']);
+    let hmac = crypto.createHmac('md5', secrets.PATREON.SECRET);
 
-	let hmac = crypto.createHmac('md5', secrets.PATREON[process.env.NODE_ENV == 'PROD' ? 'PROD' : 'DEV'].SECRET).update(req.body).digest('hex');
+    hmac.update(req.rawBody);
 
-	console.log(hmac);
+    let hash = hmac.digest('hex');
 
-    if (req.headers['x-patreon-signature'] != hmac) {
-      return res.sendStatus(403);
-    }
+    console.log(req.headers['x-patreon-signature'], hash);
+
+    /*
+     // fight with this later .......
+      if (req.headers['x-patreon-signature'] !== hash) {
+        return res.sendStatus(403);
+      }
+    */
 
     var patron = req.body.included[1];
     var discord = patron.attributes.social_connections?.discord?.user_id;
 
-    Webhook('testing', {
-      content: JSON.stringify(req.header),
-      embeds: [{
-        title: req.headers['x-patreon-event'],
-        url: 'https://www.patreon.com/squawkoverflow',
-        description: discord ? `<@${discord}> has become a patron!` : `${patron.attributes.full_name} has become a patron!`,
-      }]
-    }).then(() => {
-      res.sendStatus(200);
-    });
-}
+    var embed = {
+      title: req.headers['x-patreon-event'],
+      url: 'https://www.patreon.com/squawkoverflow',
+      description: discord ? `<@${discord}>` : `${patron.attributes.full_name}`
+    };
+
+    switch (req.headers['x-patreon-event']) {
+        case 'members:pledge:create':
+        embed.description += ' has become a patron!';
+        break;
+        case 'members:pledge:delete':
+        embed.description += ' is no longer a patron!';
+        break;
+        case 'members:pledge:update':
+        embed.description += ' has changed their pledge!'
+        break;
+      }
+
+
+      Webhook('testing', {
+        content: JSON.stringify(req.header),
+        embeds: [embed]
+      }).then(() => {
+        res.sendStatus(200);
+      });
+    }

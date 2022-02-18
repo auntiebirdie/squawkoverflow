@@ -1,0 +1,96 @@
+  <div class="col-12 col-md-6">
+    <div class="row bg-light m-3 mb-4 p-3 py-4 rounded">
+      <div class="<%= exchange.mutable ? 'col-6 col-md-8' : 'col-12' %>">
+        <h5 class="text-start text-md-center mb-4">
+          <%= member.username %>
+          <%= exchange.state == 'Completed!' ? 'gave' : 'will give' %>
+
+          <% if (exchange.mutable) { %>
+           <% if (member.id == loggedInUser.id) { %>
+            <span>
+              <select id="<%= side == 'A' ? 'giveA' : 'forB' %>" class="form-select d-inline-block w-auto mt-2">
+               <% for (let offer of offers) { %>
+                <option <%= exchange[side == 'A' ? 'giveA' : 'forB'] == offer ? 'selected' : '' %>><%= offer %></option>
+               <% } %>
+              </select>
+            </span>
+           <% } else { %>
+            <%= exchange[side == 'A' ? 'giveA' : 'forB'] %>
+           <% } %>
+          <% } %>
+        </h5>
+      </div>
+    <% if (exchange.mutable) { %>
+      <div class="col-6 col-md-4 text-end">
+        <a class="btn btn-dark btn-sm" href="/exchange/<%= exchange.id %>/<%= member.id == loggedInUser.id ? "offer" : "request" %>">
+          + <%= member.id == loggedInUser.id ? "offer" : "request" %> birds
+        </a>
+      </div>
+     <% } %>
+
+     <div id="birdypets<%= side %>" class="row mt-3">
+      <% if (exchange[`birdypets${side}`].length > 0) { %>
+       <% for (let birdypet of exchange[`birdypets${side}`]) { %>
+       <div class="col-12 col-lg-6 d-flex align-items-stretch">
+         <div class="w-100 pb-3 px-2">
+           <div class="h-100 card">
+            <% if (loggedInUser.id != exchange.memberA) { %>
+             <a class="wishlist-heart">
+               <%= birdypet.bird.wishlisted ? (birdypet.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
+             </a>
+            <% } %>
+             <div class="h100">
+               <div class="bg-white lazy birdypet <% if (loggedInUser.id != exchange.memberA) { %>checkmark<%= birdypet.bird.owned == 2 ? 2 : birdypet.bird.owned %><% } %>"
+                    data-id="<%= birdypet.id %>"
+                    data-bg="<%= birdypet.image || birdypet.variant.image %>"
+               >
+               </div>
+             </div>
+             <div class="card-body">
+              <% if (exchange.state == 'Completed!') { %>
+                <h4 class="text-center"><%= birdypet.bird.commonName %></h4>
+              <% } else { %>
+               <h4 class="text-center"><a href="/birdypet/<%= birdypet.id %>"><%= birdypet.nickname ? birdypet.nickname : birdypet.bird.commonName %></a></h4>
+               <h6 class="text-center"><%= birdypet.nickname ? birdypet.bird.commonName : "" %></h6>
+              <% } %>
+             </div>
+           </div>
+         </div>
+       </div>
+       <% } %>
+      <% } else { %>
+       <div class="js-empty col-12 text-center pt-3"><em>
+        <% if (exchange.state == 'Completed!') { %>
+          <p><em>Nothing.</em></p>
+        <% } else if (side == 'A') { %>
+         <% if (exchange.memberA == loggedInUser.id) { %>
+           <p>Please pick what birds you want to offer, or leave it up to them.</p>
+         <% } else { %>
+          <p>Please pick what birds you want from their aviary, or leave it up to them.</p>
+         <% } %>
+        <% } else { %>
+         <% if (exchange.memberB == loggedInUser.id) { %>
+           <p>Please pick what birds you want to offer, or leave it up to them.</p>
+         <% } else { %>
+          <p>Please pick what birds you want to request from their aviary, or leave it up to them.</p>
+         <% } %>
+        <% } %>
+       </em></div>
+      <% } %>
+     </div>
+
+    <% if (exchange.state != 'Completed!') { %>
+      <div id="note<%= side %>" class="w-75 mx-auto pt-4 align-self-end">
+        <% if (member.id == loggedInUser.id) { %>
+          <p><em>Notes: (optional)</em></p>
+          <textarea name="note<%= side %>" class="form-control w-100" maxlength="250" <%= exchange.mutable ? '' : 'disabled' %>><%= exchange[`note${side}`] %></textarea>
+        <% } else if (exchange[`note${side}`]) { %>
+          <p><em>Notes:</em></p>
+          <% for (var para of exchange[`note${side}`].split("\r\n")) { %>
+            <p><%= para %></p>
+          <% } %>
+        <% } %>
+      </div>
+    <% } %>
+    </div>
+  </div>

@@ -1,6 +1,7 @@
 const BirdyPet = require('./birdypet.js');
 const Database = require('../helpers/database.js');
 const Member = require('./member.js');
+const Variant = require('./variant.js');
 
 class Exchange {
   constructor(id) {
@@ -39,10 +40,8 @@ class Exchange {
 
           if (this.memberA == params.loggedInUser) {
             this.member = new Member(this.memberB);
-            this.mutable = state == '00' || state == '11' || state == '12';
           } else if (this.memberB == params.loggedInUser) {
             this.member = new Member(this.memberA);
-            this.mutable = state == '10' || state == '21' || state == '20';
           } else {
             return reject(null);
           }
@@ -51,57 +50,78 @@ class Exchange {
             exchange: this.id
           }, {
             order: 'loggedAt DESC'
-          })
+          });
 
-          if (latestLog?.log == 'The offer was accepted by both parties!') {
+          if (latestLog?.log == 'The offer was accepted by both parties!' || (this.state == '22')) {
             this.state = 'Completed!';
+            this.mutable = false;
           } else {
             switch (state) {
               case '22':
                 this.state = 'Completed!';
+                this.mutable = false;
                 break;
               case '11':
               case '12':
                 this.state = `Pending (waiting on ${this.memberA == params.loggedInUser ? "me" : "them"})`;
+                this.mutable = true;
                 break;
+              case '20':
               case '10':
                 this.state = this.memberA == params.loggedInUser ? 'Pending (waiting on them)' : 'New!';
+                this.mutable = true;
                 break;
               case '00':
                 this.state = 'Not sent';
+                this.mutable = true;
                 break;
               case '-12':
               case '-11':
               case '-10':
                 this.state = 'Rescinded';
+                this.mutable = false;
                 break;
               case '2-1':
               case '1-1':
               case '0-1':
                 this.state = 'Declined';
+                this.mutable = false;
                 break;
               default:
                 this.state = `Pending (waiting on ${this.memberA == params.loggedInUser ? "them" : "me"})`;
+                this.mutable = true;
                 break;
             }
           }
 
           await this.member.fetch();
 
-          let birdypets = await Database.query('SELECT id FROM birdypets JOIN exchange_birdypets ON (birdypets.id = exchange_birdypets.birdypet) WHERE exchange = ? AND `member` IN (?)', [exchange.id, [this.memberA, this.memberB]]);
-
           this.birdypetsA = [];
           this.birdypetsB = [];
 
-          for (let i = 0, len = birdypets.length; i < len; i++) {
-            let birdypet = new BirdyPet(birdypets[i].id);
+          if (this.state == 'Completed!') {
+            let variants = await Database.query('SELECT id, `member` FROM variants JOIN exchange_birdypets ON (variants.id = exchange_birdypets.variant) WHERE exchange = ?', [this.id]);
 
-            await birdypet.fetch({
-              include: ['memberData'],
-              member: birdypet.member == this.memberA ? this.memberB : this.memberA
-            });
+            for (let i = 0, len = variants.length; i < len; i++) {
+              let variant = new Variant(variants[i].id);
 
-            this[birdypet.member == this.memberA ? 'birdypetsA' : 'birdypetsB'].push(birdypet);
+              await variant.fetch();
+
+              this[variants[i].member == this.memberA ? 'birdypetsA' : 'birdypetsB'].push(variant);
+            }
+          } else {
+            let birdypets = await Database.query('SELECT id FROM birdypets JOIN exchange_birdypets ON (birdypets.id = exchange_birdypets.birdypet) WHERE exchange = ? AND birdypets.member IN (?)', [this.id, [this.memberA, this.memberB]]);
+
+            for (let i = 0, len = birdypets.length; i < len; i++) {
+              let birdypet = new BirdyPet(birdypets[i].id);
+
+              await birdypet.fetch({
+                include: ['memberData'],
+                member: birdypet.member == this.memberA ? this.memberB : this.memberA
+              });
+
+              this[birdypet.member == this.memberA ? 'birdypetsA' : 'birdypetsB'].push(birdypet);
+            }
           }
 
           if (params.include?.includes('logs')) {

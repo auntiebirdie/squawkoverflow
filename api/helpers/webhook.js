@@ -5,9 +5,7 @@ const {
 } = require('discord.js');
 
 module.exports = function(webhook, data) {
-  if (!process.env.NODE_ENV || process.env.NODE_ENV != "PROD") {
-    webhook = "testing";
-  }
+  webhook = process.env.NODE_ENV == 'PROD' ? webhook : "testing";
 
   return new Promise((resolve, reject) => {
     const webhookClient = new WebhookClient({

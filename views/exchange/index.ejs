@@ -26,7 +26,7 @@
         var button = this;
 
         if (!button.disabled && selectedMember) { 
-          button.parentNode.parentNode.classList.add('loadingData'); 
+          button.parentNode.parentNode.parentNode.classList.add('loadingData'); 
           button.disabled = true;
 
           window.location.href = `/exchange/${selectedMember.id}/new`;

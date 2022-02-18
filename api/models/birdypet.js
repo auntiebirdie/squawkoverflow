@@ -104,7 +104,7 @@ class BirdyPet {
 
   async set(data) {
     return new Promise(async (resolve, reject) => {
-	    let promises = [];
+      let promises = [];
 
       if (data.member && this.member != data.member) {
         const Member = require('./member.js');
@@ -121,7 +121,7 @@ class BirdyPet {
           birdypet: this.id
         }));
 
-        await Database.query('SELECT * FROM exchanges WHERE id IN (SELECT exchange FROM exchange_birdypets WHERE birdypet = ? AND statusA + statusB BETWEEN 0 AND 3)', [this.id]).then(async (exchanges) => {
+        await Database.query('SELECT * FROM exchanges WHERE id IN (SELECT exchange FROM exchange_birdypets WHERE birdypet = ?) AND statusA + statusB BETWEEN 0 AND 3', [this.id]).then(async (exchanges) => {
           for (let exchange of exchanges) {
             let toUpdate = {};
 
@@ -134,6 +134,7 @@ class BirdyPet {
             }
 
             promises.push(Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${this.bird.commonName} was removed from the offer because it was given away.`]));
+            promises.push(Database.query('DELETE FROM exchange_birdypets WHERE exchange = ? AND birdypet = ?', [exchange.id, this.id]));
 
             if (toUpdate.statusA || toUpdate.statusB) {
               await Database.set('exchanges', {
@@ -141,8 +142,12 @@ class BirdyPet {
               }, toUpdate);
             }
           }
-
-          promises.push(Database.query('DELETE FROM exchange_birdypets WHERE birdypet = ?', [this.id]));
+        });
+      } else if (data.variant != this.variant.id) {
+        await Database.query('SELECT * FROM exchanges WHERE id IN (SELECT exchange FROM exchange_birdypets WHERE birdypet = ? AND statusA + statusB BETWEEN 0 AND 3)', [this.id]).then(async (exchanges) => {
+          for (let exchange of exchanges) {
+            promises.push(Database.query('UPDATE exchange_birdypets SET variant = ? WHERE exchange = ? AND birdypet = ?', [data.variant, exchange.id, this.id]));
+          }
         });
       }
 
