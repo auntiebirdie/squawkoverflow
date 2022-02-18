@@ -15,7 +15,7 @@ jobs:
         RELEASE_NOTES: ${{ github.event.pull_request.body }}
       run: |
         CONTENT=$(echo "$RELEASE_NOTES" | sed -z 's/\r\n/\\r\\n/g;s/\"/\\\"/g')
-        curl -X POST -d '{"content":":information_source:  @&913767546048630785  A new deployment has started!  This should only take 3-5 minutes to complete.\r\n\r\n**[ Release Notes ]**\r\n\r\n'"$CONTENT"'\r\n\r\n*(to opt in/out of this notification role, please use `/squawkoverflow notifications`)*"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
+        curl -X POST -d '{"content":":information_source:  <@&913767546048630785>  A new deployment has started!  This should only take 3-5 minutes to complete.\r\n\r\n**[ Release Notes ]**\r\n\r\n'"$CONTENT"'\r\n\r\n*(to opt in/out of this notification role, please use `/squawkoverflow notifications`)*"}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
 
   deploy-app:
     needs: notify-squawkers
