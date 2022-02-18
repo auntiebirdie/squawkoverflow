@@ -139,8 +139,8 @@ module.exports = (req, res) => {
               }, {
                 statusA: exchange.statusA,
                 statusB: exchange.statusB,
-                giveA: req.body.giveA,
-                forB: req.body.forB,
+                giveA: req.body.giveA || exchange.giveA || "this",
+                forB: req.body.forB || exchange.forB || "this",
                 noteA: req.body.noteA || exchange.noteA,
                 noteB: req.body.noteB || exchange.noteB,
                 updatedAt: new Date()
@@ -150,10 +150,7 @@ module.exports = (req, res) => {
 
                 Promise.all([
                   memberA.fetch(),
-                  memberB.fetch(),
-                  exchange.fetch({
-                    loggedInUser: req.body.loggedInUser
-                  })
+                  memberB.fetch()
                 ]).then(() => {
                   if (exchange.statusA + exchange.statusB == 4) {
                     let promises = [];

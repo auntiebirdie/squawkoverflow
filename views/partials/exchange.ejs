@@ -1,6 +1,6 @@
   <div class="col-12 col-md-6">
     <div class="row bg-light m-3 mb-4 p-3 py-4 rounded">
-      <div class="col-6 col-md-8">
+      <div class="<%= exchange.mutable ? 'col-6 col-md-8' : 'col-12' %>">
         <h5 class="text-start text-md-center mb-4">
           <%= member.username %>
           <%= exchange.state == 'Completed!' ? 'gave' : 'will give' %>
@@ -42,13 +42,17 @@
              <div class="h100">
                <div class="bg-white lazy birdypet <% if (loggedInUser.id != exchange.memberA) { %>checkmark<%= birdypet.bird.owned == 2 ? 2 : birdypet.bird.owned %><% } %>"
                     data-id="<%= birdypet.id %>"
-                    data-bg="<%= birdypet.variant.image %>"
+                    data-bg="<%= birdypet.image || birdypet.variant.image %>"
                >
                </div>
              </div>
              <div class="card-body">
+              <% if (exchange.state == 'Completed!') { %>
+                <h4 class="text-center"><%= birdypet.bird.commonName %></h4>
+              <% } else { %>
                <h4 class="text-center"><a href="/birdypet/<%= birdypet.id %>"><%= birdypet.nickname ? birdypet.nickname : birdypet.bird.commonName %></a></h4>
                <h6 class="text-center"><%= birdypet.nickname ? birdypet.bird.commonName : "" %></h6>
+              <% } %>
              </div>
            </div>
          </div>
@@ -75,16 +79,18 @@
       <% } %>
      </div>
 
+    <% if (exchange.state != 'Completed!') { %>
       <div id="note<%= side %>" class="w-75 mx-auto pt-4 align-self-end">
         <% if (member.id == loggedInUser.id) { %>
-          <p><em>Notes for them: (optional)</em></p>
+          <p><em>Notes: (optional)</em></p>
           <textarea name="note<%= side %>" class="form-control w-100" maxlength="250" <%= exchange.mutable ? '' : 'disabled' %>><%= exchange[`note${side}`] %></textarea>
-        <% } else if (exchange[`note{$side}`]) { %>
-          <p><em>Notes from them:</em></p>
+        <% } else if (exchange[`note${side}`]) { %>
+          <p><em>Notes:</em></p>
           <% for (var para of exchange[`note${side}`].split("\r\n")) { %>
             <p><%= para %></p>
           <% } %>
         <% } %>
       </div>
+    <% } %>
     </div>
   </div>

@@ -2,10 +2,16 @@
 
   <%- include('../partials/page-title.ejs', {
         title: `Exchange ${exchange.memberA == loggedInUser.id ? 'Request' : 'Offer'}`,
-        subtitle: exchange.state != 'Completed!' ? 'You can click on any bird on this screen to remove it from the offer or request.' : 'The offer was accepted by both parties!'
+        subtitle: exchange.state
       }) %>
 
   <div id="errorMessage" class="bg-warning text-dark p-3 w-50 mx-auto rounded mb-3 d-none"></div>
+
+ <% if (exchange.mutable) { %>
+  <div class="text-center small">
+    <p><em>You can click on any bird on this screen to remove it from the offer or request.</em></p>
+  </div>
+ <% } %>
 
  <% if (exchange.statusA >= 0 && exchange.statusB >= 0) { %>
   <div id="exchange" class="row">
@@ -19,16 +25,18 @@
   <div class="text-center py-5">
    <% if (exchange.mutable) { %>
     <button id="makeOffer" class="btn btn-secondary btn-lg me-2">
-      <% if (exchange.statusA == 2 || exchange.statusB == 2) { %>
+      <% if ((exchange.statusA == 2 && exchange.memberB == loggedInUser.id) || (exchange.statusB == 2 && exchange.memberA == loggedInUser.id)) { %>
         Accept Offer
-      <% } else if (exchange.statusA == 1 && exchange.statusB == 1) { %>
-        Submit Offer
       <% } else if (exchange.statusA == 0 & exchange.statusB == 0) { %>
         Make Offer
       <% } else {  %>
         Update Offer
       <% } %>
     </button>
+
+    &nbsp;&nbsp;
+
+    <button id="deleteOffer" class="btn btn-danger btn-lg"><%= exchange.memberA == loggedInUser.id ? 'Rescind' : 'Decline' %> Offer</button>
 
     <script type="text/javascript">
       var errorMessage = document.getElementById('errorMessage');
@@ -125,10 +133,7 @@
           });
         }
       });
-    </script>
-   <% } %>
 
-    <script type="text/javascript">
       $('#deleteOffer').on('click', function () {
         let button = this;
 
@@ -154,6 +159,7 @@
         }
       });
     </script>
+   <% } %>
   </div>
  <% } %>
 

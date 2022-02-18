@@ -1,6 +1,7 @@
 const BirdyPet = require('./birdypet.js');
 const Database = require('../helpers/database.js');
 const Member = require('./member.js');
+const Variant = require('./variant.js');
 
 class Exchange {
   constructor(id) {
@@ -65,6 +66,7 @@ class Exchange {
                 this.state = `Pending (waiting on ${this.memberA == params.loggedInUser ? "me" : "them"})`;
                 this.mutable = true;
                 break;
+              case '20':
               case '10':
                 this.state = this.memberA == params.loggedInUser ? 'Pending (waiting on them)' : 'New!';
                 this.mutable = true;
@@ -135,8 +137,6 @@ class Exchange {
   set(data = {}) {
     return new Promise(async (resolve, reject) => {
       data.updatedAt = new Date();
-
-	    console.log(data);
 
       await Database.set('exchanges', {
         id: this.id

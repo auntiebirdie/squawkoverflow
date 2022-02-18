@@ -34,35 +34,40 @@ app.use(async function(req, res, next) {
       delete req.session.loggedInUser;
     });
 
-    res.locals.ENV = process.env.NODE_ENV ? 'PROD' : 'DEV';
-    res.locals.loggedInUser = req.session.loggedInUser;
+    if (req.session.loggedInUser) {
+      res.locals.ENV = process.env.NODE_ENV ? 'PROD' : 'DEV';
+      res.locals.loggedInUser = req.session.loggedInUser;
 
-    menu.push({
-      "icon": "🥚",
-      "label": "Hatch Eggs",
-      "href": "/hatch"
-    }, {
-      "icon": "🐣",
-      "label": "Free Birds",
-      "href": "/freebirds"
-    }, {
-      "icon": "🤝",
-      "label": "Exchange",
-      "href": "/exchange",
-      "notif": Math.max(0, req.session.loggedInUser.exchangeData)
-    });
-
-    // computers are bad at rnadom so this helps keep it from triggering too often
-    if (chance.bool({
-        likelihood: 10
-      }) && chance.bool({
-        likelihood: 5
-      })) {
-
-      res.locals.bugFound = await API.call('bug', 'PUT', {
-        members: [req.session.user],
-        bugs: 1
+      menu.push({
+        "icon": "🥚",
+        "label": "Hatch Eggs",
+        "href": "/hatch"
+      }, {
+        "icon": "🐣",
+        "label": "Free Birds",
+        "href": "/freebirds"
+      }, {
+        "icon": "🤝",
+        "label": "Exchange",
+        "href": "/exchange",
+        "notif": Math.max(0, req.session.loggedInUser.exchangeData)
       });
+
+      // computers are bad at rnadom so this helps keep it from triggering too often
+      if (chance.bool({
+          likelihood: 10
+        }) && chance.bool({
+          likelihood: 5
+        })) {
+
+        res.locals.bugFound = await API.call('bug', 'PUT', {
+          members: [req.session.user],
+          bugs: 1
+        });
+      }
+    } else {
+      delete req.session.user;
+      delete req.session.loggedInUser;
     }
   }
 
