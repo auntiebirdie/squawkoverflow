@@ -23,8 +23,6 @@ app.use(async function(req, res, next) {
   var menu = [];
 
   if (req.session.user) {
-    req.io = app.io;
-
     req.session.loggedInUser = await API.call('member', 'GET', {
       id: req.session.user,
       include: ['exchangeData']
