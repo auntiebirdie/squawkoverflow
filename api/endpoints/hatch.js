@@ -47,9 +47,11 @@ module.exports = async (req, res) => {
 
           var eggs = await Database.query(query, params);
 
-          for (let egg of eggs) {
-            egg.numHatched = member.tier?.extraInsights ? await Counters.get('eggs', member.id, egg.adjective) : 0;
-          };
+          if (member.tier?.extraInsights) {
+            for (let egg of eggs) {
+              egg.numHatched = await Counters.get('eggs', member.id, egg.adjective);
+            };
+          }
 
           return res.status(200).json(eggs);
         }

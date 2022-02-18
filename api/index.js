@@ -6,7 +6,7 @@ exports.api = (req, res) => {
   const loggingBunyan = new LoggingBunyan();
 
   req.logger = bunyan.createLogger({
-    name: process.env.NODE_ENV == 'PROD' ? 'squawkoverflow' : 'squawkdev',
+    name: 'squawkoverflow', //process.env.FUNCTION_NAME == 'api' ? 'squawkoverflow' : 'squawkdev',
     streams: [{
       stream: process.stdout,
       level: 'info'
@@ -14,6 +14,10 @@ exports.api = (req, res) => {
   });
 
   try {
+	  if (req.path == 'ping') {
+		  return res.sendStatus(200);
+	  }
+
     let route = req.path.match(/\/?(\b[A-Za-z\_]+\b)/)[0];
 
     var data = (req.method == "GET" || req.method == "HEAD") ? req.query : req.body;
