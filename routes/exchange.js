@@ -25,16 +25,6 @@ router.get('/:id', Middleware.isLoggedIn, async (req, res) => {
     });
   }
 
-  req.io.on('connection', (socket) => {
-    socket.on('loaded', () => {
-      socket.join(`exchange/${req.params.id}/${req.session.user}`);
-    });
-
-    socket.on('update', (data) => {
-      socket.to(`exchange/${req.params.id}/${exchange.member.id}`).emit('update', data);
-    });
-  });
-
   res.set('Cache-Control', 'no-store');
 
   res.render('exchange/proposal', {
@@ -67,12 +57,6 @@ router.get(['/:id/offer', '/:id/request'], Middleware.isLoggedIn, async (req, re
     });
 
     var families = await API.call('families', 'GET');
-
-    req.io.on('connection', (socket) => {
-      socket.on('update', (data) => {
-        socket.to(`exchange/${req.params.id}/${exchange.member.id}`).emit('update', data);
-      });
-    });
 
     res.render('exchange/add', {
       page: page,

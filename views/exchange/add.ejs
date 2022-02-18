@@ -15,10 +15,7 @@
 
   <%- include('../scripts/lazyloader.ejs', { template: '../templates/exchange.ejs', paginate: currentPage }) %>
 
-  <script src="https://cdn.socket.io/4.4.1/socket.io.min.js" integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous"></script>
   <script type="text/javascript">
-    const socket = io();
-
     $('#lazyLoader').on('click', '.card', function (e) {
       if (e.target.nodeName != 'A') {
         var image = e.currentTarget.querySelector('.birdypet');
@@ -46,8 +43,6 @@
               container.classList.toggle('border-secondary');
               container.classList.toggle('border-dashed');
               container.classList.remove('loadingData');
-
-              socket.emit('update', { birdypet : image.getAttribute('data-id'), disabled: container.classList.contains('border-dashed'), member: '<%= page == 'exchange/offer' ? loggedInUser.id : exchange.member.id %>' });
             }
           });
         }

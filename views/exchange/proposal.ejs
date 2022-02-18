@@ -18,55 +18,20 @@
  <% if (exchange.statusA >= 0 && exchange.statusB >= 0 && exchange.statusA + exchange.statusB < 4) { %>
   <div class="text-center py-5">
    <% if (exchange.mutable) { %>
-    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js" integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous"></script>
+    <button id="makeOffer" class="btn btn-secondary btn-lg me-2">
+      <% if (exchange.statusA == 2 || exchange.statusB == 2) { %>
+        Accept Offer
+      <% } else if (exchange.statusA == 1 && exchange.statusB == 1) { %>
+        Submit Offer
+      <% } else if (exchange.statusA == 0 & exchange.statusB == 0) { %>
+        Make Offer
+      <% } else {  %>
+        Update Offer
+      <% } %>
+    </button>
+
     <script type="text/javascript">
       var errorMessage = document.getElementById('errorMessage');
-
-      const socket = io();
-
-      socket.emit('loaded');
-
-      socket.on('update', (data) => {
-        var keys = Object.keys(data);
-
-        for (var key of keys) {
-          switch (key) {
-            case 'birdypet':
-              var birdypet = $(`.birdypet[data-id="${data[key]}"]`);
-
-              if (birdypet.length > 0) {
-                birdypet[0].parentNode.parentNode.classList[data.disabled ? 'add' : 'remove']('disabled');
-              }
-              else {
-                var container = document.createElement('div');
-                container.className = 'col-12 col-lg-6 d-flex align-items-stretch loadingData';
-
-                $(`#birdypets${data.member == '<%= exchange.memberA %>' ? 'A' : 'B'}`).append(container);
-
-                $.ajax({
-                 cache: false,
-                  url: `/api/birdypet?id=${data.birdypet}&include[]=memberData&member=${data.member == '<%= exchange.memberA %>' ? '<%= exchange.memberB %>' : null}`,
-                  method: 'GET',
-                  contentType: 'application/json',
-                  success: function(data) {
-                    console.log(data);
-                  }
-                });
-              }
-              break;
-            case 'noteA':
-            case 'noteB':
-              var content = '<p><em>Notes from them:</em></p>';
-
-              for (var para of data[key].split("\r\n")) {
-                content += `<p>${para}</p>`;
-              }
-
-              $(`#${key}`).html(content);
-              break;
-          }
-        }
-      });
 
       $('#exchange').on('click', '.card', function (e) {
         if (e.target.nodeName != 'A') {
@@ -95,8 +60,6 @@
                 container.classList.add('disabled');
 
                 $('#makeOffer').text('Update Offer');
-
-                socket.emit('update', { birdypet : image.getAttribute('data-id'), disabled: container.classList.contains('disabled') });
               }
             });
           }
@@ -118,7 +81,6 @@
           method: 'POST',
           contentType: 'application/json',
           success: function (res) {
-            socket.emit('update', data);
           }
         });
       });
@@ -195,7 +157,7 @@
   </div>
  <% } %>
 
-  <div class="bg-light p-4 mt-5 rounded w-50 mx-auto">
+  <div class="bg-light p-4 rounded w-75 mx-auto">
     <h6 class="mb-3"><em>Recent activity:</em></h6>
     <div class="small">
      <% if (exchange.logs.length > 0) { %>

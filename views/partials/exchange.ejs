@@ -1,23 +1,14 @@
   <div class="col-12 col-md-6">
     <div class="row bg-light m-3 mb-4 p-3 py-4 rounded">
-      <div class="col-12">
-        <h4 class="text-center mb-4">
-          <%- include('./member-avatar.ejs', { width : 32 }) %>
+      <div class="col-6 col-md-8">
+        <h5 class="text-start text-md-center mb-4">
           <%= member.username %>
-        </h4>
-      </div>
-      <div class="col-8">
-        <h5>
-          <% if (member.id == loggedInUser.id) { %>
-            <%= exchange.state == 'Completed!' ? 'I gave' : 'I\'ll give' %>
-          <% } else { %>
-            <%= exchange.state == 'Completed!' ? 'They gave' : 'They\'ll give' %>
-          <% } %>
+          <%= exchange.state == 'Completed!' ? 'gave' : 'will give' %>
 
           <% if (exchange.mutable) { %>
            <% if (member.id == loggedInUser.id) { %>
             <span>
-              <select id="<%= side == 'A' ? 'giveA' : 'forB' %>" class="form-select d-inline-block w-auto mt-1">
+              <select id="<%= side == 'A' ? 'giveA' : 'forB' %>" class="form-select d-inline-block w-auto mt-2">
                <% for (let offer of offers) { %>
                 <option <%= exchange[side == 'A' ? 'giveA' : 'forB'] == offer ? 'selected' : '' %>><%= offer %></option>
                <% } %>
@@ -27,10 +18,10 @@
             <%= exchange[side == 'A' ? 'giveA' : 'forB'] %>
            <% } %>
           <% } %>
-        </h4>
+        </h5>
       </div>
-     <% if (exchange.mutable) { %>
-      <div class="col-4 text-end">
+    <% if (exchange.mutable) { %>
+      <div class="col-6 col-md-4 text-end">
         <a class="btn btn-dark btn-sm" href="/exchange/<%= exchange.id %>/<%= member.id == loggedInUser.id ? "offer" : "request" %>">
           + <%= member.id == loggedInUser.id ? "offer" : "request" %> birds
         </a>
@@ -96,34 +87,4 @@
         <% } %>
       </div>
     </div>
-
-   <% if (exchange.mutable) { %>
-    <div class="col-12 text-center">
-     <% if (member.id == loggedInUser.id) { %>
-      <button id="makeOffer" class="btn btn-secondary btn-lg me-2">
-        <% if (exchange.statusA == 2 || exchange.statusB == 2) { %>
-          Accept Offer
-        <% } else if (exchange.statusA == 1 && exchange.statusB == 1) { %>
-          Submit Offer
-        <% } else if (exchange.statusA == 0 & exchange.statusB == 0) { %>
-          Make Offer
-        <% } else {  %>
-          Update Offer
-        <% } %>
-      </button>
-
-      &nbsp;
-
-      <button id="deleteOffer" class="btn btn-danger btn-lg"><%= side == 'A' ? 'Rescind' : 'Decline' %> Offer</button>
-     <% } else if (exchange.statusA > 0) { %>
-       <button id="theirOffer" class="btn btn-secondary btn-lg me-2" disabled>
-        <% if (exchange[`status{$side}`] == 2) { %>
-          Accepted!
-        <% } else { %>
-          Pending...
-        <% } %>
-       </button>
-     <% } %>
-    </div>
-   <% } %>
   </div>
