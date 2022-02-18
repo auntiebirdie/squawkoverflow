@@ -9,7 +9,7 @@ exports.publish = function(topic, action, body) {
       action
     };
 
-    if (process.env.NODE_ENV == 'PROD') {
+    if (process.env.K_SERVICE == 'api') {
       const pubsub = new PubSub();
 
       pubsub.topic(topic).publish(Buffer.from(JSON.stringify(data))).then(() => {

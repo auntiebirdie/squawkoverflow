@@ -6,7 +6,7 @@ exports.call = (endpoint, method = "GET", data = {}, headers = {}) => {
 
       const auth = new GoogleAuth();
 
-      const apiPath = 'https://us-central1-squawkoverflow.cloudfunctions.net/' + (process.env.NODE_ENV == "PROD" ? 'api' : 'test');
+      const apiPath = 'https://us-central1-squawkoverflow.cloudfunctions.net/' + (process.env.NODE_ENV == "production" ? 'api' : 'test');
 
       const client = await auth.getIdTokenClient(apiPath);
       const url = `${apiPath}/${endpoint}`;
