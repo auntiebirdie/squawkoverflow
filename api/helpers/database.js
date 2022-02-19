@@ -7,7 +7,7 @@ function Database() {}
 Database.prototype.connect = function() {
   return new Promise(async (resolve, reject) => {
     if (!this.conn) {
-      let ENV = process.env.NODE_ENV ? 'PROD' : 'DEV';
+      let ENV = process.env.K_SERVICE == 'api' ? 'PROD' : 'DEV';
 
       this.conn = await mariadb.createConnection({
         host: secrets.DB[ENV].HOST,

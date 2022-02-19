@@ -19,10 +19,11 @@
     $('#lazyLoader').on('click', '.card', function (e) {
       if (e.target.nodeName != 'A') {
         var image = e.currentTarget.querySelector('.birdypet');
+        var container = image.parentNode.parentNode;
 
         if (!image.style.opacity) {
           image.style.opacity = .5;
-          $(image.parentNode.parentNode).toggleClass('loadingData');
+          container.classList.add('loadingData');
 
           $.ajax({
             cache: false,
@@ -38,7 +39,10 @@
               image.style.opacity = null;
               image.innerHTML = "";
 
-              $(image.parentNode.parentNode).toggleClass('border-primary border-secondary border-dashed loadingData');
+              container.classList.toggle('border-primary');
+              container.classList.toggle('border-secondary');
+              container.classList.toggle('border-dashed');
+              container.classList.remove('loadingData');
             }
           });
         }
