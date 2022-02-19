@@ -16,14 +16,14 @@ class Variants {
         filters[key] = value;
       }
 
+	    if (params.artist) {
+		    filters['credit'] = params.artist;
+	    }
+
       Database.get('variants', filters, {
         select: ['id']
       }).then((variants) => {
         Promise.all(variants.map((variant) => this.get(variant.id, params))).then((variants) => {
-          if (params.artist) {
-            variants = variants.filter((variant) => variant.credit == params.artist);
-          }
-
           resolve(variants);
         });
       });
