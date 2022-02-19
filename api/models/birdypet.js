@@ -75,7 +75,7 @@ class BirdyPet {
           await this.bird.fetch(params);
 
           if (params.include?.includes('exchangeData')) {
-            this.exchangeData = await Database.query('SELECT exchanges.id FROM exchange_birdypets JOIN exchanges ON (exchange_birdypets.exchange = exchanges.id) WHERE birdypet = ? AND statusA + statusB BETWEEN 0 AND 3 AND (memberA = ? OR (memberB = ? AND statusB > 0) OR id = ?)', [this.id, this.member, this.member, params.exchange]).then(([data]) => {
+            this.exchangeData = await Database.query('SELECT exchanges.id FROM exchange_birdypets JOIN exchanges ON (exchange_birdypets.exchange = exchanges.id) WHERE birdypet = ? AND (memberA = ? OR (memberB = ? AND statusB > 0) OR id = ?)', [this.id, this.member, this.member, params.exchange]).then(([data]) => {
               if (data) {
                 return data.id;
               } else {
