@@ -5,22 +5,14 @@ on:
     types: [opened, edited]
 
 jobs:
-  deploy-app:
-    if: github.event.pull_request.merged == false
+  notify-squawkers:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: 'echo "$API_SECRETS" > ./api/secrets.json && echo "$APP_SECRETS" > ./secrets.json'
-        shell: bash
-        env:
-          API_SECRETS: ${{ secrets.API_SECRETS }}
-          APP_SECRETS: ${{ secrets.APP_SECRETS }}
-      - uses: google-github-actions/auth@v0
-        with:
-          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-      - uses: google-github-actions/setup-gcloud@v0
-      - run: gcloud functions deploy api
-        working-directory: ./api
-      - run: |
-          gcloud app deploy -q
-          gcloud app versions list --format='value(version.id)' --sort-by='~version.createTime' | tail -n +3 | xargs -r gcloud app versions delete --quiet
+    - env:
+        WEBHOOK_ID: ${{ secrets.WEBHOOK_ID }}
+        WEBHOOK_TOKEN: ${{ secrets.WEBHOOK_TOKEN }}
+        RELEASE_NOTES: ${{ github.event.pull_request.body }}
+        PR_TITLE: ${{ github.event.pull_request.title }}
+      run: |
+        CONTENT=$(echo "$RELEASE_NOTES" | sed -z 's/\r\n/\\r\\n/g;s/\"/\\\"/g')
+        curl -X POST -d '{"content":":information_source:  A new deployment has started!  This should only take 3-5 minutes to complete.","embeds":[{"title":"'"$PR_TITLE"'","description":"'"$CONTENT"'"}]}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
