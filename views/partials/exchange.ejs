@@ -24,6 +24,10 @@
       </div>
      <% } %>
 
+    <% if (exchange.mutable) { %>
+     <p class="small text-center"><%= exchange[`birdypets${side}`].length %> bird<%= exchange[`birdypets${side}`].length == 1 ? '' : 's' %> <%= member.id == loggedInUser.id ? "offered" : "requested" %></p>
+    <% } %>
+
      <div id="birdypets<%= side %>" class="row mt-3">
       <% if (exchange[`birdypets${side}`].length > 0) { %>
        <% for (let birdypet of exchange[`birdypets${side}`]) { %>
@@ -74,9 +78,6 @@
        </em></div>
       <% } %>
      </div>
-    <% if (exchange[`birdypets${side}`].length > 0) { %>
-     <p class="small text-center"><%= exchange[`birdypets${side}`].length %> birds <%= member.id == loggedInUser.id ? "offered" : "requested" %></p>
-    <% } %>
 
     <% if (exchange.state != 'Completed!') { %>
       <div id="note<%= side %>" class="w-75 mx-auto pt-4 align-self-end">

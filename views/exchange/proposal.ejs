@@ -15,9 +15,9 @@
 
  <% if (exchange.statusA >= 0 && exchange.statusB >= 0) { %>
   <div id="exchange" class="row">
-    <%- include('../partials/exchange.ejs', { member : exchange.memberA == loggedInUser.id ? loggedInUser : exchange.member, side : 'A' }) %>
+    <%- include('../partials/exchange.ejs', { member : loggedInUser, side : exchange.memberA == loggedInUser.id ? 'A' : 'B' }) %>
 
-    <%- include('../partials/exchange.ejs', { member : exchange.memberA == loggedInUser.id ? exchange.member : loggedInUser, side : 'B' }) %>
+    <%- include('../partials/exchange.ejs', { member : exchange.member, side : exchange.memberA == loggedInUser.id ? 'B' : 'A' }) %>
   </div>
  <% } %>
 
