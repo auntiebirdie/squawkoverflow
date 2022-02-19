@@ -6,7 +6,6 @@
           <%= exchange.state == 'Completed!' ? 'gave' : 'will give' %>
 
           <% if (exchange.mutable) { %>
-           <% if (member.id == loggedInUser.id) { %>
             <span>
               <select id="<%= side == 'A' ? 'giveA' : 'forB' %>" class="form-select d-inline-block w-auto mt-2">
                <% for (let offer of offers) { %>
@@ -14,9 +13,6 @@
                <% } %>
               </select>
             </span>
-           <% } else { %>
-            <%= exchange[side == 'A' ? 'giveA' : 'forB'] %>
-           <% } %>
           <% } %>
         </h5>
       </div>
