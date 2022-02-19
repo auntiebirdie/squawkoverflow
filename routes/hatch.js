@@ -5,8 +5,6 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  res.set('Cache-Control', 'no-store');
-
   API.call('hatch', "GET", {
       loggedInUser: req.session.user
     }, res).then((response) => {

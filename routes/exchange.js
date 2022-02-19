@@ -25,8 +25,6 @@ router.get('/:id', Middleware.isLoggedIn, async (req, res) => {
     });
   }
 
-  res.set('Cache-Control', 'no-store');
-
   res.render('exchange/proposal', {
     exchange: exchange,
     offers: ['this', 'one of these', 'any of these', 'all of these', 'anything'],
