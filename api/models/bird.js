@@ -34,7 +34,7 @@ class Bird {
             bird: this,
             include: params.include,
             member: params.member,
-		  artist: params.artist
+	    artist: params.artist
           });
 
           this.variants.sort((a, b) => (a.hatched === b.hatched) ? 0 : a.hatched ? -1 : 1);
