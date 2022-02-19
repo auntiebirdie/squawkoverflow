@@ -57,18 +57,35 @@ exports.bug = async (req, res) => {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SQUAWKoverflow</title>
+
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+    <link href="https://squawkoverflow.com/css/style.css" rel="stylesheet">
+    <link href="https://squawkoverflow.com/css/theme-default.css" rel="stylesheet">
   </head>
-  <body style="height: 100%; margin: 0; padding: 0; color: #eeeeee; font-size: calc(1.3rem + .6vw); background-size: cover; background-repeat: no-repeat; background-image: url('https://images.unsplash.com/photo-1591123383324-9f67589669ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNTk0OTB8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2NDgxODY&ixlib=rb-1.2.1&q=80&w=1080'); background-position: center center; font-family: system-ui,-apple-system,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,\"Noto Sans\",\"Liberation Sans\",sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\",\"Noto Color Emoji\";">
+  <body>
+    <span class="mobile-nav-toggle d-xl-none bg-secondary text-primary">≡</span>
   `;
 
   const footer = `
-    </div>
+    </main>
   </body>
   </html>
 	`;
 
-  var content = '<div style="padding: 1em; margin: 1.5rem auto 3rem; max-width: 720px; background-color: #202123; text-align: center;">';
+  var content = '';
+
+  content += '<div id="navbar">';
+    content += '<div style="padding: 1rem 15px;">';
+      content += '<img src="https://storage.googleapis.com/squawkoverflow/SQUAWK.png" style="max-width: 100%; margin-bottom: 0.5rem;">';
+      content += '<h2 class="text-center"><a href="https://squawkoverflow.com" class="text-light"><span class="text-primary">SQUAWK</span>overflow</a></h2>';
+    content += '</div>';
+
+  content += '</div>';
+	
+  content += '<main id="main" class="text-center">';
 
   console.log(req.method, req.headers['x-appengine-user-ip'], req.headers['user-agent']);
 
