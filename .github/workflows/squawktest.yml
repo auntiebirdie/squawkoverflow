@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - env:
-        WEBHOOK_ID: ${{ secrets.WEBHOOK_ID }}
-        WEBHOOK_TOKEN: ${{ secrets.WEBHOOK_TOKEN }}
+        WEBHOOK_ID: ${{ secrets.WEBHOOK_TEST_ID }}
+        WEBHOOK_TOKEN: ${{ secrets.WEBHOOK_TEST_TOKEN }}
         RELEASE_NOTES: ${{ github.event.pull_request.body }}
         PR_TITLE: ${{ github.event.pull_request.title }}
       run: |
