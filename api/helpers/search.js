@@ -142,7 +142,7 @@ class Search {
           if (kind == "wishlist") {
             params.push(input.loggedInUser);
           } else {
-            params.push((isolated || duplicated) == 'My' ? input.loggedInUser : input.memberData);
+            params.push((isolated || duplicated) == 'My' ? input.loggedInUser : input.member);
           }
         }
       }
