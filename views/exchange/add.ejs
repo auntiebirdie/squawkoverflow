@@ -16,7 +16,7 @@
   <%- include('../scripts/lazyloader.ejs', { template: '../templates/exchange.ejs', paginate: currentPage }) %>
 
   <script type="text/javascript">
-    $('#lazyLoader').on('click', '.card', function (e) {
+    $('#lazyLoader').on('click', '.card:not(.disabled)', function (e) {
       if (e.target.nodeName != 'A') {
         var image = e.currentTarget.querySelector('.birdypet');
         var container = image.parentNode.parentNode;
