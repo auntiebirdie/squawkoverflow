@@ -5,13 +5,9 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  let members = await API.call('members', 'GET', {
-    privacy: 'profile',
-    include: ['self']
-  });
-
   res.render('members/index', {
-    members: members
+    currentPage: (req.query.page || 1) * 1,
+    sidebar: 'filters'
   });
 });
 

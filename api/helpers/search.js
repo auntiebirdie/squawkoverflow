@@ -28,6 +28,9 @@ class Search {
         case 'freebird':
           query += 'freebirds.id, freebirds.variant FROM freebirds JOIN variants ON (freebirds.variant = variants.id) JOIN species ON (variants.species = species.code)';
           break;
+        case 'member':
+          query += 'members.id, members.username, members.avatar FROM members';
+          break;
         case 'wishlist':
           query += 'species.code FROM species JOIN wishlist ON (species.code = wishlist.species AND wishlist.member = ? AND wishlist.intensity > 0)';
           params.push(input.id);
@@ -175,7 +178,9 @@ class Search {
         default:
           if (kind == 'birdypet') {
             query += 'birdypets.hatchedAt';
-          } else {
+          } else if (kind == 'member') {
+		  query += 'members.username';
+	  } else {
             query += 'species.commonName';
           }
       }

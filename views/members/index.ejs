@@ -1,31 +1,13 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { title : "Members" }) %>
+  <%- include('../partials/page-title.ejs', { title : "Members" }) %>
 
-    <% for (var i = 0, len = members.length; i < len; i++) { %>
-      <% if (i % 4 === 0) { %>
-        <% if (i > 0) { %>
-          </div>
-        <% } %>
-      <div class="row">
-      <% } %>
-        <div class="col-sm-6 col-md-3 mb-3">
-          <div class="row">
-          <div class="col-4 text-center">
-            <a href="/members/<%= members[i].id %>">
-              <img class="rounded-circle" src="<%= members[i].avatar %>" data-id="<%= members[i].id %>" onerror="missingMemberAvatar(this)">
-            </a>
-          </div>
-          <div class="col-8">
-            <h5 class="pt-2">
-              <a class="text-decoration-none" href="/members/<%= members[i].id %>">
-                <%= members[i].username %>
-              </a>
-            </h5>
-          </div>
-        </div>
-      </div>
-    <% }; %>
-    </div>
+  <%- include('../partials/pagination.ejs') %>
+
+  <div id="lazyLoader" class="row g-0" data-endpoint="/api/members"></div>
+
+  <%- include('../partials/pagination.ejs') %>
+
+  <%- include('../scripts/lazyloader.ejs', { paginate : currentPage, template: '../templates/member.ejs', noResultsFound: "No members match your search criteria." }) %>
 
 <%- include('../footer.ejs') %>
