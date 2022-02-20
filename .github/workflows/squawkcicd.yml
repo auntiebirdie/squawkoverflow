@@ -16,8 +16,9 @@ jobs:
         PR_TITLE: ${{ github.event.pull_request.title }}
         PR_URL: ${{ github.event.pull_request.html_url }}
       run: |
+        TITLE=$(echo "$PR_TITLE" | sed 's/\"/\\\"/g')
         CONTENT=$(echo "$RELEASE_NOTES" | sed -z 's/\r\n/\\r\\n/g;s/\"/\\\"/g')
-        curl -X POST -d '{"content":":information_source:  <@&913767546048630785>  A new deployment has started!  This should only take 3-5 minutes to complete.\r\n** ** ","embeds":[{"title":"'"$PR_TITLE"'","url":"'"$PR_URL"'","description":"'"$CONTENT"'"}]}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
+        curl -X POST -d '{"content":":information_source:  <@&913767546048630785>  A new deployment has started!  This should only take 3-5 minutes to complete.\r\n** ** ","embeds":[{"title":"'"$TITLE"'","url":"'"$PR_URL"'","description":"'"$CONTENT"'"}]}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
 
   deploy-app:
     needs: notify-squawkers
