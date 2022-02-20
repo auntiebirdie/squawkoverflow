@@ -31,7 +31,8 @@ class BirdyPet {
           nickname: "",
           description: "",
           friendship: 0,
-          hatchedAt: new Date()
+          hatchedAt: data.hatchedAt || new Date(),
+	  addedAt: new Date()
         }).then(async () => {
           const Member = require('./member.js');
 
