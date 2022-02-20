@@ -54,7 +54,6 @@ class Member {
                   [item.setting]: item.value
                 }
               }, {}));
-
           } catch (err) {
             console.log(err);
             this.settings = {};

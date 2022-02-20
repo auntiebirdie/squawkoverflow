@@ -220,7 +220,7 @@ module.exports = (req, res) => {
                             inline: false
                           }],
                           thumbnail: {
-                            url: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/google/313/handshake_1f91d.png'
+                            url: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/320/google/110/person-with-folded-hands_1f64f.png'
                           }
                         }]
                       }).then(() => {
