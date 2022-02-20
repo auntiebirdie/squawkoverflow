@@ -15,9 +15,10 @@ module.exports = (req, res) => {
     let birdypet = new BirdyPet();
     let promises = [];
     let variant = req.body.variant;
+    let freebird = null;
 
     if (req.body.freebird) {
-      let freebird = await Database.getOne('freebirds', {
+      freebird = await Database.getOne('freebirds', {
         id: req.body.freebird
       });
 
@@ -42,7 +43,8 @@ module.exports = (req, res) => {
 
     await birdypet.create({
       variant: variant,
-      member: req.body.loggedInUser
+      member: req.body.loggedInUser,
+      hatchedAt: freebird ? freebird.hatchedAt : new Date()
     });
 
     promises.push(PubSub.publish('background', 'COLLECT', {

@@ -145,7 +145,7 @@ class Search {
           if (kind == "wishlist") {
             params.push(input.loggedInUser);
           } else {
-            params.push((isolated || duplicated) == 'My' ? input.loggedInUser : input.memberData);
+            params.push((isolated || duplicated) == 'My' ? input.loggedInUser : input.member);
           }
         }
       }
@@ -170,17 +170,21 @@ class Search {
           query += 'freebirds.freedAt';
           break;
         case 'addedAt':
-          query += 'wishlist.addedAt';
+          if (kind == 'birdypet') {
+            query += 'birdypets.addedAt';
+          } else if (kind == 'wishlist') {
+            query += 'wishlist.addedAt';
+          }
           break;
         case 'commonName':
           query += 'species.commonName';
           break;
         default:
           if (kind == 'birdypet') {
-            query += 'birdypets.hatchedAt';
+            query += 'birdypets.addedAt';
           } else if (kind == 'member') {
-		  query += 'members.username';
-	  } else {
+            query += 'members.username';
+          } else {
             query += 'species.commonName';
           }
       }

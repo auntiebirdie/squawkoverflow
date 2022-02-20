@@ -100,13 +100,17 @@ img {
   }
 
   #main {
-	  padding: 0;
+    padding-right: 0;
   }
 }
 
 @media (max-width: 1199px) {
   #navbar {
     left: -300px;
+  }
+
+  #main {
+    padding-left: 0;
   }
 
   #home-banner .attribution {

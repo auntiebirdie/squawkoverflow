@@ -6,7 +6,7 @@ exports.api = (req, res) => {
   const loggingBunyan = new LoggingBunyan();
 
   req.logger = bunyan.createLogger({
-    name: 'squawkoverflow', //process.env.FUNCTION_NAME == 'api' ? 'squawkoverflow' : 'squawkdev',
+    name: process.env.NODE_ENV == 'PROD' ? 'squawkoverflow' : 'squawkdev',
     streams: [{
       stream: process.stdout,
       level: 'info'
@@ -14,9 +14,9 @@ exports.api = (req, res) => {
   });
 
   try {
-	  if (req.path == 'ping') {
-		  return res.sendStatus(200);
-	  }
+    if (req.path == 'ping') {
+      return res.sendStatus(200);
+    }
 
     let route = req.path.match(/\/?(\b[A-Za-z\_]+\b)/)[0];
 
@@ -28,10 +28,10 @@ exports.api = (req, res) => {
 
     req.logger.info({
       req: {
-	      method: req.method,
-	      url: req.path,
-	      headers: req.headers,
-	      data: data
+        method: req.method,
+        url: req.path,
+        headers: req.headers,
+        data: data
       }
     }, `/${req.method} ${req.path} ${JSON.stringify(Object.fromEntries(Object.entries(data).filter((a) => ["id", "member", "loggedInUser"].includes(a[0]) )))}`);
 
@@ -57,26 +57,63 @@ exports.bug = async (req, res) => {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SQUAWKoverflow</title>
+
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+    <link href="https://squawkoverflow.com/css/style.css" rel="stylesheet">
+    <link href="https://squawkoverflow.com/css/theme-dark.css" rel="stylesheet">
   </head>
-  <body style="height: 100%; margin: 0; padding: 0; color: #eeeeee; font-size: calc(1.3rem + .6vw); background-size: cover; background-repeat: no-repeat; background-image: url('https://images.unsplash.com/photo-1591123383324-9f67589669ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNTk0OTB8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2NDgxODY&ixlib=rb-1.2.1&q=80&w=1080'); background-position: center center; font-family: system-ui,-apple-system,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,\"Noto Sans\",\"Liberation Sans\",sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\",\"Noto Color Emoji\";">
+  <body class="full-image-background no-sidebar" style="background-size: cover; background-repeat: no-repeat; background-image: url('https://images.unsplash.com/photo-1611748939902-060e1ae99f32?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNTk0OTB8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2NDgxODY&ixlib=rb-1.2.1&q=80&w=1080');background-position: center center;">
+    <span class="mobile-nav-toggle d-xl-none bg-secondary text-primary">≡</span>
   `;
 
   const footer = `
-    </div>
+        </div>
+
+	<a class="attribution bg-light" target="_blank" href="https://unsplash.com/photos/szPxqGFNS6Y">© Prabir Kashyap / Unsplash</a>
+      </div>
+    </main>
   </body>
   </html>
 	`;
 
-  var content = '<div style="padding: 1em; margin: 1.5rem auto 3rem; max-width: 720px; background-color: #202123; text-align: center;">';
+  var content = '';
+
+  content += '<div id="navbar" class="bg-dark">';
+  content += '<div class="pt-3 ps-3 ps-sm-0">';
+  content += '<div class="ps-3 ps-sm-0">';
+  content += '<img src="https://storage.googleapis.com/squawkoverflow/SQUAWK.png" alt="logo" class="img-fluid d-none d-sm-block mb-2">';
+  content += '<h2 class="text-center"><a href="https://squawkoverflow.com" class="text-light"><span class="text-primary">SQUAWK</span>overflow</a></h2>';
+  content += '</div>';
+  content += '</div>';
+
+  content += '<nav class="nav-menu navbar">';
+  content += '<ul>';
+  content += '<li class="nav-item pb-2"><a href="https://squawkoverflow.com" class="nav-link text-light">';
+  content += '<span class="icon d-inline-block fs-4">🏠</span><span class="d-block label">Home</span>';
+  content += '</a></li>';
+  content += '<li class="nav-item pb-2"><a href="https://discord.com/invite/h87wansdg2" target="_blank" class="nav-link text-light">';
+  content += '<span class="icon d-inline-block fs-4">💬</span><span class="d-block label">Discord</span>';
+  content += '</a></li>';
+  content += '</ul>';
+  content += '</nav>';
+  content += '</div>';
+
+  content += '<main id="main">';
+  content += '<div class="container mt-4 mb-5">';
+  content += '<div class="text-center pb-5 mx-auto w-75">';
 
   console.log(req.method, req.headers['x-appengine-user-ip'], req.headers['user-agent']);
 
   function printForm(req) {
     return new Promise(async (resolve, reject) => {
-      var output = '<h1 style="padding: .5rem; margin: 0; border-bottom: 5px solid #DDF600; font-size: calc(1.375rem + 1.5vw); font-family: "Raleway", sans-serif;">A Bug!!</h1>';
+      var output = '<h1 class="bg-light mt-5 mb-0 p-2 border-bottom border-primary border-5"><strong>A &nbsp; &nbsp; B U G !!</strong></h1>';
 
-      output += '<p>Report the bug you found using this form to receive a bug on SQUAWKoverflow that you can feed to your birds or use as bait to attract wishlisted birds.</p>';
+      output += '<div class="bg-light p-2">';
+
+      output += '<p class="fs-3">Report the bug you found using this form to receive a bug on SQUAWKoverflow that you can feed to your birds or use as bait to attract wishlisted birds.</p>';
 
       output += '<form method="POST">';
 
@@ -114,6 +151,8 @@ exports.bug = async (req, res) => {
       output += '<p><button style="background-color: #444D00; border-color: #444D00; padding: .5rem 1rem; font-size: 1.25rem; border-radius: .3rem; color: #fff;">🐛 Submit Bug Report</button></p>';
       output += '</form>';
 
+      output += '</div>';
+
       return resolve(output);
     });
   }
@@ -129,13 +168,15 @@ exports.bug = async (req, res) => {
 
         const trello = new Trello(secrets.TRELLO.KEY, secrets.TRELLO.TOKEN);
 
+        content += '<div class="bg-light p-2">';
+
         content += await new Promise((resolve, reject) => {
           trello.post("/1/cards", {
             name: req.body.description,
             desc: req.body.description + `\r\n\r\nReported by ${req.body.memberName} (${req.body.memberId})`,
             idList: '616863d9071f1c88feb22769'
           }, async function(err, card) {
-            var output = `<p style="text-align: center;">Thank you for your report!`;
+            var output = `<p class="fs-3">Thank you for your report!`;
 
             if (req.body.memberId) {
               const Database = require('./helpers/database.js');
@@ -180,6 +221,8 @@ exports.bug = async (req, res) => {
             output += '</p>';
 
             output += `<p class="text-align: center;">You can <a href="${card.url}" style="text-decoration: none; color: #a0b300;">track the progress of your report on Trello</a> (no account required).</p>`;
+
+            output += '</div>';
 
             return resolve(output);
           });

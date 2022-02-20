@@ -6,7 +6,6 @@
           <%= exchange.state == 'Completed!' ? 'gave' : 'will give' %>
 
           <% if (exchange.mutable) { %>
-           <% if (member.id == loggedInUser.id) { %>
             <span>
               <select id="<%= side == 'A' ? 'giveA' : 'forB' %>" class="form-select d-inline-block w-auto mt-2">
                <% for (let offer of offers) { %>
@@ -14,9 +13,6 @@
                <% } %>
               </select>
             </span>
-           <% } else { %>
-            <%= exchange[side == 'A' ? 'giveA' : 'forB'] %>
-           <% } %>
           <% } %>
         </h5>
       </div>
@@ -27,6 +23,10 @@
         </a>
       </div>
      <% } %>
+
+    <% if (exchange.mutable) { %>
+     <p class="small text-center"><%= exchange[`birdypets${side}`].length %> bird<%= exchange[`birdypets${side}`].length == 1 ? '' : 's' %> <%= member.id == loggedInUser.id ? "offered" : "requested" %></p>
+    <% } %>
 
      <div id="birdypets<%= side %>" class="row mt-3">
       <% if (exchange[`birdypets${side}`].length > 0) { %>
@@ -78,9 +78,8 @@
        </em></div>
       <% } %>
      </div>
-
     <% if (exchange.state != 'Completed!') { %>
-      <div id="note<%= side %>" class="w-75 mx-auto pt-4 align-self-end">
+     <div id="note<%= side %>" class="w-75 mx-auto pt-4 align-self-end">
         <% if (member.id == loggedInUser.id) { %>
           <p><em>Notes: (optional)</em></p>
           <textarea name="note<%= side %>" class="form-control w-100" maxlength="250" <%= exchange.mutable ? '' : 'disabled' %>><%= exchange[`note${side}`] %></textarea>
@@ -91,6 +90,6 @@
           <% } %>
         <% } %>
       </div>
-    <% } %>
+     <% } %>
     </div>
   </div>

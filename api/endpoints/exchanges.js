@@ -60,8 +60,8 @@ module.exports = (req, res) => {
                 Database.delete('exchange_birdypets', {
                   exchange: exchange.id,
                   birdypet: birdypet.id,
-		  variant: birdypet.variant.id,
-		  member: birdypet.member
+                  variant: birdypet.variant.id,
+                  member: birdypet.member
                 }).then(() => {
                   Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `<${req.body.loggedInUser}> removed ${birdypet.bird.commonName} from the ${birdypet.member == exchange.memberA ? 'offer' : 'request'}.`]).then(() => {
                     Database.set('exchanges', {
@@ -79,8 +79,8 @@ module.exports = (req, res) => {
                 Database.create('exchange_birdypets', {
                   exchange: exchange.id,
                   birdypet: birdypet.id,
-		  variant: birdypet.variant.id,
-		  member: birdypet.member
+                  variant: birdypet.variant.id,
+                  member: birdypet.member
                 }).then(() => {
                   Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `<${req.body.loggedInUser}> added ${birdypet.bird.commonName} to the ${birdypet.member == exchange.memberA ? 'offer' : 'request'}.`]).then(() => {
                     Database.set('exchanges', {
@@ -124,6 +124,8 @@ module.exports = (req, res) => {
         exchange.fetch({
           loggedInUser: req.body.loggedInUser
         }).then(() => {
+          var newExchange = exchange.statusA == 0 && exchange.statusB == 0;
+
           if (exchange.mutable && (exchange.memberA == req.body.loggedInUser || exchange.memberB == req.body.loggedInUser)) {
             if (exchange.birdypetsA.length == 0 && exchange.birdypetsB.length == 0) {
               throw `Please pick at least one bird to either request or offer.`;
@@ -204,28 +206,32 @@ module.exports = (req, res) => {
                         forB = "*You decide!*";
                       }
 
-                      Webhook('exchange', {
-                        content: `${memberA.username} has sent <@${memberB.id}> an offer!`,
-                        embeds: [{
-                          title: 'View Offer',
-                          description: req.body.noteA || exchange.noteA || " ",
-                          url: `https://squawkoverflow.com/exchange/${exchange.id}`,
-                          fields: [{
-                            name: `I'll give ${req.body.giveA || exchange.giveA}`,
-                            value: giveA,
-                            inline: false
-                          }, {
-                            name: `for ${req.body.forB || exchange.forB}`,
-                            value: forB,
-                            inline: false
-                          }],
-                          thumbnail: {
-                            url: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/google/313/handshake_1f91d.png'
-                          }
-                        }]
-                      }).then(() => {
+                      if (newExchange) {
+                        Webhook('exchange', {
+                          content: `${memberA.username} has sent <@${memberB.id}> an offer!`,
+                          embeds: [{
+                            title: 'View Offer',
+                            description: req.body.noteA || exchange.noteA || " ",
+                            url: `https://squawkoverflow.com/exchange/${exchange.id}`,
+                            fields: [{
+                              name: `I'll give ${req.body.giveA || exchange.giveA}`,
+                              value: giveA,
+                              inline: false
+                            }, {
+                              name: `for ${req.body.forB || exchange.forB}`,
+                              value: forB,
+                              inline: false
+                            }],
+                            thumbnail: {
+                              url: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/320/google/110/person-with-folded-hands_1f64f.png'
+                            }
+                          }]
+                        }).then(() => {
+                          res.sendStatus(200);
+                        });
+                      } else {
                         res.sendStatus(200);
-                      });
+                      }
                     } else {
                       res.sendStatus(200);
                     }

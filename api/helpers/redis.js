@@ -14,7 +14,7 @@ function Redis() {
 }
 
 Redis.prototype.connect = function() {
-  let DB = process.env.K_SERVICE == 'api' ? 'PROD' : 'DEV';
+  let DB = process.env.NODE_ENV == 'PROD' ? 'PROD' : 'DEV';
 
   if (!this.connections[DB]) {
     this.connections[DB] = redis.createClient(secrets.REDIS[DB].PORT, secrets.REDIS[DB].HOST);

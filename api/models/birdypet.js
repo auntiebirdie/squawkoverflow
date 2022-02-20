@@ -31,7 +31,8 @@ class BirdyPet {
           nickname: "",
           description: "",
           friendship: 0,
-          hatchedAt: new Date()
+          hatchedAt: data.hatchedAt || new Date(),
+	  addedAt: new Date()
         }).then(async () => {
           const Member = require('./member.js');
 
@@ -75,7 +76,7 @@ class BirdyPet {
           await this.bird.fetch(params);
 
           if (params.include?.includes('exchangeData')) {
-            this.exchangeData = await Database.query('SELECT exchanges.id FROM exchange_birdypets JOIN exchanges ON (exchange_birdypets.exchange = exchanges.id) WHERE birdypet = ? AND statusA + statusB BETWEEN 0 AND 3 AND (memberA = ? OR (memberB = ? AND statusB > 0) OR id = ?)', [this.id, this.member, this.member, params.exchange]).then(([data]) => {
+            this.exchangeData = await Database.query('SELECT exchanges.id FROM exchange_birdypets JOIN exchanges ON (exchange_birdypets.exchange = exchanges.id) WHERE birdypet = ? AND statusA >= 0 AND statusB >= 0 AND ((memberA = ? AND statusA BETWEEN 0 AND 2) OR (memberB = ? AND statusB BETWEEN 1 AND 2) OR id = ?)', [this.id, this.member, this.member, params.exchange]).then(([data]) => {
               if (data) {
                 return data.id;
               } else {

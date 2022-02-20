@@ -16,6 +16,8 @@ app.use(express.json());
 app.use(require('./helpers/session.js'));
 
 app.use(async function(req, res, next) {
+  res.set('Cache-Control', 'no-store');
+
   if (req.path.startsWith('/_') || req.path.startsWith('/api') || req.path.startsWith('/logout')) {
     return next();
   }

@@ -19,8 +19,6 @@ router.get('/:member', async (req, res, next) => {
   });;
 
   if (req.params.member == req.session.user) {
-    res.set('Cache-Control', 'no-store');
-
     member.baitUsed = await API.call('counters', 'GET', {
       member: member.id,
       kind: 'bait'
