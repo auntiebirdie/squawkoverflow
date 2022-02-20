@@ -93,8 +93,8 @@
       'friendship-ASC' : 'Friendship (Lowest)',
       'freedAt-DESC' : 'Freed At (Newest)',
       'freedAt-ASC' : 'Freed At (Oldest)',
-      'addedAt-DESC' : 'Added to List (Newest)',
-      'addedAt-ASC' : 'Added to List (Oldest)'
+      'addedAt-DESC' : `Added to ${locals.page && page == 'wishlist' ? 'List' : 'Aviary'} (Newest)`,
+      'addedAt-ASC' : `Added to ${locals.page && page == 'wishlist' ? 'List' : 'Aviary'}  (Oldest)`
     }
  %>
   <h5>Sort By</h5>
