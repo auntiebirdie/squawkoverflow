@@ -42,7 +42,8 @@ module.exports = (req, res) => {
 
     await birdypet.create({
       variant: variant,
-      member: req.body.loggedInUser
+      member: req.body.loggedInUser,
+      hatchedAt: req.body.freebird ? freebird.hatchedAt : new Date()
     });
 
     promises.push(PubSub.publish('background', 'COLLECT', {

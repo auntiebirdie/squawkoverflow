@@ -19,7 +19,7 @@ router.get('/:member', async (req, res, next) => {
     flocks: member.flocks,
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
-    sortFields: ['hatchedAt-DESC', 'hatchedAt-ASC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'friendship-DESC', 'friendship-ASC'],
+    sortFields: ['addedAt-DESC', 'addedAt-ASC', 'hatchedAt-DESC', 'hatchedAt-ASC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'friendship-DESC', 'friendship-ASC'],
     extraInsights: member.id == req.session.user ? ['unhatched-My', 'isolated-My', 'duplicated-My', 'someone'] : ['unhatched-My', 'duplicated-Their',  'wanted-My', 'needed-My']
   });
 });
