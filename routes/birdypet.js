@@ -7,7 +7,8 @@ const router = express.Router();
 
 router.get('/:birdypet/gift', Middleware.isLoggedIn, async (req, res) => {
   let birdypet = await API.call('birdypet', 'GET', {
-    id: req.params.birdypet
+    id: req.params.birdypet,
+    include: ['exchangeData']
   });
 
   let members = await API.call('members', 'GET', {
