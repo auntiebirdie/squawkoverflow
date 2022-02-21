@@ -310,6 +310,18 @@ img {
   width: 100%;
 }
 
+@media (max-width: 1399px) {
+  #exchange .birdypet {
+	  height: 200px;
+  }
+}
+
+@media (max-width: 1119px) {
+  .birdypet {
+    height: 200px;
+  }
+}
+
 @media (max-width: 576px) {
   .birdypet {
     height: 150px;
