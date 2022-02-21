@@ -159,7 +159,7 @@ class Search {
 
       switch (input.sort) {
         case 'commonName':
-          quey += 'species.commonName';
+          query += 'species.commonName';
           break;
         case 'scientificName':
           query += 'species.scientificName';
