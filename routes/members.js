@@ -5,20 +5,17 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  let members = await API.call('members', 'GET', {
-    privacy: 'profile',
-    include: ['self']
-  });
-
   res.render('members/index', {
-    members: members
+    currentPage: (req.query.page || 1) * 1,
+    sidebar: 'filters',
+    sortFields: ['username-ASC', 'username-DESC', 'aviary-DESC', 'aviary-ASC', 'joinedAt-DESC', 'joinedAt-ASC']
   });
 });
 
 router.get('/:member', async (req, res) => {
   API.call('member', "GET", {
     id: req.params.member,
-    include: ['birdyBuddy', 'families', 'featuredFlock', 'flocks', 'hasWishlist', 'totals']
+    include: ['birdyBuddy', 'families', 'featuredFlock', 'flocks', 'hasWishlist', 'rank', 'totals']
   }).then(async (member) => {
     if (member.id != req.session.user && member.settings?.privacy_profile) {
       return res.render('members/private', {

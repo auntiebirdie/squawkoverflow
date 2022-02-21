@@ -82,16 +82,16 @@
     $.ajax({
       url: endpoint,
       data: Object.assign({
-        page: currentPage * 1,
-        sort: sort.val() && sort.val().includes('-') ? sort.val().split('-').shift() : sort.val(),
-        sortDir: sort.val() && sort.val().includes('-') ? sort.val().split('-').pop() : 'ASC',
-        family : $('#family').is(':visible') ? $('#family').val() : "",
-        flock : flock && !flock.attr('data-special') ? flock.val() : "",
-        artist : $('#artist').is(':visible') ? $('#artist').val() : "",
-        search : $('#search').val(),
-        extraInsights: Array.from($('input:checked', '#extraInsights')).map((checkbox) => checkbox.value),
-        <%- locals.page == "wishlist" ? `intensity: Array.from($('input:checked', '#intensity')).map((checkbox) => checkbox.value),` : "" %>
-        <%- locals.egg ? `adjectives : "${egg.adjective}",` : "" %>
+          page: currentPage * 1,
+          sort: sort.val() && sort.val().includes('-') ? sort.val().split('-').shift() : sort.val(),
+          sortDir: sort.val() && sort.val().includes('-') ? sort.val().split('-').pop() : 'ASC',
+          search : $('#search').val(),
+          extraInsights: Array.from($('input:checked', '#extraInsights')).map((checkbox) => checkbox.value),
+          <%- locals.families ? `family : $('#family').is(':visible') ? $('#family').val() : "",` : "" %>
+          <%- locals.flocks ? `flock : flock && !flock.attr('data-special') ? flock.val() : "",` : "" %>
+          <%- locals.artists ? `artist : $('#artist').is(':visible') ? $('#artist').val() : "",` : "" %>
+          <%- locals.page == 'wishlist' ? `intensity: Array.from($('input:checked', '#intensity')).map((checkbox) => checkbox.value),` : "" %>
+          <%- locals.egg ? `adjectives : "${egg.adjective}",` : "" %>
         },
         container.getAttribute('data-params') ? JSON.parse(container.getAttribute('data-params')) : {}
       ),
@@ -165,7 +165,7 @@
       pagination.innerHTML = content;
 
       if (totalResults != null) {
-        pagination.nextElementSibling.innerHTML = `${totalResults.toLocaleString("en-US")} birds found`;
+        pagination.nextElementSibling.innerHTML = `${totalResults.toLocaleString("en-US")} <%= locals.noun ? noun : 'result' %>s found`;
       }
       else {
         pagination.nextElementSibling.innerHTML = '';

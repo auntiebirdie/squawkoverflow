@@ -28,6 +28,9 @@ class Search {
         case 'freebird':
           query += 'freebirds.id, freebirds.variant FROM freebirds JOIN variants ON (freebirds.variant = variants.id) JOIN species ON (variants.species = species.code)';
           break;
+        case 'member':
+          query += 'members.id FROM members LEFT JOIN counters ON (counters.member = members.id AND counters.type = "aviary" AND counters.id = "total")';
+          break;
         case 'wishlist':
           query += 'species.code FROM species JOIN wishlist ON (species.code = wishlist.species AND wishlist.member = ? AND wishlist.intensity > 0)';
           params.push(input.id);
@@ -35,16 +38,17 @@ class Search {
       }
 
       if (input.search) {
-        if (kind == 'birdypet') {
-          filters.push('(MATCH(birdypets.nickname) AGAINST (? IN BOOLEAN MODE) OR MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE))');
+        var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
 
-          var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
+        if (kind == 'member') {
+          filters.push('MATCH(member.username) AGAINST (? IN BOOLEAN MODE)');
+          params.push(input.search.replace(regex, '$1*'));
+        } else if (kind == 'birdypet') {
+          filters.push('(MATCH(birdypets.nickname) AGAINST (? IN BOOLEAN MODE) OR MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE))');
 
           Array(2).fill(input.search).forEach((param) => params.push(param.replace(regex, '$1*')));
         } else {
           filters.push('MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)');
-
-          var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
 
           Array(1).fill(input.search).forEach((param) => params.push(param.replace(regex, '"$1"')));
         }
@@ -154,6 +158,9 @@ class Search {
       query += ' ORDER BY ';
 
       switch (input.sort) {
+        case 'commonName':
+          quey += 'species.commonName';
+          break;
         case 'scientificName':
           query += 'species.scientificName';
           break;
@@ -173,12 +180,20 @@ class Search {
             query += 'wishlist.addedAt';
           }
           break;
-        case 'commonName':
-          query += 'species.commonName';
+        case 'joinedAt':
+          query += 'members.joinedAt';
+          break;
+        case 'username':
+          query += 'members.username';
+          break;
+        case 'aviary':
+          query += 'counters.count';
           break;
         default:
           if (kind == 'birdypet') {
             query += 'birdypets.addedAt';
+          } else if (kind == 'member') {
+            query += 'members.username';
           } else {
             query += 'species.commonName';
           }

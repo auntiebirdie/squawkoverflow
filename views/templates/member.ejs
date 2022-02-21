@@ -1,0 +1,15 @@
+<div class="col-12 col-md-6 col-xl-4">
+  <div class="row mx-3 mb-4 p-3 rounded bg-light">
+    <div class="col-2 text-center">
+      <img class="rounded-circle" src="${model.avatar}" onerror="missingMemberAvatar(this)" width="64">
+    </div>
+    <div class="col-8">
+      <h4 class="text-break"><a href="/members/${model.id}">${model.username}</a></h4>
+      <h6>${model.rank} ${model.title}</h6>
+      <p class="small mb-0"><em>Last Active: ${model.lastActive}</em></p>
+    </div>
+    <div class="col-2 d-flex">
+      <span class="small text-center align-self-center">🐦<br>${(model.aviary * 1).toLocaleString('en-US')}</span>
+    </div>
+  </div>
+</div>

@@ -8,24 +8,7 @@
     </div>
     <div class="col-6 col-md-4 text-center text-md-start mb-3">
       <h4>
-        <% if (member.totals.aviary <= 0) { %>
-          Aspiring
-        <% } else if (member.totals.aviary < 10) { %>
-          Beginner
-        <% } else if (member.totals.aviary < 100) { %>
-          Novice
-        <% } else if (member.totals.aviary < 500) { %>
-          Dedicated
-        <% } else if (member.totals.aviary < 1000) { %>
-          Greater
-        <% } else if (member.totals.aviary < 5000) { %>
-          Superb
-        <% } else if (member.totals.aviary < 10000) { %>
-          Penultimate
-        <% } else if (member.totals.aviary > 10000) { %>
-          Ultimate
-        <% } %>
-
+        <%= member.rank %>
         <%= member.title %>
       </h4>
       <p><%= (member.totals.aviary * 1).toLocaleString("en-US") %> birds collected</p>

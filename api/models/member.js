@@ -99,6 +99,7 @@ class Member {
           this.serverMember = member.serverMember;
           this.joinedAt = member.joinedAt;
           this.lastHatchAt = member.lastHatchAt;
+          this.lastLoginAt = member.lastLoginAt;
           this.lastRefresh = member.lastRefresh || 0;
           this.birdyBuddy = member.birdyBuddy;
           this.featuredFlock = member.featuredFlock;
@@ -145,9 +146,55 @@ class Member {
                   member: this.id
                 });
                 break;
+              case 'lastActive':
+                let lastActive = Date.now() - Math.max(new Date(this.lastHatchAt).getTime(), new Date(this.lastLoginAt).getTime());
+
+                let days = lastActive / (1000 * 60 * 60 * 24);
+
+                if (days <= 1) {
+                  this.lastActive = 'Today!';
+                } else if (days <= 7) {
+                  this.lastActive = 'This week';
+                } else {
+                  let weeks = days / 7;
+
+                  if (weeks <= 4) {
+                    this.lastActive = Math.ceil(weeks) + ' weeks ago';
+                  } else {
+                    let months = days / 30;
+
+                    if (months <= 6) {
+                      this.lastActive = Math.ceil(months) + ' months ago';
+                    } else {
+                      this.lastActive = '6+ months ago';
+                    }
+                  }
+                }
+                break;
+              case 'rank':
+                let total = this.aviary ? this.aviary : await Counters.get('aviary', this.id, 'total');
+
+                if (total > 10000) {
+                  this.rank = 'Ultimate';
+                } else if (total > 5000) {
+                  this.rank = 'Penultimate';
+                } else if (total > 2500) {
+                  this.rank = 'Superb';
+                } else if (total > 1000) {
+                  this.rank = 'Greater';
+                } else if (total > 500) {
+                  this.rank = 'Dedicated';
+                } else if (total > 100) {
+                  this.rank = 'Novice';
+                } else if (total > 0) {
+                  this.rank = 'Beginner';
+                } else {
+                  this.rank = 'Aspiring';
+                }
+                break;
               case 'totals':
                 this.totals = {
-                  aviary: await Counters.get('aviary', this.id, 'total'),
+                  aviary: this.aviary ? this.aviary : await Counters.get('aviary', this.id, 'total'),
                   species: await Counters.get('species', this.id, 'total')
                 };
                 break;
