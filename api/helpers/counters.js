@@ -1,9 +1,9 @@
 const Database = require('./database.js');
 
 class Counters {
-  get(kind, member, id) {
+  get(type, member, id) {
     return new Promise((resolve, reject) => {
-      Database.getOne('counters', { member: member, type: kind, id: id || "" }, { select: ['count'] }).then( (result) => {
+      Database.getOne('counters', { member: member, type: type, id: id || "" }, { select: ['count'] }).then( (result) => {
         resolve(result ? result.count : 0);
       });
     });

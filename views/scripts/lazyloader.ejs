@@ -165,7 +165,7 @@
       pagination.innerHTML = content;
 
       if (totalResults != null) {
-        pagination.nextElementSibling.innerHTML = `${totalResults.toLocaleString("en-US")} birds found`;
+        pagination.nextElementSibling.innerHTML = `${totalResults.toLocaleString("en-US")} <%= locals.noun ? noun : 'result' %>s found`;
       }
       else {
         pagination.nextElementSibling.innerHTML = '';

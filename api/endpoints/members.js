@@ -1,11 +1,24 @@
 const Bird = require('../models/bird.js');
 const Members = require('../collections/members.js');
+const Member = require('../models/member.js');
 const Search = require('../helpers/search.js');
 
 module.exports = (req, res) => {
   if (req.query.page) {
     return Search.query('member', req.query).then((response) => {
-      return res.json(response);
+    var promises = [];
+
+    response.results = response.results.map((result) => {
+      result = new Member(result.id);
+
+        promises.push(result.fetch(req.query));
+
+        return result;
+      });
+
+      Promise.all(promises).then(() => {
+        res.json(response);
+      });
     });
   } else {
     return Members.all().then(async (members) => {
