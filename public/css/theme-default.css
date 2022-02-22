@@ -1,3 +1,7 @@
+body {
+  color: #2e3338;
+}
+
 a {
 	color: #454d00;
 }
@@ -7,7 +11,7 @@ a:hover, .nav-menu a:hover {
 }
 
 .bg-dark, .btn-dark {
-	background: #2c3100 !important;
+	background: #202225 !important;
 }
 
 .text-dark, .btn-primary {
@@ -58,4 +62,12 @@ a:hover, .nav-menu a:hover {
 
 .nav-menu hr {
         background-color: #A0B300 !important;
+}
+
+#footer {
+	color: #dcddde;
+}
+
+#footer a {
+	color: #a0b300;
 }

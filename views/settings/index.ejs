@@ -9,13 +9,13 @@
         Theme
       </h3>
 
-      <div class="p-3 m-3 mb-5">
-        <div class="btn-group" role="group">
-         <% for (var theme of themes) { %>
-          <input type="radio" class="btn-check" name="theme" value="<%= theme.id %>" id="theme_<%= theme.id %>" autocomplete="off" <%= loggedInUser.settings.theme == theme.id ? "checked" : "" %>>
-          <label class="btn btn-outline-secondary" for="theme_<%= theme.id %>"><%= theme.icon %> <%= theme.name %></label>
-         <% } %>
+      <div class="p-3 ps-0 m-3 mb-5 ms-0">
+       <% for (var theme of themes) { %>
+        <div class="form-check mb-3">
+          <input type="radio" class="form-input-check" name="theme" value="<%= theme.id %>" id="theme_<%= theme.id %>" autocomplete="off" <%= loggedInUser.settings.theme == theme.id ? "checked" : "" %>>
+          <label class="form-check-label" for="theme_<%= theme.id %>"><%= theme.icon %> <%= theme.name %></label>
         </div>
+       <% } %>
       </div>
     </div>
 

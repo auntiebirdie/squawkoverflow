@@ -1,6 +1,6 @@
 html, body {
-	background-color: #121212;
-	color: #eeeeee;
+	background-color: #36393f;
+	color: #dcddde;
 }
 
 a {
@@ -12,7 +12,7 @@ a:hover, .nav-menu a:hover {
 }
 
 .bg-dark, .btn-dark {
-	background: #2c3100 !important;
+	background: #202225 !important;
 }
 
 .text-dark, .btn-primary {
@@ -31,6 +31,10 @@ a:hover, .nav-menu a:hover {
 	border-color: #202123 !important;
 }
 
+.text-muted {
+	color: #b9bbbe !important;
+}
+
 .bg-primary, .btn-primary {
 	background-color: #DDF600 !important;
 }
@@ -46,10 +50,17 @@ a:hover, .nav-menu a:hover {
 .bg-secondary, .btn-secondary,
 .page-item.active .page-link,
 .page-link:hover,
-.form-check-input:checked,
 .btn-check:active+.btn-outline-secondary, .btn-check:checked+.btn-outline-secondary,
 .btn-outline-secondary:hover {
 	background-color: #444D00 !important;
+}
+
+.form-check-input:checked {
+	background-color: #DDF600 !important;
+}
+
+.form-switch .form-check-input:checked {
+	background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23444D00'/%3e%3c/svg%3e");
 }
 
 .text-secondary {
@@ -76,7 +87,7 @@ a:hover, .nav-menu a:hover {
 }
 
 .nav-menu hr {
-        background-color: #A0B300 !important;
+        background-color: hsla(0,0%,100%,0.5) !important;
 }
 
 .birdypet, .birdypets,

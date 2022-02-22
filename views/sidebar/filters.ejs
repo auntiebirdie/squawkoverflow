@@ -134,6 +134,7 @@
 <% if (locals.filters || (locals.extraFilters && locals.loggedInUser?.tier.extraInsights)) { %>
   <h5>Filters</h5>
   <div class="mb-4">
+   <% if (locals.filters) { %>
     <div id="filters">
      <% for (var filter of filters) { %>
       <% let context = filter.split('-').pop() %>
@@ -145,6 +146,7 @@
       </div>
       <% } %>
     </div>
+   <% } %>
 
    <% if (locals.extraFilters && locals.loggedInUser?.tier.extraInsights) { %>
     <div id="extraFilters">
