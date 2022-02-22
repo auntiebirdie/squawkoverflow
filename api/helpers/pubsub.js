@@ -64,7 +64,7 @@ exports.receive = function(message, context) {
                     url: variant.image
                   },
                   thumbnail: {
-                    url: `https://storage.googleapis.com/squawkoverflow/${ egg.icon || '/eggs/D/default.png' }`
+                    url: `https://storage.googleapis.com/squawkoverflow/${ egg.icon || 'eggs/D/default.png' }`
                   }
                 }]
               })
