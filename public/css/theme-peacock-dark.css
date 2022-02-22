@@ -1,6 +1,6 @@
 html, body {
 	background-color: #121212;
-	color: #ffffff;
+	color: #eeeeee;
 }
 
 a {
@@ -19,15 +19,23 @@ a:hover, .nav-menu a:hover {
 	color: #2c3100 !important;
 }
 
-.bg-light {
+.bg-light, .card, .page-link {
 	background-color: #202123 !important;
+}
+
+.text-light, .card {
+	color: #dddddd !important;
+}
+
+.border-light, .page-link {
+	border-color: #202123 !important;
 }
 
 .bg-primary, .btn-primary {
 	background-color: #DDF600 !important;
 }
 
-.text-primary {
+.text-primary, .btn-secondary:hover {
   color: #DDF600 !important;
 }
 
@@ -37,13 +45,14 @@ a:hover, .nav-menu a:hover {
 
 .bg-secondary, .btn-secondary,
 .page-item.active .page-link,
+.page-link:hover,
 .form-check-input:checked,
 .btn-check:active+.btn-outline-secondary, .btn-check:checked+.btn-outline-secondary,
 .btn-outline-secondary:hover {
 	background-color: #444D00 !important;
 }
 
-.text-secondary, .page-item .page-link {
+.text-secondary {
 	color: #444D00 !important;
 }
 
@@ -53,12 +62,13 @@ a:hover, .nav-menu a:hover {
 
 .border-secondary, .btn-secondary, .btn-outline-secondary,
 .page-item.active .page-link,
+.page-link:hover,
 .form-check-input:checked {
 	border-color: #444D00 !important;
 }
 
-.page-item.active .page-link {
-	color: #ffffff !important;
+.page-item .page-link {
+	color: #eeeeee !important;
 }
 
 .page-title h1::after {
@@ -67,4 +77,25 @@ a:hover, .nav-menu a:hover {
 
 .nav-menu hr {
         background-color: #A0B300 !important;
+}
+
+.birdypet, .birdypets,
+.birdypet.mini,
+.form-control, .form-check-input, .form-select,
+.dropdown-menu,
+span.twitter-typeahead .tt-menu {
+	filter: brightness(.80);
+}
+
+.birdypet.unhatched,
+.birdypet.mini.unhatched {
+	filter: saturate(0%) brightness(.80);
+}
+
+.birdypets .birdypet.mini {
+	filter: none;
+}
+
+.birdypets .birdypet.mini.unhatched {
+	filter: saturate(0%);
 }
