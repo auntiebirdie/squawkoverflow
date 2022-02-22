@@ -1,8 +1,9 @@
 const Database = require('../helpers/database.js');
+const Member = require('../models/member.js');
 
 class Search {
   query(kind, input) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       var birdsPerPage = 24;
       var page = (--input.page || 0) * birdsPerPage;
       var output = [];
@@ -88,16 +89,25 @@ class Search {
         filters.push('birdypets.id NOT IN (SELECT birdypet FROM birdypet_flocks JOIN flocks ON (birdypet_flocks.flock = flocks.id) WHERE flocks.protected = 1)');
       }
 
-      // TODO: validate user has access to extra insights
-      if (input.loggedInUser && Array.isArray(input.extraInsights)) {
+      if (input.loggedInUser && (Array.isArray(input.filters) || Array.isArray(input.extraFilters))) {
+        if (Array.isArray(input.extraFilters)) {
+          let member = new Member(input.loggedInUser);
+
+          await member.fetch();
+
+          if (member.tier.extraInsights) {
+            input.filters = Array.isArray(input.filters) ? [...input.filters, ...input.extraFilters] : input.extraFilters;
+          }
+        }
+
         var intensity = [];
         var isolated = false;
         var duplicated = false;
 
-        for (let insight of input.extraInsights) {
-          let context = insight.split('-').pop();
+        for (let filter of input.filters) {
+          let context = filter.split('-').pop();
 
-          switch (insight.split('-').shift()) {
+          switch (filter.split('-').shift()) {
             case 'hatched':
               filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "species" AND id = species.code) > 0');
               params.push(input.memberData || input.loggedInUser);
@@ -131,6 +141,17 @@ class Search {
               break;
             case 'somewhere':
               filters.push('species.code IN (SELECT id FROM counters WHERE type = "species" AND `count` > 0)');
+              break;
+            case 'copied':
+              filters.push('(SELECT COUNT(*) FROM freebirds JOIN variants ON (freebirds.variant = variants.id) WHERE variants.species = species.code) > 1');
+              break;
+            case 'exchange':
+              filters.push('birdypets.id IN (SELECT birdypet FROM exchange_birdypets WHERE exchange = ?)');
+              params.push(input.exchangeData);
+              break;
+            case 'unexchange':
+              filters.push('birdypets.id NOT IN (SELECT birdypet FROM exchange_birdypets WHERE exchange = ?)');
+              params.push(input.exchangeData);
               break;
           }
         }

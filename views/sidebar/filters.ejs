@@ -113,53 +113,51 @@
   </select>
 <% } %>
 
-<% if (locals.insights) { %>
- <%
+<%
   var labels = {
-    'copies' : 'Multiple Copies'
+    'unhatched' : `Not In % Aviary`,
+    'hatched' : `In % Aviary`,
+    'isolated' : `In % Aviary <span class="checkmark"></span>`,
+    'duplicated' : `In % Aviary <span class="checkplus"></span>`,
+    'somewhere' : 'In Someone\'s Aviary',
+    'unwishlisted' : 'Not On % Wishlist',
+    'wishlisted' : `On % Wishlist`,
+    'wanted' : `On % Wishlist ❤️`,
+    'needed' : `On % Wishlist 🌟`,
+    'someone' : 'On Someone\'s Wishlist',
+    'exchange' : 'In This Exchange',
+    'unexchange' : 'Not In This Exchange',
+    'copied' : 'Multiple Copies'
   }
- %>
+%>
 
-  <h5>Insights</h5>
-  <div id="insights" class="mb-4">
-   <% for (var insight of insights) { %>
-    <% let context = insight.split('-').pop() %>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="insights-<%= insight %>" value="<%= insight %>" name="insights[]">
-      <label class="form-check-label" for="insights-<%= insight %>">
-        <%- labels[insight.split('-').shift()].replace(/%/, context) %>
-      </label>
+<% if (locals.filters || (locals.extraFilters && locals.loggedInUser?.tier.extraInsights)) { %>
+  <h5>Filters</h5>
+  <div class="mb-4">
+    <div id="filters">
+     <% for (var filter of filters) { %>
+      <% let context = filter.split('-').pop() %>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="filters-<%= filter %>" value="<%= filter %>" name="filters[]">
+        <label class="form-check-label" for="filters-<%= filter %>">
+          <%- labels[filter.split('-').shift()].replace(/%/, context) %>
+        </label>
+      </div>
+      <% } %>
     </div>
-    <% } %>
-  </div>
-<% } %>
 
-<% if (locals.extraInsights && locals.loggedInUser?.tier.extraInsights) { %>
- <%
-    var labels = {
-      'unhatched' : `Not In % Aviary`,
-      'hatched' : `In % Aviary`,
-      'isolated' : `In % Aviary <span class="checkmark"></span>`,
-      'duplicated' : `In % Aviary <span class="checkplus"></span>`,
-      'duplicatedME' : 'In My Aviary <span class="checkplus"></span>',
-      'somewhere' : 'In Someone\'s Aviary',
-      'unwishlisted' : 'Not On % Wishlist',
-      'wishlisted' : `On % Wishlist`,
-      'wanted' : `On % Wishlist ❤️`,
-      'needed' : `On % Wishlist 🌟`,
-      'someone' : 'On Someone\'s Wishlist',
-    }
- %>
-  <h5>Extra Insights</h5>
-  <div id="extraInsights" class="mb-4">
-   <% for (var insight of extraInsights) { %>
-    <% let context = insight.split('-').pop() %>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="extraInsights-<%= insight %>" value="<%= insight %>" name="extraInsights[]">
-      <label class="form-check-label" for="extraInsights-<%= insight %>">
-        <%- labels[insight.split('-').shift()].replace(/%/, context) %>
-      </label>
+   <% if (locals.extraFilters && locals.loggedInUser?.tier.extraInsights) { %>
+    <div id="extraFilters">
+     <% for (var filter of extraFilters) { %>
+      <% let context = filter.split('-').pop() %>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="extraFilters-<%= filter %>" value="<%= filter %>" name="extraFilters[]">
+        <label class="form-check-label" for="extraFilters-<%= filter %>">
+          <%- labels[filter.split('-').shift()].replace(/%/, context) %>
+        </label>
+      </div>
+      <% } %>
     </div>
-    <% } %>
+   <% } %>
   </div>
 <% } %>

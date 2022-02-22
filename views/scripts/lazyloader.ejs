@@ -86,12 +86,13 @@
           sort: sort.val() && sort.val().includes('-') ? sort.val().split('-').shift() : sort.val(),
           sortDir: sort.val() && sort.val().includes('-') ? sort.val().split('-').pop() : 'ASC',
           search : $('#search').val(),
-          extraInsights: Array.from($('input:checked', '#extraInsights')).map((checkbox) => checkbox.value),
-          <%- locals.families ? `family : $('#family').is(':visible') ? $('#family').val() : "",` : "" %>
-          <%- locals.flocks ? `flock : flock && !flock.attr('data-special') ? flock.val() : "",` : "" %>
-          <%- locals.artists ? `artist : $('#artist').is(':visible') ? $('#artist').val() : "",` : "" %>
-          <%- locals.page == 'wishlist' ? `intensity: Array.from($('input:checked', '#intensity')).map((checkbox) => checkbox.value),` : "" %>
-          <%- locals.egg ? `adjectives : "${egg.adjective}",` : "" %>
+          <%- locals.filters ? `filters : Array.from($('input:checked', '#filters')).map((checkbox) => checkbox.value),` : '' %>
+          <%- locals.extraFilters ? `extraFilters: Array.from($('input:checked', '#extraFilters')).map((checkbox) => checkbox.value),` : '' %>
+          <%- locals.families ? `family : $('#family').is(':visible') ? $('#family').val() : '',` : '' %>
+          <%- locals.flocks ? `flock : flock && !flock.attr('data-special') ? flock.val() : '',` : '' %>
+          <%- locals.artists ? `artist : $('#artist').is(':visible') ? $('#artist').val() : '',` : '' %>
+          <%- locals.page == 'wishlist' ? `intensity: Array.from($('input:checked', '#intensity')).map((checkbox) => checkbox.value),` : '' %>
+          <%- locals.egg ? `adjectives : "${egg.adjective}",` : '' %>
         },
         container.getAttribute('data-params') ? JSON.parse(container.getAttribute('data-params')) : {}
       ),
