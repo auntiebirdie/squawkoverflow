@@ -117,7 +117,7 @@ class Exchange {
 
               await birdypet.fetch({
                 include: ['memberData'],
-                member: birdypet.member == this.memberA ? this.memberB : this.memberA
+                member: params.viewAs == "them" ? this.member.id : params.loggedInUser
               });
 
               this[birdypet.member == this.memberA ? 'birdypetsA' : 'birdypetsB'].push(birdypet);
