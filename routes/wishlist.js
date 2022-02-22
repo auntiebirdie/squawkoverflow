@@ -58,7 +58,7 @@ router.get('/:member', async (req, res, next) => {
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
     sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'addedAt-DESC', 'addedAt-ASC'],
-    extraInsights: req.session.user == req.params.member ? ['hatched-My', 'unhatched-My', 'somewhere'] : ['hatched-My', 'duplicated-My']
+    extraFilters: req.session.user == req.params.member ? ['hatched-My', 'unhatched-My', 'somewhere'] : ['hatched-My', 'duplicated-My']
   });
 });
 

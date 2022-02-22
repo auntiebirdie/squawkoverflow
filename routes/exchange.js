@@ -70,7 +70,8 @@ router.get(['/:id/offer', '/:id/request'], Middleware.isLoggedIn, async (req, re
       currentPage: (req.query.page || 1) * 1,
       sidebar: 'filters',
       sortFields: ['hatchedAt-DESC', 'hatchedAt-ASC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
-      extraInsights: page == "exchange/offer" ? ['unhatched-Their', 'isolated-My', 'duplicated-My', 'wanted-Their', 'needed-Their'] : ['unhatched-My', 'isolated-Their', 'duplicated-Their', 'wanted-My', 'needed-My'],
+      filters: page == "exchange/offer" ? ['exchange', 'unexchange', 'wanted-Their', 'needed-Their'] : ['exchange', 'unexchange', 'wanted-My', 'needed-My'],
+      extraFilters: page == "exchange/offer" ? ['unhatched-Their', 'isolated-My', 'duplicated-My'] : ['unhatched-My', 'isolated-Their', 'duplicated-Their']
     });
   } else {
     res.redirect(`/exchange/${exchange.id}`);

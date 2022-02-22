@@ -16,7 +16,8 @@ router.get('/', async (req, res) => {
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
     sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
-    extraInsights: ['unhatched-My', 'isolated-My', 'duplicated-My', 'somewhere', 'unwishlisted-My', 'wanted-My', 'needed-My']
+    filters: ['unwishlisted-My', 'wanted-My', 'needed-My'],
+    extraFilters: ['unhatched-My', 'isolated-My', 'duplicated-My', 'somewhere']
   });
 });
 
@@ -48,8 +49,8 @@ router.get('/eggs/:egg', async (req, res) => {
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
         sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
-	      insightContext: 'My',
-        extraInsights: ['unhatched', 'isolated', 'duplicated', 'somewhere', 'unwishlisted', 'wanted', 'needed']
+	filters: ['unwishlisted-My', 'wanted-My', 'needed-My'],
+        extraFilters: ['unhatched-My', 'isolated-My', 'duplicated-My', 'somewhere']
       });
     } else {
       res.redirect('/error');
