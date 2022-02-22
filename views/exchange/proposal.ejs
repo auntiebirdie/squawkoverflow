@@ -8,8 +8,17 @@
   <div id="errorMessage" class="bg-warning text-dark p-3 w-50 mx-auto rounded mb-3 d-none"></div>
 
  <% if (exchange.mutable) { %>
-  <div class="text-center small">
-    <p><em>You can click on any bird on this screen to remove it from the offer or request.</em></p>
+  <div class="row">
+    <div class="col-8 small">
+      <p><em>Note: You can click on any bird on this screen to remove it from the offer or request.</em></p>
+    </div>
+    <div class="col-4 text-end">
+      👁️ view as me
+      <div class="form-check form-switch form-check-inline align-middle ms-1 me-0">
+        <input type="checkbox" class="form-check-input" id="viewAs" <%= locals.viewAs == "them" ? "checked" : "" %>>
+      </div>
+      them
+    </div>
   </div>
  <% } %>
 
@@ -39,124 +48,130 @@
     <button id="deleteOffer" class="btn btn-danger btn-lg"><%= exchange.memberA == loggedInUser.id ? 'Rescind' : 'Decline' %> Offer</button>
 
     <script type="text/javascript">
-      var errorMessage = document.getElementById('errorMessage');
+      $(document).ready(function () {
+        var errorMessage = document.getElementById('errorMessage');
 
-      $('#exchange').on('click', '.card', function (e) {
-        if (e.target.nodeName != 'A') {
-          var image = e.currentTarget.querySelector('.birdypet');
-          var container = image.parentNode.parentNode;
+        $('#viewAs').on('click', function () {
+          window.location.href = window.location.pathname + '?viewAs=' + (this.checked ? 'them' : 'me');
+        });
 
-          if (!image.style.opacity) {
-            image.style.opacity = .5;
+        $('#exchange').on('click', '.card', function (e) {
+          if (e.target.nodeName != 'A') {
+            var image = e.currentTarget.querySelector('.birdypet');
+            var container = image.parentNode.parentNode;
+
+            if (!image.style.opacity) {
+              image.style.opacity = .5;
+              container.classList.add('loadingData');
+
+              $.ajax({
+                cache: false,
+                url: '/api/exchanges',
+                data: JSON.stringify({
+                  birdypet: image.getAttribute('data-id'),
+                  exchange: '<%= exchange.id %>'
+                }),
+                dataType: 'json',
+                method: 'POST',
+                contentType: 'application/json',
+                success: function(data) {
+                  image.style.opacity = null;
+                  image.innerHTML = "";
+
+                  container.classList.remove('loadingData');
+                  container.classList.toggle('disabled');
+
+                  $('#makeOffer').text('Update Offer');
+                }
+              });
+            }
+          }
+        });
+
+        $('#giveA, #forB, #noteA textarea, #noteB textarea').on('change', function (e) {
+          let data = {
+            exchange: '<%= exchange.id %>'
+          };
+
+          data[this.getAttribute('name') || this.getAttribute('id')] = $(this).val();
+
+          $.ajax({
+            cache: false,
+            url: '/api/exchanges',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            method: 'POST',
+            contentType: 'application/json',
+            success: function (res) {
+            }
+          });
+        });
+
+        $('#makeOffer').on('click', function () {
+          let button = this;
+
+          if (!button.style.opacity) {
+            button.style.opacity = .5;
+
+            let container = button.parentNode.parentNode.parentNode;
+            container.classList.add('loadingData');
+            errorMessage.classList.add('d-none');
+
+            $.ajax({
+              cache: false,
+              url: '/api/exchanges',
+              data: JSON.stringify({
+                id: '<%= exchange.id %>',
+                giveA: $('#giveA').val(),
+                forB: $('#forB').val(),
+               <% if (exchange.memberA == loggedInUser.id) { %>
+                noteA: $('#noteA texetarea').val()
+               <% } else { %>
+                noteB: $('#noteB textarea').val()
+               <% } %>
+              }),
+              dataType: 'json',
+              method: 'PUT',
+              contentType: 'application/json',
+              success: function(data) {
+                if (data.error) {
+                  button.style.opacity = null;
+                  container.classList.remove('loadingData');
+                  errorMessage.classList.remove('d-none');
+                  errorMessage.innerHTML = '⚠️ ' + data.error;
+                }
+                else {
+                  window.location.reload();
+                }
+              }
+            });
+          }
+        });
+
+        $('#deleteOffer').on('click', function () {
+          let button = this;
+
+          if (!this.style.opacity) {
+            button.style.opacity = .5;
+
+            let container = button.parentNode.parentNode.parentNode;
             container.classList.add('loadingData');
 
             $.ajax({
               cache: false,
               url: '/api/exchanges',
               data: JSON.stringify({
-                birdypet: image.getAttribute('data-id'),
-                exchange: '<%= exchange.id %>'
+                id: '<%= exchange.id %>'
               }),
               dataType: 'json',
-              method: 'POST',
+              method: 'DELETE',
               contentType: 'application/json',
               success: function(data) {
-                image.style.opacity = null;
-                image.innerHTML = "";
-
-                container.classList.remove('loadingData');
-                container.classList.add('disabled');
-
-                $('#makeOffer').text('Update Offer');
+                window.location.reload();
               }
             });
           }
-        }
-      });
-
-      $('#giveA, #forB, #noteA textarea, #noteB textarea').on('change', function (e) {
-        let data = {
-          exchange: '<%= exchange.id %>'
-        };
-
-        data[this.getAttribute('name') || this.getAttribute('id')] = $(this).val();
-
-        $.ajax({
-          cache: false,
-          url: '/api/exchanges',
-          data: JSON.stringify(data),
-          dataType: 'json',
-          method: 'POST',
-          contentType: 'application/json',
-          success: function (res) {
-          }
         });
-      });
-
-      $('#makeOffer').on('click', function () {
-        let button = this;
-
-        if (!button.style.opacity) {
-          button.style.opacity = .5;
-
-          let container = button.parentNode.parentNode.parentNode;
-          container.classList.add('loadingData');
-          errorMessage.classList.add('d-none');
-
-          $.ajax({
-            cache: false,
-            url: '/api/exchanges',
-            data: JSON.stringify({
-              id: '<%= exchange.id %>',
-              giveA: $('#giveA').val(),
-              forB: $('#forB').val(),
-             <% if (exchange.memberA == loggedInUser.id) { %>
-              noteA: $('#noteA texetarea').val()
-             <% } else { %>
-              noteB: $('#noteB textarea').val()
-             <% } %>
-            }),
-            dataType: 'json',
-            method: 'PUT',
-            contentType: 'application/json',
-            success: function(data) {
-              if (data.error) {
-                button.style.opacity = null;
-                container.classList.remove('loadingData');
-                errorMessage.classList.remove('d-none');
-                errorMessage.innerHTML = '⚠️ ' + data.error;
-              }
-              else {
-                window.location.reload();
-              }
-            }
-          });
-        }
-      });
-
-      $('#deleteOffer').on('click', function () {
-        let button = this;
-
-        if (!this.style.opacity) {
-          button.style.opacity = .5;
-
-          let container = button.parentNode.parentNode.parentNode;
-          container.classList.add('loadingData');
-
-          $.ajax({
-            cache: false,
-            url: '/api/exchanges',
-            data: JSON.stringify({
-              id: '<%= exchange.id %>'
-            }),
-            dataType: 'json',
-            method: 'DELETE',
-            contentType: 'application/json',
-            success: function(data) {
-              window.location.reload();
-            }
-          });
-        }
       });
     </script>
    <% } %>

@@ -32,7 +32,7 @@ class BirdyPet {
           description: "",
           friendship: 0,
           hatchedAt: data.hatchedAt || new Date(),
-	  addedAt: new Date()
+          addedAt: new Date()
         }).then(async () => {
           const Member = require('./member.js');
 
@@ -113,6 +113,8 @@ class BirdyPet {
         let member = new Member(data.member);
 
         await member.fetch();
+
+        data.addedAt = new Date();
 
         if (member.settings.general_updateWishlist) {
           promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [this.bird.code, member.id]));

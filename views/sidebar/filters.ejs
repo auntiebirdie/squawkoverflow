@@ -113,6 +113,27 @@
   </select>
 <% } %>
 
+<% if (locals.insights) { %>
+ <%
+  var labels = {
+    'copies' : 'Multiple Copies'
+  }
+ %>
+
+  <h5>Insights</h5>
+  <div id="insights" class="mb-4">
+   <% for (var insight of insights) { %>
+    <% let context = insight.split('-').pop() %>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="insights-<%= insight %>" value="<%= insight %>" name="insights[]">
+      <label class="form-check-label" for="insights-<%= insight %>">
+        <%- labels[insight.split('-').shift()].replace(/%/, context) %>
+      </label>
+    </div>
+    <% } %>
+  </div>
+<% } %>
+
 <% if (locals.extraInsights && locals.loggedInUser?.tier.extraInsights) { %>
  <%
     var labels = {

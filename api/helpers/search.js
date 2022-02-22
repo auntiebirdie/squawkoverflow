@@ -41,7 +41,7 @@ class Search {
         var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
 
         if (kind == 'member') {
-          filters.push('MATCH(member.username) AGAINST (? IN BOOLEAN MODE)');
+          filters.push('MATCH(members.username) AGAINST (? IN BOOLEAN MODE)');
           params.push(input.search.replace(regex, '$1*'));
         } else if (kind == 'birdypet') {
           filters.push('(MATCH(birdypets.nickname) AGAINST (? IN BOOLEAN MODE) OR MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE))');

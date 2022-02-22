@@ -12,9 +12,12 @@ router.get('/', Middleware.isLoggedIn, async (req, res) => {
 });
 
 router.get('/:id', Middleware.isLoggedIn, async (req, res) => {
+  let viewAs = req.query.viewAs == "them" ? "them" : "me";
+
   let exchange = await API.call('exchanges', 'GET', {
     id: req.params.id,
     loggedInUser: req.session.user,
+    viewAs: viewAs,
     include: ['logs']
   });
 
@@ -27,6 +30,7 @@ router.get('/:id', Middleware.isLoggedIn, async (req, res) => {
 
   res.render('exchange/proposal', {
     exchange: exchange,
+    viewAs: viewAs,
     offers: ['this', 'one of these', 'any of these', 'all of these', 'anything'],
   });
 });

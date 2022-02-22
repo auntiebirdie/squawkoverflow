@@ -36,11 +36,11 @@
            <div class="h-100 card">
             <% if (loggedInUser.id != exchange.memberA) { %>
              <a class="wishlist-heart">
-               <%= birdypet.bird.wishlisted ? (birdypet.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
+               <%= birdypet.bird.wishlisted ? (birdypet.bird.wishlisted == 2 ? '🌟' : '❤️') : '' %>
              </a>
             <% } %>
              <div class="h100">
-               <div class="bg-white lazy birdypet <% if (loggedInUser.id != exchange.memberA) { %>checkmark<%= birdypet.bird.owned == 2 ? 2 : birdypet.bird.owned %><% } %>"
+               <div class="bg-white lazy birdypet checkmark<%= birdypet.bird.owned == 2 ? 2 : birdypet.bird.owned %>"
                     data-id="<%= birdypet.id %>"
                     data-bg="<%= birdypet.image || birdypet.variant.image %>"
                >

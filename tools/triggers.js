@@ -163,5 +163,14 @@ var Database = require('../api/helpers/database.js');
     await Database.query('REPLACE INTO squawkdata.counters SELECT exchanges.memberA, "exchanges", "waitingOnMe", COUNT(*) FROM exchanges WHERE (statusA = 1 AND statusB = 1) OR (statusA = 1 AND statusB = 2) GROUP BY memberA');
     await Database.query('REPLACE INTO squawkdata.counters SELECT exchanges.memberB, "exchanges", "waitingOnMe", COUNT(*) FROM exchanges WHERE (statusA = 2 AND statusB = 1) OR (statusA = 2 AND statusB = 0) OR (statusA = 1 AND statusB = 0) GROUP BY memberB');
 
+
+  await Database.query('DROP TRIGGER IF EXISTS squawk_adjectives_update');
+  await Database.query(
+    'CREATE TRIGGER \`squawk_adjectives_update\` AFTER UPDATE ON squawkdata.\`species_adjectives\` ' +
+    'FOR EACH ROW BEGIN ' +
+    ' UPDATE adjectives SET numSpecies = (SELECT COUNT(*) FROM species_adjectives WHERE adjective = NEW.adjective AND species IN (SELECT species FROM variants)); ' +
+    'END'
+  );
+
   process.exit(0);
 })();

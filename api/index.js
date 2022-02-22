@@ -14,7 +14,7 @@ exports.api = (req, res) => {
   });
 
   try {
-    if (req.path == 'ping') {
+    if (req.path == '/ping') {
       return res.sendStatus(200);
     }
 
