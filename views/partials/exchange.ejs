@@ -40,7 +40,7 @@
              </a>
             <% } %>
              <div class="h100">
-               <div class="bg-white lazy birdypet checkmark<%= birdypet.bird.owned == 2 ? 2 : birdypet.bird.owned %>"
+               <div class="bg-white lazy birdypet checkmark<%= birdypet.bird.owned > 2 ? 2 : birdypet.bird.owned %>"
                     data-id="<%= birdypet.id %>"
                     data-bg="<%= birdypet.image || birdypet.variant.image %>"
                >
