@@ -9,10 +9,26 @@
       </h3>
 
       <div class="p-3 ps-0 m-3 mb-5 ms-0">
-       <% for (var style of ['Light', 'Dark', 'Darker']) { %>
-        <div class="form-check mb-3 d-inline">
-          <input type="radio" class="form-input-check" name="theme_style" value="<%= style.toLowerCase() %>" id="theme_style-<%= style %>" autocomplete="off" <%= loggedInUser.settings.theme_style == style.toLowerCase() ? "checked" : "" %>>
-          <label class="form-check-label" for="theme_style-<%= style %>"><%= style %></label>
+       <% for (var style of [{
+          id: 'light',
+          label: 'Light Swan',
+          icon: '🦢', 
+        }, {
+          id: 'dark',
+          label: 'Dark Duck',
+          icon: '🦆'
+        }, {
+          id: 'darker',
+          label: 'Night Owl',
+          icon: '🦉'
+        }, {
+          id: 'chartreuse',
+          label: 'Death by Chartreuse (use at your own risk)',
+          icon: '🦚'
+        }]) { %>
+        <div class="form-check mb-3">
+          <input type="radio" class="form-input-check" name="theme_style" value="<%= style.id %>" id="theme_style-<%= style.id %>" autocomplete="off" <%= loggedInUser.settings.theme_style == style.id ? "checked" : "" %>>
+          <label class="form-check-label" for="theme_style-<%= style.id %>"><%= style.icon %> <%= style.label %></label>
         </div>
        <% } %>
       </div>

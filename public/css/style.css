@@ -355,6 +355,10 @@ img {
   margin-bottom: 0;
 }
 
+.egg img {
+  filter: drop-shadow(0px 0px 5px var(--bs-light));
+}
+
 .card {
 	border: 1px solid var(--bs-body-color);
 }
