@@ -59,7 +59,7 @@ router.get('/', async (req, res) => {
       answer: `
         <p>The more birds you get, the more you may want to organize them! You can make as many flocks as you want, and birds can belong to more than one flock.</p>
 
-        <p>When logged in, there is a link to <a href="/flocks" target="_blank">Flocks</a> that will take you to a page with a <a class="btn btn-secondary btn-sm">New Flock</a> button, which is how you create new flocks. How you want to name your flocks is completely up to you, and can even include emoji!</p>
+        <p>When logged in, there is a link to <a href="/flocks" target="_blank">Flocks</a> that will take you to a page with a <a class="btn bg-light btn-sm">New Flock</a> button, which is how you create new flocks. How you want to name your flocks is completely up to you, and can even include emoji!</p>
 
         <p>Once you've created a flock (or several), the Manage Flocks page will now have them listed out as separate rows that can be click-and-dragged to reorder them however you like.</p>
 
