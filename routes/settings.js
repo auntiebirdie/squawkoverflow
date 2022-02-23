@@ -19,13 +19,8 @@ router.get('/', Middleware.isLoggedIn, (req, res) => {
         icon: "🦉"
       },
       {
-        id: "peacock-light",
-        name: "Pretty Peacock (Light)",
-        icon: "🦚"
-      },
-      {
         id: "peacock-dark",
-        name: "Pretty Peacock (Dark)",
+        name: "Pretty Peacock",
         icon: "🦚"
       }
     ];
