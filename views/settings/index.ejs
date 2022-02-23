@@ -2,7 +2,6 @@
 
   <%- include ('../partials/page-title.ejs', { title : "Account Settings" }) %>
 
-
   <div class="row">
     <div class="col-12 col-md-6">
       <h3>
@@ -10,10 +9,10 @@
       </h3>
 
       <div class="p-3 ps-0 m-3 mb-5 ms-0">
-       <% for (var theme of themes) { %>
-        <div class="form-check mb-3">
-          <input type="radio" class="form-input-check" name="theme" value="<%= theme.id %>" id="theme_<%= theme.id %>" autocomplete="off" <%= loggedInUser.settings.theme == theme.id ? "checked" : "" %>>
-          <label class="form-check-label" for="theme_<%= theme.id %>"><%= theme.icon %> <%= theme.name %></label>
+       <% for (var style of ['Light', 'Dark', 'Darker']) { %>
+        <div class="form-check mb-3 d-inline">
+          <input type="radio" class="form-input-check" name="theme_style" value="<%= style.toLowerCase() %>" id="theme_style-<%= style %>" autocomplete="off" <%= loggedInUser.settings.theme_style == style.toLowerCase() ? "checked" : "" %>>
+          <label class="form-check-label" for="theme_style-<%= style %>"><%= style %></label>
         </div>
        <% } %>
       </div>
@@ -134,7 +133,7 @@
             contentType: 'application/json',
             method: action,
             success: function(data) {
-              if (key == 'theme') {
+              if (key.startsWith('theme')) {
                 window.location.reload();
               }
 

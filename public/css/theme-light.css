@@ -1,0 +1,13 @@
+:root {
+    --bs-body-color: #607d8b;
+    --bs-body-color-rgb: 96,125,139;
+    --bs-body-bg: #ffffff;
+    --bs-body-bg-rgb: 255,255,255;
+    --bs-light: #eef5f9;
+    --bs-light-rgb: 39,43,52;
+    --bs-dark: #eef5f9;
+    --bs-dark-rgb: 238,245,249;
+
+        --bs-secondary: #DDF600;
+        --bs-primary: #444D00;
+}

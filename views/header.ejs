@@ -14,7 +14,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
 
   <link href="/css/style.css" rel="stylesheet">
-  <link href="/css/theme-<%= locals.loggedInUser ? (loggedInUser.settings?.theme || "default") : "default" %>.css" rel="stylesheet">
+  <link href="/css/theme-<%= locals.loggedInUser ? (loggedInUser.settings?.theme_style || "dark") : "dark" %>.css" rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
@@ -47,14 +47,14 @@
 
       <div class="ps-3 ps-sm-0">
         <img src="/img/SQUAWK.png" alt="logo" class="img-fluid d-none d-sm-block mb-2">
-	<h2 class="text-center"><a href="/" class="text-light"><span class="text-primary">SQUAWK</span>overflow</a></h2>
+	<h2 class="text-center"><a href="/"><span class="text-primary">SQUAWK</span>overflow</a></h2>
       </div>
 
       <nav class="nav-menu navbar">
         <ul>
          <% siteMenu.forEach( function (item) { %> 
           <li class="nav-item pb-2">
-            <a href="<%= item.href %>" class="nav-link text-light">
+            <a href="<%= item.href %>" class="nav-link">
               <span class="icon d-inline-block fs-4">
                 <%= item.icon %>
               </span>
@@ -72,7 +72,7 @@
 	  </li>
 	 <% if (locals.loggedInUser) { %>
 	  <li class="nav-item pb-2">
-            <a href="/members/<%= loggedInUser.id %>" class="nav-link text-light">
+            <a href="/members/<%= loggedInUser.id %>" class="nav-link">
               <span class="icon d-inline-block fs-4">
                 <img src="<%= loggedInUser.avatar %>" class="rounded-circle p-2" onerror="missingMemberAvatar(this)">
               </span>
@@ -80,25 +80,25 @@
             </a>
 	  </li>
           <li class="nav-item pb-2 ms-2">
-            <a href="/aviary/<%= loggedInUser.id %>" class="nav-link text-light">
+            <a href="/aviary/<%= loggedInUser.id %>" class="nav-link">
               <span class="icon d-inline-block fs-5">🐦</span>
 	      <span class="d-block label">Aviary</span>
 	    </a>
 	  </li>
 	  <li class="nav-item pb-2 ms-2">
-            <a href="/wishlist/<%= loggedInUser.id %>" class="nav-link text-light">
+            <a href="/wishlist/<%= loggedInUser.id %>" class="nav-link">
               <span class="icon d-inline-block fs-5">❤️</span>
               <span class="d-block label">Wishlist</span>
             </a>
           </li>
 	  <li class="nav-item pb-2 ms-2">
-            <a href="/flocks" class="nav-link text-light">
+            <a href="/flocks" class="nav-link">
               <span class="icon d-inline-block fs-5">🏘️</span>
               <span class="d-block label">Flocks</span>
             </a>
 	  </li>
 	  <li class="nav-item pb-2 ms-2">
-            <a href="/settings" class="nav-link text-light">
+            <a href="/settings" class="nav-link">
               <span class="icon d-inline-block fs-5">⚙️</span>
               <span class="d-block label">Settings</span>
             </a>
@@ -129,7 +129,7 @@
       <a class="attribution bg-light"></a>
     </div>
     <div id="home-text">
-      <h1 class="bg-secondary text-light border-bottom border-5 border-primary"><strong>SQUAWK</strong>overflow</h1>
+      <h1 class="bg-dark border-bottom border-5 border-primary"><strong>SQUAWK</strong>overflow</h1>
       <div></div>
       <p class="text-center"><em>the ultimate bird collecting game</em></p>
     </div>
