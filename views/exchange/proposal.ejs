@@ -33,7 +33,7 @@
  <% if (exchange.statusA >= 0 && exchange.statusB >= 0 && exchange.statusA + exchange.statusB < 4) { %>
   <div class="text-center py-5">
    <% if (exchange.mutable) { %>
-    <button id="makeOffer" class="btn btn-secondary btn-lg me-2">
+    <button id="makeOffer" class="btn bg-light me-2">
       <% if ((exchange.statusA == 2 && exchange.memberB == loggedInUser.id) || (exchange.statusB == 2 && exchange.memberA == loggedInUser.id)) { %>
         Accept Offer
       <% } else if (exchange.statusA == 0 & exchange.statusB == 0) { %>

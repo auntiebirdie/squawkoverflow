@@ -1,12 +1,12 @@
 :root {
     --bs-body-color: #ffffff;
     --bs-body-color-rgb: 255,255,255;
-    --bs-body-bg: #323743;
-    --bs-body-bg-rgb: 50,55,67;
-    --bs-light: #272b34;
-    --bs-light-rgb: 39,43,52;
-    --bs-dark: #1d2126;
-    --bs-dark-rgb: 29,33,38;
+    --bs-body-bg: #121212;
+    --bs-body-bg-rgb: 18,18,18;
+    --bs-light: #404040;
+    --bs-light-rgb: 64,64,64;
+    --bs-dark: #000000;
+    --bs-dark-rgb: 0,0,0;
 }
 
 .bg-white,

@@ -59,6 +59,10 @@ class Member {
             this.settings = {};
           }
 
+		if (!this.settings.theme_style) {
+			this.settings.theme_style = 'dark';
+		}
+
           this.tier = await Database.query('SELECT * FROM tiers WHERE id = ?', [member.tier]).then(([tier]) => tier);
 
           if (typeof this.settings.title != "undefined" && this.settings.title != this.tier.id) {
