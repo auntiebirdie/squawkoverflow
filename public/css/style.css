@@ -143,6 +143,21 @@ img {
   min-height: 100vh;
 }
 
+#errorMessage {
+  position: fixed;
+  z-index: 9999;
+  max-width: 400px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-left: 150px;
+}
+
+#errorMessage::before {
+  content: '⚠️';
+  display: inline-block;
+  margin-right: 1em;
+}
+
 .container {
   padding: 0 1em;
 }
@@ -350,6 +365,7 @@ img {
   height: 3px;
   bottom: 0;
   left: 20%;
+  background-color: var(--bs-primary);
 }
 
 .page-title p {

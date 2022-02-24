@@ -30,6 +30,11 @@
         $('body').toggleClass('mobile-sidebar-active');
       });
 
+      $('#errorMessage').on('click', function () {
+        $('#errorMessage').addClass('d-none');
+        $('#errorMessage div').html('');
+      });
+
      <% if (locals.loggedInUser) { %>
       $('#main').on('click', 'button.wishlist-heart', function (event) {
         var button = event.target;

@@ -31,6 +31,34 @@
       img.style.transform = `rotate(${Math.max(0, img.getAttribute('data-id'))}deg)`;
     };
 
+    const API = {
+      call : function (endpoint, method, data, success, error) {
+        $('#errorMessage').addClass('d-none');
+
+        $.ajax({
+          cache: false,
+          url: `/api/${endpoint}`,
+          method: method,
+          data: JSON.stringify(data),
+          dataType: 'json',
+          contentType: 'application/json',
+          success: function (res) {
+            if (res.code && res.code != 200) {
+              $('#errorMessage').html(res.response.data);
+              $('#errorMessage').removeClass('d-none');
+
+              if (error) {
+                error(res);
+              }
+            }
+            else if (success) {
+              success(res);
+            }
+          }
+        });
+      }
+    }
+
     var lazyLoadInstance = new LazyLoad({ });
   </script>
 </head>
