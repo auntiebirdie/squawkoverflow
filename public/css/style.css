@@ -142,6 +142,21 @@ img {
   min-height: 100vh;
 }
 
+#errorMessage {
+  position: fixed;
+  z-index: 9999;
+  max-width: 400px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-left: 150px;
+}
+
+#errorMessage::before {
+  content: '⚠️';
+  display: inline-block;
+  margin-right: 1em;
+}
+
 .container {
   padding: 0 1em;
 }
@@ -176,6 +191,10 @@ img {
 
   #main {
     padding-left: 0;
+  }
+
+  #errorMessage {
+	  margin-left: 0;
   }
 
   #home-banner .attribution {

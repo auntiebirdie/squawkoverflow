@@ -17,12 +17,10 @@ router.all('/*', async (req, res) => {
 
       res.json(response);
     }).catch((err) => {
-      console.error(err);
-      res.json(err.status);
+      res.json(err);
     });
   } catch (err) {
-    console.error(err);
-    res.json(err.status);
+    res.json(err);
   }
 });
 

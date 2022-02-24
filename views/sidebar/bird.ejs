@@ -7,19 +7,30 @@
         <h5 class="pt-3">Order</h5>
         <p><%= bird.order %></p>
 
-        <h5 class="pt-3">Variants</h5>
+        <h5 class="pt-3">
+          Variants
+         <% if (locals.loggedInUser && loggedInUser.contributor) { %>
+          <a href="/birdypedia/bird/<%= bird.code %>/variant/new" class="btn btn-sm bg-light p-1 ms-3">+ new</a>
+         <% } %>
+        </h5>
         <div id="birdDisplay">
         <% for (var variant of bird.variants) { %>
-          <p>
-            <div class="bg-white border border-1 birdypet mini <%= variant.hatched ? "hatched" : "unhatched" %>" data-id="<%= `${variant.prefix}-${variant.alias}` %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" style="background-image: url('<%= variant.image %>');"></div>
-            <%= variant.label %> <%- variant.hatched ? "<span class=\"checkmark\"></span>" : "" %>
-          </p>
+          <div class="row mb-2">
+            <div class="col-3 g-0 text-end">
+              <div class="bg-white border border-1 m-0 birdypet mini <%= variant.hatched ? "hatched checkmark" : "unhatched" %>" data-id="<%= `${variant.prefix}-${variant.alias}` %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" style="background-image: url('<%= variant.image %>');"></div>
+            </div>
+            <div class="col-9 small">
+              <%= variant.subspecies ? `<em>${variant.subspecies}</em><br>` : '' %>
+              <%= variant.label ? `${variant.label}<br>` : '' %>
+              &copy; <%= variant.credit %>
+              <% if (locals.loggedInUser && loggedInUser.contributor) { %>
+                <br>
+                <a href="/birdypedia/bird/<%= bird.code %>/variant/<%= variant.prefix %>-<%= variant.alias %>" class="btn btn-sm bg-light m-2">edit</a>
+              <% } %>
+            </div>
+          </div>
         <% } %>
         </div>
-
-       <% if (locals.loggedInUser && loggedInUser.contributor) { %>
-         <p><a href="/birdypedia/bird/<%= bird.code %>/upload" class="btn btn-sm bg-light">+ new</a></p>
-       <% } %>
 
         <h5 class="pt-3">Eggs</h5>
         <p>

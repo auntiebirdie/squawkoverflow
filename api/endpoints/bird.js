@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
   });
 
   if (req.query.include?.includes('members')) {
-	  let promises = [];
+    let promises = [];
 
     await Members.all().then((members) => {
       for (let member of members) {

@@ -59,15 +59,15 @@ router.get('/eggs/:egg', async (req, res) => {
   });
 });
 
-router.get('/bird/:code/upload', Middleware.isContributor, async (req, res) => {
+router.get('/bird/:code/variant/:variant', Middleware.isContributor, async (req, res) => {
   API.call('bird', 'GET', {
     loggedInUser: req.session.user,
-    speciesCode: req.params.code,
-    include: ['members']
+    speciesCode: req.params.code
   }).then((bird) => {
     if (bird) {
-      res.render('birdypedia/upload', {
-        bird: bird
+      res.render('birdypedia/variant', {
+        bird: bird,
+	variant: bird.variants.find((variant) => `${variant.prefix}-${variant.alias}` == req.params.variant)
       });
     } else {
       res.redirect('/birdypedia');
