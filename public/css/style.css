@@ -610,6 +610,7 @@ span.twitter-typeahead {
   text-align: center;
   width: 3.25em;
   height: 3.25em;
+  background-color: rgba(255, 255, 255, 0.5);
   background-image: url('/img/eggtime.png');
   background-position: center center;
   background-repeat: no-repeat;

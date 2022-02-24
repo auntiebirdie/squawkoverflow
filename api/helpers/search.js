@@ -39,19 +39,17 @@ class Search {
       }
 
       if (input.search) {
-        var regex = new RegExp(/(\b[a-z\-\']+\b)/, 'gi');
+        input.search = input.search.match(/"[^"]*"|([\w\'\-]+)/g).map((search) => search.startsWith('"') ? search : `+${search}`).join(' ').replace(/\'s/g, "\\'s");
 
         if (kind == 'member') {
           filters.push('MATCH(members.username) AGAINST (? IN BOOLEAN MODE)');
-          params.push(input.search.replace(regex, '$1*'));
+          params.push(input.search);
         } else if (kind == 'birdypet') {
           filters.push('(MATCH(birdypets.nickname) AGAINST (? IN BOOLEAN MODE) OR MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE))');
-
-          Array(2).fill(input.search).forEach((param) => params.push(param.replace(regex, '$1*')));
+          params.push(input.search, input.search);
         } else {
           filters.push('MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)');
-
-          Array(1).fill(input.search).forEach((param) => params.push(param.replace(regex, '"$1"')));
+          params.push(input.search);
         }
       }
 
