@@ -41,8 +41,11 @@ class Member {
 
           reject();
         } else {
-          this.username = member.username;
-          this.avatar = member.avatar;
+          for (let key in member) {
+            if (!params.fields || params.fields.includes(key)) {
+              this[key] = member[key];
+            }
+          }
 
           try {
             this.settings = await Database.get('member_settings', {
@@ -59,9 +62,9 @@ class Member {
             this.settings = {};
           }
 
-		if (!this.settings.theme_style) {
-			this.settings.theme_style = 'dark';
-		}
+          if (!this.settings.theme_style) {
+            this.settings.theme_style = 'dark';
+          }
 
           this.tier = await Database.query('SELECT * FROM tiers WHERE id = ?', [member.tier]).then(([tier]) => tier);
 
@@ -72,8 +75,6 @@ class Member {
           } else {
             this.title = this.tier.name;
           }
-
-          this.bugs = member.bugs ? member.bugs * 1 : 0;
 
           if (typeof member.pronouns == "string") {
             try {
@@ -100,13 +101,6 @@ class Member {
           let inactiveMonths = new Date().setMonth(new Date().getMonth() - 3);
 
           this.active = true; //member.lastLogin > inactiveMonths || member.lastHatchedAt > inactiveMonths;
-          this.serverMember = member.serverMember;
-          this.joinedAt = member.joinedAt;
-          this.lastHatchAt = member.lastHatchAt;
-          this.lastLoginAt = member.lastLoginAt;
-          this.lastRefresh = member.lastRefresh || 0;
-          this.birdyBuddy = member.birdyBuddy;
-          this.featuredFlock = member.featuredFlock;
 
           let promises = [];
 

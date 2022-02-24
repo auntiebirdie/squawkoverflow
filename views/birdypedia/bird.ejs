@@ -1,18 +1,18 @@
 <%- include('../header.ejs') %>
 
-    <%- include('../partials/page-title.ejs', { title : bird.commonName, subtitle : bird.scientificName }) %>
+  <%- include('../partials/page-title.ejs', { title : bird.commonName, subtitle : bird.scientificName }) %>
 
-        <div class="text-center">
-          <span class="h-100 d-inline-block position-relative">
-           <% if (locals.loggedInUser) { %>
-            <button class="wishlist-heart btn btn-sm" data-id="<%= bird.code %>" role="button">
-              <%= bird.wishlisted ? (bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
-            </button>
-           <% } %>
-            <img id="birdy" src="<%= bird.variants[0].image %>" class="birdypet full <%= bird.variants[0].hatched ? "hatched" : "unhatched" %>">
-            <a class="attribution bg-light" href="<%= bird.variants[0].source %>" target="_blank">&copy; <%= bird.variants[0].credit %></a>
-          </span>
-        </div>
+  <div class="text-center">
+    <span class="h-100 d-inline-block position-relative">
+     <% if (locals.loggedInUser) { %>
+      <button class="wishlist-heart btn btn-sm" data-id="<%= bird.code %>" role="button">
+        <%= bird.wishlisted ? (bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
+      </button>
+     <% } %>
+      <img id="birdy" src="<%= bird.variants[0].image %>" class="birdypet full <%= bird.variants[0].hatched ? "hatched" : "unhatched" %>">
+      <a class="attribution bg-light" href="<%= bird.variants[0].source %>" target="_blank">&copy; <%= bird.variants[0].credit %></a>
+    </span>
+  </div>
 
   <h4 class="mb-3">Who has one?</h4>
 

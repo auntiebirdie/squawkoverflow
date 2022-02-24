@@ -1,0 +1,51 @@
+<%- include('../header.ejs') %>
+
+  <%- include('../partials/page-title.ejs', { title : bird.commonName, subtitle : 'Upload new variant' }) %>
+
+  <div id="form" class="row">
+    <div class="col-12">
+      <h5><label for="imageURL" >Image URL</label></h5>
+      <input type="text" id="imageURL" class="form-control mb-3 w-100">
+    </div>
+
+    <div class="col-12">
+      <h5><label for="source">Source</label></h5>
+      <input type="text" id="source" class="form-control mb-3 w-100">
+    </div>
+
+    <div class="col-12">
+      <h5><label for="credit">Credit</label></h5>
+      <input type="text" id="credit" class="form-control mb-3 w-100">
+    </div>
+
+    <div class="col-8">
+      <h5><label>Identifier:</label></h5>
+    </div>
+    <div class="col-2">
+      <input type="text" id="prefix" class="form-control mb-3 w-100">
+    </div>
+    <div class="col-2">
+      <input type="text" id="alias" class="form-control mb-3 w-100" style="width: 100%">
+    </div>
+
+    <div class="col-12 text-center">
+      <a id="uploadVariant" class="btn btn-dark">Upload</a>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#uploadVariant').on('click', function () {
+      var container = document.getElementById('form');
+
+      if (!container.classList.contains('loadingData')) {
+        container.classList.add('loadingData');
+
+        API('upload', 'POST', { test : "help" }, function (response) {
+console.log(response);
+});
+      }
+    });
+  </script>
+
+<%- include('../footer.ejs') %>

@@ -349,6 +349,7 @@ img {
   height: 3px;
   bottom: 0;
   left: 20%;
+  background-color: var(--bs-primary);
 }
 
 .page-title p {

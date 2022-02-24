@@ -1,4 +1,5 @@
 const API = require('../helpers/api.js');
+const Middleware = require('../helpers/middleware.js');
 
 const fs = require('fs');
 const express = require('express');
@@ -54,6 +55,22 @@ router.get('/eggs/:egg', async (req, res) => {
       });
     } else {
       res.redirect('/error');
+    }
+  });
+});
+
+router.get('/bird/:code/upload', Middleware.isContributor, async (req, res) => {
+  API.call('bird', 'GET', {
+    loggedInUser: req.session.user,
+    speciesCode: req.params.code,
+    include: ['members']
+  }).then((bird) => {
+    if (bird) {
+      res.render('birdypedia/upload', {
+        bird: bird
+      });
+    } else {
+      res.redirect('/birdypedia');
     }
   });
 });

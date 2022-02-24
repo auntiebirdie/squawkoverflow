@@ -8,4 +8,13 @@ Middleware.prototype.isLoggedIn = function(req, res, next) {
   }
 }
 
+Middleware.prototype.isContributor = function (req, res, next) {
+	if (req.session.loggedInUser?.contributor) {
+		next();
+	}
+	else {
+		res.redirect('/error');
+	}
+}
+
 module.exports = new Middleware()
