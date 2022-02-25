@@ -1,6 +1,6 @@
 <%- include('../header.ejs') %>
 
-  <%- include('../partials/page-title.ejs', { title : bird.commonName, subtitle : 'Upload new variant' }) %>
+  <%- include('../partials/page-title.ejs', { title : bird.commonName, subtitle : variant ? 'Edit Variant' : 'Upload New Variant' }) %>
 
   <div id="form" class="row">
     <div class="col-12 col-md-8 mb-4">

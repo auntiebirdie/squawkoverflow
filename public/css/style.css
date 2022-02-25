@@ -399,6 +399,7 @@ img {
 }
 
 .card {
+	background: transparent;
 	border: 1px solid var(--bs-body-color);
 	border-radius: 0;
 }
