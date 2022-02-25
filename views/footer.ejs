@@ -2,7 +2,7 @@
   </main>
 
   <div id="sidebar" class="bg-dark">
-    <div class="py-5 ps-3 ps-sm-0">
+    <div class="py-4 ps-3 ps-sm-0">
       <% if (locals.sidebar) { %>
         <%- include(`./sidebar/${sidebar}.ejs`) %>
       <% } %>
@@ -17,10 +17,13 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js" integrity="sha512-qOBWNAMfkz+vXXgbh0Wz7qYSLZp6c14R0bZeVX2TdQxWpuKr6yHjBIM69fcF8Ve4GUX6B6AKRQJqiiAmwvmUmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fitty/2.3.6/fitty.min.js" integrity="sha512-7U91NJISL6PgUHhYsU0MEEKGqx0dsOvweOAivSTcOYg1jk0fpWBuDAp09uThu33/c3F7uORGaBXFTKz0g2oHNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script type="text/javascript">
     $(document).ready( function () {
       lazyLoadInstance.update();
+
+      fitty('#navbar h2');
 
       $('.mobile-nav-toggle').on('click', function () {
         $('body').toggleClass('mobile-nav-active');

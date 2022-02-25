@@ -184,6 +184,10 @@ img {
     width: 300px;
   }
 
+  #sidebar h5 {
+    margin-right: 1.5rem !important;
+  }
+
   #main {
     padding-right: 0;
   }
@@ -204,7 +208,9 @@ img {
 }
 
 #navbar h2 {
-	font-size: 1.9em;
+	font-size: 1.75em;
+	    display: inline-block;
+    white-space: nowrap;
 }
 
 #navbar h2 a {
