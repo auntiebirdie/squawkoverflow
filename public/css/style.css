@@ -53,12 +53,20 @@ img {
 	background-color: var(--bs-light) !important;
 }
 
+.bg-primary {
+	background-color: var(--bs-primary) !important;
+}
+
 .text-primary {
 	color: var(--bs-primary) !important;
 }
 
 .border-primary {
 	border-color: var(--bs-primary) !important;
+}
+
+.bg-secondary {
+	background-color: var(--bs-secondary) !important;
 }
 
 .text-muted {
@@ -537,6 +545,14 @@ button.wishlist-heart:hover {
 .progress-bar {
 	overflow: visible;
 	text-shadow: 1px 1px 1px black, -1px -1px 1px black, -1px 1px 1px black, 1px -1px 1px black;
+}
+
+.ss-content .ss-list .ss-option {
+	background-color: var(--bs-white);
+}
+
+.ss-main .ss-multi-selected .ss-values .ss-value {
+	background-color: var(--bs-secondary);
 }
 
 span.twitter-typeahead .tt-menu {

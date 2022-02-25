@@ -9,7 +9,7 @@
 
         <h5 class="pt-3">
           Variants
-         <% if (locals.loggedInUser && loggedInUser.contributor) { %>
+         <% if (locals.loggedInUser && loggedInUser.admin) { %>
           <a href="/birdypedia/bird/<%= bird.code %>/variant/new" class="btn btn-sm bg-light p-1 ms-3">+ new</a>
          <% } %>
         </h5>
@@ -33,8 +33,45 @@
         </div>
 
         <h5 class="pt-3">Eggs</h5>
+       <% if (locals.loggedInUser && loggedInUser.contributor) { %> 
+         <select id="adjectives" multiple>
+          <% for (var egg of eggs) { %>
+           <option value="<%= egg.adjective %>" <%= bird.adjectives.includes(egg.adjective) ? 'selected' : '' %>><%= egg.adjective %></option>
+          <% } %>
+         </select>
+
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.27.1/slimselect.min.js"></script>
+         <script type="text/javascript">
+           var currentState = $('#adjectives').val();
+
+           var adjectives = new SlimSelect({
+             select: '#adjectives',
+             beforeOnChange: (info) => {
+               let newState = info.filter((opt) => opt.selected).map((opt) => opt.value);
+               let method = currentState.length > newState.length ? 'DELETE' : 'POST';
+               let adjective = method == 'DELETE' ? currentState.find((opt) => !newState.includes(opt)) : newState.find((opt) => !currentState.includes(opt));
+
+               currentState = $('#adjectives').val();
+
+               adjectives.slim.container.classList.add('loadingData');
+               adjectives.disable();
+
+               return API.call('bird', method, { speciesCode : '<%= bird.code %>', adjective : adjective }, function () {
+                 adjectives.slim.container.classList.remove('loadingData');
+                 adjectives.enable();
+                 return true;
+               }, function () {
+                 adjectives.slim.container.classList.remove('loadingData');
+                 adjectives.enable();
+                 return false;
+               });
+             }
+           });
+         </script>
+       <% } else { %>
         <p>
         <% for (var adjective of bird.adjectives.sort()) { %>
             <%= adjective %><br>
         <% } %>
         </p>
+       <% } %>
