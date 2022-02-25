@@ -33,7 +33,7 @@ exports.api = (req, res) => {
         headers: req.headers,
         data: data
       }
-    }, `/${req.method} ${req.path} ${JSON.stringify(Object.fromEntries(Object.entries(data).filter((a) => ["id", "member", "loggedInUser"].includes(a[0]) )))}`);
+    }, `${req.method} ${req.path} ${JSON.stringify(Object.fromEntries(Object.entries(data).filter((a) => ["id", "member", "loggedInUser"].includes(a[0]) )))}`);
 
     require(`./endpoints/${route}.js`)(req, res);
   } catch (err) {

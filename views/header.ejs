@@ -12,6 +12,7 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.27.1/slimselect.min.css" rel="stylesheet"></link>
 
   <link href="/css/style.css" rel="stylesheet">
   <link href="/css/theme-<%= locals.loggedInUser ? (loggedInUser.settings?.theme_style || "dark") : "dark" %>.css" rel="stylesheet">
@@ -32,17 +33,26 @@
     };
 
     const API = {
+      currentRequest : {},
       call : function (endpoint, method, data, success, error) {
         $('#errorMessage').addClass('d-none');
 
-        $.ajax({
+        if (API.currentRequest[endpoint]) {
+		API.currentRequest[endpoint].abort();
+	}
+
+	let querystring = method == 'GET' ? '?' + $.param(data) : '';
+
+        API.currentRequest[endpoint] = $.ajax({
           cache: false,
-          url: `/api/${endpoint}`,
+          url: `/api/${endpoint}${querystring}`,
           method: method,
-          data: JSON.stringify(data),
+          data: method != 'GET' ? JSON.stringify(data) : null,
           dataType: 'json',
           contentType: 'application/json',
           success: function (res) {
+            API.currentRequest[endpoint] = null;
+
             if (res.code && res.code != 200) {
               $('#errorMessage').html(res.response.data);
               $('#errorMessage').removeClass('d-none');

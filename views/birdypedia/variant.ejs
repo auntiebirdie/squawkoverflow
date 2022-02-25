@@ -5,18 +5,18 @@
   <div id="form" class="row">
     <div class="col-12 col-md-8 mb-4">
       <h5><label for="form-prefix">Identifier</label></h5>
-      <input type="text" id="form-prefix" class="form-control mb-3 d-inline w-25" value="<%= variant?.prefix %>">
+      <input type="text" id="form-prefix" class="form-control mb-3 d-inline w-25" value="<%= variant?.prefix %>" <%= loggedInUser.admin ? '' : 'disabled' %>>
        —
-      <input type="text" id="form-alias" class="form-control mb-3 d-inline w-25" value="<%= variant?.alias %>">
+      <input type="text" id="form-alias" class="form-control mb-3 d-inline w-25" value="<%= variant?.alias %>" <%= loggedInUser.admin ? '' : 'disabled' %>>
 
       <h5><label for="form-url" >Image URL</label></h5>
-      <input type="text" id="form-url" class="form-control mb-3 w-100">
+      <input type="text" id="form-url" class="form-control mb-3 w-100" value="<%= variant?.image %>" <%= loggedInUser.admin ? '' : 'disabled' %>>
 
       <h5><label for="form-source">Source</label></h5>
-      <input type="text" id="form-source" class="form-control mb-3 w-100" value="<%= variant?.source %>">
+      <input type="text" id="form-source" class="form-control mb-3 w-100" value="<%= variant?.source %>" <%= loggedInUser.admin ? '' : 'disabled' %>>
 
       <h5><label for="form-credit">Credit</label></h5>
-      <input type="text" id="form-credit" class="form-control mb-3 w-100" value="<%= variant?.credit %>">
+      <input type="text" id="form-credit" class="form-control mb-3 w-100" value="<%= variant?.credit %>" <%= loggedInUser.admin ? '' : 'disabled' %>>
 
       <div class="row mb-3">
         <div class="col-6">
@@ -31,7 +31,7 @@
 
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="checkbox" id="form-special" <%= variant?.special ? 'checked' : '' %>>
-        <label class="form-check-label" for="form-special">
+        <label class="form-check-label" for="form-special" <%= loggedInUser.admin ? '' : 'disabled' %>>
             Special (not available through hatching)
         </label>
       </div>

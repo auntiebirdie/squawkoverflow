@@ -27,7 +27,8 @@ router.get('/eggs/:letter([A-Za-z]{1})?', async (req, res) => {
 
   API.call('eggs', 'GET', {
     loggedInUser: req.session.user,
-    firstLetter: letter
+    search: letter,
+    include: ['memberData']
   }).then((eggs) => {
     res.render('birdypedia/eggs', {
       page: "birdypedia",
@@ -50,7 +51,7 @@ router.get('/eggs/:egg', async (req, res) => {
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
         sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
-	filters: ['unwishlisted-My', 'wanted-My', 'needed-My'],
+        filters: ['unwishlisted-My', 'wanted-My', 'needed-My'],
         extraFilters: ['unhatched-My', 'isolated-My', 'duplicated-My', 'somewhere']
       });
     } else {
@@ -67,7 +68,7 @@ router.get('/bird/:code/variant/:variant', Middleware.isContributor, async (req,
     if (bird) {
       res.render('birdypedia/variant', {
         bird: bird,
-	variant: bird.variants.find((variant) => `${variant.prefix}-${variant.alias}` == req.params.variant)
+        variant: bird.variants.find((variant) => `${variant.prefix}-${variant.alias}` == req.params.variant)
       });
     } else {
       res.redirect('/birdypedia');
@@ -80,15 +81,22 @@ router.get('/bird/:code', async (req, res) => {
     loggedInUser: req.session.user,
     speciesCode: req.params.code,
     include: ['members']
-  }).then((bird) => {
+  }).then(async (bird) => {
     if (bird && bird.variants.length > 0) {
-	    console.log(bird.variants);
       bird.variants.sort((a, b) => req.query.variant == `${a.prefix}-${a.alias}` ? -1 : 1);
+
+      let eggs = [];
+
+      if (req.session.user && (req.session.loggedInUser.admin || req.session.loggedInUser.contributor)) {
+
+        eggs = await API.call('eggs', 'GET');
+      }
 
       res.render('birdypedia/bird', {
         page: 'birdypedia/bird',
         bird: bird,
-        sidebar: 'bird'
+        sidebar: 'bird',
+        eggs: eggs
       });
     } else {
       res.redirect('/birdypedia');

@@ -4,6 +4,7 @@ const {
 
 const Bird = require('../models/bird.js');
 const Database = require('../helpers/database.js');
+const Member = require('../models/member.js');
 const Webhook = require('../helpers/webhook.js');
 const Variant = require('../models/variant.js');
 
@@ -17,6 +18,14 @@ module.exports = async (req, res) => {
     case "POST":
       var existing = null;
       var data = req.body;
+
+      var member = new Member(req.body.loggedInUser);
+
+      await member.fetch();
+
+      if (!member.admin && !member.contributor) {
+        return res.sendStatus(403);
+      }
 
       switch (data.url.split('.').pop().toLowerCase()) {
         case 'png':
@@ -36,13 +45,21 @@ module.exports = async (req, res) => {
 
       if (existing) {
         var key = existing.id;
-        await Database.query('UPDATE squawkdata.variants SET source = ?, species = ?, subspecies = ?, credit = ?, special = ?, filetype = ?, label = ? WHERE id = ?', [data.source, data.species, data.subspecies, data.credit, data.special, data.filetype, data.label, key]);
+        if (member.admin) {
+          await Database.query('UPDATE squawkdata.variants SET source = ?, subspecies = ?, credit = ?, special = ?, filetype = ?, label = ? WHERE id = ?', [data.source, data.subspecies, data.credit, data.special, data.filetype, data.label, key]);
+        } else {
+          await Database.query('UPDATE squawkdata.variants SET subspecies = ?, label = ? WHERE id = ?', [data.subspecies, data.label, key]);
+        }
       } else {
         var key = uuid.generate();
-        await Database.query('INSERT INTO squawkdata.variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [key, data.prefix, data.alias, data.species, data.subspecies, data.label, data.credit, data.source, data.url, data.filetype, true, data.special]);
+        if (member.admin) {
+          await Database.query('INSERT INTO squawkdata.variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [key, data.prefix, data.alias, data.species, data.subspecies, data.label, data.credit, data.source, data.url, data.filetype, true, data.special]);
+        } else {
+          return res.sendStatus(403);
+        }
       }
 
-      if (data.url) {
+      if (data.url && !data.url.startsWith('https://storage.googleapis.com/squawkoverflow') && member.admin) {
         let bird = new Bird(data.species);
 
         await bird.fetch();

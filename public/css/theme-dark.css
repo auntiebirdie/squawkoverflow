@@ -15,7 +15,8 @@
 .birdymessage,
 .form-control, .form-check-input, .form-select,
 .dropdown-menu,
-span.twitter-typeahead .tt-menu {
+span.twitter-typeahead .tt-menu,
+.ss-main {
         filter: brightness(.80);
 }
 
