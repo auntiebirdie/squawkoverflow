@@ -82,6 +82,7 @@ router.get('/bird/:code', async (req, res) => {
     include: ['members']
   }).then((bird) => {
     if (bird && bird.variants.length > 0) {
+	    console.log(bird.variants);
       bird.variants.sort((a, b) => req.query.variant == `${a.prefix}-${a.alias}` ? -1 : 1);
 
       res.render('birdypedia/bird', {

@@ -199,6 +199,10 @@ img {
   display: none;
 }
 
+#navbar h2 {
+	font-size: 1.9em;
+}
+
 #navbar h2 a {
 	color: var(--bs-body-color) !important;
 }

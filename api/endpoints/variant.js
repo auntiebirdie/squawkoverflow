@@ -4,6 +4,8 @@ const {
 
 const Bird = require('../models/bird.js');
 const Database = require('../helpers/database.js');
+const Webhook = require('../helpers/webhook.js');
+const Variant = require('../models/variant.js');
 
 const storage = new Storage();
 const bucket = storage.bucket('squawkoverflow');
@@ -13,8 +15,8 @@ const uuid = require('short-uuid');
 module.exports = async (req, res) => {
   switch (req.method) {
     case "POST":
-      let existing = null;
-      let data = req.body;
+      var existing = null;
+      var data = req.body;
 
       switch (data.url.split('.').pop().toLowerCase()) {
         case 'png':
@@ -26,7 +28,7 @@ module.exports = async (req, res) => {
 
       if (data.id) {
         existing = await Database.query('SELECT * FROM variants WHERE id = ?', [data.id]).then(([result]) => result);
-      } else (data.alias == 'NUM') {
+      } else if (data.alias == 'NUM') {
         data.alias = await Database.query('SELECT COUNT(*) AS total FROM variants WHERE prefix = ?', [data.prefix]).then(([result]) => result.total + 1);
       } else {
         existing = await Database.query('SELECT * FROM variants WHERE prefix = ? AND alias = ?', [data.prefix, data.alias]).then(([result]) => result);
@@ -44,10 +46,6 @@ module.exports = async (req, res) => {
         let bird = new Bird(data.species);
 
         await bird.fetch();
-
-        console.log(data);
-        console.log(bird);
-        console.log(key);
 
         let file = bucket.file(`${bird.order}/${bird.family}/${bird.scientificName}/${key}.${data.filetype}`);
 
@@ -67,6 +65,48 @@ module.exports = async (req, res) => {
             .quality(90)
             .getBuffer(Jimp[`MIME_${mimes[data.filetype]}`], async (err, buff) => {
               await file.save(buff);
+
+              let variant = new Variant(key);
+
+              await variant.fetch({
+                bird: bird
+              });
+
+              if (!existing && !variant.special) {
+                let fields = [];
+
+                if (data.subspecies) {
+                  fields.push({
+                    name: 'Subspecies',
+                    value: data.subspecies,
+                    inline: true
+                  });
+                }
+
+                if (data.label) {
+                  fields.push({
+                    name: 'Label',
+                    value: data.label,
+                    inline: true
+                  });
+                }
+
+                Webhook('updates', {
+                  content: "A new variant has been added!",
+                  embeds: [{
+                    title: bird.commonName,
+                    url: `https://squawkoverflow.com/birdypedia/bird/${data.species}?variant=${data.prefix}-${data.alias}`,
+                    fields: fields,
+                    image: {
+                      url: variant.image
+                    },
+                    author: {
+                      name: `© ${data.credit}`,
+                      url: data.source
+                    }
+                  }]
+                });
+              }
 
               res.json(`${data.prefix}-${data.alias}`);
             });
