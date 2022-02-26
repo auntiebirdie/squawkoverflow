@@ -67,6 +67,17 @@ class Search {
         }
       }
 
+      if (input.flocks) {
+        if (input.flocks.includes("NONE")) {
+          filters.push('birdypets.id NOT IN (SELECT a.birdypet FROM birdypet_flocks AS a)');
+        } else {
+          for (let flock of input.flocks) {
+            filters.push('birdypets.id IN (SELECT a.birdypet FROM birdypet_flocks AS a WHERE a.flock = ?)');
+            params.push(flock);
+	  }
+        }
+      }
+
       if (input.adjectives) {
         query += ' JOIN species_adjectives ON (species.code = species_adjectives.species)';
         filters.push('species_adjectives.adjective = ?');

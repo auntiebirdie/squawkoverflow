@@ -44,7 +44,7 @@
     <option value="">[ALL]</option>
     <% for (var family of allFamilies) { %>
      <% if (families.includes(family.name)) { %>
-      <option value="<%= family.name %>" <%= locals.selectedFamily && selectedFamily.toLowerCase() == family.name.toLowerCase() ? "selected" : "" %>>
+      <option value="<%= family.name %>">
         <%= family.display %>
       </option>
      <% } %>
@@ -53,18 +53,23 @@
 <% } %>
 
 <% if (locals.flocks) { %>
-  <h5>Flock</h5>
-  <select id="flock" class="form-select mb-4">
-    <option value="">[ALL]</option>
-    <option value="NONE">[FLOCKLESS]</option>
+  <h5>Flocks</h5>
+  <select id="flocks" multiple>
+    <option data-placeholder="true">[ALL]</option>
+    <option value="NONE">[NONE]</option>
    <% for (var flock of flocks) { %>
-    <% if ((locals.loggedInUser && member.id == loggedInUser.id) || !flock.private) { %>
-     <option value="<%= flock.id %>" <%= locals.selectedFlock && selectedFlock == flock.id ? "selected" : "" %>>
-       <%= flock.name %>
-     </option>
-    <% } %>
+    <option value="<%= flock.id %>"><%= flock.name %></option>
    <% } %>
   </select>
+
+  <div class="mb-4"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.27.1/slimselect.min.js"></script>
+  <script type="text/javascript">
+    new SlimSelect({
+      select: '#flocks'
+    });
+  </script>
 <% } %>
 
 <% if (locals.artists) { %>
