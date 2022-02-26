@@ -21,9 +21,9 @@ router.get('/login', (req, res) => {
       req.session.save((err) => {
         res.redirect('/');
       });
-    }).catch( (err) => {
-	    console.log(err);
-	    res.redirect('/');
+    }).catch((err) => {
+      console.log(err);
+      res.redirect('/');
     });
   } else {
     var redirectUri = process.env.DEV ? 'http%3A%2F%2Fdev.squawkoverflow.com' : 'https%3A%2F%2Fsquawkoverflow.com';

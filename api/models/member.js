@@ -76,6 +76,11 @@ class Member {
             this.title = this.tier.name;
           }
 
+          // TODO : clean up this mess
+          var pronouns = require('../data/pronouns.json');
+
+          this.preferredPronoun = pronouns["they"];
+
           if (typeof member.pronouns == "string") {
             try {
               this.pronouns = JSON.parse(member.pronouns);
@@ -96,6 +101,14 @@ class Member {
             });
 
             this.pronouns = tmp;
+          }
+
+
+          for (let key in this.pronouns) {
+            if (this.pronouns[key] == "yes") {
+              this.preferredPronoun = pronouns[key];
+              break;
+            }
           }
 
           let inactiveMonths = new Date().setMonth(new Date().getMonth() - 3);

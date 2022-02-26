@@ -59,6 +59,7 @@ router.get('/:birdypet', async (req, res) => {
   });
 
   res.render('birdypet/birdypet', {
+    title: birdypet.nickname ? birdypet.nickname : `${member.username}'s ${birdypet.bird.commonName}`,
     page: 'birdypet',
     birdypet: birdypet,
     member: member,

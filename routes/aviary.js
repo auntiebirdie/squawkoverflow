@@ -6,12 +6,13 @@ const router = express.Router();
 router.get('/:member', async (req, res, next) => {
   let member = await API.call('member', 'GET', {
     id: req.params.member,
-    include: ['flocks', 'families']
+    include: ['flocks', 'families', 'totals']
   });
 
   var families = await API.call('families', 'GET');
 
   res.render('aviary/index', {
+    title : `Aviary | ${member.username}`,
     page: 'aviary',
     member: member,
     allFamilies: families,

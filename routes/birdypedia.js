@@ -10,6 +10,7 @@ router.get('/', async (req, res) => {
   var artists = await API.call('artists', 'GET');
 
   res.render('birdypedia', {
+    title: 'Birdypedia',
     page: 'birdypedia',
     allFamilies: families,
     families: families.map((family) => family.name),
@@ -23,7 +24,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/eggs/:letter([A-Za-z]{1})?', async (req, res) => {
-  var letter = req.params.letter ? req.params.letter.toLowerCase() : 'a';
+  var letter = req.params.letter ? req.params.letter.toUpperCase() : 'A';
 
   API.call('eggs', 'GET', {
     loggedInUser: req.session.user,
@@ -31,9 +32,10 @@ router.get('/eggs/:letter([A-Za-z]{1})?', async (req, res) => {
     include: ['memberData']
   }).then((eggs) => {
     res.render('birdypedia/eggs', {
+      title: `Eggs - ${letter} | Birdypedia`,
       page: "birdypedia",
       eggs: eggs,
-      selectedLetter: letter.toUpperCase(),
+      selectedLetter: letter,
       sidebar: "eggs"
     });
   });
@@ -46,6 +48,7 @@ router.get('/eggs/:egg', async (req, res) => {
   }).then((egg) => {
     if (egg) {
       res.render('birdypedia/egg', {
+        title: `${egg.adjective.charAt(0).toUpperCase() + egg.adjective.slice(1)} Egg | Birdypedia`,
         page: 'birdypedia',
         egg: egg,
         currentPage: (req.query.page || 1) * 1,
@@ -71,7 +74,7 @@ router.get('/bird/:code/variant/:variant', Middleware.isContributor, async (req,
         variant: bird.variants.find((variant) => `${variant.prefix}-${variant.alias}` == req.params.variant)
       });
     } else {
-      res.redirect('/birdypedia');
+      res.redirect(`/birdypedia/bird/${req.params.code}`);
     }
   });
 });
@@ -88,11 +91,11 @@ router.get('/bird/:code', async (req, res) => {
       let eggs = [];
 
       if (req.session.user && (req.session.loggedInUser.admin || req.session.loggedInUser.contributor)) {
-
         eggs = await API.call('eggs', 'GET');
       }
 
       res.render('birdypedia/bird', {
+        title: `${bird.commonName} | Birdypedia`,
         page: 'birdypedia/bird',
         bird: bird,
         sidebar: 'bird',
