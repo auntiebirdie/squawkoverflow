@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get('/', Middleware.isLoggedIn, async (req, res) => {
   res.render('freebirds/index', {
+    title: 'Free Birds',
     page: 'freebirds',
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',

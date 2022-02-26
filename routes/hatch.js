@@ -13,6 +13,7 @@ router.get('/', async (req, res) => {
         include: ['hasIncubator']
       }).then((member) => {
         return res.render('hatch/index', {
+		title: 'Hatch an Egg',
           eggs: response,
           hasIncubator: member.hasIncubator
         });
@@ -28,10 +29,13 @@ router.get('/', async (req, res) => {
         case "403":
           if (err.response.data.timeUntil > 0) {
             return res.render('hatch/timer.ejs', {
+		    title: 'Hatch an Egg',
               timeUntil: err.response.data.timeUntil
             });
           } else if (err.response.data.aviaryFull) {
-            return res.render('hatch/full.ejs');
+            return res.render('hatch/full.ejs', {
+		    title: 'Hatch an Egg'
+	    });
           } else {
             return res.redirect('/error');
           }
@@ -47,6 +51,7 @@ router.get('/incubator', (req, res) => {
     loggedInUser: req.session.user
   }).then((eggs) => {
     return res.render('hatch/incubator', {
+	    title: 'Incubator',
       eggs: eggs
     });
   });

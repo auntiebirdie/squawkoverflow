@@ -51,6 +51,7 @@ router.get('/:member', async (req, res, next) => {
   }
 
   res.render('wishlist/index', {
+    title: `Wishlist | ${member.username}`,
     page: 'wishlist',
     member: member,
     allFamilies: await API.call('families', 'GET'),

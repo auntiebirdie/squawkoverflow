@@ -117,6 +117,7 @@ app.use('/api', require('./routes/api.js'));
 app.use('*', (req, res) => {
   res.status(404);
   res.render('error/404', {
+    title: 'S Q U A W K ? !',
     error: true
   });
 });
