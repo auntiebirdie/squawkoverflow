@@ -41,4 +41,22 @@ router.get('/privacy-policy', (req, res) => {
   res.render('home/privacy');
 });
 
+router.get('/oembed', async (req, res) => {
+  var json = {
+    version: '1.0',
+    provider_name: 'SQUAWKoverflow',
+    provider_url: 'https://squawkoverflow.com',
+  };
+
+  if (req.query.data) {
+    json = {
+      ...json,
+      ...JSON.parse(req.query.data)
+    }
+
+  }
+
+  res.json(json);
+});
+
 module.exports = router;

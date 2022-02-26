@@ -100,7 +100,6 @@ app.use(async function(req, res, next) {
 });
 
 app.use('/', require('./routes/home.js'));
-app.use('/oembed', require('./routes/oembed.js'));
 app.use('/hatch', require('./routes/hatch.js'));
 app.use('/birdypet', require('./routes/birdypet.js'));
 app.use('/aviary', require('./routes/aviary.js'));
