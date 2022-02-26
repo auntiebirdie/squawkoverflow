@@ -18,7 +18,11 @@
     var preset = Object.fromEntries(urlParams.entries());
 
     for (var key in preset) {
-      $(`#${key}`).val(preset[key]);
+      if (document.getElementById(key).slim) {
+        document.getElementById(key).slim.set(preset[key].split(','));
+      } else {
+        $(`#${key}`).val(preset[key]);
+      }
     }
 
     updateResults();
@@ -58,25 +62,50 @@
     container.classList.add('loadingData');
 
     var sort = $('#sort option:selected');
-    var flock = $('#flock option:selected');
+    var search = $('#search').val().trim();
+    var flocks = $('#flocks').val();
 
     <% if (!locals.skipParams) { %>
       <% if (locals.paginate) { %>
-        urlParams.set('page', currentPage);
+        if (currentPage > 1) {
+          urlParams.set('page', currentPage);
+        }
+        else {
+          urlParams.delete('page');
+        }
       <% } %>
 
-    $('select', '#sidebar').each( (i, select) => {
-      var value = select.options[select.options.selectedIndex].value;
+    if (search) {
+      urlParams.set('search', search);
+    }
+    else {
+      urlParams.delete('search');
+    }
 
-      if (value) {
-        urlParams.set(select.id, select.options[select.options.selectedIndex].value);
+    $('select', '#sidebar').each( (i, select) => {
+      if (select.multiple) {
+        var values = $(select).val();
+
+        if (values.length > 0) {
+          urlParams.set(select.id, values.join(','));
+        }
+        else {
+          urlParams.delete(select.id);
+        }
       }
       else {
-        urlParams.delete(select.id);
+        var value = select.options[select.options.selectedIndex].value;
+
+        if (value && value != select.options[0].value) {
+          urlParams.set(select.id, select.options[select.options.selectedIndex].value);
+        }
+        else {
+          urlParams.delete(select.id);
+        }
       }
     });
 
-    window.history.replaceState(null, '', window.location.pathname + '?' + urlParams.toString());
+    window.history.replaceState(null, '', window.location.pathname + (urlParams.toString() ? ('?' + urlParams.toString()) : ''));
     <% } %>
 
     $.ajax({
@@ -85,11 +114,11 @@
           page: currentPage * 1,
           sort: sort.val() && sort.val().includes('-') ? sort.val().split('-').shift() : sort.val(),
           sortDir: sort.val() && sort.val().includes('-') ? sort.val().split('-').pop() : 'ASC',
-          search : $('#search').val(),
+          search : search,
           <%- locals.filters ? `filters : Array.from($('input:checked', '#filters')).map((checkbox) => checkbox.value),` : '' %>
           <%- locals.extraFilters ? `extraFilters: Array.from($('input:checked', '#extraFilters')).map((checkbox) => checkbox.value),` : '' %>
           <%- locals.families ? `family : $('#family').is(':visible') ? $('#family').val() : '',` : '' %>
-          <%- locals.flocks ? `flock : flock && !flock.attr('data-special') ? flock.val() : '',` : '' %>
+          <%- locals.flocks ? `flocks : flocks ? flocks : '',` : '' %>
           <%- locals.artists ? `artist : $('#artist').is(':visible') ? $('#artist').val() : '',` : '' %>
           <%- locals.page == 'wishlist' ? `intensity: Array.from($('input:checked', '#intensity')).map((checkbox) => checkbox.value),` : '' %>
           <%- locals.egg ? `adjectives : "${egg.adjective}",` : '' %>
@@ -166,7 +195,7 @@
       pagination.innerHTML = content;
 
       if (totalResults != null) {
-        pagination.nextElementSibling.innerHTML = `${totalResults.toLocaleString("en-US")} <%= locals.noun ? noun : 'result' %>s found`;
+        pagination.nextElementSibling.innerHTML = `${totalResults.toLocaleString("en-US")} <%= locals.noun ? noun : 'bird' %>s found`;
       }
       else {
         pagination.nextElementSibling.innerHTML = '';
