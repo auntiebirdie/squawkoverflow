@@ -10,12 +10,15 @@ router.get('/', Middleware.isLoggedIn, async (req, res) => {
   });
 
   res.render('flocks/index', {
+    title: 'My Flocks',
     flocks: flocks
   });
 });
 
 router.get('/new', Middleware.isLoggedIn, async (req, res) => {
-  res.render('flocks/new');
+  res.render('flocks/new', {
+    title: 'New Flock'
+  });
 });
 
 router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
@@ -33,6 +36,7 @@ router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
   });
 
   res.render('flocks/manage', {
+    title: `Manage ${flock.name} | Flocks`,
     page: "manageFlock",
     member: member,
     flock: flock,
@@ -48,16 +52,15 @@ router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
 router.get('/:flock', async (req, res) => {
   let flock = await API.call('flock', 'GET', {
     id: req.params.flock,
-    include: ['families']
+    include: ['families', 'totals']
   });
 
   let member = await API.call('member', 'GET', {
     id: flock.member
   });
 
-  console.log(flock.families);
-
   res.render('flocks/flock', {
+    title: `${flock.name} | ${member.username}`,
     page: 'flock',
     member: member,
     flock: flock,

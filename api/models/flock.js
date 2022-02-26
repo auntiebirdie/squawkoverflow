@@ -45,14 +45,27 @@ class Flock {
 
           this.descriptionHTML = this.description.replace(/\</g, '&lt;').replace(/\>g/, '&gt;').replace(/(\bhttps?:\/\/(www.)?(twitter|instagram|youtube|youtu.be|tumblr|facebook)[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim, '<a href="$1" target="_blank">$1</a>');
 
-          this.families = await Database.query(`
-	  SELECT DISTINCT species.family
-	  FROM birdypets
-	  JOIN variants ON (birdypets.variant = variants.id)
-	  JOIN species ON (variants.species = species.code)
-	  JOIN birdypet_flocks ON (birdypets.id = birdypet_flocks.birdypet)
-	  WHERE birdypet_flocks.flock = ?
-	  `, [this.id]).then((results) => results.map((result) => result.family));
+          for (let include of params.include || []) {
+            switch (include) {
+              case 'families':
+                this.families = await Database.query(`
+                  SELECT DISTINCT species.family
+                  FROM birdypets
+                  JOIN variants ON (birdypets.variant = variants.id)
+                  JOIN species ON (variants.species = species.code)
+                  JOIN birdypet_flocks ON (birdypets.id = birdypet_flocks.birdypet)
+                  WHERE birdypet_flocks.flock = ?
+                  `, [this.id]).then((results) => results.map((result) => result.family));
+                break;
+              case 'totals':
+                this.totals = {
+                  birdypets: await Database.count('birdypet_flocks', {
+                    flock: this.id
+                  })
+                };
+                break;
+            }
+          }
 
           resolve(this);
         }

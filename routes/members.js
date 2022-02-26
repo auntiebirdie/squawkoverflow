@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   res.render('members/index', {
+    title: 'Members',
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
     sortFields: ['username-ASC', 'username-DESC', 'aviary-DESC', 'aviary-ASC', 'joinedAt-DESC', 'joinedAt-ASC']
@@ -25,6 +26,7 @@ router.get('/:member', async (req, res) => {
 
     API.call('families', 'GET').then((allFamilies) => {
       res.render('members/member', {
+        title: `${member.username} | Members`,
         page: 'member',
         member: member,
         allFamilies: allFamilies,
@@ -56,7 +58,7 @@ router.get('/:member/gift', Middleware.isLoggedIn, async (req, res) => {
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
         sortFields: ['hatchedAt-DESC', 'hatchedAt-ASC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
-	filters: ['wanted-Their', 'needed-Their'],
+        filters: ['wanted-Their', 'needed-Their'],
         extraFilters: ['unhatched-Their', 'duplicated-My']
       });
     });
