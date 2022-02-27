@@ -1,8 +1,8 @@
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 
+const Bird = require('../models/bird.js');
 const Member = require('../models/member.js');
-const Variant = require('../models/variant.js');
 
 const {
   Storage
@@ -59,24 +59,19 @@ module.exports = async (req, res) => {
       break;
     case "POST":
       var birdypets = [];
-      var species = await Database.query('SELECT species FROM species_adjectives WHERE adjective = ? ORDER BY RAND() LIMIT 10', [req.body.egg]);
+      var hatched = await Database.query('SELECT species FROM species_adjectives WHERE adjective = ? AND species IN (SELECT species FROM variants) ORDER BY RAND() LIMIT 1', [req.body.egg]);
 
-      if (species.length > 0) {
-        for (let bird of species) {
-          try {
-            var variant = new Variant(await Database.query('SELECT id FROM variants WHERE species = ? AND special = FALSE ORDER BY RAND() LIMIT 1', [bird.species]).then((result) => result.id));
+      if (hatched) {
+        var bird = new Bird(hatched.species);
 
-            break;
-          } catch (err) {
-            continue;
-          }
-        }
+        await bird.fetch({
+          member: req.body.loggedInUser,
+          include: ['memberData', 'variants']
+        });
 
-        await variant.fetch();
+        bird.variants = bird.variants.filter((variant) => !variant.special);
 
-        await variant.fetchMemberData(req.body.loggedInUser);
-
-        return res.status(200).json(variant);
+        return res.status(200).json(bird);
       } else {
         return res.sendStatus(404);
       }

@@ -1,68 +1,67 @@
 <script type="text/javascript">
-  var egg, variant;
+  var egg, bird;
 
   $(document).ready(function () {
     var eggs = document.getElementById('eggs');
     var hatched = document.getElementById('hatched');
     var actions = document.getElementById('actions');
+    var birdy = document.getElementById('birdy');
 
     $(eggs).one('click', 'a[data-egg]', function (e) {
       egg = e.currentTarget.getAttribute('data-egg');
 
       eggs.classList.add('loadingData');
 
-      $.ajax({
-        cache: false,
-        url: '<%= page == 'incubate' ? '/api/incubate' : '/api/hatch' %>',
-        data: JSON.stringify({
-          egg : egg
-        }),
-        dataType: "json",
-        contentType: 'application/json',
-        method: "POST",
-        success: function(data) {
-          variant = data;
+      API.call('<%= page == 'incubate' ? 'incubate' : 'hatch' %>', 'POST', { egg : egg }, function (data) {
+       <% if (page == 'hatch') { %>
+        bird = data;
+        hatched.querySelector('h1').innerHTML = hatched.querySelector('h1').innerHTML.replace('%adjective%', egg);
+       <% } else { %>
+         bird = data.bird;
+         bird.variants = [data];
+       <% } %>
 
-         <% if (page == 'hatch') { %>
-          hatched.querySelector('h1').innerHTML = hatched.querySelector('h1').innerHTML.replace('%adjective%', egg);
-         <% } %>
-          hatched.querySelector('img').setAttribute('src', variant.image);
+        birdy.setAttribute('src', bird.variants[0].image);
+        birdy.setAttribute('data-id', bird.variants[0].id);
 
-          var h3 = hatched.querySelector('h3').querySelector('a');
-          h3.setAttribute('href', `/birdypedia/bird/${variant.bird.code}`);
-          h3.innerHTML = variant.bird.commonName;
+        var birdDisplay = document.getElementById('birdDisplay');
 
-          var h5 = hatched.querySelector('h5');
-          // add label to returned data
-
-          var h6 = hatched.querySelector('h6');
-          var text = "";
-
-          if (variant.owned > 1) {
-            text += `<div><span class="checkplus"></span> <em>You have more than one of this species</em></div>`;
-          }
-          else if (variant.owned == 1) {
-            text += `<div><span class="checkmark"></span> <em>You have this species</em></div>`;
-          }
-
-          if (variant.wishlisted) {
-            switch (variant.wishlisted) {
-              case 2:
-                text += `<div>🌟 <em>You need this bird!</em></div>`;
-                break;
-              case 1:
-                text += `<div>❤️ <em>You want this bird!</em></div>`;
-            }
-          }
-
-          h6.innerHTML = text;
-
-          eggs.classList.remove('loadingData');
-          eggs.classList.add('d-none');
-
-          hatched.classList.remove('d-none');
+        if (bird.variants.length > 1) {
+          birdDisplay.innerHTML = bird.variants.map(function (variant) { return '<div data-id="' + variant.id + '" data-image="' + variant.image + '" class="birdypet mini checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" style="background-image: url(' + variant.image + ')"></div>'; }).join("");
         }
+        else {
+          birdDisplay.innerHTML = '';
+        }
+
+        var h3 = hatched.querySelector('h3').querySelector('a');
+        h3.setAttribute('href', `/birdypedia/bird/${bird.code}`);
+        h3.innerHTML = bird.commonName;
+
+        var h6 = hatched.querySelector('h6');
+
+        if (bird.wishlisted) {
+          switch (variant.wishlisted) {
+            case 2:
+              h6.innerHTML = `<div>🌟 <em>You need this bird!</em></div>`;
+              break;
+            case 1:
+              h6.innerHTML = `<div>❤️ <em>You want this bird!</em></div>`;
+              break;
+           }
+        }
+
+        eggs.classList.remove('loadingData');
+        eggs.classList.add('d-none');
+
+        hatched.classList.remove('d-none');
       });
+    });
+
+    $('#hatched').on('click', '.birdypet.mini', function (event) {
+      var variant = event.target;
+
+      birdy.src = variant.getAttribute('data-image');
+      birdy.setAttribute('data-id', variant.getAttribute('data-id'));
     });
 
     $(actions).on('click', '[data-action]', function (e) {
@@ -80,7 +79,7 @@
               cache: false,
               url: `/api/collect`,
               data: JSON.stringify({
-                variant: variant.id,
+                variant: hatched.querySelector('img').getAttribute('data-id'),
                 adjective : egg
               }),
               dataType: "json",
@@ -101,7 +100,7 @@
               cache: false,
               url: `/api/release`,
               data: JSON.stringify({
-                variant : variant.id
+                variant : hatched.querySelector('img').getAttribute('data-id')
               }),
               dataType: "json",
               contentType: 'application/json',
@@ -117,7 +116,7 @@
               url: '/api/gift',
               data: JSON.stringify({
                 member : selectedMember.id,
-                variant : variant.id
+                variant : hatched.querySelector('img').getAttribute('data-id')
               }),
               dataType: "json",
               contentType: 'application/json',
