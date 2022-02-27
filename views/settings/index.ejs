@@ -43,6 +43,15 @@
         <div class="form-inline">
           Display the title 
           <span>
+            <select name="rank" id="rank" class="form-select d-inline-block w-auto">
+             <% for (let rank of member.ranks) { %>
+               <option value="<%= rank.id %>" <%= rank.selected ? 'selected' : '' %> <%= rank.disabled ? 'disabled' : '' %>>
+                 <%= rank.label %>
+               </option>
+             <% } %>
+            </select>
+          </span>
+          <span>
             <select name="title" id="title" class="form-select d-inline-block w-auto">
              <% for (let tier of tiers) { %>
               <option value="<%= tier.id %>" <%= tier.id == loggedInUser.settings.title ? "selected" : "" %>><%= tier.name %></option>
