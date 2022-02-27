@@ -185,23 +185,69 @@ class Member {
               case 'rank':
                 let total = this.aviary ? this.aviary : await Counters.get('aviary', this.id, 'total');
 
-                if (total > 10000) {
-                  this.rank = 'Ultimate';
-                } else if (total > 5000) {
-                  this.rank = 'Penultimate';
-                } else if (total > 2500) {
-                  this.rank = 'Superb';
-                } else if (total > 1000) {
-                  this.rank = 'Greater';
-                } else if (total > 500) {
-                  this.rank = 'Dedicated';
-                } else if (total > 100) {
-                  this.rank = 'Novice';
-                } else if (total > 0) {
-                  this.rank = 'Beginner';
-                } else {
-                  this.rank = 'Aspiring';
+                this.ranks = [{
+                  id: 'ultimate',
+                  label: 'Ultimate',
+                  minimum: 10000
+                }, {
+                  id: 'penultimate',
+                  label: 'Penultimate',
+                  minimum: 5000
+                }, {
+                  id: 'superb',
+                  label: 'Superb',
+                  minimum: 2500
+                }, {
+                  id: 'greater',
+                  label: 'Greater',
+                  minimum: 1000
+                }, {
+                  id: 'dedicated',
+                  label: 'Dedicated',
+                  minimum: 500
+                }, {
+                  id: 'novice',
+                  label: 'Novice',
+                  minimum: 100
+                }, {
+                  id: 'beginner',
+                  label: 'Beginner',
+                  minimum: 1
+                }, {
+                  id: 'aspiring',
+                  label: 'Aspiring',
+                  minimum: 0
+                }, {
+                  id: 'highest',
+                  label: '(highest available)',
+                  minimum: 0
+                }, {
+                  id: 'none',
+                  label: '(none)',
+                  minimum: 0
+                }].map((rank) => {
+                  return {
+                    id: rank.id,
+                    label: total < rank.minimum ? `${rank.label} (${rank.minimum}+ birds)` : rank.label,
+                    selected: (this.settings.rank || 'highest') == rank.id,
+                    disabled: total < rank.minimum
+                  }
+                });
+
+                this.rank = this.ranks.find((rank) => rank.selected);
+
+                switch (this.rank.id) {
+                  case 'highest':
+                    this.rank = this.ranks.find((rank) => !rank.disabled).label;
+                    break;
+                  case 'none':
+                    this.rank = "";
+                    break;
+                  default:
+                    this.rank = this.rank.label;
+                    break;
                 }
+
                 break;
               case 'totals':
                 this.totals = {
