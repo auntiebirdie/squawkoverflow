@@ -96,7 +96,7 @@ router.get('/bird/:code', async (req, res) => {
         title: `${bird.commonName} | Birdypedia`,
         page: 'birdypedia/bird',
         bird: bird,
-	variant: bird.variants.find((variant) => `${variant.prefix}-${variant.alias}` == req.query.variant) || bird.variants[0],
+	variant: bird.variants.find((variant) => `${variant.prefix}-${variant.alias}` == req.query.variant) || bird.variants.find((variant) => variant.hatched) || bird.variants[0],
         sidebar: 'bird',
         eggs: eggs
       });
