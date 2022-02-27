@@ -69,6 +69,8 @@ module.exports = async (req, res) => {
           include: ['memberData', 'variants']
         });
 
+        bird.variants = bird.variants.filter((variant) => !variant.special);
+
         return res.status(200).json(bird);
       } else {
         return res.sendStatus(404);
