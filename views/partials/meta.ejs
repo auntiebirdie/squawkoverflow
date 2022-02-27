@@ -46,9 +46,9 @@
   <% oembed.author_name = 'Birdypedia' %>
   <% oembed.author_url = 'https://squawkoverflow.com/birdypedia' %>
   <meta property="og:title" content="<%= bird.commonName %>">
-  <meta property="og:image" content="<%= bird.variants[0].image %>">
+  <meta property="og:image" content="<%= variant.image %>">
   <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:image" content="<%= bird.variants[0].image %>">
+  <meta property="twitter:image" content="<%= variant.image %>">
 
  <% } else if (locals.page == 'freebirds') { %>
 

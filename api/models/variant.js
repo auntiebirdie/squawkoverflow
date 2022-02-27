@@ -11,6 +11,12 @@ class Variant {
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
       Database.getOne('variants', { id : this.id }).then( async (variant) => {
+        for (let key in variant) {
+          if (!params.fields || params.fields.includes(key)) {
+            this[key] = variant[key];
+          }
+        }
+
         let bird = null;
 
         if (!params.bird) {
@@ -22,15 +28,6 @@ class Variant {
         } else {
           bird = params.bird;
         }
-
-        this.prefix = variant.prefix;
-        this.alias = variant.alias;
-        this.label = variant.label;
-	this.subspecies = variant.subspecies;
-        this.credit = variant.credit;
-        this.source = variant.source;
-        this.special = variant.special == '1';
-	this.filetype = variant.filetype;
 
         this.image = `https://storage.googleapis.com/squawkoverflow/${bird.order}/${bird.family}/${bird.scientificName.replace(/\s/g, '%20')}/${this.id}.${variant.filetype ? variant.filetype : "jpg"}`;
 

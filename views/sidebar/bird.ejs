@@ -15,18 +15,17 @@
         </h5>
         <div id="birdDisplay">
         <% for (var variant of bird.variants) { %>
-          <div class="row mb-2">
+          <div class="row mb-3">
             <div class="col-3 g-0 text-end">
               <div class="bg-white border border-1 m-0 birdypet mini <%= variant.hatched ? "hatched" : "unhatched" %> checkmark<%= Math.min(2, variant.hatched) %>" data-id="<%= `${variant.prefix}-${variant.alias}` %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" style="background-image: url('<%= variant.image %>');"></div>
             </div>
             <div class="col-9 small">
+              <% if (locals.loggedInUser && loggedInUser.contributor) { %>
+                <a href="/birdypedia/bird/<%= bird.code %>/variant/<%= variant.prefix %>-<%= variant.alias %>" class="btn btn-sm bg-light m-2 float-end">edit</a>
+              <% } %>
               <%- variant.subspecies ? `<em>${variant.subspecies}</em><br>` : '' %>
               <%- variant.label ? `${variant.label}<br>` : '' %>
-              &copy; <a href="/birdypedia?artist=<%= encodeURIComponent(variant.credit) %>"><%= variant.credit %></a>
-              <% if (locals.loggedInUser && loggedInUser.contributor) { %>
-                <br>
-                <a href="/birdypedia/bird/<%= bird.code %>/variant/<%= variant.prefix %>-<%= variant.alias %>" class="btn btn-sm bg-light m-2">edit</a>
-              <% } %>
+              <small>&copy; <a href="/birdypedia?artist=<%= encodeURIComponent(variant.credit) %>"><%= variant.credit %></a></small>
             </div>
           </div>
         <% } %>

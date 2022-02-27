@@ -9,8 +9,8 @@
         <%= bird.wishlisted ? (bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
       </button>
      <% } %>
-      <img id="birdy" src="<%= bird.variants[0].image %>" class="birdypet full <%= bird.variants[0].hatched ? "hatched" : "unhatched" %>">
-      <a class="attribution bg-light" href="<%= bird.variants[0].source %>" target="_blank">&copy; <%= bird.variants[0].credit %></a>
+      <img id="birdy" src="<%= variant.image %>" class="birdypet full <%= variant.hatched ? "hatched" : "unhatched" %>">
+      <a class="attribution bg-light" href="<%= variant.source %>" target="_blank">&copy; <%= variant.credit %></a>
     </span>
   </div>
 

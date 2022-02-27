@@ -11,7 +11,7 @@
                data-bg="${model.variants[0].image}"
         ></div>
         <h6 class="p-1 bg-white birdypets text-center d-none d-sm-block">
-          ${model.variants.length > 1 ? model.variants.map(function (variant) { return '<div class="lazy birdypet mini ' + (variant.hatched ? "hatched" : "unhatched") + '" data-bg="' + variant.image + '"></div>'; }).join("") : '<div class="birdypet mini disabled"></div>'}
+          ${model.variants.length > 1 ? model.variants.map(function (variant) { return '<div class="lazy birdypet mini ' + (variant.hatched ? "hatched" : "unhatched") + ' checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" data-bg="' + variant.image + '"></div>'; }).join("") : '<div class="birdypet mini disabled"></div>'}
         </h6>
        </div>
        <div class="card-body">

@@ -1,7 +1,8 @@
 <%- include('../header.ejs') %>
 
   <%- include('../partials/page-title.ejs', {
-        title : flock.name
+        title : flock.name,
+        subtitle : `${member.username}'s Flock`
       }
     )
   %>

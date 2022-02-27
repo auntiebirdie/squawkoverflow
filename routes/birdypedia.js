@@ -86,8 +86,6 @@ router.get('/bird/:code', async (req, res) => {
     include: ['members']
   }).then(async (bird) => {
     if (bird && bird.variants.length > 0) {
-      bird.variants.sort((a, b) => req.query.variant == `${a.prefix}-${a.alias}` ? -1 : 1);
-
       let eggs = [];
 
       if (req.session.user && (req.session.loggedInUser.admin || req.session.loggedInUser.contributor)) {
@@ -98,6 +96,7 @@ router.get('/bird/:code', async (req, res) => {
         title: `${bird.commonName} | Birdypedia`,
         page: 'birdypedia/bird',
         bird: bird,
+	variant: bird.variants.find((variant) => `${variant.prefix}-${variant.alias}` == req.query.variant) || bird.variants[0],
         sidebar: 'bird',
         eggs: eggs
       });
