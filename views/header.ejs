@@ -52,7 +52,8 @@
           success: function (res) {
             API.currentRequest[endpoint] = null;
 
-            if (res.code && res.code != 200) {
+	    // TODO : do better
+            if (res.code && !isNaN(res.code) &&  res.code != 200) {
               $('#errorMessage').html(res.response.data);
               $('#errorMessage').removeClass('d-none');
 
