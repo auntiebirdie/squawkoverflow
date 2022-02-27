@@ -40,15 +40,15 @@
         var h6 = hatched.querySelector('h6');
         var text = "";
 
-        if (variant.owned > 1) {
+        if (bird.owned > 1) {
           text += `<div><span class="checkplus"></span> <em>You have more than one of this species</em></div>`;
         }
-        else if (variant.owned == 1) {
+        else if (bird.owned == 1) {
           text += `<div><span class="checkmark"></span> <em>You have this species</em></div>`;
         }
 
         if (bird.wishlisted) {
-          switch (variant.wishlisted) {
+          switch (bird.wishlisted) {
             case 2:
               text += `<div>🌟 <em>You need this bird!</em></div>`;
               break;

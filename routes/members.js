@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
     title: 'Members',
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
-    sortFields: ['username-ASC', 'username-DESC', 'aviary-DESC', 'aviary-ASC', 'joinedAt-DESC', 'joinedAt-ASC']
+    sortFields: ['username-ASC', 'username-DESC', 'aviary-DESC', 'aviary-ASC', 'joinedAt-DESC', 'joinedAt-ASC', 'activeAt-DESC']
   });
 });
 

@@ -34,11 +34,9 @@
        <div class="col-12 col-lg-6 d-flex align-items-stretch">
          <div class="w-100 pb-3 px-2">
            <div class="h-100 card">
-            <% if (loggedInUser.id != exchange.memberA) { %>
              <a class="wishlist-heart">
                <%= birdypet.bird.wishlisted ? (birdypet.bird.wishlisted == 2 ? '🌟' : '❤️') : '' %>
              </a>
-            <% } %>
              <div class="h100">
                <div class="bg-white lazy birdypet checkmark<%= birdypet.bird.owned > 2 ? 2 : birdypet.bird.owned %>"
                     data-id="<%= birdypet.id %>"

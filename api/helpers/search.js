@@ -74,7 +74,7 @@ class Search {
           for (let flock of input.flocks) {
             filters.push('birdypets.id IN (SELECT a.birdypet FROM birdypet_flocks AS a WHERE a.flock = ?)');
             params.push(flock);
-	  }
+          }
         }
       }
 
@@ -212,6 +212,9 @@ class Search {
           break;
         case 'joinedAt':
           query += 'members.joinedAt';
+          break;
+        case 'activeAt':
+          query += 'GREATEST(members.lastLoginAt, members.lastHatchAt)';
           break;
         case 'username':
           query += 'members.username';
