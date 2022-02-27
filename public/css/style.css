@@ -496,8 +496,8 @@ span.checkmark, span.checkplus {
 .birdypet.checkmark2::after {
   content: ' ';
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: 0px;
+  right: 0px;
 }
 
 .wishlist-heart {
