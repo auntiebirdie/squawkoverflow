@@ -2,20 +2,23 @@
 
   <%- include('../partials/page-title.ejs', { title: "Privacy Policy" }) %>
 
-  <p>In order to identify you as an individual, we leverage Discord's authentication to collect the following data:
+  <p>In order to identify you as an individual, we leverage external authentication (i.e., Discord, Google) to collect the following data:</p>
 
-    <ol>
-      <li><strong>Account ID</strong> - A publicly available identifier that is associated with your account to differentiate it from another.</li>
-      <li><strong>Username & Avatar</strong> - Your username and avatar are collected to display on the site to personalize your experience and identify you from another member.</li>
-      <li><strong>Server Membership</strong> - A check is made to determine if you are a member of the Birdy Buddies Discord server.  This is solely for the purpose of in-server notifications; members who are part of the Discord server and have not opted out through the Settings page will have their on-site activity posted to the server.</li>
-      <li><strong>Server Display Name</strong> - Additionally, members of the Discord server can set display names that will be reflected on the site and take priority over their username.</li>
-    </ol>
-  </p>
+  <ul>
+    <li class="mb-2"><strong>Account ID</strong> - A publicly available identifier that is associated with your account to differentiate it from another.</li>
+    <li class="mb-2"><strong>Username & Avatar</strong> - Your username and avatar are collected to display on the site to personalize your experience and identify you from another member.</li>
+  </ul>
 
-  <p>No other personally identifying information is collected or stored.  The site does not have access to your Discord account, only a limited view of public information.</p>
+  <p>Additionally, if you associate your Discord account with SQUAWKoverflow:</p>
+  <ul>
+    <li class="mb-2"><strong>Server Membership</strong> - A check is made to determine if you are a member of the Birdy Buddies Discord server.  This is solely for the purpose of in-server notifications; members who are part of the Discord server and have not opted out through the Settings page will have their on-site activity posted to the server.</li>
+    <li class="mb-2"><strong>Server Display Name</strong> - Additionally, members of the Discord server can set display names that will be reflected on the site and take priority over their username.</li>
+  </ul>
+
+  <p>No other personally identifying information is collected or stored.  The site does not have access to your Discord or Google accounts, only a limited view of public information.</p>
 
   <p>Additionally, if you submit a bug report without your account being identified by the server, your IP address and Web Browser User Agent will be logged in lieu of an account ID.  This is for anti-spam purposes in the event a malicious actor needs to be blocked from using the bug report form.  This information is not otherwise used for any purpose.</p>
 
-  <p><strong>Your information is NEVER sold to any third parties.</strong>  If you have any additional concerns or questions, please feel free to <a href="mailto:seppukawaii+privac@gmail.com">contact us</a>.</p>
+  <p><strong>Your information is NEVER sold to any third parties.</strong>  If you have any additional concerns or questions, please feel free to <a href="/contact">contact us</a>.</p>
 
 <%- include('../footer.ejs') %>

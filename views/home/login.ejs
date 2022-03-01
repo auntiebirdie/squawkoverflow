@@ -1,0 +1,38 @@
+<%- include('../header.ejs') %>
+
+  <div class="text-center pb-4 mx-auto w-75">
+    <h1 class="bg-light mt-5 mb-0 p-4 border-bottom border-primary border-5"><strong>Log In</strong></h1>
+    <div class="bg-light p-4">
+      <h4>Sign-In Providers:</h4>
+
+      <div class="mt-4 mb-5">
+        <a href="https://discord.com/api/oauth2/authorize?client_id=885956624777351199&redirect_uri=<%= encodeURIComponent(redirectUri) %>&response_type=code&scope=identify" class="btn d-block mx-auto mb-3 py-0" style="background-color: #5865F2; width: 175px;"><img src="/img/discord.png"></a>
+        <div class="d-flex justify-content-center">
+          <div id="g_id_onload"
+             data-client_id="848686814409-9su97mlqeq5qr0685amalf5ke5hsd4r4.apps.googleusercontent.com"
+             data-callback="googleLogin"
+             data-auto_prompt="false">
+          </div>
+          <div class="g_id_signin"
+             data-type="standard"
+             data-size="medium"
+             data-theme="outline"
+             data-text="sign_in_with"
+             data-shape="rectangular"
+             data-logo_alignment="left">
+          </div>
+        </div>
+      </div>
+
+      <p class="small">Unable to log in or access your account?<br><a href="/contact">Contact us</a> with as much information as possible and we'll do our best to help.</p>
+    </div>
+  </div>
+
+  <script src="https://accounts.google.com/gsi/client"></script>
+  <script>
+    function googleLogin (response) {
+      window.location.href = `/login?credential=${response.credential}`;
+    }
+  </script>
+
+<%- include('../footer.ejs') %>

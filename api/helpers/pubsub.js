@@ -2,6 +2,8 @@ const {
   PubSub
 } = require('@google-cloud/pubsub');
 
+const Redis = require('./redis.js');
+
 exports.publish = function(topic, action, body) {
   return new Promise((resolve, reject) => {
     const data = {
@@ -50,6 +52,10 @@ exports.receive = function(message, context) {
     switch (data.action) {
       case "COLLECT":
         if (data.adjective) {
+          if (!member.settings.privacy_activity || data.source == "DISCORD")) {
+	  	Redis.zadd('recentlyHatched', Date.now(), data.birdypet);
+	  }
+
           if (member.serverMember && (!member.settings.privacy_activity || data.source == "DISCORD")) {
             promises.push(Database.getOne('adjectives', {
               adjective: data.adjective

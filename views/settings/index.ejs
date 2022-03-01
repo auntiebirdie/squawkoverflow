@@ -53,7 +53,7 @@
           </span>
           <span>
             <select name="title" id="title" class="form-select d-inline-block w-auto">
-             <% for (let tier of tiers) { %>
+             <% for (let tier of member.tiers) { %>
               <option value="<%= tier.id %>" <%= tier.id == loggedInUser.settings.title ? "selected" : "" %>><%= tier.name %></option>
              <% } %>
             </select>
@@ -92,33 +92,94 @@
         </div>
        <% } %>
 
-        <div class="form-check form-switch mb-3">
-          <span>
-            <input type="checkbox" class="form-check-input" name="privacy_profile" value="1" id="privacy_profile" <%= loggedInUser.settings.privacy_profile ? "checked" : "" %>>
-          </span>
-          <label class="form-check-label" for="privacy_profile">Don't allow other members to see my profile</label>
-        </div>
 
-        <div class="form-check form-switch mb-3">
-          <span>
-            <input type="checkbox" class="form-check-input" name="privacy_exchange" value="1" id="privacy_exchange" <%= loggedInUser.settings.privacy_exchange ? "checked" : "" %>>
-          </span>
-          <label class="form-check-label" for="privacy_exchanges">Don't allow other members to send me exchange offers</label>
+        <h6 class="mb-3">Don't allow other members to...</h6>
+        <div class="ms-4">
+         <% for (let privacy of [
+           { id : 'profile',  label : 'see my profile'},
+           { id : 'exchange', label : 'send me exchange offers' },
+           { id : 'gifts',    label : 'send me gifts' },
+           { id : 'wishlist', label : 'see my wishlist' }
+          ]) {
+         %>
+          <div class="form-check form-switch mb-3">
+            <span>
+              <input type="checkbox" class="form-check-input" name="privacy_<%= privacy.id %>" value="1" id="privacy_<%= privacy.id %>" <%= loggedInUser.settings[`privacy_${privacy.id}`] ? "checked" : "" %>>
+            </span>
+            <label class="form-check-label" for="privacy_<%= privacy.id %>"><%= privacy.label %></label>
+          </div>
+         <% } %>
         </div>
+      </div>
+    </div>
 
-        <div class="form-check form-switch mb-3">
-          <span>
-            <input type="checkbox" class="form-check-input" name="privacy_gifts" value="1" id="privacy_gifts" <%= loggedInUser.settings.privacy_gifts ? "checked" : "" %>>
-          </span>
-          <label class="form-check-label" for="privacy_gifts">Don't allow other members to send me gifts</label>
-        </div>
+    <div class="col-12 col-md-6">
+      <h3>Account</h3>
+      <div id="accounts" class="ms-4">
+       <% for (let auth of [
+            { id: 'discord', label : 'Discord', endpoint: `https://discord.com/api/oauth2/authorize?client_id=885956624777351199&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=identify` },
+            { id: 'google', label : 'Google' }
+          ]) {
+       %>
+         <div class="row mb-3">
+           <div class="col-3 text-end py-2"><%= auth.label %></div>
+           <div class="col-9">
+            <% if (member.auth.includes(auth.id)) { %>
+             <% if (member.auth.length == 1) { %>
+              <em>(please connect another provider to disconnect this one)</em>
+             <% } else { %>
+              <a class="btn bg-dark" data-id="<%= auth.id %>" role="button">Disconnect</a>
+             <% } %>
+            <% } else if (auth.id == 'google') { %>
+              <div class="btn bg-success" data-id="google">
+                <div id="g_id_onload"
+                   data-client_id="848686814409-9su97mlqeq5qr0685amalf5ke5hsd4r4.apps.googleusercontent.com"
+                   data-callback="googleLogin"
+                   data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin d-inline-block align-middle me-2"
+                   data-type="icon"
+                   data-size="medium"
+                   data-theme="outline">
+                </div>
+                Connect
+              </div>
+            <% } else { %>
+              <a class="btn bg-success" data-id="<%= auth.id %>" href="<%= auth.endpoint %>">Connect</a>
+            <% } %>
+           </div>
+         </div>
+       <% } %>
+      </div>
 
-        <div class="form-check form-switch mb-3">
-          <span>
-            <input type="checkbox" class="form-check-input" name="privacy_wishlist" value="1" id="privacy_wishlist" <%= loggedInUser.settings.privacy_wishlist ? "checked" : "" %>>
-          </span>
-          <label class="form-check-label" for="privacy_wishlist">Don't allow other members to see my wishlist</label>
-        </div>
+      <script src="https://accounts.google.com/gsi/client"></script>
+      <script>
+        function googleLogin (response) {
+          window.location.href = `/settings/connect?credential=${response.credential}`;
+        }
+
+        $(document).ready(function () {
+          $('#accounts').on('click', '.btn', function (e) {
+            var button = this;
+            var provider = button.getAttribute('data-id');
+            var action = button.classList.contains('bg-dark') ? 'disconnect' : 'connect';
+
+            if (action == 'disconnect') {
+              window.location.href = `/settings/disconnect?provider=${provider}`;
+            }
+            else {
+              switch (provider) {
+                case 'google':
+                  google.accounts.id.prompt();
+                  break;
+              }
+            }
+          });
+        });
+      </script>
+
+      <div class="text-end">
+        <button id="deleteAccount" class="btn btn-danger">Delete Account</button>
       </div>
     </div>
   </div>
@@ -164,6 +225,16 @@
 
               input.parentNode.classList.remove('loadingData');
             }
+          });
+        }
+      });
+
+      $('#deleteAccount').on('click', function (e) {
+        var rusure = confirm('Are you sure you want to delete your account? This is permanent and cannot be undone.');
+
+        if (rusure) {
+          API.call('member', 'DELETE', {}, function () {
+            window.location.href = '/logout';
           });
         }
       });
