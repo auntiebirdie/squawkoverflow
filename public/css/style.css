@@ -18,15 +18,15 @@ body {
   flex-wrap: wrap;
 }
 
-a,
-a:hover,
-a:focus,
-a:active {
+a:not(.btn),
+a:not(.btn):hover,
+a:not(.btn):focus,
+a:not(.btn):active {
   text-decoration: none;
   color: var(--bs-primary) !important;
 }
 
-a:hover {
+a:not(.btn):hover {
   color: var(--bs-secondary) !important;
 }
 
@@ -47,8 +47,20 @@ img {
 	visibility: hidden;
 }
 
+.btn {
+        color: var(--bs-body-color) !important;
+}
+
+.btn:hover {
+	filter: brightness(0.75);
+}
+
 .bg-dark {
 	background-color: var(--bs-dark) !important;
+}
+
+.text-dark {
+	color: var(--bs-dark) !important;
 }
 
 .bg-light {
@@ -91,14 +103,6 @@ img {
 	background-color: var(--bs-dark) !important;
 	color: var(--bs-body-color) !important;
 	border-color: var(--bs-dark) !important;
-}
-
-.btn {
-	color: var(--bs-body-color) !important;
-}
-
-.btn:hover {
-	color: var(--bs-primary) !important;
 }
 
 .form-check-input {
@@ -170,6 +174,15 @@ img {
   content: '⚠️';
   display: inline-block;
   margin-right: 1em;
+}
+
+#errorMessage::after {
+  content: 'x';
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .container {

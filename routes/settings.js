@@ -43,7 +43,11 @@ router.get('/connect', Middleware.isLoggedIn, (req, res) => {
     }).then((id) => {
       res.redirect('/settings');
     }).catch((err) => {
-      res.redirect('/settings');
+      if (err.response?.status == 412) {
+        res.redirect('/settings?error=' + (encodeURIComponent('The account you selected is already associated with another member.')));
+      } else {
+        res.redirect('/settings');
+      }
     });
   } else {
     res.redirect('/settings');

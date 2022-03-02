@@ -22,6 +22,10 @@ app.use(async function(req, res, next) {
     return next();
   }
 
+  if (req.query.error) {
+    res.locals.displayError = req.query.error;
+  }
+
   var menu = [];
 
   if (req.session.user) {
@@ -108,6 +112,7 @@ app.use('/flocks', require('./routes/flocks.js'));
 app.use('/freebirds', require('./routes/freebirds.js'));
 app.use('/birdypedia', require('./routes/birdypedia.js'));
 app.use('/members', require('./routes/members.js'));
+app.use('/birdatar', require('./routes/birdatar.js'));
 app.use('/exchange', require('./routes/exchange.js'));
 app.use('/settings', require('./routes/settings.js'));
 app.use('/faq', require('./routes/faq.js'));

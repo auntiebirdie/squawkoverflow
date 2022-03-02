@@ -153,7 +153,7 @@ class Member {
       for (let include of params.include || []) {
         switch (include) {
           case 'auth':
-            this.auth = await Database.query('SELECT provider FROM member_auth WHERE `member` = ?', [this.id]).then((results) => results.map((result) => result.provider));
+            this.auth = await Database.query('SELECT provider, id FROM member_auth WHERE `member` = ?', [this.id]);
             break;
           case 'aviary':
             this.aviary = await Counters.get('aviary', this.id, "total");

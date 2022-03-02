@@ -87,9 +87,20 @@ module.exports = async (req, res) => {
           let member = new Member(req.body.loggedInUser);
 
           member.exists().then(async (data) => {
-            await Database.query('INSERT INTO member_auth VALUES (?, "google", ?)', [member.id, payload.sub]);
+            var alreadyExists = await Database.count('member_auth', {
+              provider: 'google',
+              id: payload.sub
+            });
 
-            res.sendStatus(200);
+            if (alreadyExists) {
+              res.status(412).json({
+                error: 'The selected Google account is already associated with another member.'
+              });
+            } else {
+              await Database.query('INSERT INTO member_auth VALUES (?, "google", ?)', [member.id, payload.sub]);
+
+              res.sendStatus(200);
+            }
           }).catch(() => {
             res.sendStatus(400);
           });

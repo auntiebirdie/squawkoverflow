@@ -2,8 +2,6 @@ const {
   PubSub
 } = require('@google-cloud/pubsub');
 
-const Redis = require('./redis.js');
-
 exports.publish = function(topic, action, body) {
   return new Promise((resolve, reject) => {
     const data = {
@@ -31,30 +29,50 @@ exports.publish = function(topic, action, body) {
 
 exports.receive = function(message, context) {
   return new Promise(async (resolve, reject) => {
-    const Variant = require(__dirname + '/../models/variant.js');
     const Member = require(__dirname + '/../models/member.js');
 
-    const Database = require(__dirname + '/../helpers/database.js');
-    const Webhook = require(__dirname + '/../helpers/webhook.js');
-
-    var data = JSON.parse(Buffer.from(message.data, 'base64').toString());
+    const data = JSON.parse(Buffer.from(message.data, 'base64').toString());
 
     var member = new Member(data.member);
-    var variant = new Variant(data.variant);
-
     var promises = [];
 
-    await Promise.all([
-      member.fetch(),
-      variant.fetch()
-    ]);
-
     switch (data.action) {
+      case "SYNC":
+        await member.fetch({
+          include: ['auth']
+        });
+
+        var auth = member.auth.find((tmp) => tmp.provider == data.provider);
+
+        if (auth) {
+          if (data.provider == 'discord') {
+            
+          } else if (data.provider == 'google') {
+
+          }
+        } else {
+          resolve();
+        }
+        break;
       case "COLLECT":
-        if (data.adjective) {
-          if (!member.settings.privacy_activity || data.source == "DISCORD")) {
-	  	Redis.zadd('recentlyHatched', Date.now(), data.birdypet);
-	  }
+      case "RELEASE":
+        const Database = require(__dirname + '/../helpers/database.js');
+        const Redis = require(__dirname + '/../helpers/redis.js');
+        const Variant = require(__dirname + '/../models/variant.js');
+        const Webhook = require(__dirname + '/../helpers/webhook.js');
+
+        var variant = new Variant(data.variant);
+
+        await Promise.all([
+          member.fetch(),
+          variant.fetch()
+        ]);
+
+        if (data.action == "COLLECT") {
+          if (data.adjective) {
+            if (!member.settings.privacy_activity || data.source == "DISCORD")) {
+            Redis.zadd('recentlyHatched', Date.now(), data.birdypet);
+          }
 
           if (member.serverMember && (!member.settings.privacy_activity || data.source == "DISCORD")) {
             promises.push(Database.getOne('adjectives', {
@@ -94,16 +112,13 @@ exports.receive = function(message, context) {
             });
           }
         }
-        break;
-      case "RELEASE":
-        Database.create('freebirds', {
-          id: Database.key(),
-          variant: variant.id,
-          freedAt: new Date(),
-          hatchedAt: data.hatchedAt ? new Date(data.hatchedAt) : new Date()
-        });
-
-        break;
+    } else {
+      Database.create('freebirds', {
+        id: Database.key(),
+        variant: variant.id,
+        freedAt: new Date(),
+        hatchedAt: data.hatchedAt ? new Date(data.hatchedAt) : new Date()
+      });
     }
 
     Promise.all(promises).then(resolve);

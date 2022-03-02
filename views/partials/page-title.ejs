@@ -9,7 +9,7 @@
    <% } %>
   </h1>
 
-  <div id="errorMessage" class="bg-warning text-dark p-3 w-75 rounded d-none"></div>
+  <div id="errorMessage" class="bg-warning text-dark p-3 w-75 rounded <%= locals.displayError ? '' : 'd-none' %>"><%= locals.displayError %></div>
 
  <% if (locals.subtitle) { %>
   <h6 class="text-center">
