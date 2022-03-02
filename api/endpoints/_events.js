@@ -1,5 +1,4 @@
 const secrets = require('../secrets.json');
-secrets.DB.DEV.HOST = 'localhost';
 
 const Database = require('../helpers/database.js');
 const https = require('https');
