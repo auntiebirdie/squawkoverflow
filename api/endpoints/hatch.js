@@ -4,16 +4,14 @@ const Database = require('../helpers/database.js');
 const Bird = require('../models/bird.js');
 const Member = require('../models/member.js');
 
-const {
-  Storage
-} = require('@google-cloud/storage');
-const storage = new Storage();
-const bucket = storage.bucket('squawkoverflow');
+const chance = require('chance').Chance();
 
 module.exports = async (req, res) => {
   if (!req.body?.loggedInUser && !req.query?.loggedInUser) {
     return res.sendStatus(401);
   }
+
+  var eventEggs = await Database.query('SELECT adjective FROM events JOIN event_variants ON (events.id = event_variants.event) JOIN variants ON (event_variants.variant = variants.id) JOIN species_adjectives ON (variants.species = species_adjectives.species) WHERE NOW() BETWEEN events.startDate AND events.endDate').then((results) => results.map((result) => result.adjective));
 
   switch (req.method) {
     case "GET":
@@ -36,22 +34,24 @@ module.exports = async (req, res) => {
           });
         } else {
           var query = 'SELECT adjective, numSpecies, icon FROM adjectives';
-          var params = [];
+          var params = [eventEggs];
 
           if (member.settings.general_removeCompleted) {
-            query += ' WHERE adjective NOT IN (SELECT id FROM counters WHERE counters.id = adjectives.adjective AND counters.member = ? AND counters.count = adjectives.numSpecies)';
-            params.push(member.id);
+            query += ' WHERE adjective NOT IN (SELECT id FROM counters WHERE counters.id = adjectives.adjective AND counters.member = ? AND counters.count = adjectives.numSpecies) AND adjective NOT IN (?)';
+            params.push(member.id, eventEggs);
           }
 
           query += ' ORDER BY RAND() LIMIT 6';
 
           var eggs = await Database.query(query, params);
 
-          if (member.tier?.extraInsights) {
-            for (let egg of eggs) {
+          for (let egg of eggs) {
+            egg.isEvent = eventEggs.includes(egg.adjective);
+
+            if (member.tier?.extraInsights) {
               egg.numHatched = await Counters.get('eggs', member.id, egg.adjective);
-            };
-          }
+            }
+          };
 
           return res.status(200).json(eggs);
         }
@@ -59,7 +59,13 @@ module.exports = async (req, res) => {
       break;
     case "POST":
       var birdypets = [];
-      var hatched = await Database.query('SELECT species FROM species_adjectives WHERE adjective = ? AND species IN (SELECT species FROM variants) ORDER BY RAND() LIMIT 1', [req.body.egg]);
+      var isEventEgg = eventEggs.includes(req.body.egg) && chance.bool();
+
+      if (isEventEgg) {
+        var hatched = await Database.query('SELECT species, variant FROM event_variants JOIN variants ON (event_variants.variant = variants.id) JOIN species_adjectives ON (variants.speices = species_adjectives.species) WHERE adjective = ? AND event NOW() BETWEEN events.startDate AND events.endDate ORDER BY RAND() LIMIT 1');
+      } else {
+        var hatched = await Database.query('SELECT species FROM species_adjectives WHERE adjective = ? AND species IN (SELECT species FROM variants) ORDER BY RAND() LIMIT 1', [req.body.egg]);
+      }
 
       if (hatched) {
         var bird = new Bird(hatched.species);
@@ -69,7 +75,7 @@ module.exports = async (req, res) => {
           include: ['memberData', 'variants']
         });
 
-        bird.variants = bird.variants.filter((variant) => !variant.special);
+        bird.variants = bird.variants.filter((variant) => isEventEgg ? hatched.variant : !variant.special);
 
         return res.status(200).json(bird);
       } else {
