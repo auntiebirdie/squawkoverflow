@@ -32,15 +32,6 @@ router.get('/', async (req, res) => {
 		  `
     },
     {
-      slug: 'discord-authentication',
-      question: 'Why is authentication through Discord?',
-      answer: `
-	<p>SQUAWKoverflow started primarily as a complement to a Discord server. This makes the server sort of the central hub - it's where trading and discussion take place, as well as where notifications, update notes, and bug reports go. Rather than implementing our own authentication service, it made sense to leverage Discord since the server and the site are tightly interconnected.</p>
-
-        <p>You do not need to be a member of the server to be a member of the site. Authentication does not grant any personal information or account access. The only information that is exchanged is that you have a Discord account, what your public username is, and your current avatar.</p>
-	    `
-    },
-    {
       slug: 'weird-eggs',
       question: 'What\'s with the weird eggs?',
       answer: `
@@ -130,7 +121,7 @@ router.get('/', async (req, res) => {
 	      <li>When viewing an aviary, you will have more filter options than normal. You can filter to show duplicates in an aviary, any birds that are on your wishlist, or birds you don't have yet when viewing someone else's aviary!</li>
 	    </ul>
 
-	    <p>This list may change as new ideas come to light. Feel free to suggest some of your own on the Discord server or <a href="mailto:seppukawaii+ideas@gmail.com">send us an email</a>!</p>
+	    <p>This list may change as new ideas come to light. Feel free to suggest some of your own on the Discord server or send us an email at <a href="mailto:patreon@squawkoverflow.com">patreon@squawkoverflow.com</a>!</p>
 	  `
     }
   ];

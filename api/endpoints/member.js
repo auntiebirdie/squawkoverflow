@@ -14,8 +14,6 @@ module.exports = async (req, res) => {
       var member = new Member(req.body.loggedInUser);
       var toUpdate = {};
 
-      let promises = [];
-
       await member.fetch({
         include: ['profile']
       });
@@ -36,9 +34,14 @@ module.exports = async (req, res) => {
         }
       }
 
-      promises.push(member.set(toUpdate));
+      member.set(toUpdate).then(() => {
+        return res.sendStatus(200);
+      });
+      break;
+    case "DELETE":
+      var member = new Member(req.body.loggedInUser);
 
-      Promise.all(promises).then(() => {
+      await member.delete().then(() => {
         return res.sendStatus(200);
       });
       break;

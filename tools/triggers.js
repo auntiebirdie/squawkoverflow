@@ -159,6 +159,43 @@ var Database = require('../api/helpers/database.js');
     ' END IF; ' +
     'END');
 
+  await Database.query('DROP TRIGGER IF EXISTS squawk_exchanges_delete');
+  await Database.query(
+    'CREATE TRIGGER \`squawk_exchanges_update\` AFTER DELETE ON squawkdata.\`exchanges\` ' +
+    'FOR EACH ROW BEGIN ' +
+    ' SET v_statusOld := CONCAT(OLD.statusA, OLD.statusB); ' +
+    ' IF v_statusOld = "21" AND v_statusNew IN ("22", "2-1", "-11") THEN ' +
+    '  INSERT INTO squawkdata.counters VALUES (OLD.memberB, "exchanges", "waitingOnMe", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
+
+    ' ELSEIF v_statusOld = "21" THEN ' +
+    '  INSERT INTO squawkdata.counters VALUES (OLD.memberB, "exchanges", "waitingOnMe", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
+
+    ' ELSEIF v_statusOld = "20" THEN ' +
+    '  INSERT INTO squawkdata.counters VALUES (OLD.memberB, "exchanges", "waitingOnMe", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
+
+    ' ELSEIF v_statusOld = "20" THEN ' +
+    '  INSERT INTO squawkdata.counters VALUES (OLD.memberB, "exchanges", "waitingOnMe", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
+
+    ' ELSEIF v_statusOld = "12" THEN ' +
+    '  INSERT INTO squawkdata.counters VALUES (OLD.memberA, "exchanges", "waitingOnMe", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
+
+    ' ELSEIF v_statusOld = "11" THEN ' +
+    '  INSERT INTO squawkdata.counters VALUES (OLD.memberA, "exchanges", "waitingOnMe", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
+
+    ' ELSEIF v_statusOld = "11" THEN ' +
+    '  INSERT INTO squawkdata.counters VALUES (OLD.memberA, "exchanges", "waitingOnMe", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
+
+    ' ELSEIF v_statusOld = "20" THEN ' +
+    '  INSERT INTO squawkdata.counters VALUES (OLD.memberB, "exchanges", "waitingOnMe", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
+
+    ' ELSEIF v_statusOld = "10" THEN ' +
+    '  INSERT INTO squawkdata.counters VALUES (OLD.memberB, "exchanges", "waitingOnMe", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
+
+    ' ELSEIF v_statusOld = "10" THEN ' +
+    '  INSERT INTO squawkdata.counters VALUES (OLD.memberB, "exchanges", "waitingOnMe", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
+
+    'END');
+
     await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "exchanges"');
     await Database.query('REPLACE INTO squawkdata.counters SELECT exchanges.memberA, "exchanges", "waitingOnMe", COUNT(*) FROM exchanges WHERE (statusA = 1 AND statusB = 1) OR (statusA = 1 AND statusB = 2) GROUP BY memberA');
     await Database.query('REPLACE INTO squawkdata.counters SELECT exchanges.memberB, "exchanges", "waitingOnMe", COUNT(*) FROM exchanges WHERE (statusA = 2 AND statusB = 1) OR (statusA = 2 AND statusB = 0) OR (statusA = 1 AND statusB = 0) GROUP BY memberB');

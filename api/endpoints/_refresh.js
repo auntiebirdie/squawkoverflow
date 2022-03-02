@@ -1,7 +1,6 @@
 const secrets = require('../secrets.json');
 
 const Database = require('../helpers/database.js');
-const Members = require('../collections/members.js');
 
 const {
   Client,
@@ -14,7 +13,7 @@ const client = new Client({
 
 module.exports = async (req, res) => {
   return new Promise(async (resolve, reject) => {
-    let siteMembers = await Members.all();
+    let siteMembers = await Database.query('SELECT * FROM member_auth WHERE provider = "discord"');
     let serverMembers = [];
 
     client.login(secrets.DISCORD.BOT_TOKEN);
@@ -27,15 +26,13 @@ module.exports = async (req, res) => {
           promises.push(guild.members.fetch(`${siteMember.id}`).then((serverMember) => {
             if (serverMember) {
               return Database.set('members', {
-                id: serverMember.id
+                id: siteMember.member
               }, {
-                username: serverMember.displayName,
-                avatar: serverMember.displayAvatarURL(),
                 serverMember: true
               });
             } else {
               return Database.set('members', {
-                id: serverMember.id
+                id: siteMember.member
               }, {
                 serverMember: false
               });

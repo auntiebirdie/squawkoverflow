@@ -27,8 +27,8 @@
           icon: '🦚'
         }]) { %>
         <div class="form-check mb-3">
-          <input type="radio" class="form-input-check" name="theme_style" value="<%= style.id %>" id="theme_style-<%= style.id %>" autocomplete="off" <%= loggedInUser.settings.theme_style == style.id ? "checked" : "" %>>
-          <label class="form-check-label" for="theme_style-<%= style.id %>"><%= style.icon %> <%= style.label %></label>
+          <input type="radio" class="form-input-check" name="theme_style" value="<%= style.id %>" id="theme_style-<%= style.id %>" autocomplete="off" <%= member.settings.theme_style == style.id ? "checked" : "" %>>
+          <label class="form-check-label ms-1 d-inline-block" for="theme_style-<%= style.id %>"><%= style.icon %> <%= style.label %></label>
         </div>
        <% } %>
       </div>
@@ -40,37 +40,75 @@
       </h3>
 
       <div class="p-3 m-3 mb-5 d-inline">
-        <div class="form-inline">
-          Display the title 
-          <span>
-            <select name="rank" id="rank" class="form-select d-inline-block w-auto">
+        <div class="row mb-3">
+          <div class="col-12 col-md-3 text-md-end">
+            <label for="username">
+              Display Name:
+            </label>
+          </div>
+          <div class="col-12 col-md-9">
+            <input type="text" name="username" id="username" class="form-control d-inline-block" data-endpoint="member" value="<%= member.username %>">
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12 col-md-3 text-md-end">
+            <label for="avatar">
+              Avatar:
+            </label>
+          </div>
+          <div class="col-12 col-md-9">
+            <select type="text" name="avatar" id="avatar" class="form-select d-inline-block">
+             <% for (let auth of [
+                  { id: 'birdatar', label : 'Birdatar (customization coming soon!)' },
+                  { id: 'discord', label : 'Discord' },
+                  { id: 'google', label : 'Google' }
+                ]) {
+                  let connected = auth.id == "birdatar" || member.auth.find((tmp) => tmp.provider == auth.id);
+             %>
+               <option value="<%= auth.id %>" <%= member.settings.avatar == auth.id ? 'selected' : ''  %> <%= !connected ? 'disabled' : '' %>>
+                 <%= auth.label %>
+                 <%= !connected ? '(not connected)' : '' %>
+               </option>
+             <% } %>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12 col-md-3 text-md-end">
+            <label for="rank">
+              Title:
+            </label>
+          </div>
+          <div class="col-6 col-md-4">
+            <select name="rank" id="rank" class="form-select">
              <% for (let rank of member.ranks) { %>
                <option value="<%= rank.id %>" <%= rank.selected ? 'selected' : '' %> <%= rank.disabled ? 'disabled' : '' %>>
                  <%= rank.label %>
                </option>
              <% } %>
             </select>
-          </span>
-          <span>
-            <select name="title" id="title" class="form-select d-inline-block w-auto">
-             <% for (let tier of tiers) { %>
-              <option value="<%= tier.id %>" <%= tier.id == loggedInUser.settings.title ? "selected" : "" %>><%= tier.name %></option>
+          </div>
+          <div class="col-6 col-md-4">
+            <select name="title" id="title" class="form-select">
+             <% for (let tier of member.tiers) { %>
+              <option value="<%= tier.id %>" <%= tier.id == member.settings.title ? "selected" : "" %>><%= tier.name %></option>
              <% } %>
             </select>
-          </span>
-          on my profile
+          </div>
         </div>
 
-        <div class="form-check form-switch mt-3 mb-3">
+        <div class="form-check form-switch mb-3">
           <span>
-            <input type="checkbox" class="form-check-input" name="general_updateWishlist" value="1" id="general_updateWishlist" <%= loggedInUser.settings.general_updateWishlist ? "checked" : "" %>>
+            <input type="checkbox" class="form-check-input" name="general_updateWishlist" value="1" id="general_updateWishlist" <%= member.settings.general_updateWishlist ? "checked" : "" %>>
           </span>
           <label class="form-check-label" for="general_updateWishlist">Remove newly obtained birds from my wishlist automatically</label>
         </div>
 
         <div class="form-check form-switch mb-3">
           <span>
-            <input type="checkbox" class="form-check-input" name="general_removeCompleted" value="1" id="general_removeCompleted" <%= loggedInUser.settings.general_removeCompleted ? "checked" : "" %>>
+            <input type="checkbox" class="form-check-input" name="general_removeCompleted" value="1" id="general_removeCompleted" <%= member.settings.general_removeCompleted ? "checked" : "" %>>
           </span>
           <label class="form-check-label" for="general_removeCompleted">Remove completed eggs from the hatching pool</label>
         </div>
@@ -83,42 +121,87 @@
       </h3>
 
       <div class="p-3 m-3 mb-5 d-inline">
-       <% if (loggedInUser.serverMember) { %>
+       <% if (member.serverMember) { %>
         <div class="form-check form-switch mb-3">
           <span>
-            <input type="checkbox" class="form-check-input" name="privacy_activity" value="1" id="privacy_activity" <%= loggedInUser.settings.privacy_activity ? "checked" : "" %>>
+            <input type="checkbox" class="form-check-input" name="privacy_activity" value="1" id="privacy_activity" <%= member.settings.privacy_activity ? "checked" : "" %>>
           </span>
           <label class="form-check-label" for="privacy_activity">Don't post my on-site activity to the Discord server</label>
         </div>
        <% } %>
 
-        <div class="form-check form-switch mb-3">
-          <span>
-            <input type="checkbox" class="form-check-input" name="privacy_profile" value="1" id="privacy_profile" <%= loggedInUser.settings.privacy_profile ? "checked" : "" %>>
-          </span>
-          <label class="form-check-label" for="privacy_profile">Don't allow other members to see my profile</label>
-        </div>
 
-        <div class="form-check form-switch mb-3">
-          <span>
-            <input type="checkbox" class="form-check-input" name="privacy_exchange" value="1" id="privacy_exchange" <%= loggedInUser.settings.privacy_exchange ? "checked" : "" %>>
-          </span>
-          <label class="form-check-label" for="privacy_exchanges">Don't allow other members to send me exchange offers</label>
+        <h6 class="mt-5 mb-3">Don't allow other members to...</h6>
+        <div class="ms-4">
+         <% for (let privacy of [
+           { id : 'profile',  label : 'see my profile'},
+           { id : 'exchange', label : 'send me exchange offers' },
+           { id : 'gifts',    label : 'send me gifts' },
+           { id : 'wishlist', label : 'see my wishlist' }
+          ]) {
+         %>
+          <div class="form-check form-switch mb-3">
+            <span>
+              <input type="checkbox" class="form-check-input" name="privacy_<%= privacy.id %>" value="1" id="privacy_<%= privacy.id %>" <%= member.settings[`privacy_${privacy.id}`] ? "checked" : "" %>>
+            </span>
+            <label class="form-check-label" for="privacy_<%= privacy.id %>"><%= privacy.label %></label>
+          </div>
+         <% } %>
         </div>
+      </div>
+    </div>
 
-        <div class="form-check form-switch mb-3">
-          <span>
-            <input type="checkbox" class="form-check-input" name="privacy_gifts" value="1" id="privacy_gifts" <%= loggedInUser.settings.privacy_gifts ? "checked" : "" %>>
-          </span>
-          <label class="form-check-label" for="privacy_gifts">Don't allow other members to send me gifts</label>
-        </div>
+    <div class="col-12 col-md-6">
+      <h3>Account</h3>
+      <div id="accounts" class="ms-4">
+       <% for (let auth of [
+            { id: 'discord', label : 'Discord', endpoint: `https://discord.com/api/oauth2/authorize?client_id=885956624777351199&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=identify` },
+            { id: 'google', label : 'Google' }
+          ]) {
+       %>
+         <div class="row mb-3">
+           <div class="col-3 text-end py-2"><%= auth.label %></div>
+           <div class="col-9">
+            <% if (member.auth.find((tmp) => tmp.provider == auth.id)) { %>
+             <% if (member.auth.length == 1) { %>
+              <a class="btn bg-dark me-4 disabled"><em>(please connect another provider to disconnect this one)</em></a>
+             <% } else { %>
+              <a class="btn bg-dark me-4" data-id="<%= auth.id %>" data-action="disconnect" role="button">Disconnect</a>
+             <% } %>
+            <% } else if (auth.id == 'google') { %>
+              <div class="btn bg-success" data-id="google" data-action="connect">
+                <div id="g_id_onload"
+                   data-client_id="848686814409-9su97mlqeq5qr0685amalf5ke5hsd4r4.apps.googleusercontent.com"
+                   data-callback="googleLogin"
+                   data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin d-inline-block align-middle me-2"
+                   data-type="icon"
+                   data-size="medium"
+                   data-theme="outline">
+                </div>
+                Connect
+              </div>
+            <% } else { %>
+              <a class="btn bg-success" data-id="<%= auth.id %>" data-action="connect" href="<%= auth.endpoint %>">
+                <img class="bg-white rounded p-1 me-2" src="/img/providers/<%= auth.id %>.png" width="32px">
+                Connect
+              </a>
+            <% } %>
+           </div>
+         </div>
+       <% } %>
+      </div>
 
-        <div class="form-check form-switch mb-3">
-          <span>
-            <input type="checkbox" class="form-check-input" name="privacy_wishlist" value="1" id="privacy_wishlist" <%= loggedInUser.settings.privacy_wishlist ? "checked" : "" %>>
-          </span>
-          <label class="form-check-label" for="privacy_wishlist">Don't allow other members to see my wishlist</label>
-        </div>
+      <script src="https://accounts.google.com/gsi/client"></script>
+      <script>
+        function googleLogin (response) {
+          window.location.href = `/settings/connect?credential=${response.credential}`;
+        }
+      </script>
+
+      <div class="pt-5 text-end">
+        <button id="deleteAccount" class="btn btn-danger">Delete Account</button>
       </div>
     </div>
   </div>
@@ -130,41 +213,75 @@
         var input = this;
 
         if (!input.parentNode.classList.contains('loadingData')) {
+          var action = 'PUT';
           var key = input.name;
           var value = input.value;
+          var data = {};
 
           input.parentNode.classList.add('loadingData');
 
           switch (input.type) {
             case 'radio':
             case 'checkbox':
-              var value = input.value;
-              var action = input.checked ? "PUT" : "DELETE";
+              action = input.checked ? 'PUT' : 'DELETE';
+
+              data.setting = key;
+              data.value = value;
               break;
             case 'select-one':
-              var value = input.options[input.selectedIndex].value;
-              var action = value ? "PUT" : "DELETE";
+              value = input.options[input.selectedIndex].value;
+              action = value ? 'PUT' : 'DELETE';
+
+              data.setting = key;
+              data.value = value;
+              break;
+            case 'text':
+              data[key] = input.value;
               break;
           }
 
-          $.ajax({
-            cache: false,
-            url: '/api/settings',
-            data: JSON.stringify({
-              setting: key,
-              value: value
-            }),
-            dataType: 'json',
-            contentType: 'application/json',
-            method: action,
-            success: function(data) {
-              if (key.startsWith('theme')) {
-                window.location.reload();
-              }
-
-              input.parentNode.classList.remove('loadingData');
+          API.call(input.getAttribute('data-endpoint') || 'settings', action, data, function (response) {
+            if (key.startsWith('theme') || key == 'avatar') {
+              window.location.reload();
             }
+
+            input.parentNode.classList.remove('loadingData');
           });
+        }
+      });
+
+      $('#accounts').on('click', '.btn', function (e) {
+        var button = this;
+        var provider = button.getAttribute('data-id');
+        var action = button.getAttribute('data-action');
+
+        if (!button.classList.contains('disabled')) {
+          switch (action) {
+            case 'disconnect':
+              button.classList.add('disabled');
+              button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+              window.location.href = `/settings/disconnect?provider=${provider}`;
+              break;
+            case 'connect':
+              if (provider == 'google') {
+                google.accounts.id.prompt();
+              }
+              break;
+          }
+        }
+      });
+
+      $('#deleteAccount').on('click', function (e) {
+        var rusure = confirm('Are you sure you want to delete your account? This is permanent and cannot be undone.');
+
+        if (rusure) {
+          var rurlysure = confirm('Are you REALLY sure?  This is PERMANENT.');
+
+          if (rurlysure) {
+            API.call('member', 'DELETE', {}, function () {
+              window.location.href = '/logout';
+            });
+          }
         }
       });
     });

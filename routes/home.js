@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-  if (req.query.code || req.query.konami) {
+  if (req.query.code || req.query.credential || req.query.konami) {
     API.call('login', 'POST', req.query).then((id) => {
       req.session.user = id;
 
@@ -26,8 +26,9 @@ router.get('/login', (req, res) => {
       res.redirect('/');
     });
   } else {
-    var redirectUri = process.env.DEV ? 'http%3A%2F%2Fdev.squawkoverflow.com' : 'https%3A%2F%2Fsquawkoverflow.com';
-    res.redirect(`https://discord.com/api/oauth2/authorize?client_id=885956624777351199&redirect_uri=${redirectUri}%2Flogin&response_type=code&scope=identify`);
+    res.render('home/login', {
+      redirectUri: 'https://' + (process.env.DEV ? 'dev.' : '') + 'squawkoverflow.com/login'
+    });
   }
 });
 
@@ -37,8 +38,16 @@ router.get('/logout', (req, res) => {
   });
 });
 
+router.get('/contact', (req, res) => {
+  res.render('home/contact');
+});
+
 router.get('/privacy-policy', (req, res) => {
   res.render('home/privacy');
+});
+
+router.get('/terms-of-service', (req, res) => {
+  res.render('home/terms');
 });
 
 router.get('/oembed', async (req, res) => {
