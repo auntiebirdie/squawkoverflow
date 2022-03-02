@@ -151,8 +151,8 @@ module.exports = (req, res) => {
                 let memberB = new Member(exchange.memberB);
 
                 Promise.all([
-                  memberA.fetch(),
-                  memberB.fetch()
+                  memberA.fetch({ include : ['auth'] }),
+                  memberB.fetch({ include: ['auth'] })
                 ]).then(() => {
                   if (exchange.statusA + exchange.statusB == 4) {
                     let promises = [];
@@ -174,7 +174,7 @@ module.exports = (req, res) => {
                     Promise.all(promises).then(() => {
                       if (memberA.serverMember && memberB.serverMember) {
                         Webhook('exchange', {
-                          content: req.body.loggedInUser == memberA.id ? `${memberA.username} and <@${memberB.id}> have come to an agreement!` : `${memberB.username} has accepted <@${memberA.id}>'s offer!`,
+                          content: req.body.loggedInUser == memberA.id ? `${memberA.username} and <@${memberB.auth.find((auth) => auth.provider == 'discord').id}> have come to an agreement!` : `${memberB.username} has accepted <@${memberA.auth.find((auth) => auth.provider == 'discord').id}>'s offer!`,
                           embeds: [{
                             description: 'The offer was accepted by both parties!',
                             thumbnail: {
@@ -208,7 +208,7 @@ module.exports = (req, res) => {
 
                       if (newExchange) {
                         Webhook('exchange', {
-                          content: `${memberA.username} has sent <@${memberB.id}> an offer!`,
+                          content: `${memberA.username} has sent <@${memberB.auth.find((auth) => auth.provider == 'discord').id}> an offer!`,
                           embeds: [{
                             title: 'View Offer',
                             description: req.body.noteA || exchange.noteA || " ",

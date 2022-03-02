@@ -161,10 +161,13 @@ var Database = require('../api/helpers/database.js');
 
   await Database.query('DROP TRIGGER IF EXISTS squawk_exchanges_delete');
   await Database.query(
-    'CREATE TRIGGER \`squawk_exchanges_update\` AFTER DELETE ON squawkdata.\`exchanges\` ' +
+    'CREATE TRIGGER \`squawk_exchanges_delete\` AFTER DELETE ON squawkdata.\`exchanges\` ' +
     'FOR EACH ROW BEGIN ' +
+    '  DECLARE \`v_statusOld\` VARCHAR(4); ' +
+
     ' SET v_statusOld := CONCAT(OLD.statusA, OLD.statusB); ' +
-    ' IF v_statusOld = "21" AND v_statusNew IN ("22", "2-1", "-11") THEN ' +
+
+    ' IF v_statusOld = "21" THEN ' +
     '  INSERT INTO squawkdata.counters VALUES (OLD.memberB, "exchanges", "waitingOnMe", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
 
     ' ELSEIF v_statusOld = "21" THEN ' +
@@ -194,6 +197,7 @@ var Database = require('../api/helpers/database.js');
     ' ELSEIF v_statusOld = "10" THEN ' +
     '  INSERT INTO squawkdata.counters VALUES (OLD.memberB, "exchanges", "waitingOnMe", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
 
+    ' END IF; ' +
     'END');
 
     await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "exchanges"');

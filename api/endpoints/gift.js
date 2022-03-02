@@ -43,7 +43,7 @@ module.exports = async (req, res) => {
 
       if (birdypet.member == fromMember.id || req.body.variant) {
         await fromMember.fetch();
-        await toMember.fetch();
+        await toMember.fetch({ include : ['auth'] });
 
         let promises = [];
 
@@ -56,7 +56,7 @@ module.exports = async (req, res) => {
 
         if (fromMember.serverMember && toMember.serverMember) {
           promises.push(Webhook('gifts', {
-            content: `${fromMember.username} has sent <@${toMember.id}> a gift!`,
+            content: `${fromMember.username} has sent <@${toMember.auth.find((auth) => auth.provider == 'discord').id}> a gift!`,
             embeds: [{
               title: birdypet.nickname || birdypet.bird.commonName,
               description: birdypet.variant.label || " ",

@@ -17,6 +17,10 @@ module.exports = (req, res) => {
     let variant = req.body.variant;
     let freebird = null;
 
+    await member.fetch({
+      createIfNotExists: req.headers && req.headers['x-forwarded-for'] == '35.208.110.100' ? true : false
+    });
+
     if (req.body.freebird) {
       freebird = await Database.getOne('freebirds', {
         id: req.body.freebird
@@ -34,22 +38,18 @@ module.exports = (req, res) => {
         id: req.body.freebird
       }));
     } else {
-      promises.push(Database.query('UPDATE members SET lastHatchAt = NOW() WHERE id = ?', [req.body.loggedInUser]));
+      promises.push(Database.query('UPDATE members SET lastHatchAt = NOW() WHERE id = ?', [member.id]));
     }
-
-    await member.fetch({
-      createIfNotExists: req.headers && req.headers['x-forwarded-for'] == '35.208.110.100' ? true : false
-    });
 
     await birdypet.create({
       variant: variant,
-      member: req.body.loggedInUser,
+      member: member.id,
       hatchedAt: freebird ? freebird.hatchedAt : new Date()
     });
 
     promises.push(PubSub.publish('background', 'COLLECT', {
       birdypet: birdypet.id,
-      member: req.body.loggedInUser,
+      member: member.id,
       variant: variant,
       adjective: req.body.adjective,
       freebird: req.body.freebird,

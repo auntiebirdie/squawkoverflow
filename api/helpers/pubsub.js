@@ -37,23 +37,6 @@ exports.receive = function(message, context) {
     var promises = [];
 
     switch (data.action) {
-      case "SYNC":
-        await member.fetch({
-          include: ['auth']
-        });
-
-        var auth = member.auth.find((tmp) => tmp.provider == data.provider);
-
-        if (auth) {
-          if (data.provider == 'discord') {
-            
-          } else if (data.provider == 'google') {
-
-          }
-        } else {
-          resolve();
-        }
-        break;
       case "COLLECT":
       case "RELEASE":
         const Database = require(__dirname + '/../helpers/database.js');
@@ -64,61 +47,64 @@ exports.receive = function(message, context) {
         var variant = new Variant(data.variant);
 
         await Promise.all([
-          member.fetch(),
+          member.fetch({
+            include: ['auth']
+          }),
           variant.fetch()
         ]);
 
         if (data.action == "COLLECT") {
           if (data.adjective) {
-            if (!member.settings.privacy_activity || data.source == "DISCORD")) {
-            Redis.zadd('recentlyHatched', Date.now(), data.birdypet);
-          }
+            if (!member.settings.privacy_activity || data.source == "DISCORD") {
+              Redis.connect().zadd('recentlyHatched', Date.now(), data.birdypet);
+            }
 
-          if (member.serverMember && (!member.settings.privacy_activity || data.source == "DISCORD")) {
-            promises.push(Database.getOne('adjectives', {
-              adjective: data.adjective
-            }).then((egg) => {
+            if (member.serverMember && (!member.settings.privacy_activity || data.source == "DISCORD")) {
+              promises.push(Database.getOne('adjectives', {
+                adjective: data.adjective
+              }).then((egg) => {
+                Webhook('birdwatching', {
+                  content: " ",
+                  embeds: [{
+                    title: variant.bird.commonName,
+                    description: `<@${member.auth.find((auth) => auth.provider == 'discord').id}> hatched the ${data.adjective} egg!`,
+                    url: `https://squawkoverflow.com/birdypet/${data.birdypet}`,
+                    image: {
+                      url: variant.image
+                    },
+                    thumbnail: {
+                      url: `https://storage.googleapis.com/squawkoverflow/${ egg.icon || 'eggs/D/default.png' }`
+                    }
+                  }]
+                })
+              }));
+            }
+          } else if (data.freebird) {
+            if (member.serverMember && (!member.settings.privacy_activity || data.source == "DISCORD")) {
               Webhook('birdwatching', {
                 content: " ",
                 embeds: [{
                   title: variant.bird.commonName,
-                  description: `<@${member.id}> hatched the ${data.adjective} egg!`,
+                  description: `<@${member.auth.find((auth) => auth.provider == 'discord').id}> excitedly adds a new bird to ${member.fetchPronoun('determiner')} aviary!`,
                   url: `https://squawkoverflow.com/birdypet/${data.birdypet}`,
                   image: {
                     url: variant.image
                   },
                   thumbnail: {
-                    url: `https://storage.googleapis.com/squawkoverflow/${ egg.icon || 'eggs/D/default.png' }`
+                    url: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/282/hatching-chick_1f423.png'
                   }
                 }]
-              })
-            }));
+              });
+            }
           }
-        } else if (data.freebird) {
-          if (member.serverMember && (!member.settings.privacy_activity || data.source == "DISCORD")) {
-            Webhook('birdwatching', {
-              content: " ",
-              embeds: [{
-                title: variant.bird.commonName,
-                description: `<@${member.id}> excitedly adds a new bird to ${member.fetchPronoun('determiner')} aviary!`,
-                url: `https://squawkoverflow.com/birdypet/${data.birdypet}`,
-                image: {
-                  url: variant.image
-                },
-                thumbnail: {
-                  url: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/282/hatching-chick_1f423.png'
-                }
-              }]
-            });
-          }
+        } else {
+          Database.create('freebirds', {
+            id: Database.key(),
+            variant: variant.id,
+            freedAt: new Date(),
+            hatchedAt: data.hatchedAt ? new Date(data.hatchedAt) : new Date()
+          });
         }
-    } else {
-      Database.create('freebirds', {
-        id: Database.key(),
-        variant: variant.id,
-        freedAt: new Date(),
-        hatchedAt: data.hatchedAt ? new Date(data.hatchedAt) : new Date()
-      });
     }
 
     Promise.all(promises).then(resolve);

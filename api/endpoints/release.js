@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
   }
 
   let variant = null;
-	let hatchedAt = new Date();
+  let hatchedAt = new Date();
 
   if (req.body.variant) {
     variant = req.body.variant;

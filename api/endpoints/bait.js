@@ -13,7 +13,7 @@ module.exports = (req, res) => {
   return new Promise(async (resolve, reject) => {
     let member = new Member(req.body.loggedInUser);
 
-    await member.fetch();
+    await member.fetch({ include: ['auth'] });
 
     if (member.bugs > 0) {
       promises.push(
@@ -48,7 +48,7 @@ module.exports = (req, res) => {
           content: " ",
           embeds: [{
             title: variant.bird.commonName,
-            description: `<@${member.id}> attracted a beloved bird with a bug!`,
+            description: `<@${member.auth.find((auth) => auth.provider == 'discord').id}> attracted a beloved bird with a bug!`,
             url: `https://squawkoverflow.com/birdypet/${birdypet.id}`,
             image: {
               url: variant.image
