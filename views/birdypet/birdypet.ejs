@@ -30,13 +30,15 @@
             <% if (!birdypet.variant.special && birdypet.bird.variants.length > 1) { %>
               <h5><label>Variant</label></h5>
               <select name="variant" class="form-select">
-                <% for (let variant of birdypet.bird.variants) { %>
+               <% for (let variant of birdypet.bird.variants) { %>
+                <% if (!variant.special) { %>
                 <option value="<%= variant.id %>" data-src="<%= variant.image %>" <%= variant.id == birdypet.variant.id ? "selected" : "" %>>
                   <%= variant.label %> <%= variant.subspecies ? `${variant.subspecies} subspecies` : '' %>
                   by <%= variant.credit %>
                   <%= variant.id == birdypet.variant.id ? "[current]" : "" %>
                 </option>
                 <% } %>
+               <% } %>
               </select>
             <% } %>
             </div>

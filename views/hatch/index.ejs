@@ -12,12 +12,15 @@
               <img src="https://storage.googleapis.com/squawkoverflow/<%= egg.icon || 'eggs/D/default.png' %>">
             </h3>
             <h4><%= egg.adjective %></h4>
-           <% if (loggedInUser.tier.extraInsights) { %>
-            <h5 class="text-muted">
-              <%= egg.numHatched %>/<%= egg.numSpecies %>
-            </h5>
-             <% } %>
           </a>
+         <% if (loggedInUser.tier.extraInsights) { %>
+          <h5 class="text-muted">
+            <%= egg.numHatched %>/<%= egg.numSpecies %>
+          </h5>
+         <% } %>
+         <% if (egg.isEvent) { %>
+          <h6 class="small">🎉 This egg can hatch a special event bird!</h6>
+         <% } %>
         </div>
         <% } %>
       <% } else if (loggedInUser.settings.general_removeCompleted) { %>
