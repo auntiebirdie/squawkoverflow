@@ -68,6 +68,7 @@
              %>
                <option value="<%= auth.id %>" <%= member.settings.avatar == auth.id ? 'selected' : ''  %> <%= !connected ? 'disabled' : '' %>>
                  <%= auth.label %>
+                 <%= !connected ? '(not connected)' : '' %>
                </option>
              <% } %>
             </select>
