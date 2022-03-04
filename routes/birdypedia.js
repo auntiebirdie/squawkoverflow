@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
     artists: artists,
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
-    sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
+    sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'variants-DESC'],
     filters: ['unwishlisted-My', 'wanted-My', 'needed-My'],
     extraFilters: ['unhatched-My', 'isolated-My', 'duplicated-My', 'somewhere']
   });

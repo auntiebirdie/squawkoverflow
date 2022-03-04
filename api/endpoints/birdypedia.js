@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
     });
 
     Promise.all(promises).then(() => {
-	    response.results = response.results.filter((variant) => !variant.special || variant.hatched);
+      response.results = response.results.filter((variant) => !variant.special);
 
       res.json(response);
     });

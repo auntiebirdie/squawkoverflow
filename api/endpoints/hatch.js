@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
 
   switch (req.method) {
     case "GET":
-      let member = new Member(req.query.loggedInUser);
+      var member = new Member(req.query.loggedInUser);
 
       await member.fetch({
         include: ['totals']
@@ -34,11 +34,16 @@ module.exports = async (req, res) => {
           });
         } else {
           var query = 'SELECT adjective, numSpecies, icon FROM adjectives';
-          var params = [eventEggs];
+          var params = [];
 
           if (member.settings.general_removeCompleted) {
-            query += ' WHERE adjective NOT IN (SELECT id FROM counters WHERE counters.id = adjectives.adjective AND counters.member = ? AND counters.count = adjectives.numSpecies) AND adjective NOT IN (?)';
-            params.push(member.id, eventEggs);
+            query += ' WHERE adjective NOT IN (SELECT id FROM counters WHERE counters.id = adjectives.adjective AND counters.member = ? AND counters.count = adjectives.numSpecies)';
+            params.push(member.id);
+
+            if (eventEggs.length > 0) {
+              query += ' AND adjective NOT IN (?)';
+              params.push(eventEggs);
+            };
           }
 
           query += ' ORDER BY RAND() LIMIT 6';
@@ -69,9 +74,12 @@ module.exports = async (req, res) => {
 
       if (hatched) {
         var bird = new Bird(hatched.species);
+        var member = new Member(req.body.loggedInUser);
+
+        await member.fetch();
 
         await bird.fetch({
-          member: req.body.loggedInUser,
+          member: member.id,
           include: ['memberData', 'variants']
         });
 

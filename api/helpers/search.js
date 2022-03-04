@@ -14,7 +14,7 @@ class Search {
 
       switch (kind) {
         case 'bird':
-          query += 'species.code FROM species';
+          query += 'species.code FROM species JOIN variants ON (species.code = variants.species AND variants.special = 0)';
           filters.push('species.code IN (SELECT species FROM variants)');
           break;
         case 'birdypet':
@@ -185,6 +185,10 @@ class Search {
         query += ' WHERE ' + filters.join(' AND ');
       }
 
+      if (kind == 'bird') {
+        query += ' GROUP BY species.code';
+      }
+
       query += ' ORDER BY ';
 
       switch (input.sort) {
@@ -221,6 +225,9 @@ class Search {
           break;
         case 'aviary':
           query += 'counters.count';
+          break;
+        case 'variants':
+          query += 'MAX(variants.addedAt)';
           break;
         default:
           if (kind == 'birdypet') {

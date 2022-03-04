@@ -46,14 +46,14 @@ module.exports = async (req, res) => {
       if (existing) {
         var key = existing.id;
         if (member.admin) {
-          await Database.query('UPDATE squawkdata.variants SET source = ?, subspecies = ?, credit = ?, special = ?, filetype = ?, label = ? WHERE id = ?', [data.source, data.subspecies, data.credit, data.special, data.filetype, data.label, key]);
+          await Database.query('UPDATE squawkdata.variants SET source = ?, subspecies = ?, credit = ?, full = ?, special = ?, filetype = ?, label = ? WHERE id = ?', [data.source, data.subspecies, data.credit, data.full, data.special, data.filetype, data.label, key]);
         } else {
           await Database.query('UPDATE squawkdata.variants SET subspecies = ?, label = ? WHERE id = ?', [data.subspecies, data.label, key]);
         }
       } else {
         var key = uuid.generate();
         if (member.admin) {
-          await Database.query('INSERT INTO squawkdata.variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())', [key, data.prefix, data.alias, data.species, data.subspecies, data.label, data.credit, data.source, data.url, data.filetype, true, data.special]);
+          await Database.query('INSERT INTO squawkdata.variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())', [key, data.prefix, data.alias, data.species, data.subspecies, data.label, data.credit, data.source, data.url, data.filetype, data.full, data.special]);
         } else {
           return res.sendStatus(403);
         }

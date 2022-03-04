@@ -37,7 +37,7 @@ class Bird {
 	    artist: params.artist
           });
 
-          this.variants.sort((a, b) => ((a.subspecies || "").localeCompare(b.subspecies) || (a.label || "").localeCompare(b.label) || (a.credit || "").localeCompare(b.credit)));
+          this.variants.sort((a, b) => ((a.full ? -1 : 1) || (a.subspecies || "").localeCompare(b.subspecies) || (a.label || "").localeCompare(b.label) || (a.credit || "").localeCompare(b.credit)));
         }
 
         if (params.include?.includes('adjectives')) {
