@@ -100,6 +100,8 @@ app.use(async function(req, res, next) {
     return item;
   });
 
+	res.locals.includeLogin = true;
+
   next();
 });
 

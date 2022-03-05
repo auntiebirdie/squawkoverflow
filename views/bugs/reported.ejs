@@ -1,0 +1,19 @@
+<%- include('../header.ejs') %>
+  
+  <div id="errorMessage" class="bg-warning text-dark mt-3 p-3 w-75 rounded <%= locals.displayError ? '' : 'd-none' %>"><%= locals.displayError %></div>
+
+  <div class="text-center pb-5 mx-auto w-75">
+    <h1 class="bg-light mt-5 mb-0 p-4 border-bottom border-primary border-5">
+      <strong>Bug Reported</strong>
+    </h1>
+
+    <div class="bg-light p-4">
+      <p>Thank you for your report! <%= locals.member ? 'Enjoy your bug! You can feed it to one of your birds or use it as bait to attract wishlisted birds.' : '' %></p>
+
+     <% if (locals.card) { %>
+      <p class="text-align: center;">You can <a href="<%= card.url %>" style="text-decoration: none; color: #a0b300;">track the progress of your report on Trello</a> (no account required).</p>
+     <% } %>
+    </div>
+  </div>
+
+<%- include('../footer.ejs') %>

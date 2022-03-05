@@ -104,7 +104,8 @@
 	      <% } %>
             </a>
           </li>
-          <% }) %>
+         <% }) %>
+        <% if (locals.includeLogin) { %>
 	  <li class="my-2 ms-3 pb-2">
             <hr>
 	  </li>
@@ -156,6 +157,7 @@
 	    </a>
 	  </li>
 	 <% } %>
+        <% } %>
         </ul>
       </nav>
     </div>

@@ -38,6 +38,8 @@ jobs:
       - run: gcloud functions deploy api
         working-directory: ./api
       - run: |
+          rm Dockerfile
+          rm -rf api
           gcloud app deploy
           gcloud app versions list --format='value(version.id)' --sort-by='~version.createTime' | tail -n +3 | xargs -r gcloud app versions delete --quiet
 
