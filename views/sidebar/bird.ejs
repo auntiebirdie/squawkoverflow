@@ -44,7 +44,7 @@
               <% if (locals.loggedInUser && loggedInUser.admin) { %>
                 <a href="/birdypedia/bird/<%= bird.code %>/variant/<%= variant.prefix %>-<%= variant.alias %>" class="btn btn-sm bg-light m-2 float-end">edit</a>
               <% } %>
-              <%- variant.subspecies ? `<em>${variant.subspecies}</em><br>` : '' %>
+              <%- variant.subspecies ? `<em>ssp. ${variant.subspecies}</em><br>` : '' %>
               <%- variant.label ? `${variant.label}<br>` : '' %>
               <small>&copy; <a href="/birdypedia?artist=<%= encodeURIComponent(variant.credit) %>"><%= variant.credit %></a></small>
             </div>

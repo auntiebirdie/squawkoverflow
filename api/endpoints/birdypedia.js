@@ -18,7 +18,11 @@ module.exports = async (req, res) => {
     });
 
     Promise.all(promises).then(() => {
-      response.results = response.results.map((bird) => bird.variants.filter((variant) => !variant.special));
+      response.results = response.results.map((bird) => {
+	      bird.variants.filter((variant) => !variant.special);
+
+	      return bird;
+      });
 
       if (req.query.sort == 'variants') {
         response.results.map((bird) => {

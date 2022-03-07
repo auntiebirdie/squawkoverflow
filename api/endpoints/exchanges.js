@@ -56,7 +56,7 @@ module.exports = (req, res) => {
               member: req.body.member,
               exchange: exchange.id
             }).then(() => {
-              if (birdypet.exchangeData == exchange.id) {
+              if (birdypet.exchangeData.find((data) => data.id == exchange.id)) {
                 Database.delete('exchange_birdypets', {
                   exchange: exchange.id,
                   birdypet: birdypet.id,
@@ -75,7 +75,7 @@ module.exports = (req, res) => {
                     });
                   });
                 });
-              } else if (!birdypet.exchangeData) {
+              } else if (birdypet.exchangeData.length == 0) {
                 Database.create('exchange_birdypets', {
                   exchange: exchange.id,
                   birdypet: birdypet.id,
