@@ -1,22 +1,43 @@
 const Bird = require('../models/bird.js');
 const Birds = require('../collections/birds.js');
+const Redis = require('../helpers/redis.js');
 
-module.exports = async (req, res) => {
-  if (req.query.taxonomy) {
-    var birds = await Birds.fetch('*', req.query.taxonomy);
+const hash = require('object-hash');
 
-    if (birds.length > 0) {
-      birds.sort(() => Math.random() - .5);
+module.exports = (req, res) => {
+  Redis.zrange(`birds:${hash(req.query)}`, '-inf', '+inf', 'BYSCORE', async (err, results) => {
+    if (results.length == 0) {
+      if (req.query.search) {
+        var birds = await Birds.fetch('*', req.query.search);
+      } else {
+        var birds = await Birds.all();
+      }
 
-      var bird = new Bird(birds[0].code);
+      let promises = [];
+
+      for (let bird of birds) {
+        bird = new Bird(bird.code);
+
+        promises.push(bird.fetch());
+      }
+
+      Promise.all(promises).then(() => {
+        let promises = [];
+
+        for (let i = 0, len = birds.length; i < len; i++) {
+          promises.push(Redis.zadd(`birds:${hash(req.query)}`, i, JSON.stringify(birds[i])));
+        }
+
+        Promise.all(promises).then(() => {
+          res.json(birds);
+        });
+      });
     } else {
-      return res.json(null);
+      for (let i = 0, len = results.length; i < len; i++) {
+        results[i] = JSON.parse(results[i]);
+      }
+
+      res.json(results);
     }
-  } else {
-    var bird = await Birds.random().then((bird) => new Bird(bird.code));
-  }
-
-  await bird.fetch();
-
-  res.json(bird);
+  });
 }

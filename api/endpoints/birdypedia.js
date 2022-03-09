@@ -19,17 +19,17 @@ module.exports = async (req, res) => {
 
     Promise.all(promises).then(() => {
       response.results = response.results.map((bird) => {
-	      bird.variants.filter((variant) => !variant.special);
+        bird.variants.filter((variant) => !variant.special);
 
-	      return bird;
+        return bird;
       });
 
       if (req.query.sort == 'variants') {
         response.results.map((bird) => {
-		bird.variants.sort((a, b) => a.addedAt > b.addedAt ? -1 : 1);
+          bird.variants.sort((a, b) => a.addedAt > b.addedAt ? -1 : 1);
 
-		return bird;
-	});
+          return bird;
+        });
       }
 
       res.json(response);

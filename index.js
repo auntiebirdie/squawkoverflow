@@ -38,6 +38,8 @@ app.use(async function(req, res, next) {
       delete req.session.loggedInUser;
     });
 
+	  console.log(req.session);
+
     if (req.session.loggedInUser) {
       res.locals.ENV = process.env.NODE_ENV ? 'PROD' : 'DEV';
       res.locals.loggedInUser = req.session.loggedInUser;

@@ -45,7 +45,7 @@ router.get('/eggs/:egg', async (req, res) => {
   API.call('eggs', 'GET', {
     loggedInUser: req.session.user,
     adjective: req.params.egg
-  }).then((egg) => {
+  }).then(([egg]) => {
     if (egg) {
       res.render('birdypedia/egg', {
         title: `${egg.adjective.charAt(0).toUpperCase() + egg.adjective.slice(1)} Egg | Birdypedia`,

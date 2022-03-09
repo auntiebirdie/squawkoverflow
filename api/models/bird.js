@@ -1,6 +1,6 @@
 const Database = require('../helpers/database.js');
-const Cache = require('../helpers/cache.js');
 const Counters = require('../helpers/counters.js');
+const Redis = require('../helpers/redis.js');
 
 class Bird {
   constructor(id) {
@@ -9,22 +9,45 @@ class Bird {
 
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
-      Database.getOne('species', {
-        code: this.id
-      }).then(async (bird) => {
-        for (let key in bird) {
+
+      const identifier = `species:${this.id}`;
+
+      Redis.hgetall(`species:${id}`, async (err, result) => {
+        if (!result) {
+          result = await Database.getOne('species', {
+            code: this.id
+          }).then(async (bird) => {
+            for (let key in bird) {
+              await Redis.hset(`species:${id}`, key, bird[key]);
+            }
+
+            return bird;
+          });
+        }
+
+        for (let key in result) {
           if (!params.fields || params.fields.includes(key)) {
-            this[key] = bird[key];
+            this[key] = result[key];
           }
         }
 
-        await Database.getOne('taxonomy', {
-          name: bird.family
-        }, {
-          select: ['name', 'parent']
-        }).then((taxonomy) => {
-          this.family = taxonomy.name;
-          this.order = taxonomy.parent;
+        Redis.hgetall(`taxonomy:${result.family}`, async (err, result) => {
+          if (!result) {
+            result = await Database.getOne('taxonomy', {
+              name: bird.family
+            }, {
+              select: ['name', 'parent']
+            }).then(async (taxonomy) => {
+              for (let key in taxonomy) {
+                await Redis.hset(`taxonomy:${result.family}`, key, taxonomy[key]);
+              }
+
+              return taxonomy;
+            });
+          }
+
+          this.family = result.name;
+          this.order = result.parent;
         });
 
         if (params.include?.includes('variants')) {
@@ -34,7 +57,7 @@ class Bird {
             bird: this,
             include: params.include,
             member: params.member,
-	    artist: params.artist
+            artist: params.artist
           });
 
           this.variants.sort((a, b) => ((a.full ? -1 : 1) || (a.subspecies || "").localeCompare(b.subspecies) || (a.label || "").localeCompare(b.label) || (a.credit || "").localeCompare(b.credit)));
@@ -59,7 +82,10 @@ class Bird {
 
   fetchMemberData(memberId) {
     return new Promise(async (resolve, reject) => {
-      this.wishlisted = await Database.getOne('wishlist', { member : memberId, species: this.id }).then( (wishlist) => wishlist ? wishlist.intensity : 0);
+      this.wishlisted = await Database.getOne('wishlist', {
+        member: memberId,
+        species: this.id
+      }).then((wishlist) => wishlist ? wishlist.intensity : 0);
       this.owned = await Counters.get('species', memberId, this.id);
 
       resolve({

@@ -1,4 +1,3 @@
-const Cache = require('../helpers/cache.js');
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
@@ -54,6 +53,7 @@ class BirdyPet {
 
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
+	    // TODO - add redis
       Database.getOne('birdypets', {
         id: this.id
       }).then(async (birdypet) => {
@@ -153,7 +153,8 @@ class BirdyPet {
           id: this.id
         }, data);
 
-        await Cache.refresh('birdypet', this.id);
+	      // TODO - just refresh
+        await Redis.del(`birdypet:${this.id}`);
 
         resolve();
       });
@@ -189,7 +190,7 @@ class BirdyPet {
 
         await Database.query('DELETE FROM exchange_birdypets WHERE birdypet = ?', [this.id]);
       }),
-      Redis.connect("cache").del(`birdypet:${this.id}`),
+      Redis.del(`birdypet:${this.id}`),
     ]);
   }
 }

@@ -7,32 +7,50 @@ const Members = require('../collections/members.js');
 module.exports = async (req, res) => {
   switch (req.method) {
     case "GET":
-      var bird = new Bird(req.query.speciesCode);
+      if (req.query.speciesCode) {
+        var bird = new Bird(req.query.speciesCode);
 
-      await bird.fetch({
-        include: ['variants', 'adjectives', 'memberData'],
-        member: req.query.loggedInUser
-      });
+        await bird.fetch({
+          include: ['variants', 'adjectives', 'memberData'],
+          member: req.query.loggedInUser
+        });
 
-      if (req.query.include?.includes('members')) {
-        let promises = [];
+        if (req.query.include?.includes('members')) {
+          let promises = [];
 
-        await Members.all().then((members) => {
-          for (let member of members) {
-            if (!member.settings.privacy_profile) {
-              promises.push(Counters.get('species', member.id, bird.code).then((result) => {
-                return {
-                  member: member,
-                  count: result
-                }
-              }));
+          await Members.all().then((members) => {
+            for (let member of members) {
+              if (!member.settings.privacy_profile) {
+                promises.push(Counters.get('species', member.id, bird.code).then((result) => {
+                  return {
+                    member: member,
+                    count: result
+                  }
+                }));
+              }
             }
-          }
-        });
+          });
 
-        await Promise.all(promises).then((responses) => {
-          bird.members = responses.filter((response) => response.count > 0).map((response) => response.member);
-        });
+          await Promise.all(promises).then((responses) => {
+            bird.members = responses.filter((response) => response.count > 0).map((response) => response.member);
+          });
+        }
+      } else if (req.query.taxonomy) {
+        var birds = await Birds.fetch('*', req.query.taxonomy);
+
+        if (birds.length > 0) {
+          birds.sort(() => Math.random() - .5);
+
+          var bird = new Bird(birds[0].code);
+
+          await bird.fetch(req.query);
+        } else {
+          return res.json(null);
+        }
+      } else {
+        var bird = await Birds.random().then((bird) => new Bird(bird.code));
+
+        await bird.fetch(req.query);
       }
 
       res.json(bird);

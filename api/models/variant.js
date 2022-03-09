@@ -1,7 +1,6 @@
 const Bird = require('./bird.js');
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
-const Redis = require('../helpers/redis.js');
 
 class Variant {
   constructor(id) {
