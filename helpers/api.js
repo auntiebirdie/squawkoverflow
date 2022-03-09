@@ -36,7 +36,7 @@ exports.call = (endpoint, method = "GET", data = {}, headers = {}) => {
           resolve(response.data);
         }
       }).catch((err) => {
-        reject(err);
+	      resolve({ error : err });
       });
   });
 }
