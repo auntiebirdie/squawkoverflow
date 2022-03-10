@@ -1,9 +1,11 @@
-FROM node:16
+FROM google/cloud-sdk:alpine
 
 WORKDIR /usr/app
 
 COPY . .
 
-RUN npm install discord.js express ejs mariadb node-trello short-uuid
+RUN apk update && apk add nodejs nodejs-npm
+RUN npm install discord.js express express-session ejs mariadb node-trello redis connect-redis short-uuid
+RUN gsutil cp gs://squawkstorage/secrets.json secrets.json
 
 CMD [ "node", "bugs.js"]

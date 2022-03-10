@@ -10,7 +10,6 @@ app.use(express.urlencoded({
 app.use(require('./helpers/session.js'));
 
 app.use(async function(req, res, next) {
-
   if (req.session.loggedInUser) {
     res.locals.loggedInUser = req.session.loggedInUser;
   }
@@ -38,7 +37,7 @@ app.get('/', (req, res) => {
 app.post('/', (req, res) => {
   console.log(req.body);
 
-  const secrets = require('./api/secrets.json');
+  const secrets = require('./secrets.json');
   const Database = require('./api/helpers/database.js');
   const Trello = require('node-trello');
   const trello = new Trello(secrets.TRELLO.KEY, secrets.TRELLO.TOKEN);

@@ -18,7 +18,7 @@ module.exports = session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-	  domain: null, //'dev.squawkoverflow.com',
+    domain: 'squawkoverflow.com',
     maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
   }
 });

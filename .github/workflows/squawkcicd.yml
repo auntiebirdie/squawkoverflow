@@ -20,26 +20,34 @@ jobs:
         CONTENT=$(echo "$RELEASE_NOTES" | sed -z 's/\r\n/\\r\\n/g;s/\"/\\\"/g')
         curl -X POST -d '{"content":":information_source:  <@&913767546048630785>  A new deployment has started!  This should only take 3-5 minutes to complete.\r\n** ** ","embeds":[{"title":"'"$TITLE"'","url":"'"$PR_URL"'","description":"'"$CONTENT"'"}]}' -H "Content-Type:application/json" "https://discord.com/api/webhooks/$WEBHOOK_ID/$WEBHOOK_TOKEN"
 
-  deploy-app:
+  deploy-api:
     needs: notify-squawkers
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: 'echo "$API_SECRETS" > ./api/secrets.json && echo "$APP_SECRETS" > ./secrets.json'
-        shell: bash
-        env:
-          API_SECRETS: ${{ secrets.API_SECRETS }}
-          APP_SECRETS: ${{ secrets.APP_SECRETS }}
       - uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - uses: google-github-actions/setup-gcloud@v0
+      - run: gsutil cp gs://squawkstorage/secrets.json ./api/secrets.json
       - run: gcloud functions deploy api
         working-directory: ./api
+
+  deploy-app:
+    needs: deploy-api
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - uses: google-github-actions/setup-gcloud@v0
       - run: |
           rm Dockerfile
           rm -rf api
+          gsutil cp gs://squawkstorage/secrets.json ./secrets.json
           gcloud app deploy
           gcloud app versions list --format='value(version.id)' --sort-by='~version.createTime' | tail -n +3 | xargs -r gcloud app versions delete --quiet
 
