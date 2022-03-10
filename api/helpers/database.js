@@ -46,8 +46,13 @@ Database.prototype.count = function(type, identifiers) {
     let params = [];
 
     for (let i in identifiers) {
-      filters.push(`\`${i}\` = ?`);
-      params.push(identifiers[i]);
+      if (Array.isArray(identifiers[i])) {
+        filters.push(`\`${i}\` IN (?)`);
+        params.push(identifiers[i]);
+      } else {
+        filters.push(`\`${i}\` = ?`);
+        params.push(identifiers[i]);
+      }
     }
 
     query += filters.join(' AND ');

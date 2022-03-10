@@ -88,6 +88,8 @@ router.get('/bird/:code', async (req, res) => {
     if (bird && bird.variants.length > 0) {
       let eggs = [];
 
+	    console.log(bird.members);
+
       if (req.session.user && (req.session.loggedInUser.admin || req.session.loggedInUser.contributor)) {
         eggs = await API.call('eggs', 'GET');
       }

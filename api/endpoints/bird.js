@@ -21,18 +21,22 @@ module.exports = async (req, res) => {
           await Members.all().then((members) => {
             for (let member of members) {
               if (!member.settings.privacy_profile) {
-                promises.push(Counters.get('species', member.id, bird.code).then((result) => {
-                  return {
-                    member: member,
-                    count: result
-                  }
+                promises.push(Counters.get('species', member.id, bird.code).then(async (result) => {
+                  member.owned = result;
+                  member.wishlisted = await Database.count('wishlist', {
+                    member: member.id,
+                    species: bird.code,
+                    intensity: [1, 2]
+                  });
+
+                  return member;
                 }));
               }
             }
           });
 
-          await Promise.all(promises).then((responses) => {
-            bird.members = responses.filter((response) => response.count > 0).map((response) => response.member);
+          await Promise.all(promises).then(async (responses) => {
+            bird.members = responses.filter((response) => (response.owned + response.wishlisted) > 0);
           });
         }
       } else if (req.query.taxonomy) {
