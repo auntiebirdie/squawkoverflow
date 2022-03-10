@@ -56,7 +56,13 @@ exports.receive = function(message, context) {
         if (data.action == "COLLECT") {
           if (data.adjective) {
             if (!member.settings.privacy_activity || data.source == "DISCORD") {
-              Redis.connect().zadd('recentlyHatched', Date.now(), data.birdypet);
+              promises.push(Redis.zadd('recentlyHatched', Date.now(), data.birdypet, (err, results) => {
+                Redis.zcount('recentlyHatched', '-inf', '+inf', (err, count) => {
+                  if (count > 5) {
+                    return Redis.zremrangebyrank('recentlyHatched', 0, 0);
+                  }
+                });
+              }));
             }
 
             if (member.serverMember && (!member.settings.privacy_activity || data.source == "DISCORD")) {
