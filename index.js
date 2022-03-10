@@ -29,18 +29,16 @@ app.use(async function(req, res, next) {
   var menu = [];
 
   if (req.session.user) {
-    req.session.loggedInUser = await API.call('member', 'GET', {
+    res.locals.loggedInUser = await API.call('member', 'GET', {
       id: req.session.user,
       include: ['exchangeData']
     }).catch((err) => {
       console.log(err);
       delete req.session.user;
-      delete req.session.loggedInUser;
     });
 
-    if (req.session.loggedInUser) {
+    if (res.locals.loggedInUser) {
       res.locals.ENV = process.env.NODE_ENV ? 'PROD' : 'DEV';
-      res.locals.loggedInUser = req.session.loggedInUser;
 
       menu.push({
         "icon": "🥚",
@@ -54,7 +52,7 @@ app.use(async function(req, res, next) {
         "icon": "🤝",
         "label": "Exchange",
         "href": "/exchange",
-        "notif": Math.max(0, req.session.loggedInUser.exchangeData)
+        "notif": Math.max(0, res.locals.loggedInUser.exchangeData)
       });
 
       // computers are bad at rnadom so this helps keep it from triggering too often
@@ -70,8 +68,7 @@ app.use(async function(req, res, next) {
         });
       }
     } else {
-      delete req.session.user;
-      delete req.session.loggedInUser;
+      //delete req.session.user;
     }
   }
 

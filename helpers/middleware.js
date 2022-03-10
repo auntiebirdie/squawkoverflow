@@ -9,7 +9,7 @@ Middleware.prototype.isLoggedIn = function(req, res, next) {
 }
 
 Middleware.prototype.isContributor = function(req, res, next) {
-  if (req.session.loggedInUser?.contributor) {
+  if (res.locals.loggedInUser?.contributor) {
     next();
   } else {
     res.redirect('/error');
@@ -17,7 +17,7 @@ Middleware.prototype.isContributor = function(req, res, next) {
 }
 
 Middleware.prototype.isAdmin = function(req, res, next) {
-  if (req.session.loggedInUser?.admin) {
+  if (res.locals.loggedInUser?.admin) {
     next();
   } else {
     res.redirect('/error');

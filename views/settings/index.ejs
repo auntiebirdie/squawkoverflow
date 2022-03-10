@@ -40,6 +40,20 @@
       </h3>
 
       <div class="p-3 m-3 mb-5 d-inline">
+        <div class="form-check form-switch mb-3">
+          <span>
+            <input type="checkbox" class="form-check-input" name="general_updateWishlist" value="1" id="general_updateWishlist" <%= member.settings.general_updateWishlist ? "checked" : "" %>>
+          </span>
+          <label class="form-check-label" for="general_updateWishlist">Remove newly obtained birds from my wishlist automatically</label>
+        </div>
+
+        <div class="form-check form-switch mb-3">
+          <span>
+            <input type="checkbox" class="form-check-input" name="general_removeCompleted" value="1" id="general_removeCompleted" <%= member.settings.general_removeCompleted ? "checked" : "" %>>
+          </span>
+          <label class="form-check-label" for="general_removeCompleted">Remove completed eggs from the hatching pool</label>
+        </div>
+
         <div class="row mb-3">
           <div class="col-12 col-md-3 text-md-end">
             <label for="username">
@@ -81,7 +95,7 @@
               Title:
             </label>
           </div>
-          <div class="col-6 col-md-4">
+          <div class="col-7 col-md-5">
             <select name="rank" id="rank" class="form-select">
              <% for (let rank of member.ranks) { %>
                <option value="<%= rank.id %>" <%= rank.selected ? 'selected' : '' %> <%= rank.disabled ? 'disabled' : '' %>>
@@ -90,7 +104,7 @@
              <% } %>
             </select>
           </div>
-          <div class="col-6 col-md-4">
+          <div class="col-5 col-md-4">
             <select name="title" id="title" class="form-select">
              <% for (let tier of member.tiers) { %>
               <option value="<%= tier.id %>" <%= tier.id == member.settings.title ? "selected" : "" %>><%= tier.name %></option>
@@ -99,18 +113,33 @@
           </div>
         </div>
 
-        <div class="form-check form-switch mb-3">
-          <span>
-            <input type="checkbox" class="form-check-input" name="general_updateWishlist" value="1" id="general_updateWishlist" <%= member.settings.general_updateWishlist ? "checked" : "" %>>
-          </span>
-          <label class="form-check-label" for="general_updateWishlist">Remove newly obtained birds from my wishlist automatically</label>
-        </div>
-
-        <div class="form-check form-switch mb-3">
-          <span>
-            <input type="checkbox" class="form-check-input" name="general_removeCompleted" value="1" id="general_removeCompleted" <%= member.settings.general_removeCompleted ? "checked" : "" %>>
-          </span>
-          <label class="form-check-label" for="general_removeCompleted">Remove completed eggs from the hatching pool</label>
+        <div class="row mb-3">
+          <div class="col-12 col-md-3 text-md-end">
+            <label for="rank">
+              Birthday:
+              <div class="small">
+                <small>
+                  Get a free BirdyPet of your choice on your birthday!
+                </small>
+              </div>
+            </label>
+          </div>
+          <div class="col-5 col-md-3">
+            <select name="birthday_date" id="birthday_date" class="form-select">
+              <option value="" disabled <%= member.settings.birthday_date == null ? '' : 'selected' %>>Day</option>
+             <% for (let i = 1; i < 31; i++) { %>
+              <option <%= member.settings.birthday_date == i ? 'selected' : '' %>><%= i %></option>
+             <% } %>
+            </select>
+          </div>
+          <div class="col-7 col-md-6">
+            <select name="birthday_month" id="birthday_month" class="form-select">
+              <option value="" disabled <%= member.settings.birthday_month == null ? '' : 'selected' %>>Month</option>
+             <% for (let i = 0, months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']; i < 12; i++) { %>
+              <option <%= member.settings.birthday_month == i ? 'selected' : '' %> value="<%= i %>"><%= months[i] %></option>
+             <% } %>
+            </select>
+          </div>
         </div>
       </div>
     </div>

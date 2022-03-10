@@ -31,25 +31,13 @@ class Bird {
           }
         }
 
-        Redis.hgetall(`taxonomy:${this.family}`, async (err, result) => {
-          if (!result) {
-            result = await Database.getOne('taxonomy', {
-              name: this.family
-            }, {
-              select: ['name', 'parent']
-            }).then(async (taxonomy) => {
-              for (let key in taxonomy) {
-                await Redis.hset(`taxonomy:${this.family}`, key, taxonomy[key]);
-              }
-
-              return taxonomy;
-            });
-          }
-
-          this.family = result.name;
-          this.order = result.parent;
-
-          await Redis.hset(identifier, 'order', result.parent);
+        await Database.getOne('taxonomy', {
+          name: this.family
+        }, {
+          select: ['name', 'parent']
+        }).then((taxonomy) => {
+          this.family = taxonomy.name;
+          this.order = taxonomy.parent;
         });
 
         if (params.include?.includes('variants')) {

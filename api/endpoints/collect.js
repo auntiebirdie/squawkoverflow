@@ -17,8 +17,12 @@ module.exports = (req, res) => {
     let variant = req.body.variant;
     let freebird = null;
 
-    await member.fetch({
-      createIfNotExists: req.headers && req.headers['x-forwarded-for'] == '35.208.110.100' ? true : false
+    await member.fetch(req.headers && req.headers['x-forwarded-for'] == '35.208.110.100' ? {
+      createIfNotExists: true,
+      data: req.body.userData || {}
+    } : {
+      createIfNotExists: false,
+      data: {}
     });
 
     if (req.body.freebird) {

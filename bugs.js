@@ -10,8 +10,13 @@ app.use(express.urlencoded({
 app.use(require('./helpers/session.js'));
 
 app.use(async function(req, res, next) {
-  if (req.session.loggedInUser) {
-    res.locals.loggedInUser = req.session.loggedInUser;
+  if (req.session.user) {
+    res.locals.loggedInUser = await API.call('member', 'GET', {
+      id: req.session.user,
+      include: ['exchangeData']
+    }).catch((err) => {
+      console.log(err);
+    });
   }
 
   res.locals.siteMenu = [{

@@ -9,7 +9,7 @@ const session = require('express-session');
 module.exports = session({
   store: new DatastoreStore({
     kind: 'express-sessions',
-    expirationMs: 0,
+    expirationMs: 30 * 24 * 60 * 60 * 1000, // 30 days,
     dataset: new Datastore()
   }),
   secret: 'birds are just government drones',

@@ -51,40 +51,12 @@ class Member {
 
       if (!member) {
         if (params.createIfNotExists) {
-          const secrets = require('../secrets.json');
-          const {
-            Client,
-            Intents
-          } = require('discord.js');
+          this.create(params.data || {}).then((id) => {
+            this.id = id;
 
-          const client = new Client({
-            intents: [Intents.FLAGS.GUILD_MEMBERS]
-          });
-
-          client.login(secrets.DISCORD.BOT_TOKEN);
-
-          client.on('ready', () => {
-            client.guilds.fetch(secrets.DISCORD.GUILD_ID).then(async (guild) => {
-              await guild.members.fetch(`${auth.id}`).then((member) => {
-                params.data.username = member.displayName;
-                params.data.avatar = member.displayAvatarURL();
-                params.data.serverMember = true;
-              }).catch(() => {
-                client.users.fetch(`${auth.id}`).then((user) => {
-                  params.data.username = user.username;
-                  params.deta.avatar = user.avatarURL();
-                  params.data.serverMember = false;
-                });
-              });
-
-              await this.create(params.data || {}).then((id) => {
-                this.id = id;
-
-                resolve({
-                  ...params.data,
-                  id: id
-                });
-              });
+            resolve({
+              ...params.data,
+              id: id
             });
           });
         } else {
@@ -127,7 +99,7 @@ class Member {
         this.settings.theme_style = 'dark';
       }
 
-      this.tier = await Database.query('SELECT * FROM tiers WHERE id = ?', [member.tier]).then(([tier]) => tier);
+      this.tier = await Database.query('SELECT * FROM tiers WHERE id = ?', [member.tier || 0]).then(([tier]) => tier);
 
       if (typeof this.settings.title != "undefined" && this.settings.title != this.tier.id) {
         this.title = await Database.getOne('tiers', {

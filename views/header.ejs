@@ -36,7 +36,7 @@
       call : function (endpoint, method, data, success, error) {
         $('#errorMessage').addClass('d-none');
 
-        if (API.currentRequest[endpoint]) {
+        if (API.currentRequest[endpoint] && method == 'GET') {
 		API.currentRequest[endpoint].abort();
 	}
 
