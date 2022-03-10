@@ -19,7 +19,7 @@ class Member {
         username: data.username,
         avatar: data.avatar,
         tier: data.tier || 0,
-        serverMember: false, // TODO - check?
+        serverMember: data.serverMember || false,
         joinedAt: new Date(),
         lastLoginAt: new Date()
       }).then(() => {
@@ -51,12 +51,40 @@ class Member {
 
       if (!member) {
         if (params.createIfNotExists) {
-          await this.create(params.data || {}).then((id) => {
-            this.id = id;
+          const secrets = require('../secrets.json');
+          const {
+            Client,
+            Intents
+          } = require('discord.js');
 
-            resolve({
-              ...params.data,
-              id: id
+          const client = new Client({
+            intents: [Intents.FLAGS.GUILD_MEMBERS]
+          });
+
+          client.login(secrets.DISCORD.BOT_TOKEN);
+
+          client.on('ready', () => {
+            client.guilds.fetch(secrets.DISCORD.GUILD_ID).then(async (guild) => {
+              await guild.members.fetch(`${auth.id}`).then((member) => {
+                params.data.username = member.displayName;
+                params.data.avatar = member.displayAvatarURL();
+                params.data.serverMember = true;
+              }).catch(() => {
+                client.users.fetch(`${auth.id}`).then((user) => {
+                  params.data.username = user.username;
+                  params.deta.avatar = user.avatarURL();
+                  params.data.serverMember = false;
+                });
+              });
+
+              await this.create(params.data || {}).then((id) => {
+                this.id = id;
+
+                resolve({
+                  ...params.data,
+                  id: id
+                });
+              });
             });
           });
         } else {
