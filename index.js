@@ -33,12 +33,10 @@ app.use(async function(req, res, next) {
       id: req.session.user,
       include: ['exchangeData']
     }).catch((err) => {
-      console.error(err);
+      console.log(err);
       delete req.session.user;
       delete req.session.loggedInUser;
     });
-
-	  console.log(req.session);
 
     if (req.session.loggedInUser) {
       res.locals.ENV = process.env.NODE_ENV ? 'PROD' : 'DEV';

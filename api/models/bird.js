@@ -12,13 +12,13 @@ class Bird {
 
       const identifier = `species:${this.id}`;
 
-      Redis.hgetall(`species:${id}`, async (err, result) => {
+      Redis.hgetall(identifier, async (err, result) => {
         if (!result) {
           result = await Database.getOne('species', {
             code: this.id
           }).then(async (bird) => {
             for (let key in bird) {
-              await Redis.hset(`species:${id}`, key, bird[key]);
+              await Redis.hset(identifier, key, bird[key]);
             }
 
             return bird;
@@ -31,15 +31,15 @@ class Bird {
           }
         }
 
-        Redis.hgetall(`taxonomy:${result.family}`, async (err, result) => {
+        Redis.hgetall(`taxonomy:${this.family}`, async (err, result) => {
           if (!result) {
             result = await Database.getOne('taxonomy', {
-              name: bird.family
+              name: this.family
             }, {
               select: ['name', 'parent']
             }).then(async (taxonomy) => {
               for (let key in taxonomy) {
-                await Redis.hset(`taxonomy:${result.family}`, key, taxonomy[key]);
+                await Redis.hset(`taxonomy:${this.family}`, key, taxonomy[key]);
               }
 
               return taxonomy;
@@ -48,6 +48,8 @@ class Bird {
 
           this.family = result.name;
           this.order = result.parent;
+
+          await Redis.hset(identifier, 'order', result.parent);
         });
 
         if (params.include?.includes('variants')) {

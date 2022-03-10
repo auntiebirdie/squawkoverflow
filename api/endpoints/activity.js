@@ -4,7 +4,7 @@ const Redis = require('../helpers/redis.js');
 module.exports = async (req, res) => {
   switch (req.method) {
     case "GET":
-      Redis.zrange('recentlyHatched', '-inf', '+inf', 'BYSCORE', 'REV', 'LIMIT', 0, 1, (err, results) => {
+      Redis.zrange('recentlyHatched', '-inf', '+inf', 'BYSCORE', 'REV', 'LIMIT', 0, 5, (err, results) => {
         let promises = [];
 
         for (let result of results) {
