@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
     await oauth.tokenRequest({
       clientId: secrets.DISCORD.CLIENT_ID,
       clientSecret: secrets.DISCORD.CLIENT_SECRET,
-      redirectUri: process.env.NODE_ENV == 'PROD' ? 'https://squawkoverflow.com/login' : 'https://dev.squawkoverflow.com/login',
+      redirectUri: `https://${process.env.NODE_ENV == 'PROD' ? '' : 'dev.'}squawkoverflow.com/${req.body.connect ? 'settings/connect' : 'login'}`,
       code: req.body.code,
       scope: 'identify',
       grantType: 'authorization_code'

@@ -26,6 +26,18 @@ router.get('/login', (req, res) => {
       res.redirect('/');
     });
   } else {
+    res.clearCookie('connect.sid', {
+      domain: '.squawkoverflow.com'
+    });
+    res.clearCookie('connect.sid', {
+      domain: 'squawkoverflow.com'
+    });
+    res.clearCookie('connect.sid', {
+      domain: 'dev.squawkoverflow.com'
+    });
+    res.clearCookie('connect.sid', {
+      domain: '.dev.squawkoverflow.com'
+    });
     res.render('home/login', {
       redirectUri: 'https://' + (process.env.DEV ? 'dev.' : '') + 'squawkoverflow.com/login'
     });
