@@ -28,6 +28,7 @@ class Search {
           break;
         case 'freebird':
           query += 'freebirds.id, freebirds.variant FROM freebirds JOIN variants ON (freebirds.variant = variants.id) JOIN species ON (variants.species = species.code)';
+          filters.push('freebirds.freedAt <= DATE_SUB(NOW(), INTERVAL 10 MINUTE)');
           break;
         case 'member':
           query += 'members.id FROM members LEFT JOIN counters ON (counters.member = members.id AND counters.type = "aviary" AND counters.id = "total")';

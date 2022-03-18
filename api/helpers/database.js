@@ -49,6 +49,11 @@ Database.prototype.count = function(type, identifiers) {
       if (Array.isArray(identifiers[i])) {
         filters.push(`\`${i}\` IN (?)`);
         params.push(identifiers[i]);
+      } else if (typeof identifiers[i] == 'object') {
+        filters.push(`\`${i}\` ${identifiers[i].comparator} ${'value_trusted' in identifiers[i] ? identifiers[i].value_trusted : '?'}`);
+        if ('value' in identifiers[i]) {
+          params.push(identifiers[i].value);
+        }
       } else {
         filters.push(`\`${i}\` = ?`);
         params.push(identifiers[i]);
