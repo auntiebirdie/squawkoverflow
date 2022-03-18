@@ -1,7 +1,7 @@
 <h5>Collection Progress</h5>
 
 <p class="mb-0 mt-4"><a href="/birdypedia">All Species</a></hp>
-<% var prct = Math.round(member.totals.species / totalSpecies * 100); %>
+<% var prct = Math.floor(member.totals.species / totalSpecies * 100); %>
 <p class="small mt-0 mb-2"><small></small></p>
 <div class="progress mx-2">
   <div class="progress-bar<%= prct == 100 ? " bg-success" : "" %>" style="width: <%= prct %>%" role="progressbar" aria-valuenow="<%= member.totals.species %>" aria-valuemin="0" aria-valuemax="<%= totalSpecies %>"><%= prct %>%</div>
@@ -12,7 +12,7 @@
  <% if (family.owned > 0) { %>
   <p class="mb-0 mt-4"><a href="/birdypedia?family=<%= family.name %>"><%= family.name %></a></hp>
   <p class="small mt-0 mb-2"><small>(<%= family.display.split(' (').pop() %></small></p>
-  <% var prct = Math.round(family.owned / family.total * 100); %>
+  <% var prct = Math.floor(family.owned / family.total * 100); %>
   <div class="progress mx-2">
     <div class="progress-bar<%= prct == 100 ? " bg-success" : "" %>" style="width: <%= prct %>%" role="progressbar" aria-valuenow="<%= family.owned %>" aria-valuemin="0" aria-valuemax="<%= family.total %>"><%= prct %>%</div>
   </div>

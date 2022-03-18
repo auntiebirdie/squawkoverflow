@@ -40,8 +40,8 @@ module.exports = async (req, res) => {
             query += ' WHERE adjective NOT IN (SELECT id FROM counters WHERE counters.id = adjectives.adjective AND counters.member = ? AND counters.count = adjectives.numSpecies)';
             params.push(member.id);
 
-            if (eventEggs.length > 0) {
-              query += ' AND adjective NOT IN (?)';
+            if (eventEggs.length > 0 && !member.settings.general_removeEvent) {
+              query += ' AND counters.id NOT IN (?)';
               params.push(eventEggs);
             };
           }
@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
           var eggs = await Database.query(query, params);
 
           for (let egg of eggs) {
-            egg.isEvent = eventEggs.includes(egg.adjective);
+            egg.isEvent = eventEggs.includes(egg.adjective) && !member.settings.general_removeEvent;
 
             if (member.tier?.extraInsights) {
               egg.numHatched = await Counters.get('eggs', member.id, egg.adjective);
@@ -64,7 +64,11 @@ module.exports = async (req, res) => {
       break;
     case "POST":
       var birdypets = [];
-      var isEventEgg = eventEggs.includes(req.body.egg) && chance.bool();
+      var member = new Member(req.body.loggedInUser);
+
+      await member.fetch();
+
+      var isEventEgg = eventEggs.includes(req.body.egg) && chance.bool() && !member.settings.general_removeEvent;
 
       if (isEventEgg) {
         var hatched = await Database.query('SELECT species, variant FROM event_variants JOIN variants ON (event_variants.variant = variants.id) JOIN species_adjectives ON (variants.speices = species_adjectives.species) WHERE adjective = ? AND event NOW() BETWEEN events.startDate AND events.endDate ORDER BY RAND() LIMIT 1');
@@ -74,9 +78,6 @@ module.exports = async (req, res) => {
 
       if (hatched) {
         var bird = new Bird(hatched.species);
-        var member = new Member(req.body.loggedInUser);
-
-        await member.fetch();
 
         await bird.fetch({
           member: member.id,

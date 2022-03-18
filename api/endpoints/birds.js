@@ -21,7 +21,7 @@ module.exports = (req, res) => {
         promises.push(bird.fetch());
       }
 
-      Promise.all(promises).then(() => {
+      Promise.all(promises).then((birds) => {
         let promises = [];
 
         for (let i = 0, len = birds.length; i < len; i++) {

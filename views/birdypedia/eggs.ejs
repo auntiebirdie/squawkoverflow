@@ -24,7 +24,7 @@
         </div>
         <div class="col-6 col-md-5 text-start">
          <% if (locals.loggedInUser) { %>
-          <% var prct = Math.round(egg.memberTotal / egg.numSpecies * 100); %>
+          <% var prct = Math.floor(egg.memberTotal / egg.numSpecies * 100); %>
           <div class="progress mx-2">
             <div class="progress-bar<%= prct == 100 ? " bg-success" : "" %>" style="width: <%= prct %>%" role="progressbar" aria-valuenow="<%= egg.memberTotal %>" aria-valuemin="0" aria-valuemax="<%= egg.numSpecies %>"></div>
           </div>
@@ -49,7 +49,7 @@
         $('.progress-bar').each((i, bar) => {
           switch (display) {
             case 'percent':
-               bar.innerHTML = Math.round(bar.getAttribute('aria-valuenow') / bar.getAttribute('aria-valuemax') * 100) + '%';
+               bar.innerHTML = Math.floor(bar.getAttribute('aria-valuenow') / bar.getAttribute('aria-valuemax') * 100) + '%';
                break;
             case 'fraction':
               bar.innerHTML = bar.getAttribute('aria-valuenow') + '/' + bar.getAttribute('aria-valuemax') ;

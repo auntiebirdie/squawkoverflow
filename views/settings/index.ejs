@@ -54,6 +54,13 @@
           <label class="form-check-label" for="general_removeCompleted">Remove completed eggs from the hatching pool</label>
         </div>
 
+        <div class="form-check form-switch mb-3">
+          <span>
+            <input type="checkbox" class="form-check-input" name="general_removeEvent" value="1" id="general_removeEvent" <%= member.settings.general_removeEvent ? "checked" : "" %>>
+          </span>
+          <label class="form-check-label" for="general_removeEvent">Remove special event variants from the hatching pool</label>
+        </div>
+
         <div class="row mb-3">
           <div class="col-12 col-md-3 text-md-end">
             <label for="username">
