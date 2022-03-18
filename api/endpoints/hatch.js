@@ -71,7 +71,7 @@ module.exports = async (req, res) => {
       var isEventEgg = eventEggs.includes(req.body.egg) && chance.bool() && !member.settings.general_removeEvent;
 
       if (isEventEgg) {
-        var hatched = await Database.query('SELECT species, variant FROM event_variants JOIN variants ON (event_variants.variant = variants.id) JOIN species_adjectives ON (variants.speices = species_adjectives.species) WHERE adjective = ? AND event NOW() BETWEEN events.startDate AND events.endDate ORDER BY RAND() LIMIT 1');
+        var hatched = await Database.query('SELECT variants.species, variants.id FROM event_variants JOIN events ON (event_variants.event = events.id) JOIN variants ON (event_variants.variant = variants.id) JOIN species_adjectives ON (variants.species = species_adjectives.species) WHERE adjective = ? AND NOW() BETWEEN events.startDate AND events.endDate ORDER BY RAND() LIMIT 1', [req.body.egg]);
       } else {
         var hatched = await Database.query('SELECT species FROM species_adjectives WHERE adjective = ? AND species IN (SELECT species FROM variants) ORDER BY RAND() LIMIT 1', [req.body.egg]);
       }
@@ -84,7 +84,7 @@ module.exports = async (req, res) => {
           include: ['memberData', 'variants']
         });
 
-        bird.variants = bird.variants.filter((variant) => isEventEgg ? hatched.variant : !variant.special);
+        bird.variants = bird.variants.filter((variant) => isEventEgg ? variant.id == hatched.id : !variant.special);
 
         return res.status(200).json(bird);
       } else {
