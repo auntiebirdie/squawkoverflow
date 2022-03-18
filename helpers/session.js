@@ -5,6 +5,7 @@ const {
   DatastoreStore
 } = require('@google-cloud/connect-datastore');
 const session = require('express-session');
+const secrets = require('../secrets.json');
 
 module.exports = session({
   store: new DatastoreStore({
@@ -12,7 +13,7 @@ module.exports = session({
     expirationMs: 30 * 24 * 60 * 60 * 1000, // 30 days,
     dataset: new Datastore()
   }),
-  secret: 'birds are just government drones',
+  secret: secrets.SESSION_TOKEN,
   key: 'squawk.connect.sid',
   resave: false,
   saveUninitialized: false,
