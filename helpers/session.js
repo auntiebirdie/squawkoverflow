@@ -13,6 +13,7 @@ module.exports = session({
     dataset: new Datastore()
   }),
   secret: 'birds are just government drones',
+  key: 'squawk.connect.sid',
   resave: false,
   saveUninitialized: false,
   cookie: {
