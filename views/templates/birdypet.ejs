@@ -2,7 +2,7 @@
   <div class="w-100 pb-3 px-2">
     <div class="h-100 card">
       <% if (locals.loggedInUser) { %>
-        <button class="wishlist-heart btn btn-sm" data-id="${model.bird.code}" role="button">
+        <button class="wishlist-heart btn btn-sm" data-id="${model.bird.id}" role="button">
           ${model.bird.wishlisted ? (model.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍'}
         </button>
       <% } %>

@@ -4,7 +4,7 @@ const Redis = require('../helpers/redis.js');
 
 class Bird {
   constructor(id) {
-    this.id = id;
+    this.id = id.replace(/\-/g, ' ');
   }
 
   fetch(params = {}) {
@@ -15,7 +15,7 @@ class Bird {
       Redis.hgetall(identifier, async (err, result) => {
         if (!result) {
           result = await Database.getOne('species', {
-            code: this.id
+            id: this.id
           }).then(async (bird) => {
             for (let key in bird) {
               await Redis.hset(identifier, key, bird[key]);
@@ -31,6 +31,8 @@ class Bird {
           }
         }
 
+        this.id_slug = this.id.replace(/\s/g, '-');
+
         await Database.getOne('taxonomy', {
           name: this.family
         }, {
@@ -43,7 +45,7 @@ class Bird {
         if (params.include?.includes('variants')) {
           const Variants = require('../collections/variants.js');
 
-          this.variants = await Variants.fetch('species', this.code, {
+          this.variants = await Variants.fetch('species', this.id, {
             bird: this,
             include: params.include,
             member: params.member,

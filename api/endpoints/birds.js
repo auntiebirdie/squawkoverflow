@@ -16,7 +16,7 @@ module.exports = (req, res) => {
       let promises = [];
 
       for (let bird of birds) {
-        bird = new Bird(bird.code);
+        bird = new Bird(bird.id);
 
         promises.push(bird.fetch());
       }

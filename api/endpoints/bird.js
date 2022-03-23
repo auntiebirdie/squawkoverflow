@@ -7,8 +7,8 @@ const Members = require('../collections/members.js');
 module.exports = async (req, res) => {
   switch (req.method) {
     case "GET":
-      if (req.query.speciesCode) {
-        var bird = new Bird(req.query.speciesCode);
+      if (req.query.id) {
+        var bird = new Bird(req.query.id);
 
         await bird.fetch({
           include: ['variants', 'adjectives', 'memberData'],
@@ -21,11 +21,11 @@ module.exports = async (req, res) => {
           await Members.all().then((members) => {
             for (let member of members) {
               if (!member.settings.privacy_profile) {
-                promises.push(Counters.get('species', member.id, bird.code).then(async (result) => {
+                promises.push(Counters.get('species', member.id, bird.id).then(async (result) => {
                   member.owned = result;
                   member.wishlisted = await Database.count('wishlist', {
                     member: member.id,
-                    species: bird.code,
+                    species: bird.id,
                     intensity: [1, 2]
                   });
 
@@ -45,14 +45,14 @@ module.exports = async (req, res) => {
         if (birds.length > 0) {
           birds.sort(() => Math.random() - .5);
 
-          var bird = new Bird(birds[0].code);
+          var bird = new Bird(birds[0].id);
 
           await bird.fetch(req.query);
         } else {
           return res.json(null);
         }
       } else {
-        var bird = await Birds.random().then((bird) => new Bird(bird.code));
+        var bird = await Birds.random().then((bird) => new Bird(bird.id));
 
         await bird.fetch(req.query);
       }
@@ -64,7 +64,7 @@ module.exports = async (req, res) => {
         var member = await Members.get(req.body.loggedInUser);
 
         if (member.contributor || member.admin) {
-          await Database.query('INSERT INTO species_adjectives VALUES (?, ?)', [req.body.speciesCode, req.body.adjective]);
+          await Database.query('INSERT INTO species_adjectives VALUES (?, ?)', [req.body.id, req.body.adjective]);
 
           return res.sendStatus(200);
         } else {
@@ -79,7 +79,7 @@ module.exports = async (req, res) => {
         var member = await Members.get(req.body.loggedInUser);
 
         if (member.contributor || member.admin) {
-          await Database.query('DELETE FROM species_adjectives WHERE species = ? AND adjective = ?', [req.body.speciesCode, req.body.adjective]);
+          await Database.query('DELETE FROM species_adjectives WHERE species = ? AND adjective = ?', [req.body.id, req.body.adjective]);
 
           return res.sendStatus(200);
         } else {

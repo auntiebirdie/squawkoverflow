@@ -12,9 +12,9 @@ class Birds {
       query[key] = value;
 
       Database.getOne('species', query, {
-        select: ['code']
+        select: ['id']
       }).then((bird) => {
-        resolve(new this.model(bird.code));
+        resolve(new this.model(bird.id));
       });
     });
   }
@@ -33,7 +33,7 @@ class Birds {
         query[key] = value;
 
         Database.get('species', query, {
-          select: ['code']
+          select: ['id']
         }).then((birds) => {
           resolve(birds);
         });

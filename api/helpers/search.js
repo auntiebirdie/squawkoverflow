@@ -14,11 +14,11 @@ class Search {
 
       switch (kind) {
         case 'bird':
-          query += 'species.code FROM species JOIN variants ON (species.code = variants.species AND variants.special = 0)';
-          filters.push('species.code IN (SELECT species FROM variants)');
+          query += 'DISTINCT species.id FROM species JOIN variants ON (species.id = variants.species AND variants.special = 0)';
+          filters.push('species.id IN (SELECT species FROM variants)');
           break;
         case 'birdypet':
-          query += 'birdypets.id FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.code)';
+          query += 'birdypets.id FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.id)';
           filters.push('birdypets.member = ?');
           params.push(input.member);
 
@@ -27,14 +27,14 @@ class Search {
           }
           break;
         case 'freebird':
-          query += 'freebirds.id, freebirds.variant FROM freebirds JOIN variants ON (freebirds.variant = variants.id) JOIN species ON (variants.species = species.code)';
+          query += 'freebirds.id, freebirds.variant FROM freebirds JOIN variants ON (freebirds.variant = variants.id) JOIN species ON (variants.species = species.id)';
           filters.push('freebirds.freedAt <= DATE_SUB(NOW(), INTERVAL 10 MINUTE)');
           break;
         case 'member':
           query += 'members.id FROM members LEFT JOIN counters ON (counters.member = members.id AND counters.type = "aviary" AND counters.id = "total")';
           break;
         case 'wishlist':
-          query += 'species.code FROM species JOIN wishlist ON (species.code = wishlist.species AND wishlist.member = ? AND wishlist.intensity > 0)';
+          query += 'species.id FROM species JOIN wishlist ON (species.id = wishlist.species AND wishlist.member = ? AND wishlist.intensity > 0)';
           params.push(input.id);
           break;
       }
@@ -80,13 +80,13 @@ class Search {
       }
 
       if (input.adjectives) {
-        query += ' JOIN species_adjectives ON (species.code = species_adjectives.species)';
+        query += ' JOIN species_adjectives ON (species.id = species_adjectives.species)';
         filters.push('species_adjectives.adjective = ?');
         params.push(input.adjectives);
       }
 
       if (input.artist) {
-        filters.push('species.code IN (SELECT a.species FROM variants a WHERE a.credit = ?)');
+        filters.push('species.id IN (SELECT a.species FROM variants a WHERE a.credit = ?)');
         params.push(input.artist);
       }
 
@@ -119,11 +119,11 @@ class Search {
 
           switch (filter.split('-').shift()) {
             case 'hatched':
-              filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "species" AND id = species.code) > 0');
+              filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "species" AND id = species.id) > 0');
               params.push(input.memberData || input.loggedInUser);
               break;
             case 'unhatched':
-              filters.push('(SELECT IF(`count` = 0, NULL, 1) FROM counters WHERE `member` = ? AND type = "species" AND id = species.code) IS NULL');
+              filters.push('(SELECT IF(`count` = 0, NULL, 1) FROM counters WHERE `member` = ? AND type = "species" AND id = species.id) IS NULL');
               params.push(input.memberData || input.loggedInUser);
               break;
             case 'isolated':
@@ -139,21 +139,21 @@ class Search {
               intensity.push(2);
               break;
             case 'wishlisted':
-              filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity > 0)');
+              filters.push('species.id IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity > 0)');
               params.push(input.memberData || input.loggedInUser);
               break;
             case 'unwishlisted':
-              filters.push('species.code NOT IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity > 0)');
+              filters.push('species.id NOT IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity > 0)');
               params.push(input.memberData || input.loggedInUser);
               break;
             case 'someone':
-              filters.push('species.code IN (SELECT a.species FROM wishlist a JOIN members b ON (a.member = b.id) WHERE intensity > 0 AND b.id NOT IN (SELECT `member` FROM member_settings WHERE setting = "privacy_gifts"))');
+              filters.push('species.id IN (SELECT a.species FROM wishlist a JOIN members b ON (a.member = b.id) WHERE intensity > 0 AND b.id NOT IN (SELECT `member` FROM member_settings WHERE setting = "privacy_gifts"))');
               break;
             case 'somewhere':
-              filters.push('species.code IN (SELECT id FROM counters WHERE type = "species" AND `count` > 0)');
+              filters.push('species.id IN (SELECT id FROM counters WHERE type = "species" AND `count` > 0)');
               break;
             case 'copied':
-              filters.push('(SELECT COUNT(*) FROM freebirds JOIN variants ON (freebirds.variant = variants.id) WHERE variants.species = species.code) > 1');
+              filters.push('(SELECT COUNT(*) FROM freebirds JOIN variants ON (freebirds.variant = variants.id) WHERE variants.species = species.id) > 1');
               break;
             case 'exchange':
               filters.push('birdypets.id IN (SELECT birdypet FROM exchange_birdypets WHERE exchange = ?)');
@@ -167,12 +167,12 @@ class Search {
         }
 
         if (intensity.length > 0) {
-          filters.push('species.code IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity IN (?))');
+          filters.push('species.id IN (SELECT a.species FROM wishlist a WHERE a.member = ? AND intensity IN (?))');
           params.push(input.memberData || input.loggedInUser, intensity);
         }
 
         if (isolated || duplicated) {
-          filters.push('species.code IN (SELECT id FROM counters WHERE type = "species" AND `member` = ? AND `count` ' + (isolated && duplicated ? '>= 1' : (isolated ? '= 1' : '> 1')) + ')');
+          filters.push('species.id IN (SELECT id FROM counters WHERE type = "species" AND `member` = ? AND `count` ' + (isolated && duplicated ? '>= 1' : (isolated ? '= 1' : '> 1')) + ')');
 
           if (kind == "wishlist") {
             params.push(input.loggedInUser);
@@ -187,7 +187,7 @@ class Search {
       }
 
       if (kind == 'bird') {
-        query += ' GROUP BY species.code';
+        query += ' GROUP BY species.id';
       }
 
       query += ' ORDER BY ';

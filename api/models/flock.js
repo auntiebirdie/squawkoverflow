@@ -52,7 +52,7 @@ class Flock {
                   SELECT DISTINCT species.family
                   FROM birdypets
                   JOIN variants ON (birdypets.variant = variants.id)
-                  JOIN species ON (variants.species = species.code)
+                  JOIN species ON (variants.species = species.id)
                   JOIN birdypet_flocks ON (birdypets.id = birdypet_flocks.birdypet)
                   WHERE birdypet_flocks.flock = ?
                   `, [this.id]).then((results) => results.map((result) => result.family));

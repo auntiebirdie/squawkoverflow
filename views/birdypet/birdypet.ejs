@@ -9,7 +9,7 @@
         <div class="text-center">
           <span class="h-100 d-inline-block position-relative">
            <% if (locals.loggedInUser && loggedInUser.id != birdypet.member) { %>
-            <button class="wishlist-heart btn btn-sm" data-id="<%= birdypet.bird.code %>" role="button">
+            <button class="wishlist-heart btn btn-sm" data-id="<%= birdypet.bird.id %>" role="button">
               <%= birdypet.bird.wishlisted ? (birdypet.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
             </button>
            <% } %>

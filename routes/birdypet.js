@@ -14,7 +14,7 @@ router.get('/:birdypet/gift', Middleware.isLoggedIn, async (req, res) => {
   let members = await API.call('members', 'GET', {
     privacy: 'gifts',
     include: ['birdData'],
-    bird: birdypet.bird.code
+    bird: birdypet.bird.id
   });
 
   if (birdypet.member == req.session.user) {

@@ -28,7 +28,7 @@ class Variant {
           bird = params.bird;
         }
 
-        this.image = `https://storage.googleapis.com/squawkoverflow/${bird.order}/${bird.family}/${bird.scientificName.replace(/\s/g, '%20')}/${this.id}.${variant.filetype ? variant.filetype : "jpg"}`;
+        this.image = `https://storage.googleapis.com/squawkoverflow/birds/${this.id.slice(0, 1)}/${this.id.slice(0, 2)}/${this.id}.${variant.filetype ? variant.filetype : "jpg"}`;
 
         if (params.include?.includes('memberData') && params.member) {
           await this.fetchMemberData(params.member);

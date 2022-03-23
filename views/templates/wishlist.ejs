@@ -2,7 +2,7 @@
   <div class="w-100 pb-3 px-2">
     <div class="h-100 card">      
      <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>
-      <button class="wishlist-heart btn btn-sm" data-id="${model.code}" role="button">
+      <button class="wishlist-heart btn btn-sm" data-id="${model.id}" role="button">
         ${model.wishlisted ? (model.wishlisted == 2 ? '🌟' : '❤️') : '🤍'}
       </button>
      <% } %>
@@ -15,10 +15,10 @@
         <h3 class="text-center">
           <a
             <% if (locals.loggedInUser) { %>
-            <% if (loggedInUser.id == member.id) { %>href="${model.variants[0].hatched ? `/aviary/<%= loggedInUser.id %>?search=%22${model.commonName}%22` : `/birdypedia/bird/${model.code}`}"<% } %>
-            <% if (loggedInUser.id != member.id) { %>href="${model.variants[0].hatched ? `/members/<%= member.id %>/gift?search=%22${model.commonName}%22` : `/birdypedia/bird/${model.code}`}"<% } %>
+            <% if (loggedInUser.id == member.id) { %>href="${model.variants[0].hatched ? `/aviary/<%= loggedInUser.id %>?search=%22${model.commonName}%22` : `/birdypedia/bird/${model.id_slug}`}"<% } %>
+            <% if (loggedInUser.id != member.id) { %>href="${model.variants[0].hatched ? `/members/<%= member.id %>/gift?search=%22${model.commonName}%22` : `/birdypedia/bird/${model.id_slug}`}"<% } %>
             <% } else { %>
-             href="/birdypedia/bird/${model.code}"
+             href="/birdypedia/bird/${model.id_slug}"
             <% } %>
           >
             ${model.commonName}
