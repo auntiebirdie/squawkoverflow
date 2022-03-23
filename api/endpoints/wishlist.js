@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
 
   switch (req.method) {
     case "HEAD":
-      let families = await Database.query('SELECT DISTINCT species.family FROM species JOIN wishlist ON (species.code = wishlist.species) WHERE wishlist.member = ?', [req.query.id]).then((results) => results.map((result) => result.family));
+      let families = await Database.query('SELECT DISTINCT species.family FROM species JOIN wishlist ON (species.id = wishlist.species) WHERE wishlist.member = ?', [req.query.id]).then((results) => results.map((result) => result.family));
 
       res.setHeader('SQUAWK', JSON.stringify(families));
 
@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
         var promises = [];
 
         response.results = response.results.map((result) => {
-          result = new Bird(result.code);
+          result = new Bird(result.id);
 
           promises.push(result.fetch({
             include: ['variants', 'memberData'],

@@ -40,7 +40,7 @@ class BirdyPet {
           await member.fetch();
 
           if (member.settings.general_updateWishlist) {
-            await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [variant.bird.code, member.id]);
+            await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [variant.bird.id, member.id]);
           }
 
           resolve(this);
@@ -111,7 +111,7 @@ class BirdyPet {
         data.addedAt = new Date();
 
         if (member.settings.general_updateWishlist) {
-          promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [this.bird.code, member.id]));
+          promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [this.bird.id, member.id]));
         }
 
         promises.push(Database.delete('birdypet_flocks', {

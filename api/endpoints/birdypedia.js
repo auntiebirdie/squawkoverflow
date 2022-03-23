@@ -6,7 +6,7 @@ module.exports = async (req, res) => {
     var promises = [];
 
     response.results = response.results.map((result) => {
-      result = new Bird(result.code);
+      result = new Bird(result.id);
 
       promises.push(result.fetch({
         include: ['variants', 'memberData'],

@@ -38,7 +38,7 @@ module.exports = (req, res) => {
 
       promises.push(Database.set('wishlist', {
         member: member.id,
-        species: variant.bird.code
+        species: variant.bird.id
       }, {
         intensity: 0
       }));

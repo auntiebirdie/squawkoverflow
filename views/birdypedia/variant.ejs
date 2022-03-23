@@ -70,14 +70,14 @@
               alias: $('#form-alias').val(),
               url: $('#form-url').val(),
               source: $('#form-source').val(),
-              species: '<%= bird.code %>',
+              species: '<%= bird.id %>',
               subspecies: $('#form-subspecies').val(),
               credit: $('#form-credit').val(),
               full: $('#form-full').is(':checked'),
               special: $('#form-special').is(':checked'),
               label: $('#form-label').val()
             }, function (response) {
-              window.location.replace('/birdypedia/bird/<%= bird.code %>?variant=' + response);
+              window.location.replace('/birdypedia/bird/<%= bird.id_slug %>?variant=' + response);
             }, function (error) {
               container.classList.remove('loadingData');
             }
