@@ -42,7 +42,7 @@ Database.prototype.query = function(query, params = []) {
 Database.prototype.count = function(type, identifiers) {
   return new Promise((resolve, reject) => {
     this.get(type, identifiers, {
-      select: 'COUNT(*) AS total'
+      select: ['COUNT(*) AS total']
     }).then((results) => {
       resolve(results[0]['total']);
     });

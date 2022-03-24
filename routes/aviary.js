@@ -22,7 +22,7 @@ router.get('/:member', async (req, res, next) => {
     sidebar: 'filters',
     sortFields: ['addedAt-DESC', 'addedAt-ASC', 'hatchedAt-DESC', 'hatchedAt-ASC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'friendship-DESC', 'friendship-ASC'],
     filters: member.id == req.session.user ? false : ['wanted-My', 'needed-My'],
-    extraFilters: member.id == req.session.user ? ['isolated-My', 'duplicated-My', 'someone'] : ['unhatched-My', 'duplicated-Their']
+    extraFilters: member.id == req.session.user ? ['isolated-My', 'duplicated-My', 'someone'] : ['duplicated-Their', 'unhatched-My', 'isolated-My', 'duplicated-My']
   });
 });
 

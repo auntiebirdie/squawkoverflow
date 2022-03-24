@@ -71,7 +71,7 @@ module.exports = async (req, res) => {
 
         await bird.fetch();
 
-        let file = bucket.file(`${bird.order}/${bird.family}/${bird.scientificName}/${key}.${data.filetype}`);
+        let file = bucket.file(`birds/${key.slice(0, 1)}/${key.slice(0, 2)}/${key}.${data.filetype}`);
 
         await Jimp.read(data.url).then(async (image) => {
           var mimes = {
@@ -119,7 +119,7 @@ module.exports = async (req, res) => {
                   content: "A new variant has been added!",
                   embeds: [{
                     title: bird.commonName,
-                    url: `https://squawkoverflow.com/birdypedia/bird/${data.species}?variant=${data.prefix}-${data.alias}`,
+                    url: `https://squawkoverflow.com/birdypedia/bird/${bird.id_slug}?variant=${data.prefix}-${data.alias}`,
                     fields: fields,
                     image: {
                       url: variant.image
