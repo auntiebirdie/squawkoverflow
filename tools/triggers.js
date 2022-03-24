@@ -11,7 +11,7 @@ var Database = require('../api/helpers/database.js');
     '  DECLARE \`v_newSpecies\` INT DEFAULT 0; '+
 
     '  SELECT variants.species INTO v_species FROM variants WHERE id = NEW.variant; ' +
-    '  SELECT species.family INTO v_family FROM species WHERE code = v_species; ' +
+    '  SELECT species.family INTO v_family FROM species WHERE id = v_species; ' +
     '  SELECT IFNULL(\`count\`, 0) INTO v_newSpecies FROM counters WHERE \`member\` = NEW.member AND type = "species" AND id = v_species; ' +
 
     '  INSERT INTO counters VALUES (NEW.member, "aviary", "total", 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
@@ -36,7 +36,7 @@ var Database = require('../api/helpers/database.js');
     '  DECLARE \`v_newSpecies\` INT DEFAULT 0; '+
 
     '  SELECT species INTO v_species FROM variants WHERE id = NEW.variant; ' +
-    '  SELECT family INTO v_family FROM species WHERE code = v_species; ' +
+    '  SELECT family INTO v_family FROM species WHERE id = v_species; ' +
 
     '  INSERT INTO counters VALUES (NEW.member, "variant", NEW.variant, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
     '  INSERT INTO counters VALUES (OLD.member, "variant", OLD.variant, 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
@@ -76,7 +76,7 @@ var Database = require('../api/helpers/database.js');
     '  DECLARE \`v_newSpecies\` INT DEFAULT 0; '+
 
     '  SELECT species INTO v_species FROM variants WHERE id = OLD.variant; ' +
-    '  SELECT family INTO v_family FROM species WHERE code = v_species; ' +
+    '  SELECT family INTO v_family FROM species WHERE id = v_species; ' +
     '  SELECT IFNULL(\`count\`, 0) INTO v_newSpecies FROM counters WHERE \`member\` = OLD.member AND type = "species" AND id = v_species; ' +
 
     '  INSERT INTO counters VALUES (OLD.member, "aviary", "total", 0) ON DUPLICATE KEY UPDATE \`count\`= \`count\` - 1; ' +
@@ -101,7 +101,7 @@ var Database = require('../api/helpers/database.js');
   await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "species", "total", COUNT(DISTINCT variants.species) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) GROUP BY \`member\`');
 
   await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "family"');
-  await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "family", species.family, COUNT(DISTINCT variants.species) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.code) GROUP BY \`member\`, species.family');
+  await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "family", species.family, COUNT(DISTINCT variants.species) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.id) GROUP BY \`member\`, species.family');
 
   await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "eggs"');
   await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "eggs", adjective, COUNT(DISTINCT variants.species) FROM species_adjectives JOIN variants ON (variants.species = species_adjectives.species) JOIN birdypets ON (birdypets.variant = variants.id) GROUP BY \`member\`, adjective');

@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
         <p>You can absolutely play SQUAWKoverflow for free. There are some limitations, which are:</p>
 	<ul>
 	  <li>You can hatch a new egg once every 10 minutes.</li>
-	  <li>You can have up to 11,000 birds in your aviary.</li>
+	  <li>You can have up to 12,000 birds in your aviary.</li>
 	</ul>
 	<p>There is a Patreon where you can pick a support level that matches the playstyle you want.  For $3, you can hatch eggs as much as you want, as often as you want.  For $5, your aviary can contain as many birds as your heart desires. For $10, there are some <a href="#extra-insights">extra insights</a> that become available to you.</p>
 	<p>It's completely optional to become a supporter, but it is deeply appreciated! You can support us at <a href="https://patreon.com/squawkoverflow" target="_blank">patreon.com/squawkoverflow</a>.</p>
@@ -61,7 +61,7 @@ router.get('/', async (req, res) => {
       slug: 'tier-limits',
       question: 'Why are there limits and how can I remove them?',
       answer: `
-		  <p>In order to offset hosting costs, <a href="https://patreon.com/squawkoverflow">we have a Patreon</a>, but we also have what we hope is a very reasonable free tier.  For free, you can hatch an egg every 10 minutes and have up to 11,000 birds in your aviary, which is enough for one of every species plus extra of your favorites!</p>
+		  <p>In order to offset hosting costs, <a href="https://patreon.com/squawkoverflow">we have a Patreon</a>, but we also have what we hope is a very reasonable free tier.  For free, you can hatch an egg every 10 minutes and have up to 12,000 birds in your aviary, which is enough for one of every species plus extra of your favorites!</p>
 
                   <p>Additionally, every tier will grant the title of that tier and the ones below it.  For example, a Bird Fanatic can choose to display the title Bird Collector on their profile while still enjoying the extra insights!</p>
 
