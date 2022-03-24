@@ -30,7 +30,7 @@ router.get('/:member', async (req, res) => {
         page: 'member',
         member: member,
         allFamilies: allFamilies,
-        totalSpecies: 11,054, // make this.. .... not manual
+        totalSpecies: 11054, // make this.. .... not manual
         sidebar: 'member'
       });
     });
