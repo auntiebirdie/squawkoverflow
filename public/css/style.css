@@ -193,7 +193,7 @@ img {
   flex-basis: 100%;
   text-align: center;
   margin: 0;
-  padding: 2em;
+  padding: 2em 2em 2em 300px;
   font-size: 80%;
 }
 
@@ -221,7 +221,7 @@ img {
     left: -300px;
   }
 
-  #main {
+  #main, #footer {
     padding-left: 0;
   }
 }
