@@ -14,7 +14,7 @@
     </span>
   </div>
 
-  <h4 class="mb-3">Who has one?</h4>
+  <h4 class="mb-4">Who has one?</h4>
   <% let membersOwned = bird.members ? bird.members.filter((member) => member.owned > 0) : []; %>
   <% if (membersOwned.length > 0) { %>
     <% for (let i = 0, len = membersOwned.length; i < len; i++) { %>
@@ -43,10 +43,10 @@
       </div>
     <% }; %>
   <% } else { %>
-    <p><em>This bird doesn't appear to be in anyone's aviaries... yet!</em></p>
+    <p><em>This bird doesn't appear to be in any aviaries... yet!</em></p>
   <% } %>
 
-  <h4 class="mt-3 mb-3">Who wants one?</h4>
+  <h4 class="mt-4 mb-4">Who wants one?</h4>
   <% let membersWishlisted = bird.members ? bird.members.filter((member) => member.wishlisted > 0) : []; %>
   <% if (membersWishlisted.length > 0) { %>
     <% for (let i = 0, len = membersWishlisted.length; i < len; i++) { %>
@@ -75,7 +75,7 @@
       </div>
     <% }; %>
   <% } else { %>
-    <p><em>This bird doesn't appear to be in anyone's aviaries... yet!</em></p>
+    <p><em>This bird doesn't appear to be in any wishlists... yet!</em></p>
   <% } %>
 
   <script type="text/javascript">

@@ -15,6 +15,13 @@ const uuid = require('short-uuid');
 
 module.exports = async (req, res) => {
   switch (req.method) {
+    case "GET":
+      let variant = new Variant(req.query.id);
+
+      await variant.fetch();
+
+      res.json(variant);
+      break;
     case "POST":
       var existing = null;
       var data = req.body;

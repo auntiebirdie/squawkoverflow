@@ -41,28 +41,9 @@ Database.prototype.query = function(query, params = []) {
 
 Database.prototype.count = function(type, identifiers) {
   return new Promise((resolve, reject) => {
-    let query = `SELECT COUNT(*) AS total FROM ${type} WHERE `;
-    let filters = [];
-    let params = [];
-
-    for (let i in identifiers) {
-      if (Array.isArray(identifiers[i])) {
-        filters.push(`\`${i}\` IN (?)`);
-        params.push(identifiers[i]);
-      } else if (typeof identifiers[i] == 'object') {
-        filters.push(`\`${i}\` ${identifiers[i].comparator} ${'value_trusted' in identifiers[i] ? identifiers[i].value_trusted : '?'}`);
-        if ('value' in identifiers[i]) {
-          params.push(identifiers[i].value);
-        }
-      } else {
-        filters.push(`\`${i}\` = ?`);
-        params.push(identifiers[i]);
-      }
-    }
-
-    query += filters.join(' AND ');
-
-    this.query(query, params).then((results) => {
+    this.get(type, identifiers, {
+      select: 'COUNT(*) AS total'
+    }).then((results) => {
       resolve(results[0]['total']);
     });
   });
@@ -86,8 +67,18 @@ Database.prototype.get = function(type, identifiers, options = {}) {
     query += selects.join(', ') + ` FROM ${type}`;
 
     for (let i in identifiers) {
-      filters.push(`\`${i}\` = ?`);
-      params.push(identifiers[i]);
+      if (Array.isArray(identifiers[i])) {
+        filters.push(`\`${i}\` IN (?)`);
+        params.push(identifiers[i]);
+      } else if (typeof identifiers[i] == 'object') {
+        filters.push(`\`${i}\` ${identifiers[i].comparator} ${'value_trusted' in identifiers[i] ? identifiers[i].value_trusted : '?'}`);
+        if ('value' in identifiers[i]) {
+          params.push(identifiers[i].value);
+        }
+      } else {
+        filters.push(`\`${i}\` = ?`);
+        params.push(identifiers[i]);
+      }
     }
 
     if (filters.length > 0) {
