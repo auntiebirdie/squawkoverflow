@@ -141,7 +141,7 @@
               <span class="icon d-inline-block fs-5">🔔</span>
               <span class="d-block label">Notifications</span>
              <% if (loggedInUser.notificationCount) { %>
-              <strong class="ms-2 bg-primary text-dark p-2 badge"><%= loggedInUser.notificationCount %></strong>
+	     <strong class="ms-2 bg-primary text-dark p-2 badge"><%= loggedInUser.notificationCount > 100 ? '100+' : loggedInUser.notificationCount %></strong>
              <% } %>
             </a>
 	  </li>

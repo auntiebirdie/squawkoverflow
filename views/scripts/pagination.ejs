@@ -26,7 +26,7 @@
     for (let pagination of paginations) {
       pagination.innerHTML = content;
 
-      if (typeof totalResults !== 'undefined') {
+      if (typeof totalResults !== 'undefined' && totalResults != null) {
         pagination.nextElementSibling.innerHTML = `${totalResults.toLocaleString("en-US")} <%= locals.noun ? noun : 'bird' %>s found`;
       }
       else {
