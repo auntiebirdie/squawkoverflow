@@ -18,6 +18,3 @@ node_modules/
 
 # Non-App Engine directories:
 /tools
-
-# Secrets
-secrets.json
