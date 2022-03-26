@@ -1,0 +1,74 @@
+<%- include('../header.ejs') %>
+
+  <%- include('../partials/page-title.ejs', {
+    title: "Notifications"
+  }) %>
+
+  <div id = "notifications" class = "row">
+  <% for (let notification of notifications) { %>
+    <div data-id="<%= notification.id %>">
+      <div class="card bg-light border-dark p-2 mb-4">
+        <div class="row align-items-center">
+          <div class="col-4 col-md-2 col-lg-1 text-center">
+            <span class="fs-2">
+              <%- notification.icon %>
+            </span>
+          </div>
+          <div class="col-8 col-lg-10">
+            <%- notification.text %>
+          </div>
+          <div class="col-12 col-md-2 col-lg-1 text-end">
+            <a class="btn btn-sm btn-dark" data-action="dismiss">Dismiss</a>
+          </div>
+        </div>
+      </div>
+    </div>
+   <% } %>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      $('#notifications').on('click', '[data-action]', function() {
+        var action = this.getAttribute('data-action');
+        var trigger = this.nodeName == 'LI' ? document.getElementById(this.parentNode.getAttribute('aria-labelledby')) : this;
+        var container = $(this).closest('div[data-id]')[0];
+
+        if (!container.classList.contains('loadingData')) {
+          trigger.classList.add('disabled');
+          container.classList.add('loadingData');
+
+          var attributes = this.getAttributeNames();
+          var json = {};
+
+          for (let attribute of attributes) {
+            if (attribute.startsWith('data-json')) {
+              json[attribute.replace('data-json-', '')] = this.getAttribute(attribute);
+            }
+          }
+
+          API.call('notifications', action == 'dismiss' ? 'DELETE' : 'PUT', {
+            id: container.getAttribute('data-id'),
+            action: action,
+            data: json
+          }, () => {
+            container.classList.remove('loadingData');
+
+            switch (action) {
+              case 'thank':
+                trigger.innerHTML = '💖 Thanked!';
+                trigger.classList.remove('dropdown-toggle');
+                break;
+              case 'dismiss':
+                container.remove();
+                break;
+            }
+          }, (err) => {
+            trigger.classList.remove('disabled');
+            container.classList.remove('loadingData');
+          });
+        }
+      });
+    });
+  </script>
+
+<%- include('../footer.ejs') %>

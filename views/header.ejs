@@ -137,6 +137,15 @@
             </a>
 	  </li>
 	  <li class="nav-item pb-2 ms-2">
+            <a href="/notifications" class="nav-link">
+              <span class="icon d-inline-block fs-5">🔔</span>
+              <span class="d-block label">Notifications</span>
+             <% if (loggedInUser.notificationCount) { %>
+              <strong class="ms-2 bg-primary text-dark p-2 badge"><%= loggedInUser.notificationCount %></strong>
+             <% } %>
+            </a>
+	  </li>
+	  <li class="nav-item pb-2 ms-2">
             <a href="/settings" class="nav-link">
               <span class="icon d-inline-block fs-5">⚙️</span>
               <span class="d-block label">Settings</span>
