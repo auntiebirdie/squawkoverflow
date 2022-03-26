@@ -1,5 +1,6 @@
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
+const Redis = require('../helpers/redis.js');
 
 const Bird = require('./bird.js');
 const Flocks = require('../collections/flocks.js');
@@ -218,50 +219,13 @@ class Member {
               }
             }
             break;
+          case 'notificationCount':
+            this.notificationCount = await Database.count('notifications', { member : this.id, viewed : false });
+            break;
           case 'rank':
             let total = this.aviary ? this.aviary : await Counters.get('aviary', this.id, 'total');
 
-            this.ranks = [{
-              id: 'ultimate',
-              label: 'Ultimate',
-              minimum: 10000
-            }, {
-              id: 'penultimate',
-              label: 'Penultimate',
-              minimum: 5000
-            }, {
-              id: 'superb',
-              label: 'Superb',
-              minimum: 2500
-            }, {
-              id: 'greater',
-              label: 'Greater',
-              minimum: 1000
-            }, {
-              id: 'dedicated',
-              label: 'Dedicated',
-              minimum: 500
-            }, {
-              id: 'novice',
-              label: 'Novice',
-              minimum: 100
-            }, {
-              id: 'beginner',
-              label: 'Beginner',
-              minimum: 1
-            }, {
-              id: 'aspiring',
-              label: 'Aspiring',
-              minimum: 0
-            }, {
-              id: 'highest',
-              label: '(highest available)',
-              minimum: 0
-            }, {
-              id: 'none',
-              label: '(none)',
-              minimum: 0
-            }].map((rank) => {
+            this.ranks = require('../data/ranks.json').map((rank) => {
               return {
                 id: rank.id,
                 label: total < rank.minimum ? `${rank.label} (${rank.minimum}+ birds)` : rank.label,
@@ -323,46 +287,6 @@ class Member {
 
       resolve();
     });
-  }
-
-  fetchWishlist(family = null) {
-    let birds = [];
-
-    return new Promise((resolve, reject) => {
-      Database.get('wishlist', {
-        member: this.id
-      }, {
-        select: ['species', 'intensity']
-      }).then(async (results) => {
-        for (let i = 0, len = results.length; i < len; i++) {
-          let bird = new Bird(results[i].species);
-
-          bird.intensity = results[i].intensity;
-
-          birds.push(bird.fetch());
-        }
-
-        Promise.all(birds).then(() => {
-          resolve(birds);
-        });
-      });
-    });
-  }
-
-  fetchPronoun(pronounCase) {
-    var pronouns = require('../data/pronouns.json');
-
-    try {
-      for (let key in this.pronouns) {
-        if (this.pronouns[key] == "yes") {
-          return pronouns[key].cases[pronounCase];
-        }
-      }
-    } catch (err) {
-      console.log(err);
-    }
-
-    return pronouns["they"].cases[pronounCase];
   }
 
   delete() {

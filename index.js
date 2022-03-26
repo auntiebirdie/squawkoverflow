@@ -31,7 +31,7 @@ app.use(async function(req, res, next) {
   if (req.session.user) {
     res.locals.loggedInUser = await API.call('member', 'GET', {
       id: req.session.user,
-      include: ['exchangeData']
+      include: ['exchangeData', 'notificationCount']
     }).catch((err) => {
       console.log(err);
       delete req.session.user;
@@ -97,7 +97,7 @@ app.use(async function(req, res, next) {
     return item;
   });
 
-	res.locals.includeLogin = true;
+  res.locals.includeLogin = true;
 
   next();
 });
@@ -110,6 +110,7 @@ app.use('/wishlist', require('./routes/wishlist.js'));
 app.use('/flocks', require('./routes/flocks.js'));
 app.use('/freebirds', require('./routes/freebirds.js'));
 app.use('/birdypedia', require('./routes/birdypedia.js'));
+app.use('/notifications', require('./routes/notifications.js'));
 app.use('/members', require('./routes/members.js'));
 app.use('/exchange', require('./routes/exchange.js'));
 app.use('/settings', require('./routes/settings.js'));

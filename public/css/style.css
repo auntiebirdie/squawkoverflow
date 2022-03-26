@@ -522,9 +522,6 @@ span.checkmark, span.checkplus {
   z-index: 100;
 }
 
-button.wishlist-heart:hover {
-}
-
 .birdymessage {
   position: absolute;
   top: -50px;

@@ -4,11 +4,12 @@
   var container = document.getElementById('lazyLoader');
   var endpoint = container.getAttribute('data-endpoint');
   var search = document.getElementById('search');
-  var paginations = document.querySelectorAll('.pagination');
   var currentPage = <%= locals.paginate || 1 %>;
   var totalPages = 0;
   var totalResults = 0;
   var timeout;
+
+  <%- include('./pagination.ejs') %>
 
   function template (model) {
     return `<%- include(locals.template ? template : '../templates/birdypet.ejs') %>`;
@@ -166,43 +167,5 @@
         }
       }
     });
-  }
-
-  function updatePagination () {
-    var content = "";
-
-    if (currentPage > 2) {
-      content += `<li class="page-item"><a class="page-link" role="button">1</a></li>`;
-    }
-
-    if (currentPage > 3) {
-      content += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-    }
-
-    for (let i = Math.max(1, currentPage - 1), len = Math.min(totalPages, currentPage + 1); i <= len; i++) {
-      content += `<li class="page-item${currentPage == i ? ' active' : ''}"><a class="page-link" role="button">${i}</a></li>`;
-    }
-
-    if (currentPage < totalPages - 2) {
-      content += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-    }
-
-    if (currentPage < totalPages - 1) {
-      content += `<li class="page-item"><a class="page-link" role="button">${totalPages}</a></li>`;
-    }
-
-    for (let pagination of paginations) {
-      pagination.innerHTML = content;
-
-      if (totalResults != null) {
-        pagination.nextElementSibling.innerHTML = `${totalResults.toLocaleString("en-US")} <%= locals.noun ? noun : 'bird' %>s found`;
-      }
-      else {
-        pagination.nextElementSibling.innerHTML = '';
-      }
-
-      pagination.parentNode.style.visibility = 'visible';
-    }
-
   }
 </script>

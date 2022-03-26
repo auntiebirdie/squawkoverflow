@@ -3,7 +3,7 @@
     "label": "any",
     "cases": {
       "subject": "they",
-      "object": "their",
+      "object": "them",
       "determiner": "their",
       "possessive": "theirs",
       "reflexive": "themself"
@@ -36,7 +36,7 @@
     "pronouny": "https://pronouny.xyz/pronouns/56d7c4008f53000e00d795d1",
     "cases": {
       "subject": "they",
-      "object": "their",
+      "object": "them",
       "determiner": "their",
       "possessive": "theirs",
       "reflexive": "themself"

@@ -3,7 +3,6 @@ const BirdyPet = require('../models/birdypet.js');
 
 const Database = require('../helpers/database.js');
 const PubSub = require('../helpers/pubsub.js');
-const Webhook = require('../helpers/webhook.js');
 const Search = require('../helpers/search.js');
 
 module.exports = async (req, res) => {
@@ -25,7 +24,7 @@ module.exports = async (req, res) => {
 
         await birdypet.set({
           member: req.body.member,
-	  addedAt: new Date()
+          addedAt: new Date()
         });
       } else if (req.body.variant) {
         var birdypet = new BirdyPet();
@@ -42,9 +41,6 @@ module.exports = async (req, res) => {
       let toMember = new Member(req.body.member);
 
       if (birdypet.member == fromMember.id || req.body.variant) {
-        await fromMember.fetch();
-        await toMember.fetch({ include : ['auth'] });
-
         let promises = [];
 
         if (req.body.variant) {
@@ -54,22 +50,15 @@ module.exports = async (req, res) => {
           });
         }
 
-        if (fromMember.serverMember && toMember.serverMember) {
-          promises.push(Webhook('gifts', {
-            content: `${fromMember.username} has sent <@${toMember.auth.find((auth) => auth.provider == 'discord').id}> a gift!`,
-            embeds: [{
-              title: birdypet.nickname || birdypet.bird.commonName,
-              description: birdypet.variant.label || " ",
-              url: `https://squawkoverflow.com/birdypet/${birdypet.id}`,
-              thumbnail: {
-                url: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/google/313/wrapped-gift_1f381.png'
-              },
-              image: {
-                url: birdypet.variant.image
-              }
-            }]
-          }));
-        }
+        promises.push(Database.create('notifications', {
+          id: Database.key(),
+          member: toMember.id,
+          type: 'birdypet_gift',
+          data: {
+            "from": fromMember.id,
+            "birdypet": birdypet.id
+          }
+        }));
 
         promises.push(PubSub.publish('background', 'COLLECT', {
           member: toMember.id,
@@ -77,7 +66,9 @@ module.exports = async (req, res) => {
           variant: birdypet.variant.id
         }));
 
-        return res.sendStatus(200);
+        Promise.all(promises).then(() => {
+          return res.sendStatus(200);
+        });
       } else {
         return res.sendStatus(404);
       }

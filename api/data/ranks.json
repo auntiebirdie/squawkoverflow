@@ -1,0 +1,41 @@
+[{
+  "id": "ultimate",
+  "label": "Ultimate",
+  "minimum": 10000
+}, {
+  "id": "penultimate",
+  "label": "Penultimate",
+  "minimum": 5000
+}, {
+  "id": "superb",
+  "label": "Superb",
+  "minimum": 2500
+}, {
+  "id": "greater",
+  "label": "Greater",
+  "minimum": 1000
+}, {
+  "id": "dedicated",
+  "label": "Dedicated",
+  "minimum": 500
+}, {
+  "id": "novice",
+  "label": "Novice",
+  "minimum": 100
+}, {
+  "id": "beginner",
+  "label": "Beginner",
+  "minimum": 1
+}, {
+  "id": "aspiring",
+  "label": "Aspiring",
+  "minimum": 0
+}, {
+  "id": "highest",
+  "label": "(highest available)",
+  "minimum": 0
+}, {
+  "id": "none",
+  "label": "(none)",
+  "minimum": 0
+}]
