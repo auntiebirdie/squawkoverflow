@@ -4,14 +4,16 @@ const BirdyPet = require('../models/birdypet.js');
 const Member = require('../models/member.js');
 
 module.exports = async (req, res) => {
-  const stickers = ["LoveBirdsLife/003.png", "LoveBirdsLife/006.png", "LoveBirdsLife/011.png", "LoveBirdsLife/014.png", "LoveBirdsLife/016.png", "LoveBirdsLife/023.png", "LoveBirdsLife/031.png", "LoveBirdsLife/034.png"];
-
   switch (req.method) {
     case "GET":
       var notifications = await Database.get('notifications', {
         member: req.query.loggedInUser
       }, {
-        order: 'createdAt DESC'
+        order: 'createdAt DESC',
+        limit: (req.query.page ? (((req.query.page * 1) - 1) * 25) : 0) + ', 25'
+      });
+      var totalResults = await Database.count('notifications', {
+        member: req.query.loggedInUser
       });
       let promises = [];
 
@@ -40,7 +42,10 @@ module.exports = async (req, res) => {
       }
 
       Promise.all(promises).then(() => {
-        return res.json(notifications);
+        return res.json({
+          totalResults: totalResults,
+          results: notifications
+        });
       });
       break;
     case "PUT":
@@ -80,18 +85,26 @@ module.exports = async (req, res) => {
       res.sendStatus(200);
       break;
     case "DELETE":
-      var notification = await Database.getOne('notifications', {
-        id: req.body.id
-      });
-
-      if (notification.member == req.body.loggedInUser) {
+      if (req.body.id == "ALL") {
         await Database.delete('notifications', {
-          id: notification.id
+          member: req.body.loggedInUser
         });
 
-	res.sendStatus(200);
+        res.sendStatus(200);
       } else {
-        return res.sendStatus(403);
+        var notification = await Database.getOne('notifications', {
+          id: req.body.id
+        });
+
+        if (notification.member == req.body.loggedInUser) {
+          await Database.delete('notifications', {
+            id: notification.id
+          });
+
+          res.sendStatus(200);
+        } else {
+          return res.sendStatus(403);
+        }
       }
 
       break;

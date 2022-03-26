@@ -6,15 +6,20 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   API.call('notifications', "GET", {
-    loggedInUser: req.session.user
-  }, res).then((notifications) => {
-
+    loggedInUser: req.session.user,
+    page: req.query.page
+  }, res).then((response) => {
+    const notifications = response.results;
     const stickers = ["LoveBirdsLife/003.png", "LoveBirdsLife/006.png", "LoveBirdsLife/011.png", "LoveBirdsLife/014.png", "LoveBirdsLife/016.png", "LoveBirdsLife/023.png", "LoveBirdsLife/031.png", "LoveBirdsLife/034.png"];
 
     for (let notification of notifications) {
       notification.text = '<p class="mt-3">';
 
       switch (notification.type) {
+        case 'site_update':
+          notification.icon = '<img src="/img/SQUAWK.png">';
+          notification.text += `<a href="${notification.data.url}" target="_blank">Site Update - ${notification.data.title}</a>`;
+          break;
         case 'birdypet_gift':
           notification.icon = '🎁';
           notification.text += notification.data.from.username ? `<a href="/members/${notification.data.from.id}">${notification.data.from.username}</a>` : 'Someone';
@@ -57,7 +62,9 @@ router.get('/', async (req, res) => {
     }
 
     res.render('notifications/index', {
-      notifications: notifications
+      notifications: notifications,
+      totalPages: Math.ceil(response.totalResults / 25),
+      currentPage: Math.max(req.query.page || 1, 1)
     });
   }).catch((err) => {
     console.log(err);

@@ -4,8 +4,19 @@
     title: "Notifications"
   }) %>
 
-  <div id = "notifications" class = "row">
-  <% for (let notification of notifications) { %>
+ <% if (totalPages == 0) { %>
+    <div class="text-center">
+      <em>You have no notifications right now.</em>
+    </div>
+ <% } else { %>
+  <%- include('../partials/pagination.ejs') %>
+
+  <div id="notifications" class="row">
+    <div class="col-12 text-end mb-3" data-id="ALL">
+      <a class="btn btn-sm btn-dark" data-action="dismiss">Dismiss All</a>
+    </div>
+
+   <% for (let notification of notifications) { %>
     <div data-id="<%= notification.id %>">
       <div class="card bg-light border-dark p-2 mb-4">
         <div class="row align-items-center">
@@ -26,8 +37,15 @@
    <% } %>
   </div>
 
+  <%- include('../partials/pagination.ejs') %>
+
   <script>
+    const totalPages = <%= totalPages %>; 
+    const currentPage = <%= currentPage %>;
+
     $(document).ready(function() {
+      updatePagination();
+
       $('#notifications').on('click', '[data-action]', function() {
         var action = this.getAttribute('data-action');
         var trigger = this.nodeName == 'LI' ? document.getElementById(this.parentNode.getAttribute('aria-labelledby')) : this;
@@ -59,7 +77,11 @@
                 trigger.classList.remove('dropdown-toggle');
                 break;
               case 'dismiss':
-                container.remove();
+                if (container.getAttribute('data-id') == 'ALL') {
+                  window.location.reload();
+                } else {
+                  container.remove();
+                }
                 break;
             }
           }, (err) => {
@@ -69,6 +91,9 @@
         }
       });
     });
+
+    <%- include('../scripts/pagination.ejs', { linkTo : '/notifications' }) %>
   </script>
+ <% } %>
 
 <%- include('../footer.ejs') %>
