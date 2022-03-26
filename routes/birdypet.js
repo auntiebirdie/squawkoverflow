@@ -53,18 +53,22 @@ router.get('/:birdypet', async (req, res) => {
     include: req.session.user ? ['memberData', 'variants'] : ['variants']
   });
 
-  let member = await API.call('member', 'GET', {
-    id: birdypet.member,
-    include: ['flocks']
-  });
+  if (birdypet.member) {
+    let member = await API.call('member', 'GET', {
+      id: birdypet.member,
+      include: ['flocks']
+    });
 
-  res.render('birdypet/birdypet', {
-    title: birdypet.nickname ? birdypet.nickname : `${member.username}'s ${birdypet.bird.commonName}`,
-    page: 'birdypet',
-    birdypet: birdypet,
-    member: member,
-    sidebar: 'birdypet'
-  });
+    res.render('birdypet/birdypet', {
+      title: birdypet.nickname ? birdypet.nickname : `${member.username}'s ${birdypet.bird.commonName}`,
+      page: 'birdypet',
+      birdypet: birdypet,
+      member: member,
+      sidebar: 'birdypet'
+    });
+  } else {
+    res.render('error/404', { error : true });
+  }
 });
 
 module.exports = router;

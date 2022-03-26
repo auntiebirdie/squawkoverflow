@@ -91,7 +91,7 @@ exports.receive = function(message, context) {
                 content: " ",
                 embeds: [{
                   title: variant.bird.commonName,
-                  description: `<@${member.auth.find((auth) => auth.provider == 'discord').id}> excitedly adds a new bird to ${member.fetchPronoun('determiner')} aviary!`,
+                  description: `<@${member.auth.find((auth) => auth.provider == 'discord').id}> excitedly adds a new bird to ${member.preferredPronoun.determiner} aviary!`,
                   url: `https://squawkoverflow.com/birdypet/${data.birdypet}`,
                   image: {
                     url: variant.image
