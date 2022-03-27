@@ -16,7 +16,12 @@
       <h5>Joined</h5>
       <p><%= new Date(member.joinedAt).toLocaleString('en-US', { dateStyle: "long" }) %></p>
     </div>
-    <div class="col-md-6 text-center text-md-end">
+    <div class="col-md-3 text-center">
+     <% for (let badge of member.badges) { %>
+      <img src="https://storage.googleapis.com/squawkoverflow/badges/<%= badge.id %>.png" alt="<%= badge.name %>" data-bs-toggle="tooltip" data-bs-placement="top" title="<%= badge.name %>">
+     <% } %>
+    </div>
+    <div class="col-md-3 text-center text-md-end">
       <% if (member.totals.aviary > 0) { %>
         <p><a href="/aviary/<%= member.id %>" class="btn bg-light">🐦 View Aviary</a></p>
       <% } %>
@@ -61,7 +66,7 @@
         <% if (member.birdyBuddy.friendship >= 100) { %>
          <p><em>You have <%= loggedInUser.bugs %> bug<%= loggedInUser.bugs != 1 ? "s" : "" %>, but <%= member.birdyBuddy.nickname ? member.birdyBuddy.nickname : member.birdyBuddy.bird.commonName %> is full!</em></p>
         <% } else { %>
-         <p><button id="feedBug" class="btn bg-light" role="button" data-birdypet="<%= member.birdyBuddy.id %>">🐛 Feed a Bug (you have <span><%= loggedInUser.bugs %></span>)</button></p>
+         <p><button id="feedBug" class="btn btn-dark" role="button" data-birdypet="<%= member.birdyBuddy.id %>">🐛 Feed a Bug (you have <span><%= loggedInUser.bugs %></span>)</button></p>
         <% } %>
       <% } %>
        </div>
@@ -82,5 +87,7 @@
 
   <%- include('../scripts/lazyloader.ejs') %>
 <% } %>
+
+  <%- include('../scripts/tooltips.ejs') %>
 
 <%- include('../footer.ejs') %>

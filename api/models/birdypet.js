@@ -43,7 +43,16 @@ class BirdyPet {
             await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [variant.bird.id, member.id]);
           }
 
-          resolve(this);
+          Database.query('SELECT `count` FROM counters WHERE `member` IN ? AND type = "species" AND id = "total"', [
+            [member.id, 'SQUAWK']
+          ]).then(async (totals) => {
+            if (totals.length > 1 && totals[0].count == totals[1].count) {
+              await Database.query('INSERT INTO member_badges VALUES (?, "completionist", NOW()) ON DUPLICATE KEY UPDATE badge = badge', [this.member]);
+		    await Database.query('');
+            }
+
+            resolve(this);
+          });
         });
       } else {
         reject();
@@ -53,7 +62,7 @@ class BirdyPet {
 
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
-	    // TODO - add redis
+      // TODO - add redis
       Database.getOne('birdypets', {
         id: this.id
       }).then(async (birdypet) => {
@@ -109,6 +118,7 @@ class BirdyPet {
         await member.fetch();
 
         data.addedAt = new Date();
+        data.friendship = 0;
 
         if (member.settings.general_updateWishlist) {
           promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [this.bird.id, member.id]));
@@ -148,12 +158,18 @@ class BirdyPet {
         });
       }
 
+      data.friendship = Math.min(data.friendship, 100);
+
+      if (this.friendship < 100 && data.friendship == 100) {
+        promises.push(Database.query('INSERT INTO member_badges VALUES (?, "friendship", NOW()) ON DUPLICATE KEY UPDATE badge = badge', [this.member]));
+      }
+
       Promise.all(promises).then(async () => {
         await Database.set('birdypets', {
           id: this.id
         }, data);
 
-	      // TODO - just refresh
+        // TODO - just refresh
         await Redis.del(`birdypet:${this.id}`);
 
         resolve();

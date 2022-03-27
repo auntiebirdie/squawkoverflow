@@ -103,7 +103,7 @@ class Member {
       this.tier = await Database.query('SELECT * FROM tiers WHERE id = ?', [member.tier || 0]).then(([tier]) => tier);
 
       if (typeof this.settings.title != "undefined" && this.settings.title != this.tier.id) {
-        this.title = await Database.getOne('tiers', {
+        this.title = await Database.getOne('titles', {
           id: this.settings.title
         }).then((title) => title.name);
       } else {
@@ -158,6 +158,30 @@ class Member {
             break;
           case 'aviary':
             this.aviary = await Counters.get('aviary', this.id, "total");
+            break;
+          case 'badges':
+            this.badges = await Database.query('SELECT badges.* FROM badges JOIN member_badges ON (member_badges.badge = badges.id) WHERE member_badges.member = ? ORDER BY displayOrder', [this.id]);
+
+            for (let badge of this.badges) {
+              if (badge.name.includes('[COUNTER]')) {
+                var total = 0;
+
+                switch (badge.id) {
+                  case 'friendship':
+                    total = await Database.count('birdypets', {
+                      member: this.id,
+                      friendship: 100
+                    });
+                    break;
+                }
+
+                if (total > 1) {
+                  badge.name = badge.name.replace('[COUNTER]', total);
+                } else {
+                  badge.name = badge.name.replace(' ([COUNTER])', '');
+                }
+              }
+            }
             break;
           case 'birdyBuddy':
             if (member.birdyBuddy) {
@@ -220,7 +244,10 @@ class Member {
             }
             break;
           case 'notificationCount':
-            this.notificationCount = await Database.count('notifications', { member : this.id, viewed : false });
+            this.notificationCount = await Database.count('notifications', {
+              member: this.id,
+              viewed: false
+            });
             break;
           case 'rank':
             let total = this.aviary ? this.aviary : await Counters.get('aviary', this.id, 'total');
@@ -249,13 +276,14 @@ class Member {
             }
 
             break;
-          case 'tiers':
-            this.tiers = await Database.query(`
-          SELECT *
-          FROM tiers
-          WHERE \`member\` = ? OR id = ? OR
-          (id < 4 AND id < ?)
-          `, [this.id, this.tier.id, this.tier.id]);
+          case 'titles':
+            this.titles = await Database.query(`
+              SELECT titles.*
+              FROM titles
+              LEFT JOIN member_titles ON (member_titles.title = titles.id)
+              WHERE \`member\` = ? OR
+              (id < 4 AND id < ?)
+            `, [this.id, this.tier.id]);
             break;
           case 'totals':
             this.totals = {
@@ -297,7 +325,7 @@ class Member {
       promises.push(Database.query('DELETE FROM members WHERE id = ?', [this.id]));
       promises.push(Database.query('DELETE FROM member_settings WHERE `member` = ?', [this.id]));
       promises.push(Database.query('DELETE FROM member_variants WHERE `member` = ?', [this.id]));
-      promises.push(Database.query('DELETE FROM tiers WHERE `member` = ?', [this.id]));
+      promises.push(Database.query('DELETE FROM member_titles WHERE `member` = ?', [this.id]));
       promises.push(Database.query('DELETE FROM birdypet_flocks WHERE birdypet IN (SELECT id FROM birdypets WHERE `member` = ?) OR flock IN (SELECT id FROM flocks WHERE `member` = ?)', [this.id, this.id]));
       promises.push(Database.query('DELETE FROM flocks WHERE `member` = ?', [this.id]));
       promises.push(Database.query('DELETE FROM exchange_birdypets WHERE exchange IN (SELECT id FROM exchanges WHERE `memberA` = ? OR `memberB` = ?)', [this.id, this.id]));
