@@ -23,17 +23,17 @@
     </div>
     <div class="col-md-3 text-center text-md-end">
       <% if (member.totals.aviary > 0) { %>
-        <p><a href="/aviary/<%= member.id %>" class="btn bg-light">🐦 View Aviary</a></p>
+        <p><a href="/aviary/<%= member.id %>" class="btn btn-light">🐦 View Aviary</a></p>
       <% } %>
       <% if (member.hasWishlist && !member.settings.privacy_wishlist) { %>
-        <p><a href="/wishlist/<%= member.id %>" class="btn bg-light">❤️ View Wishlist</a></p>
+        <p><a href="/wishlist/<%= member.id %>" class="btn btn-light">❤️ View Wishlist</a></p>
       <% } %>
       <% if (locals.loggedInUser && loggedInUser.id != member.id) { %>
        <% if (!member.settings.privacy_exchanges) { %>
-        <p><a href="/exchange/<%= member.id %>/new" class="btn bg-light">🤝 Offer Exchange</a></p>
+        <p><a href="/exchange/<%= member.id %>/new" class="btn btn-light">🤝 Offer Exchange</a></p>
        <% } %>
        <% if (!member.settings.privacy_gifts) { %>
-        <p><a href="/members/<%= member.id %>/gift" class="btn bg-light">🎁 Send Gift</a></p>
+        <p><a href="/members/<%= member.id %>/gift" class="btn btn-light">🎁 Send Gift</a></p>
        <% } %>
       <% } %>
     </div>

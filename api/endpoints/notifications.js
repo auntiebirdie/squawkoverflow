@@ -67,7 +67,7 @@ module.exports = async (req, res) => {
                 }),
                 Database.create('notifications', {
                   id: Database.key(),
-                  member: notification.from,
+                  member: notification.data.from,
                   type: 'gift_thanks',
                   data: {
                     "from": req.body.loggedInUser,

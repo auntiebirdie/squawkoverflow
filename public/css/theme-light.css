@@ -11,3 +11,7 @@
         --bs-secondary: #DDF600;
         --bs-primary: #444D00;
 }
+
+.ss-main .ss-multi-selected .ss-values .ss-value {
+	background-color: var(--bs-primary);
+}

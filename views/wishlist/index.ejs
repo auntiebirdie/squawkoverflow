@@ -15,7 +15,7 @@
        <% } else if (member.bugs > 0) { %>
         <p><em>You have <strong><%= member.bugs %> bug<%= member.bugs == 1 ? "" : "s" %></strong> available.  Once per day, you can use one to attract a random bird from your wishlist to live in your aviary!</em></p>
 
-        <button id="useBait" class="btn btn-dark text-primary">🐛  Here, birdy, birdy...</button>
+        <button id="useBait" class="btn btn-dark">🐛  Here, birdy, birdy...</button>
        <% } else { %>
         <p class="mb-0"><em>You don't have any bugs available to use as bait! You can find them randomly while wandering the site or receive them as a reward for <a href="https://trello.com/add-card?name=%22Bug%20reported%20by%20<%= loggedInUser.id %>!%22&idList=616863d9071f1c88feb22769">reporting a bug</a>.</em></p>
        <% } %>
@@ -54,7 +54,7 @@
             contentType: 'application/json',
             success: function(data) {
               if (!data.error) {
-                window.location.href = `/birdypet/${data}`;
+                window.location.href = `/birdypet/${data.id}`;
               }
               else {
                 button.innerText = data.error;

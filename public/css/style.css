@@ -47,10 +47,6 @@ img {
 	visibility: hidden;
 }
 
-.btn {
-        color: var(--bs-body-color) !important;
-}
-
 .btn:hover {
 	filter: brightness(0.75);
 }
