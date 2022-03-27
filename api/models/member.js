@@ -250,7 +250,7 @@ class Member {
             });
             break;
           case 'rank':
-            let total = this.aviary ? this.aviary : await Counters.get('aviary', this.id, 'total');
+            var total = this.aviary ? this.aviary : await Counters.get('aviary', this.id, 'total');
 
             this.ranks = require('../data/ranks.json').map((rank) => {
               return {
