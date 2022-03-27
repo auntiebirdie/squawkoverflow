@@ -45,8 +45,7 @@ module.exports = async (req, res) => {
 
         if (req.body.variant) {
           await birdypet.set({
-            member: toMember.id,
-            friendship: 0
+            member: toMember.id
           });
         }
 

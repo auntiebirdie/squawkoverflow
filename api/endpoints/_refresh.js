@@ -13,7 +13,7 @@ const client = new Client({
 
 module.exports = async (req, res) => {
   return new Promise(async (resolve, reject) => {
-    let siteMembers = await Database.query('SELECT * FROM member_auth WHERE provider = "discord"');
+    let siteMembers = await Database.query('SELECT members.id `member`, member_auth.id  FROM members LEFT JOIN member_auth ON (members.id = member_auth.member AND member_auth.provider = "discord")');
     let serverMembers = [];
 
     client.login(secrets.DISCORD.BOT_TOKEN);
@@ -25,12 +25,16 @@ module.exports = async (req, res) => {
         for (let siteMember of siteMembers) {
           promises.push(guild.members.fetch(`${siteMember.id}`).then((serverMember) => {
             if (serverMember) {
+              promises.push(Database.query('INSERT INTO member_badges VALUES (?, "discord", NOW()) ON DUPLICATE KEY UPDATE badge = badge', [siteMember.member]));
+
               return Database.set('members', {
                 id: siteMember.member
               }, {
                 serverMember: true
               });
             } else {
+              promises.push(Database.query('DELETE FROM member_badges WHERE member = ? AND badge = "discord"', [siteMember.member]));
+
               return Database.set('members', {
                 id: siteMember.member
               }, {

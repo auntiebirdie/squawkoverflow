@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
 router.get('/:member', async (req, res) => {
   API.call('member', "GET", {
     id: req.params.member,
-    include: ['birdyBuddy', 'families', 'featuredFlock', 'flocks', 'hasWishlist', 'rank', 'totals']
+    include: ['badges', 'birdyBuddy', 'families', 'featuredFlock', 'flocks', 'hasWishlist', 'rank', 'totals']
   }).then(async (member) => {
     if (member.id != req.session.user && member.settings?.privacy_profile) {
       return res.render('members/private', {

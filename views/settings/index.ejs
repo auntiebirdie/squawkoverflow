@@ -113,8 +113,8 @@
           </div>
           <div class="col-5 col-md-4">
             <select name="title" id="title" class="form-select">
-             <% for (let tier of member.tiers) { %>
-              <option value="<%= tier.id %>" <%= tier.id == member.settings.title ? "selected" : "" %>><%= tier.name %></option>
+             <% for (let title of member.titles) { %>
+              <option value="<%= title.id %>" <%= title.id == member.settings.title ? "selected" : "" %>><%= title.name %></option>
              <% } %>
             </select>
           </div>

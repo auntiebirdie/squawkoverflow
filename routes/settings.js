@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/', Middleware.isLoggedIn, (req, res) => {
   API.call('member', 'GET', {
     id: req.session.user,
-    include: ['auth', 'rank', 'settings', 'tiers']
+    include: ['auth', 'rank', 'settings', 'titles']
   }).then((member) => {
     var themes = [{
         id: "default",

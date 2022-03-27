@@ -1,7 +1,6 @@
 var Database = require('../api/helpers/database.js');
 
 (async () => {
-  await Database.query('DROP TRIGGER IF EXISTS squawk_counters_insert');
   await Database.query('DROP TRIGGER IF EXISTS squawk_birdypets_insert');
   await Database.query(
     'CREATE TRIGGER \`squawk_birdypets_insert\` BEFORE INSERT ON squawkdata.\`birdypets\` ' +
@@ -26,7 +25,6 @@ var Database = require('../api/helpers/database.js');
     'END');
 
 
-  await Database.query('DROP TRIGGER IF EXISTS squawk_counters_update');
   await Database.query('DROP TRIGGER IF EXISTS squawk_birdypets_update');
   await Database.query(
     'CREATE TRIGGER \`squawk_birdypets_update\` AFTER UPDATE ON squawkdata.\`birdypets\` ' +
@@ -66,7 +64,6 @@ var Database = require('../api/helpers/database.js');
     '  END IF; ' +
     'END');
 
-  await Database.query('DROP TRIGGER IF EXISTS squawk_counters_delete');
   await Database.query('DROP TRIGGER IF EXISTS squawk_birdypets_delete');
   await Database.query(
     'CREATE TRIGGER \`squawk_birdypets_delete\` AFTER DELETE ON squawkdata.\`birdypets\` ' +
@@ -105,6 +102,8 @@ var Database = require('../api/helpers/database.js');
 
   await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "eggs"');
   await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "eggs", adjective, COUNT(DISTINCT variants.species) FROM species_adjectives JOIN variants ON (variants.species = species_adjectives.species) JOIN birdypets ON (birdypets.variant = variants.id) GROUP BY \`member\`, adjective');
+
+  await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "friendship", "total", COUNT(*) FROM birdypets WHERE friendship = 100 GROUP BY birdypets.member');
 
   await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "aviary", "total", COUNT(*) FROM birdypets GROUP BY birdypets.member');
 
