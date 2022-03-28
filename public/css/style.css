@@ -51,7 +51,7 @@ img {
 	filter: brightness(0.75);
 }
 
-.bg-dark {
+.bg-dark, .btn-dark  {
 	background-color: var(--bs-dark) !important;
 }
 
@@ -59,8 +59,13 @@ img {
 	color: var(--bs-dark) !important;
 }
 
-.bg-light {
+.bg-light, .btn-light {
 	background-color: var(--bs-light) !important;
+}
+
+.btn-dark, .btn-light {
+  color: var(--bs-body-color) !important;
+  border-color: rgba(var(--bs-light-rgb), .7) !important;
 }
 
 .bg-primary {

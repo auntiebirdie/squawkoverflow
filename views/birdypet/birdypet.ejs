@@ -19,52 +19,47 @@
         </div>
 
        <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
-        <form id="manageBirdyPet" class="py-3">
-
+        <div id="manageBirdyPet" class="py-3">
           <div class="row">
             <div class="col-12 col-md-8 mb-3">
               <h5><label>Nickname</label></h5>
-              <input id="nickname" type="text" name="nickname" class="form-control" value="<%= birdypet.nickname %>" style="width: 100%">
-            </div>
-            <div class="col-12 col-md-4 mb-3">
-            <% if (!birdypet.variant.special && birdypet.bird.variants.length > 1) { %>
-              <h5><label>Variant</label></h5>
-              <select name="variant" class="form-select">
-               <% for (let variant of birdypet.bird.variants) { %>
-                <% if (!variant.special) { %>
-                <option value="<%= variant.id %>" data-src="<%= variant.image %>" <%= variant.id == birdypet.variant.id ? "selected" : "" %>>
-                  <%= variant.label %> <%= variant.subspecies ? `${variant.subspecies} subspecies` : '' %>
-                  by <%= variant.credit %>
-                  <%= variant.id == birdypet.variant.id ? "[current]" : "" %>
-                </option>
+              <input id="nickname" type="text" name="nickname" class="form-control mb-3" value="<%= birdypet.nickname %>" style="width: 100%">
+
+              <h5><label>Description</label></h5>
+              <textarea name="description" maxlength="500" class="form-control mb-3" style="height: 150px; width: 100%;"><%= birdypet.description %></textarea>
+
+             <% if (member.flocks) { %>
+              <h5><label>Flocks</label> <a href="/flocks"><small>(manage)</small></a></h5>
+              <select id="flocks" name="flocks" multiple>
+                <% for (var flock of member.flocks) { %>
+                  <option value="<%= flock.id %>" <%= birdypet.flocks && birdypet.flocks.includes(flock.id) ? 'selected' : '' %>><%= flock.name %></option>
                 <% } %>
-               <% } %>
               </select>
-            <% } %>
+             <% } %>
             </div>
+           <% if (!birdypet.variant.special && birdypet.bird.variants.length > 1) { %>
+            <div id="birdDisplay" class="col-12 col-md-4 mb-3">
+              <h5><label>Variant</label></h5>
+             <% for (let variant of birdypet.bird.variants) { %>
+              <% if (!variant.special) { %>
+              <div class="row mb-3">
+                <div class="col-3 col-md-2 text-center">
+                  <div class="d-inline-block p-1 <%= birdypet.variant.id == variant.id ? 'border border-1 border-primary' : '' %>">
+                    <div class="m-0 birdypet mini <%= variant.hatched ? "hatched" : "unhatched" %> checkmark<%= Math.min(2, variant.hatched) %>" data-id="<%= variant.id %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" style="background-image: url('<%= variant.image %>');"></div>
+                  </div>
+                </div>
+                <div class="col-9 small">
+                  <%- variant.subspecies ? `<em>${variant.subspecies}</em><br>` : '' %>
+                  <%- variant.label ? `${variant.label}<br>` : '' %>
+                  <small>&copy; <a href="/birdypedia?artist=<%= encodeURIComponent(variant.credit) %>"><%= variant.credit %></a></small>
+                </div>
+              </div>
+              <% } %>
+             <% } %>
+            </div>
+           <% } %>
           </div>
-
-          <div class="mb-3">
-            <h5><label>Description</label></h5>
-            <textarea name="description" maxlength="500" class="form-control" style="height: 150px; width: 100%;"><%= birdypet.description %></textarea>
-          </div>
-
-          <% if (member.flocks) { %>
-            <h5 class="mb-4"><label>Flocks</label> <a href="/flocks"><small>(manage)</small></a></h5>
-            <% for (var flock of member.flocks) { %>
-            <p>
-              <label>
-                <input type="checkbox" name="flocks[]" class="form-check-input" value="<%= flock.id%>" <%= birdypet.flocks && birdypet.flocks.includes(flock.id) ? "checked" : ""%>>
-                &nbsp;
-                <%= flock.name %>
-              </label>
-            </p>
-            <% } %>
-          <% } %>
-
-          <button class="btn btn-light mt-3" type="submit">Save Changes</button>
-
-        </form>
+        </div>
       <% } else { %>
         <% if (birdypet.description) { %>
           <div class="w-75 mx-auto my-4 bg-light rounded p-3 pb-1 text-break">
@@ -76,67 +71,59 @@
       <% } %>
 
     <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.27.1/slimselect.min.js"></script>
       <script type="text/javascript">
+        var container = document.getElementById('manageBirdyPet');
+        var flocks = new SlimSelect({
+          select: '#flocks'
+        });
+
         $(document).ready(function () {
-
-          $('select[name="variant"]').change(function() {
-            var option = this.options[this.options.selectedIndex];
-            var birdy = document.getElementById('birdy');
-
-            birdy.src = option.getAttribute('data-src');
-          });
-
           $('#makeBirdyBuddy').on('click', function () {
-            $.ajax({
-              cache: false,
-              url: '/api/member',
-              data: JSON.stringify({ birdyBuddy : "<%= birdypet.id %>" }),
-              dataType: 'json',
-              contentType: 'application/json',
-              method: 'PUT',
-              success: function(data) {
-                window.location.reload();
-              }
-            });
-          });
+            if (!this.classList.contains('disabled')) {
+              this.classList.add('disabled', 'loadingData');
 
-          var form = document.getElementById('manageBirdyPet');
-
-          form.onsubmit = function (e) {
-            e.preventDefault();
-
-            if (!form.classList.contains('loadingData')) {
-              form.classList.add('loadingData');
-
-              var data = {
-                birdypet: "<%= birdypet.id %>",
-                flocks: []
-              }
-
-              $(form).serializeArray().map( function (datum) {
-                if (datum.name == "flocks[]") {
-                  data['flocks'].push(datum.value);
-                }
-                else {
-                  data[datum.name] = datum.value;
-                }
-              });
-
-              $.ajax({
-                cache: false,
-                url: '/api/birdypet',
-                data: JSON.stringify(data),
-                dataType: 'json',
-                contentType: 'application/json',
-                method: 'PUT',
-                success: function(data) {
-                  window.location.reload();
-                }
+              API.call('member', 'PUT', { birdyBuddy : "<%= birdypet.id %>" }, () => {
+                this.classList.remove('loadingData');
               });
             }
-          }
-      });
-    </script>
-   <% } %>
+          });
+
+          $('#birdDisplay').on('click', '.birdypet.mini', function (event) {
+            if (!container.classList.contains('loadingData')) {
+              var variant = event.target;
+              var full = document.getElementById('birdy');
+
+              full.src = variant.getAttribute('data-image');
+
+              $('.border-primary', '#birdDisplay').removeClass('border', 'border-1', 'border-primary');
+              variant.parentNode.classList.add('border', 'border-1', 'border-primary');
+
+              saveBirdyPet({ variant : variant.getAttribute('data-id') });
+            }
+          });
+        });
+
+        $('input, textarea, select', container).on('change', function (event) {
+          let data = {};
+
+          data[event.target.name] = $(event.target).val();
+
+          saveBirdyPet(data);
+        });
+
+        function saveBirdyPet (data) {
+          container.classList.add('loadingData');
+          $('input, textarea', container).attr('disabled', true);
+          flocks.disable();
+
+          API.call('birdypet', 'PUT', { ...{birdypet: "<%= birdypet.id %>"}, ...data}, () => {
+            container.classList.remove('loadingData');
+            $('input, textarea', container).attr('disabled', false);
+            flocks.enable();
+          });
+        }
+      </script>
+    <% } %>
 
 <%- include('../footer.ejs') %>

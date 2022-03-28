@@ -54,7 +54,7 @@
             contentType: 'application/json',
             success: function(data) {
               if (!data.error) {
-                window.location.href = `/birdypet/${data.id}`;
+                window.location.href = `/birdypet/${data}`;
               }
               else {
                 button.innerText = data.error;

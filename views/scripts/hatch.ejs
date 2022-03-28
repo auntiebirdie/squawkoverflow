@@ -97,7 +97,7 @@
               method: "POST",
               success: function(birdypet) {
                 actions.classList.remove('loadingData');
-                actions.innerHTML = `<a class="btn btn-lg bg-light mb-3" href="/birdypet/${birdypet.id}">🐣 View BirdyPet</a>&nbsp;<a class="btn btn-lg bg-light mb-3" href="/hatch">🥚 Hatch Another Egg</a>`;
+                actions.innerHTML = `<a class="btn btn-lg btn-light mb-3" href="/birdypet/${birdypet.id}">🐣 View BirdyPet</a>&nbsp;<a class="btn btn-lg btn-light mb-3" href="/hatch">🥚 Hatch Another Egg</a>`;
               },
               error: function(XMLHttpRequest, textStatus, errorThrown) {
                 actions.classList.remove('loadingData');
