@@ -44,7 +44,7 @@
 
         <div id="memberDisplay" class="my-5">
         <% if (locals.selectedMember) { %>
-          <h3><img src="<%= selectedMember.avatar %>" class="rounded-circle" width="75" data-id="<%= selectedMember.id %>" onerror="missingMemberAvatar(this)"> <%= selectedMember.username %></h3>
+          <h3><img src="<%= selectedMember.avatar %>" class="rounded" width="75" data-id="<%= selectedMember.id %>" onerror="missingMemberAvatar(this)"> <%= selectedMember.username %></h3>
         <% } %>
         </div>
 

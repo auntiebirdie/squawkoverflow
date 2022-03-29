@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-12">
       <h3>
-        <img class="rounded-circle me-2" src="${model.member.avatar}" data-id="${model.memberB.id}" onerror="missingMemberAvatar(this)" width="42">
+        <img class="rounded me-2" src="${model.member.avatar}" data-id="${model.memberB.id}" onerror="missingMemberAvatar(this)" width="42">
 
         Offer ${model.memberA == '<%= loggedInUser.id %>' ? "to" : "from"} ${model.member.username}
       </h3>

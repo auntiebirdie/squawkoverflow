@@ -1,0 +1,75 @@
+<%- include('../header.ejs') %>
+
+  <%- include ('../partials/page-title.ejs', { title : "Customize Birdatar" }) %>
+
+  <div class="row">
+    <div id="preview" class="col-12 col-md-6 position-relative" style="height: 275px;">
+     <% for (let layer of layers) { %>
+      <div data-layer="<%= layer.id %>"
+          style="width: 256px; height: 256px; position: absolute; right: 20%;">
+      </div>
+     <% } %>
+    </div>
+    <div class="col-12 col-md-6">
+      <select id="layer" class="form-select mb-3">
+       <% for (let layer of layers) { %>
+        <option value="<%= layer.id %>" data-components="<%= layer.components %>"><%= layer.id.slice(0, 1).toUpperCase() %><%= layer.id.slice(1) %></option>
+       <% } %>
+      </select>
+
+      <div id="components" class="bg-dark rounded p-2"></div>
+    </div>
+  </div>
+
+
+  <script type="text/javascript">
+    var selected = <%- JSON.stringify(selectedComponents) %>;
+    var prefix = 'https://storage.googleapis.com/squawkoverflow/birdatar';
+
+    $(document).ready( function () {
+      fetchComponents();
+      updatePreview();
+
+      $('#layer').on('change', fetchComponents);
+
+      $('#components').on('click', 'img', function () {
+         $('#preview').addClass('loadingData');
+
+         $('.border-primary').removeClass('border border-1 border-primary');
+
+         this.classList.add('border', 'border-1', 'border-primary');
+
+         selected[$('#layer').val()] = this.getAttribute('data-id');
+
+         updatePreview();
+
+         API.call('settings', 'PUT', { setting : 'birdatar', value : JSON.stringify(selected) }, function () {
+           $('#preview').removeClass('loadingData');
+         });
+      });
+    });
+
+    function fetchComponents() {
+      let layer = $('option:selected', '#layer');
+      let container = $('#components');
+      let components = "";
+
+      for (let i = 1, len = layer.attr('data-components') * 1; i <= len; i++) {
+        components += `<img data-id="${i}" src="${prefix}/${layer.val()}/${i}.png" class="m-1 rounded bg-light`;
+          if (selected[layer.val()] == i) {
+            components += ' border border-1 border-primary';
+          }
+        components += `" style="width: 100px;" role="button">`;
+      }
+
+      container.html(components);
+    }
+
+    function updatePreview () {
+      for (let layer in selected) {
+        $(`div[data-layer="${layer}"]`).css('background-image', `url('${prefix}/${layer}/${selected[layer]}.png')`);
+      }
+    }
+  </script>
+
+<%- include('../footer.ejs') %>

@@ -26,6 +26,7 @@ module.exports = async (req, res) => {
           case "featuredFlock":
           case "username":
           case "avatar":
+          case "birdatar":
             toUpdate[key] = req.body[key];
             break;
           case "pronouns":

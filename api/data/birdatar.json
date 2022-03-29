@@ -1,0 +1,30 @@
+[
+  {
+    "id": "tails",
+    "components": 9
+  },
+  {
+    "id": "crests",
+    "components": 10
+  },
+  {
+    "id": "body",
+    "components": 9
+  },
+  {
+    "id": "wings",
+    "components": 9
+  },
+  {
+    "id": "eyes",
+    "components": 9
+  },
+  {
+    "id": "beaks",
+    "components": 9
+  },
+  {
+    "id": "accessories",
+    "components": 11
+  }
+]
