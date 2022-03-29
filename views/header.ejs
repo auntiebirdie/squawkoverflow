@@ -113,7 +113,7 @@
 	  <li class="nav-item pb-2">
             <a href="/members/<%= loggedInUser.id %>" class="nav-link">
               <span class="icon d-inline-block fs-4">
-                <img src="<%= loggedInUser.avatar %>" class="rounded-circle p-2" onerror="missingMemberAvatar(this)">
+                <img src="<%= loggedInUser.avatar %>" class="rounded p-2" onerror="missingMemberAvatar(this)">
               </span>
               <span class="ms-1"><%= loggedInUser.username %></span>
             </a>

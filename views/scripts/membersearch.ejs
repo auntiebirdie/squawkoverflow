@@ -69,7 +69,7 @@
         suggestion: function (data) {
           var text = '<div class="px-1 py-2">';
 
-          text += `<img src="${data.avatar}" class="rounded-circle" width="42" onerror="missingMemberAvatar(this)"> ${data.username}`;
+          text += `<img src="${data.avatar}" class="rounded" width="42" onerror="missingMemberAvatar(this)"> ${data.username}`;
 
           if (data.owned > 1) {
             text += `<div class="small ms-5"><span class="checkplus"></span> <em>Multiple in aviary</em></div>`;
@@ -98,7 +98,7 @@
       selectedMember = member;
 
       if (member) {
-        memberDisplay.html(`<h3><img src="${member.avatar}" class="rounded-circle" width="75" data-id="${member.id}" onerror="missingMemberAvatar(this)"> ${member.username}</h3>`);
+        memberDisplay.html(`<h3><img src="${member.avatar}" class="rounded" width="75" data-id="${member.id}" onerror="missingMemberAvatar(this)"> ${member.username}</h3>`);
         memberButton.attr('disabled', false);
       }
       else {
@@ -109,7 +109,7 @@
       selectedMember = member;
 
       if (member) {
-        memberDisplay.html(`<h3><img src="${member.avatar}" class="rounded-circle" width="75" data-id="${member.id}" onerror="missingMemberAvatar(this)"> ${member.username}</h3>`);
+        memberDisplay.html(`<h3><img src="${member.avatar}" class="rounded" width="75" data-id="${member.id}" onerror="missingMemberAvatar(this)"> ${member.username}</h3>`);
         memberButton.attr('disabled', false);
       }
       else {
