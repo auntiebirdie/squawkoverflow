@@ -34,6 +34,14 @@ router.get('/', Middleware.isLoggedIn, (req, res) => {
   });
 });
 
+router.get('/birdatar', Middleware.isLoggedIn, (req, res) => {
+  API.call('birdatar', 'GET', {
+    loggedInUser: req.session.user
+  }).then((data) => {
+    res.render('settings/birdatar', data);
+  });
+});
+
 router.get('/connect', Middleware.isLoggedIn, (req, res) => {
   if (req.query.code || req.query.credential) {
     API.call('login', 'POST', {

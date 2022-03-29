@@ -1,12 +1,5 @@
-const {
-  Storage
-} = require('@google-cloud/storage');
-
-const storage = new Storage();
-const bucket = storage.bucket('squawkoverflow');
-const jimp = require('jimp');
-
 const Database = require('../helpers/database.js');
+const Birdatar = require('../helpers/birdatar.js');
 const secrets = require('../secrets.json');
 
 module.exports = (req, res) => {
@@ -79,61 +72,15 @@ module.exports = (req, res) => {
               });
               break;
             case 'birdatar':
-              var rand = require('random-seed').create(req.body.loggedInUser);
-              var url = 'https://storage.googleapis.com/squawkoverflow/';
-              var filename = `birdatar/users/${req.body.loggedInUser.charAt(0)}/${req.body.loggedInUser}.png`;
-              var file = bucket.file(filename);
-              var layers = [{
-                  id: 'tails',
-                  components: 9
-                },
-                {
-                  id: 'crests',
-                  components: 10
-                },
-                {
-                  id: 'body',
-                  components: 9
-                },
-                {
-                  id: 'wings',
-                  components: 9
-                },
-                {
-                  id: 'eyes',
-                  components: 9
-                },
-                {
-                  id: 'beaks',
-                  components: 9
-                },
-                {
-                  id: 'accessories',
-                  components: 20
-                }
-              ];
-
-              var base = await new jimp(256, 256);
-
-              for (let layer of layers) {
-                layer = await jimp.read(`${url}birdatar/${layer.id}/${rand(layer.components - 1) + 1}.png`);
-
-                base.composite(layer, 0, 0);
-              }
-
-              base.getBuffer(jimp[`MIME_PNG`], async (err, buff) => {
-                await file.save(buff);
-
-                await Database.set('members', {
-                  id: req.body.loggedInUser
-                }, {
-                  avatar: `${url}${filename}`
-                });
-
-                res.sendStatus(200);
+              Birdatar.generate(req.body.loggedInUser).then(() => {
+                return res.sendStatus(200);
               });
               break;
           }
+        } else if (req.body.setting == 'birdatar') {
+          Birdatar.generate(req.body.loggedInUser).then(() => {
+            return res.sendStatus(200);
+          });
         } else {
           return res.sendStatus(200);
         }

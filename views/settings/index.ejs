@@ -79,9 +79,9 @@
             </label>
           </div>
           <div class="col-12 col-md-9">
-            <select type="text" name="avatar" id="avatar" class="form-select d-inline-block">
+            <select type="text" name="avatar" id="avatar" class="form-select d-inline-block mb-3">
              <% for (let auth of [
-                  { id: 'birdatar', label : 'Birdatar (customization coming soon!)' },
+                  { id: 'birdatar', label : 'Birdatar' },
                   { id: 'discord', label : 'Discord' },
                   { id: 'google', label : 'Google' }
                 ]) {
@@ -93,6 +93,9 @@
                </option>
              <% } %>
             </select>
+            <% if (member.settings.avatar == 'birdatar') { %>
+              <p class="mb-0"><a href="/settings/birdatar">Customize your Birdatar!</a></p>
+            <% } %>
           </div>
         </div>
 
