@@ -48,8 +48,8 @@ module.exports = async (req, res) => {
       var member = new Member(req.body.loggedInUser);
 
       await Promise.all([
-	      birdypet.fetch(),
-	      member.fetch()
+        birdypet.fetch(),
+        member.fetch()
       ]);
 
       if (birdypet.member == member.id) {
@@ -101,12 +101,12 @@ module.exports = async (req, res) => {
           await birdypet.set(toUpdate);
         }
 
-        return res.sendStatus(200);
+        return res.json(birdypet);
       } else {
         return res.sendStatus(403);
       }
       break;
-    defualt:
-		  return res.sendStatus(405);
+      defualt:
+        return res.sendStatus(405);
   }
 };

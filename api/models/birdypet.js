@@ -169,6 +169,10 @@ class BirdyPet {
           id: this.id
         }, data);
 
+        for (let key in data) {
+          this[key] = data[key];
+        }
+
         // TODO - just refresh
         await Redis.del(`birdypet:${this.id}`);
 

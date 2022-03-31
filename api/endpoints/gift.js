@@ -21,11 +21,6 @@ module.exports = async (req, res) => {
         var birdypet = new BirdyPet(req.body.birdypet);
 
         await birdypet.fetch();
-
-        await birdypet.set({
-          member: req.body.member,
-          addedAt: new Date()
-        });
       } else if (req.body.variant) {
         var birdypet = new BirdyPet();
 
@@ -45,7 +40,8 @@ module.exports = async (req, res) => {
 
         if (req.body.variant) {
           await birdypet.set({
-            member: toMember.id
+            member: toMember.id,
+            addedAt: new Date()
           });
         }
 
