@@ -33,11 +33,15 @@
 
            <% if (member.flocks) { %>
             <h5><label>Flocks</label></h5>
-            <select name="flocks" multiple>
-              <% for (var flock of member.flocks) { %>
-                <option value="<%= flock.id %>"><%= flock.name %></option>
-              <% } %>
-            </select>
+            <% for (var flock of member.flocks) { %>
+            <p>
+              <label>
+                <input type="checkbox" name="flocks" class="form-check-input" value="<%= flock.id%>">
+                &nbsp;
+                <%= flock.name %>
+              </label>
+            </p>
+            <% } %>
           <% } %>
         </div>
         <div class="modal-footer">
@@ -52,52 +56,52 @@
   <script>
     var modal_editBirdyPet = new bootstrap.Modal(document.getElementById('modal_editBirdyPet'));
 
-    var flocks = new SlimSelect({
-      select: '#modal_editBirdyPet select[name="flocks"]'
-    });
+    $(document).ready(() => {
+      $('#modal_editBirdyPet').on('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
 
-    $('#modal_editBirdyPet').on('show.bs.modal', function (event) {
-      var button = event.relatedTarget;
-
-      $('.modal-body', modal_editBirdyPet._element).addClass('loadingData');
-
-      API.call('birdypet', 'GET', { id : button.getAttribute('data-id') }, (birdypet) => {
-        $('.modal-title', modal_editBirdyPet._element).html('Quick Edit - ' + (birdypet.nickname ? birdypet.nickname : birdypet.bird.commonName));
-        $('input[name="nickname"]', modal_editBirdyPet._element).val(birdypet.nickname);
-        $('textarea[name="description"]', modal_editBirdyPet._element).val(birdypet.description);
-
-        flocks.set(birdypet.flocks);
-
-        $('.btn-success', modal_editBirdyPet._element).removeClass('disabled').attr('data-id', button.getAttribute('data-id'));
-        $('.modal-body', modal_editBirdyPet._element).removeClass('loadingData');
-      });
-    }).on('hidden.bs.modal', function (event) {
-      $('.modal-title', modal_editBirdyPet._element).html('Quick Edit Birdypet');
-      $('input[name="nickname"]', modal_editBirdyPet._element).val('');
-      $('textarea[name="description"]', modal_editBirdyPet._element).val('');
-
-      flocks.set([]);
-
-      $('.btn-success', modal_editBirdyPet._element).addClass('disabled').attr('data-id', null);
-    }).on('click', '.btn-success', function (event) {
-      if (!event.target.classList.contains('disabled')) {
-        $('.btn-success', modal_editBirdyPet._element).addClass('disabled');
         $('.modal-body', modal_editBirdyPet._element).addClass('loadingData');
 
-        API.call('birdypet', 'PUT', {
-          birdypet: event.target.getAttribute('data-id'),
-          nickname: $('input[name="nickname"]', modal_editBirdyPet._element).val(),
-          description: $('textarea[name="description"]', modal_editBirdyPet._element).val(),
-          flocks: flocks.selected()
-        }, (birdypet) => {
-          $('div[data-id="' + birdypet.id + '"]').replaceWith(template((birdypet)));
-          lazyLoadInstance.update();
-          modal_editBirdyPet.hide();
-        });
-      }
-    });
+        API.call('birdypet', 'GET', { id : button.getAttribute('data-id') }, (birdypet) => {
+          $('.modal-title', modal_editBirdyPet._element).html('Quick Edit - ' + (birdypet.nickname ? birdypet.nickname : birdypet.bird.commonName));
+          $('input[name="nickname"]', modal_editBirdyPet._element).val(birdypet.nickname);
+          $('textarea[name="description"]', modal_editBirdyPet._element).val(birdypet.description);
 
-    
+          for (let flock of birdypet.flocks) {
+            $('input[name="flocks"][value="' + flock + '"]').attr('checked', true);
+          }
+
+          $('.btn-success', modal_editBirdyPet._element).removeClass('disabled').attr('data-id', button.getAttribute('data-id'));
+          $('.modal-body', modal_editBirdyPet._element).removeClass('loadingData');
+        });
+      }).on('hidden.bs.modal', function (event) {
+        $('.modal-title', modal_editBirdyPet._element).html('Quick Edit Birdypet');
+        $('input[name="nickname"]', modal_editBirdyPet._element).val('');
+        $('textarea[name="description"]', modal_editBirdyPet._element).val('');
+
+        $('input[type="checkbox"]', modal_editBirdyPet._element).each(function () { $(this).attr('checked', false) });
+
+        $('.btn-success', modal_editBirdyPet._element).addClass('disabled').attr('data-id', null);
+      }).on('click', '.btn-success', function (event) {
+        if (!event.target.classList.contains('disabled')) {
+          $('.btn-success', modal_editBirdyPet._element).addClass('disabled');
+          $('.modal-body', modal_editBirdyPet._element).addClass('loadingData');
+
+          API.call('birdypet', 'PUT', {
+            birdypet: event.target.getAttribute('data-id'),
+            nickname: $('input[name="nickname"]', modal_editBirdyPet._element).val(),
+            description: $('textarea[name="description"]', modal_editBirdyPet._element).val(),
+            flocks: $('input[type="checkbox"]:checked', modal_editBirdyPet._element).map(function () { return this.value }).get()
+          }, (birdypet) => {
+            $('div[data-id="' + birdypet.id + '"]').replaceWith(template((birdypet)));
+            lazyLoadInstance.update();
+            modal_editBirdyPet.hide();
+          });
+        }
+      });
+    });
   </script>
+
+  <%- include('../partials/giftModal.ejs') %>
 
 <%- include('../footer.ejs') %>

@@ -38,7 +38,7 @@ module.exports = async (req, res) => {
       if (birdypet.member == fromMember.id || req.body.variant) {
         let promises = [];
 
-        if (req.body.variant) {
+        if (!req.body.variant) {
           await birdypet.set({
             member: toMember.id,
             addedAt: new Date()

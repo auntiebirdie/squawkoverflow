@@ -22,7 +22,7 @@
     <input class="typeahead form-control" type="text">
   </div>
 
-  <div id="memberDisplay" class="my-5">
+  <div id="memberDisplay" class="mt-4">
    <% if (locals.selectedMember) { %>
      <h3><img src="<%= selectedMember.avatar %>" class="rounded" width="75" data-id="<%= selectedMember.id %>" onerror="missingMemberAvatar(this)"> <%= selectedMember.username %></h3>
    <% } %>

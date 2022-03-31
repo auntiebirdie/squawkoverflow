@@ -292,7 +292,7 @@ img {
   position: fixed;
   left: 15px;
   top: 15px;
-  z-index: 9998;
+  z-index: 1000;
   border: 0;
   font-size: 24px;
   transition: all 0.4s;
@@ -521,6 +521,11 @@ span.checkmark, span.checkplus {
   top: 3px;
   right: 3px;
   z-index: 100;
+}
+
+.birdypet-actions button {
+  display: block;
+  margin-bottom: .5em;
 }
 
 .birdymessage {
