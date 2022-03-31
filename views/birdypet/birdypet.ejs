@@ -9,9 +9,11 @@
         <div class="text-center">
           <span class="h-100 d-inline-block position-relative">
            <% if (locals.loggedInUser && loggedInUser.id != birdypet.member) { %>
-            <button class="wishlist-heart btn btn-sm" data-id="<%= birdypet.bird.id %>" role="button">
-              <%= birdypet.bird.wishlisted ? (birdypet.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
-            </button>
+            <div class="birdypet-actions">
+              <button class="wishlist-heart btn btn-sm" data-id="<%= birdypet.bird.id %>" role="button">
+                <%= birdypet.bird.wishlisted ? (birdypet.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
+              </button>
+            </div>
            <% } %>
             <img id="birdy" src="<%= birdypet.variant.image %>" class="birdypet full">
             <span class="birdymessage border border-1 border-secondary" style="display: none;"></span>
@@ -21,24 +23,28 @@
        <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
         <div id="manageBirdyPet" class="py-3">
           <div class="row">
-            <div class="col-12 col-md-8 mb-3">
+            <div class="col-12 col-md-7 col-lg-8 mb-3">
               <h5><label>Nickname</label></h5>
               <input id="nickname" type="text" name="nickname" class="form-control mb-3" value="<%= birdypet.nickname %>" style="width: 100%">
 
               <h5><label>Description</label></h5>
               <textarea name="description" maxlength="500" class="form-control mb-3" style="height: 150px; width: 100%;"><%= birdypet.description %></textarea>
 
-             <% if (member.flocks) { %>
+            <% if (member.flocks) { %>
               <h5><label>Flocks</label> <a href="/flocks"><small>(manage)</small></a></h5>
-              <select id="flocks" name="flocks" multiple>
-                <% for (var flock of member.flocks) { %>
-                  <option value="<%= flock.id %>" <%= birdypet.flocks && birdypet.flocks.includes(flock.id) ? 'selected' : '' %>><%= flock.name %></option>
-                <% } %>
-              </select>
+             <% for (var flock of member.flocks) { %>
+              <p>
+                <label>
+                  <input type="checkbox" name="flock" class="form-check-input" value="<%= flock.id%>" <%= birdypet.flocks && birdypet.flocks.includes(flock.id) ? "checked" : ""%>>
+                  &nbsp;
+                  <%= flock.name %>
+                </label>
+              </p>
              <% } %>
+            <% } %>
             </div>
            <% if (!birdypet.variant.special && birdypet.bird.variants.length > 1) { %>
-            <div id="birdDisplay" class="col-12 col-md-4 mb-3">
+            <div id="birdDisplay" class="col-12 col-md-5 col-lg-4 mb-3">
               <h5><label>Variant</label></h5>
              <% for (let variant of birdypet.bird.variants) { %>
               <% if (!variant.special) { %>
@@ -74,9 +80,6 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.27.1/slimselect.min.js"></script>
       <script type="text/javascript">
         var container = document.getElementById('manageBirdyPet');
-        var flocks = new SlimSelect({
-          select: '#flocks'
-        });
 
         $(document).ready(function () {
           $('#makeBirdyBuddy').on('click', function () {
@@ -115,15 +118,15 @@
         function saveBirdyPet (data) {
           container.classList.add('loadingData');
           $('input, textarea', container).attr('disabled', true);
-          flocks.disable();
 
           API.call('birdypet', 'PUT', { ...{birdypet: "<%= birdypet.id %>"}, ...data}, () => {
             container.classList.remove('loadingData');
             $('input, textarea', container).attr('disabled', false);
-            flocks.enable();
           });
         }
       </script>
+
+      <%- include('../partials/giftModal.ejs') %>
     <% } %>
 
 <%- include('../footer.ejs') %>

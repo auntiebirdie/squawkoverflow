@@ -10,7 +10,13 @@
 
         <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
             <p><a id="makeBirdyBuddy" class="btn btn-light <%= member.birdyBuddy == birdypet.id ? 'disabled' : '' %>">💖 Make Birdy Buddy</a></p>
-            <p><a href="/birdypet/<%= birdypet.id %>/gift" class="btn btn-light">🎁 Gift to Someone</a></p>
+            <p>
+              <a data-bs-toggle="modal"
+                 data-bs-target="#modal_giftBirdyPet"
+                 data-id="<%= birdypet.id %>" class="btn btn-light">
+                🎁 Gift to Someone
+              </a>
+            </p>
             <p><a href="/birdypet/release/<%= birdypet.id %>" class="btn btn-light">👋 Release Bird</a></p>
         <% } %>
         </div>
@@ -70,4 +76,6 @@
             <%= birdypet.variant.credit %>
           </a>
         </p>
+
+  <%- include('../scripts/feedbug.ejs') %>
 <% } %>

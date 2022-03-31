@@ -133,7 +133,7 @@ img {
   top: 0;
   bottom: 0;
   transition: all ease-in-out 0.5s;
-  z-index: 9997;
+  z-index: 999;
   transition: all 0.5s;
   padding: 0 15px;
   overflow-y: auto;
@@ -292,7 +292,7 @@ img {
   position: fixed;
   left: 15px;
   top: 15px;
-  z-index: 9998;
+  z-index: 1000;
   border: 0;
   font-size: 24px;
   transition: all 0.4s;
@@ -516,11 +516,16 @@ span.checkmark, span.checkplus {
   right: 0px;
 }
 
-.wishlist-heart {
+.birdypet-actions {
   position: absolute;
   top: 3px;
   right: 3px;
   z-index: 100;
+}
+
+.birdypet-actions button {
+  display: block;
+  margin-bottom: .5em;
 }
 
 .birdymessage {
@@ -559,6 +564,15 @@ span.checkmark, span.checkplus {
 .progress-bar {
 	overflow: visible;
 	text-shadow: 1px 1px 1px black, -1px -1px 1px black, -1px 1px 1px black, 1px -1px 1px black;
+}
+
+.modal-content {
+	background-color: var(--bs-body-bg);
+	color: var(--bs-body-color);
+}
+
+.modal-header, .modal-footer {
+	border-color: transparent;
 }
 
 .ss-main {

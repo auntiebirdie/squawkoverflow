@@ -1,16 +1,34 @@
-<div class="col-6 col-md-4 d-flex align-items-stretch">
+<div class="birdypet-container col-12 col-sm-6 col-md-4 d-flex align-items-stretch" data-id="${model.id}">
   <div class="w-100 pb-3 px-2">
     <div class="h-100 card">
-      <% if (locals.loggedInUser) { %>
-        <button class="wishlist-heart btn btn-sm" data-id="${model.bird.id}" role="button">
+      <div class="birdypet-actions">
+       <% if (locals.loggedInUser) { %>
+        <button class="wishlist-heart btn btn-sm btn-light" data-id="${model.bird.id}" role="button">
           ${model.bird.wishlisted ? (model.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍'}
         </button>
-      <% } %>
-      <div class="h100">
+        <% if (locals.page == 'aviary' && loggedInUser.id == member.id) {%>
+         <button class="birdypet-edit btn btn-sm btn-light"
+             data-bs-toggle="modal"
+             data-bs-target="#modal_editBirdyPet"
+             data-id="${model.id}"
+             role="button">
+           ✏️
+         </button>
+         <button class="btn btn-sm btn-light"
+             data-bs-toggle="modal"
+             data-bs-target="#modal_giftBirdyPet"
+             data-id="${model.id}"
+             role="button">
+            🎁
+         </button>
+        <% } %>
+       <% } %>
+      </div>
+      <div>
         <a href="/birdypet/${model.id}">
           <div class="bg-white lazy birdypet <% if ((locals.page && page != 'aviary') || (locals.loggedInUser && loggedInUser.id != member.id)) { %>checkmark${model.bird.owned == 2 ? 2 : model.bird.owned}<% } %>"
-               data-id="${model.id}"
                data-bg="${model.variant.image}"
+               data-id="${model.id}"
           >
           </div>
         </a>

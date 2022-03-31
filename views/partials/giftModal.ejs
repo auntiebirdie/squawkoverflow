@@ -1,0 +1,52 @@
+  <div id="modal_giftBirdyPet" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Gift BirdyPet</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <%- include('../partials/membersearch.ejs') %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+          <button id="memberButton" type="button" class="btn btn-success" disabled>Send Gift!</button>
+        </div>
+      </div>
+    </div>    
+  </div>
+
+  <%- include('../scripts/membersearch.ejs') %>
+
+  <script>
+    var modal_giftBirdyPet = new bootstrap.Modal(document.getElementById('modal_giftBirdyPet'));
+
+    $('#modal_giftBirdyPet').on('show.bs.modal', function (event) {
+      $('#memberSearch').attr('data-bird', event.relatedTarget.getAttribute('data-id'));
+    }).on('hidden.bs.modal', function (event) {
+      $('#memberSearch').attr('data-bird', null);
+      $('#memberDisplay').html('');
+    }).on('click', '.btn-success', function (event) {
+      if (!event.target.disabled) {
+        $('.modal-body', modal_giftBirdyPet._element).addClass('loadingData');
+        event.target.setAttribute('disabled', true);
+
+        API.call('gift', 'POST', {
+          member: $('img', '#memberDisplay').attr('data-id'),
+          birdypet: $('#memberSearch').attr('data-bird')
+        }, () => {
+          switch ("<%= locals.page %>") {
+            case "birdypet":
+              window.location.reload();
+              break;
+            case "aviary":
+              $('.birdypet-container[data-id="' + $('#memberSearch').attr('data-bird') + '"]').css('opacity', .5).find('.birdypet-actions').remove();
+              modal_giftBirdyPet.hide();
+              break;
+            default:
+              modal_giftBirdyPet.hide();
+          }
+        });
+      }
+    });
+  </script>

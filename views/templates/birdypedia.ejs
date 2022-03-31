@@ -1,11 +1,13 @@
 <div class="col-6 col-md-4 d-flex align-items-stretch">
   <div class="w-100 pb-3 px-2">
     <div class="h-100 card">
-      <% if (locals.loggedInUser) { %>
+      <div class="birdypet-actions">
+       <% if (locals.loggedInUser) { %>
         <button class="wishlist-heart btn btn-sm" data-id="${model.id}" role="button">
           ${model.wishlisted ? (model.wishlisted == 2 ? '🌟' : '❤️') : '🤍'}
         </button>
-      <% } %>
+       <% } %>
+      </div>
       <div class="h100">
         <div class="bg-white lazy birdypet ${model.variants.find((variant) => variant.hatched) ? "hatched" : "unhatched"} checkmark${model.owned >= 2 ? 2 : model.owned}"
                data-bg="${model.variants.find((variant) => variant.hatched)?.image || model.variants[0].image}"

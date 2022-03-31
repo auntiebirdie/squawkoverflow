@@ -25,9 +25,9 @@
 
           let data = {
             search: query,
-            include: <%- JSON.stringify(locals.include ? include : []) %>,
-            bird: <%- locals.bird ? bird : '""' %>,
-            privacy: <%- JSON.stringify(locals.privacy ? privacy : []) %>
+            bird: $('#memberSearch').attr('data-bird') || "",
+            include: ['birdData'],
+            privacy: ['gifts']
           };
 
           let cache = sessionStorage.getItem(`members-${JSON.stringify(data)}`);
@@ -65,6 +65,9 @@
       templates: {
         empty: function () {
           return '<div class="px-1 py-2"><em>No members found.</em></div>';
+        },
+        pending: function () {
+          return '<div class="mx-1 fst-italic"><div class="spinner-border spinner-border-sm" role="status"></div> Searching...</div>';
         },
         suggestion: function (data) {
           var text = '<div class="px-1 py-2">';

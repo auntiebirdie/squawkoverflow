@@ -18,7 +18,7 @@
       <% } %>
 
       <div>
-        <div id="memberSearch">
+        <div id="memberSearch" data-bird="<%= birdypet.bird.id %>" data-include='["birdData"]' data-privacy='["gifts"]'>
           <div class="row text-center">
             <div class="col-6 p-3">
               <div class="form-check form-check-inline">
@@ -55,7 +55,7 @@
     </div>
   </div>
 
-  <%- include('../scripts/membersearch.ejs', { privacy: ['gifts'], include: ['birdData'], bird : `"${birdypet.bird.id}"` }) %>
+  <%- include('../scripts/membersearch.ejs') %>
 
   <script type="text/javascript">
     $(document).ready(function () {

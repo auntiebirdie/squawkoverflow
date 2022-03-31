@@ -5,9 +5,11 @@
   <div class="text-center mb-4">
     <span class="h-100 d-inline-block position-relative">
      <% if (locals.loggedInUser) { %>
-      <button class="wishlist-heart btn btn-sm" data-id="<%= bird.id %>" role="button">
-        <%= bird.wishlisted ? (bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
-      </button>
+      <div class="birdypet-actions">
+        <button class="wishlist-heart btn btn-sm" data-id="<%= bird.id %>" role="button">
+          <%= bird.wishlisted ? (bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
+        </button>
+      </div>
      <% } %>
       <img id="birdy" src="<%= variant.image %>" class="birdypet full <%= variant.hatched ? "hatched" : "unhatched" %>">
       <a class="attribution bg-light" href="<%= variant.source %>" target="_blank" rel="noopener">&copy; <%= variant.credit %></a>
