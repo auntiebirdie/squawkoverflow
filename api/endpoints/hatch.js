@@ -68,12 +68,23 @@ module.exports = async (req, res) => {
 
       await member.fetch();
 
-      var isEventEgg = eventEggs.includes(req.body.egg) && chance.bool() && !member.settings.general_removeEvent;
+      var today = new Date();
+      var isAprFools = (today.getMonth() + '-' + today.getDate()) == '3-1';
 
-      if (isEventEgg) {
-        var hatched = await Database.query('SELECT variants.species, variants.id FROM event_variants JOIN events ON (event_variants.event = events.id) JOIN variants ON (event_variants.variant = variants.id) JOIN species_adjectives ON (variants.species = species_adjectives.species) WHERE adjective = ? AND NOW() BETWEEN events.startDate AND events.endDate ORDER BY RAND() LIMIT 1', [req.body.egg]);
+      if (isAprFools && await Counters.get('aprfools', member.id, today.getYear()) < 3) {
+        var isEventEgg = true;
+        var hatched = {
+          species: 'Psittacosaurus mongoliensis',
+          id: 'iqkTUrXqtN31qnXTtJaVH5'
+        };
       } else {
-        var hatched = await Database.query('SELECT species FROM species_adjectives WHERE adjective = ? AND species IN (SELECT species FROM variants) ORDER BY RAND() LIMIT 1', [req.body.egg]);
+        var isEventEgg = eventEggs.includes(req.body.egg) && chance.bool() && !member.settings.general_removeEvent;
+
+        if (isEventEgg) {
+          var hatched = await Database.query('SELECT variants.species, variants.id FROM event_variants JOIN events ON (event_variants.event = events.id) JOIN variants ON (event_variants.variant = variants.id) JOIN species_adjectives ON (variants.species = species_adjectives.species) WHERE adjective = ? AND NOW() BETWEEN events.startDate AND events.endDate ORDER BY RAND() LIMIT 1', [req.body.egg]);
+        } else {
+          var hatched = await Database.query('SELECT species FROM species_adjectives WHERE adjective = ? AND species IN (SELECT species FROM variants) ORDER BY RAND() LIMIT 1', [req.body.egg]);
+        }
       }
 
       if (hatched) {

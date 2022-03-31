@@ -42,6 +42,9 @@ module.exports = (req, res) => {
         id: req.body.freebird
       }));
     } else {
+      if (req.body.variant == "iqkTUrXqtN31qnXTtJaVH5") {
+        promises.push(Database.query('INSERT INTO counters VALUES (?, "aprfools", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` + 1', [member.id, new Date().getYear()]));
+      }
       promises.push(Database.query('UPDATE members SET lastHatchAt = NOW() WHERE id = ?', [member.id]));
     }
 
