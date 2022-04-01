@@ -11,11 +11,13 @@
         <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
             <p><a id="makeBirdyBuddy" class="btn btn-light <%= member.birdyBuddy == birdypet.id ? 'disabled' : '' %>">💖 Make Birdy Buddy</a></p>
             <p>
-              <a data-bs-toggle="modal"
+              <button data-bs-toggle="modal"
                  data-bs-target="#modal_giftBirdyPet"
-                 data-id="<%= birdypet.id %>" class="btn btn-light">
+                 data-bird="<%= birdypet.bird.id %>"i
+                 data-id="<%= birdypet.id %>"
+                 class="btn btn-light">
                 🎁 Gift to Someone
-              </a>
+              </button>
             </p>
             <p><a href="/birdypet/release/<%= birdypet.id %>" class="btn btn-light">👋 Release Bird</a></p>
         <% } %>

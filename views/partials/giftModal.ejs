@@ -22,10 +22,24 @@
     var modal_giftBirdyPet = new bootstrap.Modal(document.getElementById('modal_giftBirdyPet'));
 
     $('#modal_giftBirdyPet').on('show.bs.modal', function (event) {
-      $('#memberSearch').attr('data-bird', event.relatedTarget.getAttribute('data-id'));
+      $('#memberSearch').attr('data-bird', event.relatedTarget.getAttribute('data-bird'));
+      $('#memberSearch').attr('data-birdypet', event.relatedTarget.getAttribute('data-id'));
+
+      switch ("<%= locals.page %>") {
+        case "aviary":
+          $('.modal-title', modal_giftBirdyPet._element).html('Gift ' + $(event.relatedTarget).closest('.birdypet-container').find('h3').text());
+          break;
+      }
     }).on('hidden.bs.modal', function (event) {
       $('#memberSearch').attr('data-bird', null);
+      $('#memberSearch').attr('data-birdypet', null);
+
+      $('.modal-title', modal_giftBirdyPet._element).html('Gift BirdyPet');
+      $('.modal-body', modal_giftBirdyPet._element).removeClass('loadingData');
+
       $('#memberDisplay').html('');
+      memberSearch.typeahead('val', '').typeahead('destroy');
+      setupMemberSearch();
     }).on('click', '.btn-success', function (event) {
       if (!event.target.disabled) {
         $('.modal-body', modal_giftBirdyPet._element).addClass('loadingData');
@@ -33,14 +47,14 @@
 
         API.call('gift', 'POST', {
           member: $('img', '#memberDisplay').attr('data-id'),
-          birdypet: $('#memberSearch').attr('data-bird')
+          birdypet: $('#memberSearch').attr('data-birdypet')
         }, () => {
           switch ("<%= locals.page %>") {
             case "birdypet":
               window.location.reload();
               break;
             case "aviary":
-              $('.birdypet-container[data-id="' + $('#memberSearch').attr('data-bird') + '"]').css('opacity', .5).find('.birdypet-actions').remove();
+              $('.birdypet-container[data-id="' + $('#memberSearch').attr('data-birdypet') + '"]').css('opacity', .5).find('.birdypet-actions').remove();
               modal_giftBirdyPet.hide();
               break;
             default:

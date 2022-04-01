@@ -1,12 +1,25 @@
 <script type="text/javascript">
+  var memberSearch, memberButton, memberDisplay;
   var selectedMember = null;
   var _TRAPCARD = false;
 
   $(document).ready(function () {
-    var memberSearch = $('#memberSearch .typeahead');
-    var memberButton = $('#memberButton');
-    var memberDisplay = $('#memberDisplay');
+    memberSearch = $('#memberSearch .typeahead');
+    memberButton = $('#memberButton');
+    memberDisplay = $('#memberDisplay');
 
+    setupMemberSearch();
+
+    $('#memberSearch').on('change', 'input[type="checkbox"]', function () {
+      let query = memberSearch.typeahead('val');
+
+      _TRAPCARD = true;
+
+      memberSearch.typeahead('val', '.').typeahead('val', query);
+    });
+  });
+
+  function setupMemberSearch () {
     memberSearch.typeahead({
       hint: true,
       highlight: true,
@@ -120,13 +133,5 @@
         memberButton.attr('disabled', true);
       }
     });
-
-    $('#memberSearch').on('change', 'input[type="checkbox"]', function () {
-      let query = memberSearch.typeahead('val');
-
-      _TRAPCARD = true;
-
-      memberSearch.typeahead('val', '.').typeahead('val', query);
-    });
-  });
+  }
 </script>
