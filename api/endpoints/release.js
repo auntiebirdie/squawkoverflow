@@ -1,5 +1,6 @@
 const BirdyPet = require('../models/birdypet.js');
 const Counters = require('../helpers/counters.js');
+const Database = require('../helpers/database.js');
 const PubSub = require('../helpers/pubsub.js');
 
 module.exports = async (req, res) => {
@@ -12,6 +13,10 @@ module.exports = async (req, res) => {
 
   if (req.body.variant) {
     variant = req.body.variant;
+
+    if (req.body.variant == "iqkTUrXqtN31qnXTtJaVH5") {
+      promises.push(Database.query('INSERT INTO counters VALUES (?, "aprfools", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` + 1', [req.body.loggedInUser, new Date().getYear()]));
+    }
   } else if (req.body.birdypet) {
     let birdypet = new BirdyPet(req.body.birdypet);
 
