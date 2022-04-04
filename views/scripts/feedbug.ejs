@@ -1,38 +1,28 @@
-  <script>
+  <script>    
     $(document).ready(function() {
-      $('#feedBug').on('click', function (event) {
+      $('#feedBug').on('click', function(event) {
         var button = this;
 
         if (!button.style.opacity) {
           button.style.opacity = .5;
 
-          $.ajax({
-            cache: false,
-            url: `/api/nomnomnom`,
-            method: 'POST',
-            dataType: "json",
-            contentType: 'application/json',
-            data: JSON.stringify({
-              birdypet: button.getAttribute('data-birdypet')
-            }),
-            success: function(data) {
-              if (!data.error) {
-                $('.birdymessage').text(data.response).show();
-                $('.friendshipMeter').text(data.friendshipMeter);
+          API.call('nomnomnom', 'POST', {
+            birdypet: button.getAttribute('data-birdypet')
+          }, function(data) {
+            if (!data.error) {
+              $('.birdymessage').text(data.response).show();
+              $('.friendshipMeter').text(data.friendshipMeter);
 
-                button.childNodes[1].innerText = data.bugs;
+              button.childNodes[1].innerText = data.bugs;
 
-                if (data.bugs == 0) {
-                  button.disabled = true;
-                }
-                else {
-                  button.style.opacity = null;
-                }
-              }
-              else {
-                button.innerText = data.error;
+              if (data.bugs == 0) {
                 button.disabled = true;
+              } else {
+                button.style.opacity = null;
               }
+            } else {
+              button.innerText = data.error;
+              button.disabled = true;
             }
           });
         }

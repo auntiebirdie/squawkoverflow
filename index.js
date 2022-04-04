@@ -55,7 +55,7 @@ app.use(async function(req, res, next) {
         "notif": Math.max(0, res.locals.loggedInUser.exchangeData)
       });
 
-      // computers are bad at rnadom so this helps keep it from triggering too often
+      // computers are bad at random so this helps keep it from triggering too often
       if (chance.bool({
           likelihood: 10
         }) && chance.bool({
@@ -68,7 +68,7 @@ app.use(async function(req, res, next) {
         });
       }
     } else {
-      //delete req.session.user;
+      delete req.session.user;
     }
   }
 
@@ -86,9 +86,10 @@ app.use(async function(req, res, next) {
     "href": "https://discord.com/invite/h87wansdg2",
     "newWindow": true
   }, {
-    "icon": "❔",
-    "label": "FAQ",
-    "href": "/faq"
+    "icon": "💸",
+    "label": "Support",
+    "href": "https://www.patreon.com/squawkoverflow",
+    "newWindow": true
   });
 
   res.locals.siteMenu = menu.map((item) => {
