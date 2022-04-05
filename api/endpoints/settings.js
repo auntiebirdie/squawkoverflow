@@ -41,7 +41,7 @@ module.exports = (req, res) => {
                         id: req.body.loggedInUser
                       }, {
                         avatar: user.avatarURL(),
-                        serverMember: true
+                        serverMember: false
                       });
                     });
                   });

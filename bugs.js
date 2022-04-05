@@ -1,3 +1,4 @@
+const API = require('./helpers/api.js');
 const express = require('express');
 const app = express();
 
@@ -40,8 +41,6 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res) => {
-  console.log(req.body);
-
   const secrets = require('./secrets.json');
   const Database = require('./api/helpers/database.js');
   const Trello = require('node-trello');
@@ -51,7 +50,7 @@ app.post('/', (req, res) => {
     var member = null;
 
     if (req.body.memberId) {
-      member = await Database.query('SELECT members.id, member_auth.id discord FROM members LEFT JOIN member_auth ON (members.id == member_auth.member AND member_auth.type == "discord") WHERE members.id = ? LIMIT 1', [req.body.memberId]);
+      member = await Database.query('SELECT members.id, member_auth.id discord, members.bugs FROM members LEFT JOIN member_auth ON (members.id = member_auth.member AND member_auth.provider = "discord") WHERE members.id = ? LIMIT 1', [req.body.memberId]);
 
       if (member.id) {
         await Database.set('members', {
