@@ -10,7 +10,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
-          <button id="memberButton" type="button" class="btn btn-success" disabled>Send Gift!</button>
+          <button id="memberButton" type="button" class="btn btn-success" <%= locals.selectedMember ? '' : 'disabled' %>>Send Gift!</button>
         </div>
       </div>
     </div>    
@@ -27,6 +27,7 @@
 
       switch ("<%= locals.page %>") {
         case "aviary":
+        case "gift":
           $('.modal-title', modal_giftBirdyPet._element).html('Gift ' + $(event.relatedTarget).closest('.birdypet-container').find('h3').text());
           break;
       }
@@ -54,6 +55,7 @@
               window.location.reload();
               break;
             case "aviary":
+            case "gift":
               $('.birdypet-container[data-id="' + $('#memberSearch').attr('data-birdypet') + '"]').css('opacity', .5).find('.birdypet-actions').remove();
               modal_giftBirdyPet.hide();
               break;

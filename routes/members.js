@@ -49,7 +49,7 @@ router.get('/:member/gift', Middleware.isLoggedIn, async (req, res) => {
       id: req.session.user,
       include: ['flocks', 'families']
     }).then(async (loggedInUser) => {
-      res.render('members/gift', {
+      res.render('aviary/index', {
         page: 'gift',
         member: member,
         flocks: loggedInUser.flocks,

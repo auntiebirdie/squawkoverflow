@@ -6,7 +6,7 @@
         <button class="wishlist-heart btn btn-sm btn-light" data-id="${model.bird.id}" role="button">
           ${model.bird.wishlisted ? (model.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍'}
         </button>
-        <% if (locals.page == 'aviary' && loggedInUser.id == member.id) {%>
+        <% if ((locals.page == 'aviary' && loggedInUser.id == member.id) || locals.page == 'gift') {%>
          <button class="birdypet-edit btn btn-sm btn-light"
              data-bs-toggle="modal"
              data-bs-target="#modal_editBirdyPet"
