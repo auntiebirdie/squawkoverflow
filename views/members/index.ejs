@@ -4,7 +4,7 @@
 
   <%- include('../partials/pagination.ejs') %>
 
-  <div id="lazyLoader" class="row g-0" data-endpoint="/api/members" data-params="<%= JSON.stringify({"include":["aviary","lastActive","rank"],"privacy":"profile"}) %>"></div>
+  <div id="lazyLoader" class="row g-0" data-endpoint="members" data-params="<%= JSON.stringify({"include":["aviary","lastActive","rank"],"privacy":"profile"}) %>"></div>
 
   <%- include('../partials/pagination.ejs') %>
 

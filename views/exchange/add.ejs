@@ -9,7 +9,7 @@
 
   <%- include('../partials/pagination.ejs') %>
 
-  <div id="lazyLoader" class="row g-0" data-endpoint="/api/aviary" data-params='{"member":"<%= page == "exchange/offer" ? loggedInUser.id : exchange.member.id %>","memberData":"<%= page == "exchange/offer" ? exchange.member.id : loggedInUser.id %>","exchangeData":"<%= exchange.id %>"}'></div>
+  <div id="lazyLoader" class="row g-0" data-endpoint="aviary" data-params='{"member":"<%= page == "exchange/offer" ? loggedInUser.id : exchange.member.id %>","memberData":"<%= page == "exchange/offer" ? exchange.member.id : loggedInUser.id %>","exchangeData":"<%= exchange.id %>"}'></div>
 
   <%- include('../partials/pagination.ejs') %>
 

@@ -109,9 +109,7 @@
     window.history.replaceState(null, '', window.location.pathname + (urlParams.toString() ? ('?' + urlParams.toString()) : ''));
     <% } %>
 
-    $.ajax({
-      url: endpoint,
-      data: Object.assign({
+    API.call(endpoint, 'GET', Object.assign({
           page: currentPage * 1,
           sort: sort.val() && sort.val().includes('-') ? sort.val().split('-').shift() : sort.val(),
           sortDir: sort.val() && sort.val().includes('-') ? sort.val().split('-').pop() : 'ASC',
@@ -125,10 +123,7 @@
           <%- locals.egg ? `adjectives : "${egg.adjective}",` : '' %>
         },
         container.getAttribute('data-params') ? JSON.parse(container.getAttribute('data-params')) : {}
-      ),
-      method: "GET",
-      dataType: "json",
-      success: function (data) {
+      ), function (data) {
         totalPages = data.totalPages * 1;
         totalResults = typeof data.totalResults == "undefined" ? null : data.totalResults * 1;
 
@@ -165,7 +160,6 @@
              container.innerHTML = '<p class="text-center"><em><%= locals.noResultsFound ? noResultsFound : 'No birdies match the selected criteria.  Where could they be hiding?' %></em></p>';
           }
         }
-      }
     });
   }
 </script>

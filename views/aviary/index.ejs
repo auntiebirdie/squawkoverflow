@@ -13,7 +13,7 @@
 
   <%- include('../partials/pagination.ejs') %>
 
-  <div id="lazyLoader" class="row g-0" data-endpoint="/api/aviary" data-params='{"member":"<%= locals.page == 'gift' ? loggedInUser.id : member.id %>","memberData":"<%= locals.page == 'gift' ? member.id : (locals.loggedInUser ? loggedInUser.id : '') %>"}'></div>
+  <div id="lazyLoader" class="row g-0" data-endpoint="aviary" data-params='{"member":"<%= locals.page == 'gift' ? loggedInUser.id : member.id %>","memberData":"<%= locals.page == 'gift' ? member.id : (locals.loggedInUser ? loggedInUser.id : '') %>"}'></div>
 
   <%- include('../partials/pagination.ejs') %>
 
