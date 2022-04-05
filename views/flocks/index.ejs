@@ -61,20 +61,14 @@
 
           item.classList.add('loadingData');
 
-          $.ajax({
-            cache: false,
-            url: `/api/flock`,
-            data: JSON.stringify({
+          API.call('flock', 'PUT', {
              id: item.getAttribute('data-id'),
              displayOrder : displayOrder
-            }),
-            dataType: "json",
-            method: "PUT",
-            contentType: 'application/json',
-            success: function(data) {
+            },
+            function(data) {
               item.classList.remove('loadingData');
             }
-          });
+          );
         }
       });
 
@@ -94,19 +88,13 @@
 
         toFeature.classList.add('loadingData');
 
-        $.ajax({
-          cache: false,
-          url: '/api/member',
-          dataType: 'json',
-          method: 'PUT',
-          contentType: 'application/json',
-          data: JSON.stringify({
+        API.call('member', 'PUT', {
             featuredFlock: featuredFlock
-          }),
-          success: function (data) {
+          },
+          function (data) {
             toFeature.classList.remove('loadingData');
           }
-        });
+        );
       });
     });
   </script>

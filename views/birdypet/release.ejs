@@ -25,19 +25,13 @@
           button.setAttribute('disabled', true);
           button.parentNode.classList.add('loadingData');
 
-              $.ajax({
-                cache: false,
-                url: `/api/release`,
-                data: JSON.stringify({
-                  birdypet : '<%= birdypet.id %>'
-                }),
-                dataType: "json",
-                method: "POST",
-                contentType: 'application/json',
-                success: function(data) {
-                  window.location.href = '/aviary/<%= loggedInUser.id %>';
-                }
-              });
+          API.call('release', 'POST', {
+              birdypet : '<%= birdypet.id %>'
+            },
+            function(data) {
+              window.location.href = '/aviary/<%= loggedInUser.id %>';
+            }
+          );
         }
       }); 
   </script>

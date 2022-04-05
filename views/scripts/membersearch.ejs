@@ -49,13 +49,9 @@
             resolve(JSON.parse(cache));
           }
           else {
-            $.ajax({
-              url: '/api/members',
-              data: data,
-              success: function (results) {
-                sessionStorage.setItem(`members-${query}-${JSON.stringify(data)}`, JSON.stringify(results));
-                resolve(results);
-              }
+            API.call('members', 'GET', data, function (results) {
+              sessionStorage.setItem(`members-${query}-${JSON.stringify(data)}`, JSON.stringify(results));
+              resolve(results);
             });
           }
         }).then((results) => {

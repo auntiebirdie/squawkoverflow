@@ -61,23 +61,17 @@
           image.style.opacity = .5;
           $(image.parentNode.parentNode).toggleClass('loadingData');
 
-          $.ajax({
-            cache: false,
-            url: '/api/birdypet',
-            data: JSON.stringify({
+          API.call('birdypet', 'PUT', {
               birdypet: image.getAttribute('data-id'),
               flock: "<%= flock.id %>"
-            }),
-            dataType: 'json',
-            method: 'PUT',
-            contentType: 'application/json',
-            success: function(data) {
+            },
+            function(data) {
               image.style.opacity = null;
               image.innerHTML = "";
 
               $(image.parentNode.parentNode).toggleClass('border-primary border-secondary border-dashed loadingData');
             }
-          });
+          );
         }
       }
     });
@@ -88,23 +82,17 @@
       if (!container.classList.contains('loadingData')) {
         toggleFields(container, true);
 
-        $.ajax({
-          cache: false,
-          url: '/api/flock',
-          data: JSON.stringify({
+        API.call('flock', 'PUT', {
            id: '<%= flock.id %>',
            name: $('#flock_name').val(),
            description: $('#flock_description').val(),
            protected: $('#flock_protected').is(':checked'),
            private: $('#flock_private').is(':checked')
-          }),
-          dataType: "json",
-          method: "PUT",
-          contentType: 'application/json',
-          success: function(data) {
+          },
+          function(data) {
             toggleFields(container, false);
           }
-        });
+        );
       }
     });
 
@@ -112,19 +100,13 @@
       var rusure = confirm("Are you sure you want to delete this flock? This cannot be undone.");
 
       if (rusure) {
-        $.ajax({
-          cache: false,
-          url: `/api/flock`,
-          data: JSON.stringify({
+        API.call('flock', 'DELETE', {
             id: "<%= flock.id %>"
-          }),
-          dataType: "json",
-          method: "DELETE",
-          contentType: 'application/json',
-          success: function(data) {
+          },
+          function(data) {
             window.location.href = '/flocks';
           }
-        });
+        );
       }
     });
 

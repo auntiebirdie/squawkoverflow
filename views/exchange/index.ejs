@@ -42,19 +42,13 @@
           let container = button.parentNode.parentNode;
           container.classList.add('loadingData');
 
-          $.ajax({
-            cache: false,
-            url: '/api/exchanges',
-            data: JSON.stringify({
+          API.call('exchanges', 'DELETE', {
               id: button.getAttribute('data-id')
-            }),
-            dataType: 'json',
-            method: 'DELETE',
-            contentType: 'application/json',
-            success: function(data) {
+            },
+            function(data) {
               window.location.reload();
             }
-          });
+          );
         }
       });
     });

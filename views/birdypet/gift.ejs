@@ -66,19 +66,14 @@
           button.parentNode.parentNode.classList.add('loadingData'); 
           button.disabled = true;
 
-          $.ajax({
-            url: '/api/gift',
-            data: JSON.stringify({
+          API.call('gift', 'POST', {
               member: $('img', '#memberDisplay').attr('data-id'),
               birdypet: '<%= birdypet.id %>'
-            }),
-            method: 'POST',
-            dataType: "json",
-            contentType: 'application/json',
-            success: function() {
+            },
+            function() {
               window.location.replace('/birdypet/<%= birdypet.id %>');
             }
-          });
+          );
         }
       });
     });

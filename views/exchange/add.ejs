@@ -25,17 +25,11 @@
           image.style.opacity = .5;
           container.classList.add('loadingData');
 
-          $.ajax({
-            cache: false,
-            url: '/api/exchanges',
-            data: JSON.stringify({
+          API.call('exchanges', 'POST', {
               birdypet: image.getAttribute('data-id'),
               exchange: '<%= exchange.id %>'
-            }),
-            dataType: 'json',
-            method: 'POST',
-            contentType: 'application/json',
-            success: function(data) {
+            },
+            function(data) {
               image.style.opacity = null;
               image.innerHTML = "";
 
@@ -44,7 +38,7 @@
               container.classList.toggle('border-dashed');
               container.classList.remove('loadingData');
             }
-          });
+          );
         }
       }
     });

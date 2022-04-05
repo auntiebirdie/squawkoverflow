@@ -85,56 +85,34 @@
 
         switch (button.getAttribute('data-action')) {
           case "keep":
-            $.ajax({
-              cache: false,
-              url: `/api/collect`,
-              data: JSON.stringify({
+            API.call('collect', 'POST', {
                 variant: hatched.querySelector('img').getAttribute('data-id'),
                 adjective : egg
-              }),
-              dataType: "json",
-              contentType: 'application/json',
-              method: "POST",
-              success: function(birdypet) {
+              },
+              function(birdypet) {
                 actions.classList.remove('loadingData');
                 actions.innerHTML = `<a class="btn btn-lg btn-light mb-3" href="/birdypet/${birdypet.id}">🐣 View BirdyPet</a>&nbsp;<a class="btn btn-lg btn-light mb-3" href="/hatch">🥚 Hatch Another Egg</a>`;
-              },
-              error: function(XMLHttpRequest, textStatus, errorThrown) {
-                actions.classList.remove('loadingData');
-                actions.innerHTML = '<em>Something went wrong!  Please <a href="https://bugs.squawkoverflow.com/?member=<%= loggedInUser.id %>" target="_blank">submit a bug report</a> so someone can look into it.</em>';
               }
-            });
+            );
             break;
           case "release":
-            $.ajax({
-              cache: false,
-              url: `/api/release`,
-              data: JSON.stringify({
+            API.call('release', 'POST', {
                 variant : hatched.querySelector('img').getAttribute('data-id')
-              }),
-              dataType: "json",
-              contentType: 'application/json',
-              method: "POST",
-              success: function(data) {
+              },
+              function(data) {
                 window.location.reload();
               }
-            });
+            );
             break;
           case 'gift':
-            $.ajax({
-              cache: false,
-              url: '/api/gift',
-              data: JSON.stringify({
+            API.call('gift', 'POST', {
                 member : selectedMember.id,
                 variant : hatched.querySelector('img').getAttribute('data-id')
-              }),
-              dataType: "json",
-              contentType: 'application/json',
-              method: "POST",
-              success: function(data) {
+              },
+              function(data) {
                 window.location.reload();
               }
-            });
+            );
             break;
         }
       }

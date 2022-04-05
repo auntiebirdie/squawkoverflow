@@ -23,17 +23,11 @@
       if (!image.parentNode.classList.contains('loadingData') && image.hasAttribute('data-freebird')) {
         image.parentNode.classList.add('loadingData');
 
-        $.ajax({
-          cache: false,
-          url: `/api/collect`,
-          data: JSON.stringify({
+        API.call('collect', 'POST', {
             freebird: `${image.getAttribute('data-freebird')}`,
             variant: `${image.getAttribute('data-variant')}`
-          }),
-          dataType: 'json',
-          contentType: 'application/json',
-          method: 'POST',
-          success: function(birdypet) {
+          },
+          function(birdypet) {
             image.removeAttribute('data-freebird');
             image.parentNode.classList.remove('loadingData');
             image.style.opacity = .5;
@@ -45,7 +39,7 @@
               h3.innerHTML = `<a href="/birdypet/${birdypet.id}" target="_blank">${h3.innerText}</a>`;
             }
           }
-        });
+        );
       }
     });
   </script>

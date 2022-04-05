@@ -74,19 +74,15 @@
         if (!button.style.opacity) { 
           button.style.opacity = .5;
           button.innerHTML = '⏳';
-          $.ajax({
-            url: '/api/wishlist',
-            data: JSON.stringify({
+
+          API.call('wishlist', 'PUT', {
               species: button.getAttribute('data-id')
-            }),
-            method: 'PUT',
-            dataType: 'json',
-            contentType: 'application/json',
-            success: function(data) {
+            }, 
+            function(data) {
               button.style.opacity = null;
               button.innerHTML = data;
             }
-          });
+          );
         }
       }).on('click', 'button.birdypet-edit', function (event) {
         var button = event.target;

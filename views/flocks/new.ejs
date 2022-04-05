@@ -21,20 +21,14 @@
       if (!container.classList.contains('loadingData')) {
         toggleFields(container, true);
 
-        $.ajax({
-          cache: false,
-          url: `/api/flock`,
-          data: JSON.stringify({
+        API.call('flock', 'POST', {
            name: $('#flockName').val(),
            description: $('#flockDescription').val()
-          }),
-          dataType: "json",
-          method: "POST",
-          contentType: 'application/json',
-          success: function(data) {
+          },
+          function(data) {
             window.location.replace(`/flocks/${data}/manage`);
           }
-        });
+        );
       }
     });
 

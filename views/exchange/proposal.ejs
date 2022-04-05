@@ -62,17 +62,11 @@
               image.style.opacity = .5;
               container.classList.add('loadingData');
 
-              $.ajax({
-                cache: false,
-                url: '/api/exchanges',
-                data: JSON.stringify({
+              API.call('exchanges', 'POST', {
                   birdypet: image.getAttribute('data-id'),
                   exchange: '<%= exchange.id %>'
-                }),
-                dataType: 'json',
-                method: 'POST',
-                contentType: 'application/json',
-                success: function(data) {
+                },
+                function(data) {
                   image.style.opacity = null;
                   image.innerHTML = "";
 
@@ -81,7 +75,7 @@
 
                   $('#makeOffer').text('Update Offer');
                 }
-              });
+              );
             }
           }
         });
@@ -93,16 +87,7 @@
 
           data[this.getAttribute('name') || this.getAttribute('id')] = $(this).val();
 
-          $.ajax({
-            cache: false,
-            url: '/api/exchanges',
-            data: JSON.stringify(data),
-            dataType: 'json',
-            method: 'POST',
-            contentType: 'application/json',
-            success: function (res) {
-            }
-          });
+          API.call('exchanges', 'POST', data);
         });
 
         $('#makeOffer').on('click', function () {
@@ -115,10 +100,7 @@
             container.classList.add('loadingData');
             errorMessage.classList.add('d-none');
 
-            $.ajax({
-              cache: false,
-              url: '/api/exchanges',
-              data: JSON.stringify({
+            API.call('exchanges', 'PUT', {
                 id: '<%= exchange.id %>',
                 giveA: $('#giveA').val(),
                 forB: $('#forB').val(),
@@ -127,11 +109,8 @@
                <% } else { %>
                 noteB: $('#noteB textarea').val()
                <% } %>
-              }),
-              dataType: 'json',
-              method: 'PUT',
-              contentType: 'application/json',
-              success: function(data) {
+              },
+              function(data) {
                 if (data.error) {
                   button.style.opacity = null;
                   container.classList.remove('loadingData');
@@ -142,7 +121,7 @@
                   window.location.reload();
                 }
               }
-            });
+            );
           }
         });
 
@@ -155,19 +134,13 @@
             let container = button.parentNode.parentNode.parentNode;
             container.classList.add('loadingData');
 
-            $.ajax({
-              cache: false,
-              url: '/api/exchanges',
-              data: JSON.stringify({
+            API.call('exchanges', 'DELETE', {
                 id: '<%= exchange.id %>'
-              }),
-              dataType: 'json',
-              method: 'DELETE',
-              contentType: 'application/json',
-              success: function(data) {
+              },
+              function(data) {
                 window.location.reload();
               }
-            });
+            );
           }
         });
       });

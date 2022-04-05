@@ -38,9 +38,11 @@
       $('.modal-title', modal_giftBirdyPet._element).html('Gift BirdyPet');
       $('.modal-body', modal_giftBirdyPet._element).removeClass('loadingData');
 
+     <% if (!locals.selectedMember) { %>
       $('#memberDisplay').html('');
       memberSearch.typeahead('val', '').typeahead('destroy');
       setupMemberSearch();
+     <% } %>
     }).on('click', '.btn-success', function (event) {
       if (!event.target.disabled) {
         $('.modal-body', modal_giftBirdyPet._element).addClass('loadingData');
