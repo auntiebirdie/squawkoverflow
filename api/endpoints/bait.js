@@ -36,15 +36,8 @@ module.exports = (req, res) => {
         member: member.id
       });
 
-      promises.push(Database.set('wishlist', {
-        member: member.id,
-        species: variant.bird.id
-      }, {
-        intensity: 0
-      }));
-
       if (member.serverMember && !member.settings.privacy_activity) {
-        promises.push(Webhook('birdwatching', {
+        Webhook('birdwatching', {
           content: " ",
           embeds: [{
             title: variant.bird.commonName,
@@ -57,14 +50,14 @@ module.exports = (req, res) => {
               url: Chance.pickone(require('../data/bugs.json'))
             }
           }]
-        }));
+        });
       }
 
-      promises.push(PubSub.publish('background', 'COLLECT', {
+      PubSub.publish('background', 'COLLECT', {
         member: member.id,
         birdypet: birdypet.id,
         variant: variant.id
-      }));
+      });
 
       await Promise.all(promises).then(() => {
         res.json(birdypet.id);

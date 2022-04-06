@@ -10,7 +10,7 @@
         <h5 class="pt-3">
           Variants
          <% if (locals.loggedInUser && loggedInUser.admin) { %>
-          <a href="/birdypedia/bird/<%= bird.id_slug %>/variant/new" class="btn btn-sm bg-light p-1 ms-3">+ new</a>
+          <a href="/birdypedia/bird/<%= bird.id_slug %>/variant/new" class="btn btn-sm btn-light p-1 ms-3">+ new</a>
          <% } %>
         </h5>
         <div id="birdDisplay">
@@ -22,7 +22,7 @@
             </div>
             <div class="col-9 small">
               <% if (locals.loggedInUser && loggedInUser.contributor) { %>
-                <a href="/birdypedia/bird/<%= bird.id_slug %>/variant/<%= variant.prefix %>-<%= variant.alias %>" class="btn btn-sm bg-light m-2 float-end">edit</a>
+                <a href="/birdypedia/bird/<%= bird.id_slug %>/variant/<%= variant.prefix %>-<%= variant.alias %>" class="btn btn-sm btn-light m-2 float-end">edit</a>
               <% } %>
               <%- variant.subspecies ? `<em>${variant.subspecies}</em><br>` : '' %>
               <%- variant.label ? `${variant.label}<br>` : '' %>
@@ -42,7 +42,7 @@
             </div>
             <div class="col-9 small">
               <% if (locals.loggedInUser && loggedInUser.admin) { %>
-                <a href="/birdypedia/bird/<%= bird.id_slug %>/variant/<%= variant.prefix %>-<%= variant.alias %>" class="btn btn-sm bg-light m-2 float-end">edit</a>
+                <a href="/birdypedia/bird/<%= bird.id_slug %>/variant/<%= variant.prefix %>-<%= variant.alias %>" class="btn btn-sm btn-light m-2 float-end">edit</a>
               <% } %>
               <%- variant.subspecies ? `<em>ssp. ${variant.subspecies}</em><br>` : '' %>
               <%- variant.label ? `${variant.label}<br>` : '' %>
@@ -73,8 +73,6 @@
                let method = currentState.length > newState.length ? 'DELETE' : 'POST';
                let adjective = method == 'DELETE' ? currentState.find((opt) => !newState.includes(opt)) : newState.find((opt) => !currentState.includes(opt));
 
-               currentState = $('#adjectives').val();
-
                adjectives.slim.container.classList.add('loadingData');
                adjectives.disable();
 
@@ -87,6 +85,9 @@
                  adjectives.enable();
                  return false;
                });
+             },
+             onChange: (info) => {
+               currentState = $('#adjectives').val();
              }
            });
          </script>

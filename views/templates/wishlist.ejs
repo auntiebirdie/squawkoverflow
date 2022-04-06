@@ -9,7 +9,7 @@
        <% } %>
       </div>
       <div>
-        <div class="bg-white lazy birdypet ${model.owned ? "hatched" : "unhatched"} checkmark${model.owned == 2 ? 2 : model.owned}"
+        <div class="bg-white lazy birdypet ${model.owned ? "hatched" : "unhatched"} checkmark${model.owned > 2 ? 2 : model.owned}"
              data-bg="${model.variants[0].image}"
         ></div>
       </div>

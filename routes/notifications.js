@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
     page: req.query.page
   }, res).then((response) => {
     const notifications = response.results;
-    const stickers = ["LoveBirdsLife/003.png", "LoveBirdsLife/006.png", "LoveBirdsLife/011.png", "LoveBirdsLife/014.png", "LoveBirdsLife/016.png", "LoveBirdsLife/023.png", "LoveBirdsLife/031.png", "LoveBirdsLife/034.png"];
+    const stickers = ["bird_4359609.png", "bird_4359669.png", "bird_4359689.png", "bird_4359824.png", "bird_4433234.png", "cactus_4359655.png", "duck_4359767.png", "love-birds_4289413.png", "love-birds_4403057.png", "parrot_4359923.png"];
 
     for (let notification of notifications) {
       notification.text = '<p class="mt-3">';
