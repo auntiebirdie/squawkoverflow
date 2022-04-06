@@ -101,14 +101,6 @@ exports.receive = function(message, context) {
             });
           }
         }
-        /*
-          Database.create('freebirds', {
-            id: Database.key(),
-            variant: variant.id,
-            freedAt: member.tier.eggTimer ? new Date() : new Date(Date.now() - (10 * 60 * 1000)),
-            hatchedAt: data.hatchedAt ? new Date(data.hatchedAt) : new Date()
-          });
-	  */
         break;
     }
 
