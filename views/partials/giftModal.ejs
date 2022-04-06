@@ -42,6 +42,8 @@
       $('#memberDisplay').html('');
       memberSearch.typeahead('val', '').typeahead('destroy');
       setupMemberSearch();
+     <% } else { %>
+      $('#memberButton').attr('disabled', false);
      <% } %>
     }).on('click', '.btn-success', function (event) {
       if (!event.target.disabled) {

@@ -332,7 +332,7 @@ class Member {
       promises.push(Database.query('DELETE FROM wishlist WHERE `member` = ?', [this.id]));
 
       Promise.all(promises).then(async () => {
-        await Database.query('DELETE FROM birdypets WHERE `member` = ?', [this.id]);
+        await Database.query('UPDATE birdypets SET `member` = NULL, friendship = 0 WHERE `member` = ?', [this.id]);
         await Database.query('DELETE FROM exchanges WHERE `memberA` = ? OR `memberB` = ?', [this.id, this.id]);
         await Database.query('DELETE FROM counters WHERE `member` = ?', [this.id]);
 

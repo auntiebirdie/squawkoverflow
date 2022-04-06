@@ -150,9 +150,11 @@ Database.prototype.create = function(type, data) {
     let params = [];
 
     for (let d in data) {
-      fields.push(`\`${d}\``);
-      values.push('?');
-      params.push(data[d]);
+      if (data[d]) {
+        fields.push(`\`${d}\``);
+        values.push('?');
+        params.push(data[d]);
+      }
     }
 
     query += fields.join(', ') + ') VALUES (' + values.join(', ') + ')';

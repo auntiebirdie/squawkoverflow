@@ -31,26 +31,30 @@ class BirdyPet {
           description: "",
           friendship: 0,
           hatchedAt: data.hatchedAt || new Date(),
-          addedAt: new Date()
+          addedAt: data.addedAt || new Date()
         }).then(async () => {
-          const Member = require('./member.js');
+          if (data.member) {
+            const Member = require('./member.js');
 
-          let member = new Member(data.member);
+            let member = new Member(data.member);
 
-          await member.fetch();
+            await member.fetch();
 
-          if (member.settings.general_updateWishlist) {
-            await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [variant.bird.id, member.id]);
-          }
-
-          Database.query('SELECT `count` FROM counters WHERE (`member` = ? OR `member` = "SQUAWK") AND type = "species" AND id = "total"', [member.id]).then(async (totals) => {
-            if (totals.length > 1 && totals[0].count == totals[1].count) {
-              await Database.query('INSERT INTO member_badges VALUES (?, "completionist", NOW()) ON DUPLICATE KEY UPDATE badge = badge', [this.member]);
-              await Database.query('');
+            if (member.settings.general_updateWishlist) {
+              await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [variant.bird.id, member.id]);
             }
 
+            Database.query('SELECT `count` FROM counters WHERE (`member` = ? OR `member` = "SQUAWK") AND type = "species" AND id = "total"', [member.id]).then(async (totals) => {
+              if (totals.length > 1 && totals[0].count == totals[1].count) {
+                await Database.query('INSERT INTO member_badges VALUES (?, "completionist", NOW()) ON DUPLICATE KEY UPDATE badge = badge', [this.member]);
+                await Database.query('');
+              }
+
+              resolve(this);
+            });
+          } else {
             resolve(this);
-          });
+          }
         });
       } else {
         reject();
@@ -183,8 +187,11 @@ class BirdyPet {
 
   delete() {
     return Promise.all([
-      Database.delete('birdypets', {
+      Database.set('birdypets', {
         id: this.id
+      }, {
+        member: null,
+	addedAt: new Date(Date.now() - (10 * 60 * 1000))
       }),
       Database.delete('birdypet_flocks', {
         birdypet: this.id

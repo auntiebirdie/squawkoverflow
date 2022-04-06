@@ -27,8 +27,8 @@ class Search {
           }
           break;
         case 'freebird':
-          query += 'freebirds.id, freebirds.variant FROM freebirds JOIN variants ON (freebirds.variant = variants.id) JOIN species ON (variants.species = species.id)';
-          filters.push('freebirds.freedAt <= DATE_SUB(NOW(), INTERVAL 10 MINUTE)');
+          query += 'birdypets.id, birdypets.variant, birdypets.nickname FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.id)';
+          filters.push('birdypets.member IS NULL AND birdypets.addedAt <= DATE_SUB(NOW(), INTERVAL 10 MINUTE)');
           break;
         case 'member':
           query += 'members.id FROM members LEFT JOIN counters ON (counters.member = members.id AND counters.type = "aviary" AND counters.id = "total")';
@@ -153,7 +153,7 @@ class Search {
               filters.push('species.id IN (SELECT id FROM counters WHERE type = "species" AND `count` > 0)');
               break;
             case 'copied':
-              filters.push('(SELECT COUNT(*) FROM freebirds JOIN variants ON (freebirds.variant = variants.id) WHERE variants.species = species.id) > 1');
+              filters.push('(SELECT COUNT(*) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) WHERE variants.species = species.id AND birdypets.member IS NULL) > 1');
               break;
             case 'exchange':
               filters.push('birdypets.id IN (SELECT birdypet FROM exchange_birdypets WHERE exchange = ?)');
@@ -206,7 +206,7 @@ class Search {
           query += 'birdypets.hatchedAt';
           break;
         case 'freedAt':
-          query += 'freebirds.freedAt';
+          query += 'birdypets.addedAt';
           break;
         case 'addedAt':
           if (kind == 'birdypet') {

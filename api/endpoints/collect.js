@@ -12,7 +12,7 @@ module.exports = (req, res) => {
     }
 
     let member = new Member(req.body.loggedInUser);
-    let birdypet = new BirdyPet();
+    let birdypet = new BirdyPet(req.body.freebird);
     let promises = [];
     let variant = req.body.variant;
     let freebird = null;
@@ -26,8 +26,12 @@ module.exports = (req, res) => {
     });
 
     if (req.body.freebird) {
-      freebird = await Database.getOne('freebirds', {
-        id: req.body.freebird
+      freebird = await Database.getOne('birdypets', {
+        id: req.body.freebird,
+        member: {
+          comparator: 'IS',
+          value_trusted: 'NULL'
+        }
       });
 
       if (!freebird) {
@@ -36,23 +40,23 @@ module.exports = (req, res) => {
         });
       }
 
-      variant = freebird.variant;
+      await birdypet.fetch();
 
-      promises.push(Database.delete('freebirds', {
-        id: req.body.freebird
-      }));
+      await birdypet.set({
+        member: member.id
+      });
     } else {
       if (req.body.variant == "iqkTUrXqtN31qnXTtJaVH5") {
         promises.push(Database.query('INSERT INTO counters VALUES (?, "aprfools", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` + 1', [member.id, new Date().getYear()]));
       }
       promises.push(Database.query('UPDATE members SET lastHatchAt = NOW() WHERE id = ?', [member.id]));
-    }
 
-    await birdypet.create({
-      variant: variant,
-      member: member.id,
-      hatchedAt: freebird ? freebird.hatchedAt : new Date()
-    });
+      await birdypet.create({
+        variant: variant,
+        member: member.id,
+        hatchedAt: new Date()
+      });
+    }
 
     promises.push(PubSub.publish('background', 'COLLECT', {
       birdypet: birdypet.id,

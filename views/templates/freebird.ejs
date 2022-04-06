@@ -14,8 +14,8 @@
         ></div>
       </div>
       <div class="card-body">
-        <h3 class="text-center">${model.bird.commonName}</h3>
-        <h6 class="text-small text-center">${model.label}</h6>
+        <h3 class="text-center">${model.nickname ? model.nickname : model.bird.commonName}</h3>
+        <h6 class="text-small text-center">${model.nickname ? model.bird.commonName : model.bird.scientificName}</h6>
       </div>
     </div>
   </div>
