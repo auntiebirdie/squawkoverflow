@@ -96,6 +96,16 @@ class Member {
         this.settings = {};
       }
 
+      var birthday = new Date();
+      birthday.setMonth(this.settings.birthday_month);
+      birthday.setDate(this.settings.birthday_date);
+
+      this.happyBirdday = birthday <= new Date();
+
+      if (this.happyBirdday) {
+        this.birthdayPresentClaimed = await Counters.get('birthday', this.id, new Date().getYear());
+      }
+
       if (!this.settings.theme_style) {
         this.settings.theme_style = 'dark';
       }

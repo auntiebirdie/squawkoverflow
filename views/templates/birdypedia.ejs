@@ -3,9 +3,14 @@
     <div class="h-100 card">
       <div class="birdypet-actions">
        <% if (locals.loggedInUser) { %>
-        <button class="wishlist-heart btn btn-sm" data-id="${model.id}" role="button">
+        <button class="wishlist-heart btn btn-sm btn-dark" data-id="${model.id}" role="button">
           ${model.wishlisted ? (model.wishlisted == 2 ? '🌟' : '❤️') : '🤍'}
         </button>
+        <% if (loggedInUser.happyBirdday && loggedInUser.birthdayPresentClaimed != 1) { %>
+          <button class="birdday-present btn btn-sm btn-dark" data-id="${model.id}" role="button">
+            🎉
+          </button>
+        <% } %>
        <% } %>
       </div>
       <div class="h100">

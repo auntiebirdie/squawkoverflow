@@ -56,6 +56,15 @@ router.get('/', async (req, res) => {
           }
           notification.text += notification.data.from.username ? `<a href="/members/${notification.data.from.id}">${notification.data.from.username}</a>` : 'Someone';
           notification.text += ` thanks you for a gift you sent ${notification.data.from.username ? notification.data.from.preferredPronoun.cases.object : 'them'}!`;
+          break;
+        case 'birthday':
+          notification.icon = '<img src="https://storage.googleapis.com/squawkoverflow/stickers/unboxing_5784126.png">';
+          notification.text += 'Head to the <a href="/birdypedia">Birdypedia</a> to pick your celebratory BirdyPet!';
+          break;
+        case 'birthday_retro':
+          notification.icon = '<img src="https://storage.googleapis.com/squawkoverflow/stickers/unboxing_5784126.png">';
+          notification.text += 'You had a birthday this year!  Head to the <a href="/birdypedia">Birdypedia</a> to pick your celebratory BirdyPet!';
+          break;
       }
 
       notification.text += '</p>';

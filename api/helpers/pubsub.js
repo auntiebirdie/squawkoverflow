@@ -30,6 +30,7 @@ exports.publish = function(topic, action, body) {
 exports.receive = function(message, context) {
   return new Promise(async (resolve, reject) => {
     const Member = require(__dirname + '/../models/member.js');
+    const Chance = require('chance.js').Chance();
 
     const data = JSON.parse(Buffer.from(message.data, 'base64').toString());
 
@@ -100,6 +101,36 @@ exports.receive = function(message, context) {
               }]
             });
           }
+        } else if (data.wishlist) {
+          Webhook('birdwatching', {
+            content: " ",
+            embeds: [{
+              title: variant.bird.commonName,
+              description: `<@${member.auth.find((auth) => auth.provider == 'discord').id}> attracted a beloved bird with a bug!`,
+              url: `https://squawkoverflow.com/birdypet/${birdypet.id}`,
+              image: {
+                url: variant.image
+              },
+              thumbnail: {
+                url: Chance.pickone(require('../data/bugs.json'))
+              }
+            }]
+          });
+        } else if (data.birthday) {
+          Webhook('birdwatching', {
+            content: " ",
+            embeds: [{
+              title: variant.bird.commonName,
+              description: `Happy BirdDay, <@${member.auth.find((auth) => auth.provider == 'discord').id}>!!`,
+              url: `https://squawkoverflow.com/birdypet/${data.birdypet}`,
+              image: {
+                url: variant.image
+              },
+              thumbnail: {
+                url: 'https://storage.googleapis.com/squawkoverflow/stickers/unboxing_5784126.png'
+              }
+            }]
+          });
         }
         break;
     }

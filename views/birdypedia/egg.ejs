@@ -2,6 +2,8 @@
 
   <%- include('../partials/page-title.ejs', { title : { text : `${egg.adjective} Egg`, prepend : `<img class="me-2" style="height: 4rem;" src="https://storage.googleapis.com/squawkoverflow/${ egg.icon || 'eggs/D/default.png' }"><span class="text-capitalize">`, append : '</span>' } }) %>
 
+  <%- include('../partials/happy-birthday.ejs') %>
+
   <%- include('../partials/pagination.ejs') %>
 
   <div id="lazyLoader" class="row g-0" data-endpoint="birdypedia"></div>

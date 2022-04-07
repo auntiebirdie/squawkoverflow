@@ -9,19 +9,18 @@ module.exports = (req, res) => {
   return new Promise(async (resolve, reject) => {
     let member = new Member(req.body.loggedInUser);
 
-    await member.fetch();
+    await member.fetch({
+      include: ['auth']
+    });
 
-    if (member.bugs > 0) {
-      promises.push(
-        member.set({
-          bugs: (member.bugs * 1) - 1
-        })
-      );
-
-      promises.push(Database.query('INSERT INTO counters VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE count = 1', [member.id, 'bait', "", 1]));
+    if (member.happyBirdday && member.birthdayPresentClaimed != 1) {
+      promises.push(Database.query('INSERT INTO counters VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE count = 1', [member.id, 'birthday', new Date().getYear(), 1]));
 
       let birdypet = new BirdyPet();
-      let variant = await Database.query('SELECT variants.id, variants.species FROM variants JOIN wishlist ON (variants.species = wishlist.species) WHERE wishlist.member = ? AND special = 0 ORDER BY wishlist.intensity DESC, RAND() LIMIT 1', [member.id]);
+      let variant = await Database.getOne('variants', {
+        species: req.body.birthday,
+        special: 0
+      });
 
       await birdypet.create({
         variant: variant.id,
@@ -32,14 +31,14 @@ module.exports = (req, res) => {
         member: member.id,
         birdypet: birdypet.id,
         variant: variant.id,
-        wishlist: true
+        birthday: true
       });
 
       await Promise.all(promises).then(() => {
         res.json(birdypet.id);
       });
     } else {
-      res.status(404).send("You have no bugs!");
+      res.status(404).send("It's not your birthday!");
     }
   });
 };

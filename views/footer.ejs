@@ -84,9 +84,23 @@
             }
           );
         }
-      }).on('click', 'button.birdypet-edit', function (event) {
+     <% if (loggedInUser.happyBirdday && loggedInUser.birthdayPresentClaimed != 1) { %>
+      }).on('click', 'button.birdday-present', function (event) {
         var button = event.target;
 
+        if (!button.style.opacity) {
+          button.style.opacity = .5;
+          button.innerHTML = '⏳';
+
+          API.call('birthday', 'POST', {
+              birthday: button.getAttribute('data-id')
+            },
+            function (data) {
+console.log(data);
+            }
+          );
+        }
+     <% } %>
       });
     <% } %>
     });
