@@ -40,27 +40,6 @@
       </h3>
 
       <div class="p-3 m-3 mb-5 d-inline">
-        <div class="form-check form-switch mb-3">
-          <span>
-            <input type="checkbox" class="form-check-input" name="general_updateWishlist" value="1" id="general_updateWishlist" <%= member.settings.general_updateWishlist ? "checked" : "" %>>
-          </span>
-          <label class="form-check-label" for="general_updateWishlist">Remove newly obtained birds from my wishlist automatically</label>
-        </div>
-
-        <div class="form-check form-switch mb-3">
-          <span>
-            <input type="checkbox" class="form-check-input" name="general_removeCompleted" value="1" id="general_removeCompleted" <%= member.settings.general_removeCompleted ? "checked" : "" %>>
-          </span>
-          <label class="form-check-label" for="general_removeCompleted">Remove completed eggs from the hatching pool</label>
-        </div>
-
-        <div class="form-check form-switch mb-3">
-          <span>
-            <input type="checkbox" class="form-check-input" name="general_removeEvent" value="1" id="general_removeEvent" <%= member.settings.general_removeEvent ? "checked" : "" %>>
-          </span>
-          <label class="form-check-label" for="general_removeEvent">Remove special event variants from the hatching pool</label>
-        </div>
-
         <div class="row mb-3">
           <div class="col-12 col-md-3 text-md-end">
             <label for="username">
@@ -150,6 +129,35 @@
              <% } %>
             </select>
           </div>
+        </div>
+
+        <div class="form-check form-switch mb-3">
+          <span>
+            <input type="checkbox" class="form-check-input" name="general_updateWishlist" value="1" id="general_updateWishlist" <%= member.settings.general_updateWishlist ? "checked" : "" %>>
+          </span>
+          <label class="form-check-label" for="general_updateWishlist">Remove newly obtained birds from my wishlist automatically</label>
+        </div>
+
+        <div class="form-check form-switch mb-3">
+          <span>
+            <input type="checkbox" class="form-check-input" name="general_removeCompleted" value="1" id="general_removeCompleted" <%= member.settings.general_removeCompleted ? "checked" : "" %>>
+          </span>
+          <label class="form-check-label" for="general_removeCompleted">Remove completed eggs from the hatching pool</label>
+        </div>
+
+        <div class="form-check form-switch mb-3">
+          <span>
+            <input type="checkbox" class="form-check-input" name="general_removeEvent" value="1" id="general_removeEvent" <%= member.settings.general_removeEvent ? "checked" : "" %>>
+          </span>
+          <label class="form-check-label" for="general_removeEvent">Remove special event variants from the hatching pool</label>
+        </div>
+
+        <div class="form-check form-switch mb-3">
+          <span>
+            <input type="checkbox" class="form-check-input" name="general_lowData" value="1" id="general_lowData" <%= member.settings.general_lowData ? "checked" : "" %>>
+          </span>
+          <label class="form-check-label" for="general_lowData">Enable "low data" mode when on mobile</label>
+          <p><small><em>This will enable a placeholder bird image while hatching, viewing an aviary, or browsing the Birdypedia.  Viewing a species or BirdyPet will show their natural image.</em></small></p>
         </div>
       </div>
     </div>

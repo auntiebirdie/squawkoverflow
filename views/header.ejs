@@ -69,7 +69,13 @@
       }
     }
 
-    var lazyLoadInstance = new LazyLoad({ });
+    var lazyLoadInstance = new LazyLoad({
+     <% if (locals.loggedInUser && locals.isMobile && loggedInUser.settings.general_lowData) { %>
+      callback_enter: function (element) {
+        element.setAttribute(element.hasAttribute('data-bg') ? 'data-bg' : 'data-src', '/img/placeholder.jpeg');
+      }
+     <% } %>
+    });
   </script>
 </head>
 

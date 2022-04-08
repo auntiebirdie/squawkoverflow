@@ -21,14 +21,14 @@
          bird.variants = [data];
        <% } %>
 
-        birdy.setAttribute('src', bird.variants[0].image);
+        birdy.setAttribute('data-src', bird.variants[0].image);
         birdy.setAttribute('data-id', bird.variants[0].id);
         $('#memberSearch').attr('data-bird', bird.id);
 
         var birdDisplay = document.getElementById('birdDisplay');
 
         if (bird.variants.length > 1) {
-          birdDisplay.innerHTML = bird.variants.map(function (variant) { return '<div data-id="' + variant.id + '" data-image="' + variant.image + '" class="birdypet mini checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" style="background-image: url(' + variant.image + ')"></div>'; }).join("");
+          birdDisplay.innerHTML = bird.variants.map(function (variant) { return '<div data-id="' + variant.id + '" class="lazy birdypet mini checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" data-bg="' + variant.image + '"></div>'; }).join("");
         }
         else {
           birdDisplay.innerHTML = '';
@@ -38,7 +38,7 @@
         h3.setAttribute('href', `/birdypedia/bird/${bird.id_slug}`);
         h3.innerHTML = bird.commonName;
 
-        var h6 = hatched.querySelector('h6');
+        var h5 = hatched.querySelector('h5');
         var text = "";
 
         if (bird.owned > 1) {
@@ -59,19 +59,21 @@
            }
         }
 
-        h6.innerHTML = text;
+        h5.innerHTML = text;
 
         eggs.classList.remove('loadingData');
         eggs.classList.add('d-none');
 
         hatched.classList.remove('d-none');
+
+        lazyLoadInstance.update();
       });
     });
 
     $('#hatched').on('click', '.birdypet.mini', function (event) {
       var variant = event.target;
 
-      birdy.src = variant.getAttribute('data-image');
+      birdy.src = variant.getAttribute('data-bg');
       birdy.setAttribute('data-id', variant.getAttribute('data-id'));
     });
 
@@ -87,7 +89,7 @@
         switch (button.getAttribute('data-action')) {
           case "keep":
             API.call('collect', 'POST', {
-                variant: hatched.querySelector('img').getAttribute('data-id'),
+                variant: birdy.getAttribute('data-id'),
                 adjective : egg
               },
               function(birdypet) {
@@ -98,7 +100,7 @@
             break;
           case "release":
             API.call('release', 'POST', {
-                variant : hatched.querySelector('img').getAttribute('data-id')
+                variant : birdy.getAttribute('data-id')
               },
               function(data) {
                 window.location.reload();
@@ -108,7 +110,7 @@
           case 'gift':
             API.call('gift', 'POST', {
                 member : selectedMember.id,
-                variant : hatched.querySelector('img').getAttribute('data-id')
+                variant : birdy.getAttribute('data-id')
               },
               function(data) {
                 window.location.reload();

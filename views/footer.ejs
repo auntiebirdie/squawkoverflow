@@ -96,7 +96,7 @@
               birthday: button.getAttribute('data-id')
             },
             function (data) {
-console.log(data);
+              window.location.href = `/birdypet/${data}`;
             }
           );
         }

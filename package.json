@@ -18,6 +18,7 @@
     "ejs": "^3.1.6",
     "express": "^4.17.3",
     "express-session": "^1.17.2",
+    "express-useragent": "^1.0.15",
     "google-auth-library": "^7.14.0"
   },
   "devDependencies": {
