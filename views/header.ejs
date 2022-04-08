@@ -69,13 +69,32 @@
       }
     }
 
+   <% if (locals.loggedInUser && locals.isMobile && loggedInUser.settings.general_lowData) { %>
     var lazyLoadInstance = new LazyLoad({
-     <% if (locals.loggedInUser && locals.isMobile && loggedInUser.settings.general_lowData) { %>
       callback_enter: function (element) {
+	element.setAttribute('data-orig', element.getAttribute(element.hasAttribute('data-bg') ? 'data-bg' : 'data-src'));
         element.setAttribute(element.hasAttribute('data-bg') ? 'data-bg' : 'data-src', '/img/placeholder.jpeg');
       }
-     <% } %>
     });
+
+    $(document).ready(() => {
+      $('#main').on('click', '.loaded', function (event) {
+        let element = event.target;
+
+	if (element.hasAttribute('data-orig')) {
+          if (element.hasAttribute('src')) {
+            element.src = element.getAttribute('data-orig');
+          } else {
+            element.style.backgroundImage = 'url("' + element.getAttribute('data-orig') + '")';
+          }
+
+          element.removeAttribute('data-orig');
+	}
+      });
+    });
+   <% } else { %>
+    var lazyLoadInstance = new LazyLoad({});
+   <% } %>
   </script>
 </head>
 

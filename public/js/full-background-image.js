@@ -1,6 +1,6 @@
 (function() {
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', `/data/${document.currentScript.getAttribute("image")}Images.json`, true);
+  xhr.open('GET', `https://storage.googleapis.com/squawkoverflow/unsplash/${document.currentScript.getAttribute("image")}.json`, true);
   xhr.responseType = 'json';
 
   xhr.onload = function() {
@@ -18,23 +18,31 @@
       images[randomIndex] = temporaryValue;
     }
 
-    var containers = document.querySelectorAll('.full-image-background');
-
-    for (var i = 0, len = containers.length; i < len; i++) {
-      var image = images.pop();
-
-      containers[i].style.backgroundSize = 'cover';
-      containers[i].style.backgroundRepeat = 'no-repeat';
-      containers[i].style.backgroundImage = "url('" + image.image + "')";
-      containers[i].style.backgroundPosition = image.position || 'center center';
-
-      var attribution = containers[i].querySelector('.attribution');
-	    
-      attribution.href = image.source;
-      attribution.target = '_blank';
-      attribution.innerHTML = "&copy; " + image.attribution + " / Unsplash";
-    }
+    setFullImageBackground(images.pop());
   };
 
+  xhr.onerror = function() {
+    setFullImageBackground({
+      "image": "https://images.unsplash.com/photo-1588715703712-2a8d1b0c9619",
+      "attribution": "Zdeněk Macháček",
+      "source": "https://unsplash.com/photos/jfWHzG7gIRw"
+    });
+  }
+
   xhr.send();
+
+  function setFullImageBackground(image) {
+    var container = document.querySelector('.full-image-background');
+
+    container.style.backgroundSize = 'cover';
+    container.style.backgroundRepeat = 'no-repeat';
+    container.style.backgroundImage = "url('" + image.image + "?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNTk0OTB8MHwxfHJhbmRvbXx8fHx8fHx8fDE2MzE2NDgxODY&ixlib=rb-1.2.1&q=80&w=1080')";
+    container.style.backgroundPosition = image.position || 'center center';
+
+    var attribution = container.querySelector('.attribution');
+
+    attribution.href = image.source;
+    attribution.target = '_blank';
+    attribution.innerHTML = "&copy; " + image.attribution + " / Unsplash";
+  }
 })();

@@ -30,8 +30,6 @@ app.use(async function(req, res, next) {
 
   res.locals.isMobile = req.useragent.isMobile;
 
-
-
   var menu = [];
 
   if (req.session.user) {
