@@ -18,11 +18,11 @@
          <% if (!variant.special) { %>
           <div class="row mb-3">
             <div class="col-3 g-0 text-end">
-              <div class="bg-white border border-1 m-0 birdypet mini <%= variant.hatched ? "hatched" : "unhatched" %> checkmark<%= Math.min(2, variant.hatched) %>" data-id="<%= `${variant.prefix}-${variant.alias}` %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" style="background-image: url('<%= variant.image %>');"></div>
+              <div class="bg-white border border-1 m-0 birdypet mini <%= variant.hatched ? "hatched" : "unhatched" %> checkmark<%= Math.min(2, variant.hatched) %>" data-id="<%= variant.id %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" style="background-image: url('<%= variant.image %>');"></div>
             </div>
             <div class="col-9 small">
               <% if (locals.loggedInUser && loggedInUser.contributor) { %>
-                <a href="/birdypedia/bird/<%= bird.id_slug %>/variant/<%= variant.prefix %>-<%= variant.alias %>" class="btn btn-sm btn-light m-2 float-end">edit</a>
+                <a href="/birdypedia/bird/<%= bird.id_slug %>/variant/<%= variant.id %>" class="btn btn-sm btn-light m-2 float-end">edit</a>
               <% } %>
               <%- variant.subspecies ? `<em>${variant.subspecies}</em><br>` : '' %>
               <%- variant.label ? `${variant.label}<br>` : '' %>
@@ -38,11 +38,11 @@
          <% if (variant.special) { %>
           <div class="row mb-3">
             <div class="col-3 g-0 text-end">
-              <div class="bg-white border border-1 m-0 birdypet mini <%= variant.hatched ? "hatched" : "unhatched" %> checkmark<%= Math.min(2, variant.hatched) %>" data-id="<%= `${variant.prefix}-${variant.alias}` %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" style="background-image: url('<%= variant.image %>');"></div>
+              <div class="bg-white border border-1 m-0 birdypet mini <%= variant.hatched ? "hatched" : "unhatched" %> checkmark<%= Math.min(2, variant.hatched) %>" data-id="<%= variant.id %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" style="background-image: url('<%= variant.image %>');"></div>
             </div>
             <div class="col-9 small">
               <% if (locals.loggedInUser && loggedInUser.admin) { %>
-                <a href="/birdypedia/bird/<%= bird.id_slug %>/variant/<%= variant.prefix %>-<%= variant.alias %>" class="btn btn-sm btn-light m-2 float-end">edit</a>
+                <a href="/birdypedia/bird/<%= bird.id_slug %>/variant/<%= variant.id %>" class="btn btn-sm btn-light m-2 float-end">edit</a>
               <% } %>
               <%- variant.subspecies ? `<em>ssp. ${variant.subspecies}</em><br>` : '' %>
               <%- variant.label ? `${variant.label}<br>` : '' %>

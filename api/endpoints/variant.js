@@ -44,10 +44,6 @@ module.exports = async (req, res) => {
 
       if (data.id) {
         existing = await Database.query('SELECT * FROM variants WHERE id = ?', [data.id]).then(([result]) => result);
-      } else if (data.alias == 'NUM') {
-        data.alias = await Database.query('SELECT COUNT(*) AS total FROM variants WHERE prefix = ?', [data.prefix]).then(([result]) => result.total + 1);
-      } else {
-        existing = await Database.query('SELECT * FROM variants WHERE prefix = ? AND alias = ?', [data.prefix, data.alias]).then(([result]) => result);
       }
 
       if (existing) {
@@ -60,7 +56,7 @@ module.exports = async (req, res) => {
       } else {
         var key = uuid.generate();
         if (member.admin) {
-          await Database.query('INSERT INTO squawkdata.variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())', [key, data.prefix, data.alias, data.species, data.subspecies, data.label, data.credit, data.source, data.url, data.filetype, data.full, data.special]);
+          await Database.query('INSERT INTO squawkdata.variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())', [key, data.species, data.subspecies, data.label, data.credit, data.source, data.url, data.filetype, data.full, data.special]);
         } else {
           return res.sendStatus(403);
         }
@@ -119,7 +115,7 @@ module.exports = async (req, res) => {
                   content: "A new variant has been added!",
                   embeds: [{
                     title: bird.commonName,
-                    url: `https://squawkoverflow.com/birdypedia/bird/${bird.id_slug}?variant=${data.prefix}-${data.alias}`,
+                    url: `https://squawkoverflow.com/birdypedia/bird/${bird.id_slug}?variant=${data.id}`,
                     fields: fields,
                     image: {
                       url: variant.image
@@ -132,11 +128,11 @@ module.exports = async (req, res) => {
                 });
               }
 
-              res.json(`${data.prefix}-${data.alias}`);
+              res.json(data.id);
             });
         });
       } else {
-        res.json(`${data.prefix}-${data.alias}`);
+        res.json(data.id);
       }
 
       break;

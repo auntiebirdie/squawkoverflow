@@ -9,16 +9,11 @@ class Variants {
     return new Promise((resolve, reject) => {
       let filters = [];
 
-      if (key == 'prefix-alias') {
-        filters.prefix = value.split('-').shift();
-        filters.alias = value.split('-').pop();
-      } else {
-        filters[key] = value;
-      }
+      filters[key] = value;
 
-	    if (params.artist) {
-		    filters['credit'] = params.artist;
-	    }
+      if (params.artist) {
+        filters['credit'] = params.artist;
+      }
 
       Database.get('variants', filters, {
         select: ['id']
