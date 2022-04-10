@@ -65,6 +65,11 @@ router.get('/', async (req, res) => {
           notification.icon = '<img src="https://storage.googleapis.com/squawkoverflow/stickers/unboxing_5784126.png">';
           notification.text += 'You had a birthday this year!  Head to the <a href="/birdypedia">Birdypedia</a> to pick your celebratory BirdyPet!';
           break;
+        case 'other':
+          notification.icon = `<img src="https://storage.googleapis.com/squawkoverflow/stickers/${notification.data.flair}">`;
+
+          notification.text += notification.data.text;
+          break;
       }
 
       notification.text += '</p>';
