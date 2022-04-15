@@ -6,6 +6,8 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+            <div class="p-1 mb-3 birdypets text-center"></div>
+
             <h5><label>Nickname</label></h5>
             <input type="text" name="nickname" class="form-control mb-3" style="width: 100%">
 
@@ -42,14 +44,18 @@
 
         $('.modal-body', modal_editBirdyPet._element).addClass('loadingData');
 
-        API.call('birdypet', 'GET', { id : button.getAttribute('data-id') }, (birdypet) => {
+        API.call('birdypet', 'GET', { id : button.getAttribute('data-id'), member: '<%= loggedInUser.id %>', include: ['memberData', 'variants'] }, (birdypet) => {
           $('.modal-title', modal_editBirdyPet._element).html('Quick Edit - ' + (birdypet.nickname ? birdypet.nickname : birdypet.bird.commonName));
           $('input[name="nickname"]', modal_editBirdyPet._element).val(birdypet.nickname);
           $('textarea[name="description"]', modal_editBirdyPet._element).val(birdypet.description);
 
           for (let flock of birdypet.flocks) {
-            $('input[name="flocks"][value="' + flock + '"]').attr('checked', true);
+            $('input[name="flocks"][value="' + flock + '"]').prop('checked', true);
           }
+
+          $('.birdypets', modal_editBirdyPet._element).html(birdypet.bird.variants.map(function (variant) { return '<div data-id="' + variant.id + '" class="' + (variant.id == birdypet.variant.id ? 'border border-4 border-primary' : '') + ' lazy birdypet mini checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" data-bg="' + variant.image + '"></div>'; }).join(""));
+
+          lazyLoadInstance.update();
 
           $('.btn-success', modal_editBirdyPet._element).removeClass('disabled').attr('data-id', button.getAttribute('data-id'));
           $('.modal-body', modal_editBirdyPet._element).removeClass('loadingData');
@@ -59,7 +65,7 @@
         $('input[name="nickname"]', modal_editBirdyPet._element).val('');
         $('textarea[name="description"]', modal_editBirdyPet._element).val('');
 
-        $('input[type="checkbox"]', modal_editBirdyPet._element).each(function () { $(this).attr('checked', false) });
+        $('input[type="checkbox"]', modal_editBirdyPet._element).prop('checked', false);
 
         $('.btn-success', modal_editBirdyPet._element).addClass('disabled').attr('data-id', null);
       }).on('click', '.btn-success', function (event) {
@@ -71,12 +77,24 @@
             birdypet: event.target.getAttribute('data-id'),
             nickname: $('input[name="nickname"]', modal_editBirdyPet._element).val(),
             description: $('textarea[name="description"]', modal_editBirdyPet._element).val(),
-            flocks: $('input[type="checkbox"]:checked', modal_editBirdyPet._element).map(function () { return this.value }).get()
+            flocks: $('input[type="checkbox"]:checked', modal_editBirdyPet._element).map(function () { return this.value }).get(),
+            variant: $('.birdypet.border-primary', modal_editBirdyPet._element).attr('data-id')
           }, (birdypet) => {
-            $('div[data-id="' + birdypet.id + '"]').replaceWith(template((birdypet)));
-            lazyLoadInstance.update();
+            if (typeof template != "undefined") {
+              $('div[data-id="' + birdypet.id + '"]').replaceWith(template((birdypet)));
+              lazyLoadInstance.update();
+            }
+            else {
+              $('#birdy').attr('src', $('.birdypet.border-primary', modal_editBirdyPet._element).attr('data-bg'));
+            }
             modal_editBirdyPet.hide();
           });
+        }
+      }).on('click', '.birdypet.mini', function (event) {
+        if (!event.target.parentNode.parentNode.classList.contains('loadingData')) {
+          $('.birdypet.border-primary', modal_editBirdyPet._element).removeClass('border border-4 border-primary');
+
+          event.target.classList.add('border', 'border-4', 'border-primary');
         }
       });
     });

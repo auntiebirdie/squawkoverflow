@@ -151,8 +151,12 @@ module.exports = (req, res) => {
                 let memberB = new Member(exchange.memberB);
 
                 Promise.all([
-                  memberA.fetch({ include : ['auth'] }),
-                  memberB.fetch({ include: ['auth'] })
+                  memberA.fetch({
+                    include: ['auth']
+                  }),
+                  memberB.fetch({
+                    include: ['auth']
+                  })
                 ]).then(() => {
                   if (exchange.statusA + exchange.statusB == 4) {
                     let promises = [];
@@ -170,6 +174,17 @@ module.exports = (req, res) => {
                     }
 
                     promises.push(Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, 'The offer was accepted by both parties!']));
+                    promises.push(Database.query('INSERT INTO notifications VALUES (?, ?, ?, ?, 0, NOW())',
+                      [
+                        Database.key(),
+                        (req.body.loggedInUser == memberA.id ? memberB.id : memberA.id),
+                        "exchange_accepted",
+                        {
+                          "from": req.body.loggedInUser == memberA.id ? memberA : memberB,
+                          "exchange": exchange.id
+                        }
+                      ]
+                    ));
 
                     Promise.all(promises).then(() => {
                       if (memberA.serverMember && memberB.serverMember) {

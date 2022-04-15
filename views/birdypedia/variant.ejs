@@ -61,6 +61,7 @@
           container.classList.add('loadingData');
 
           API.call('variant', 'POST', {
+              <%- variant ? `id: "${variant.id}",` : '' %>
               url: $('#form-url').val(),
               source: $('#form-source').val(),
               species: '<%= bird.id %>',

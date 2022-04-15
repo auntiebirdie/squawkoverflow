@@ -174,7 +174,15 @@ class BirdyPet {
         }, data);
 
         for (let key in data) {
-          this[key] = data[key];
+          switch (key) {
+            case 'variant':
+              this.variant = new Variant(data[key]);
+
+              await this.variant.fetch();
+              break;
+            default:
+              this[key] = data[key];
+          }
         }
 
         // TODO - just refresh
@@ -191,7 +199,7 @@ class BirdyPet {
         id: this.id
       }, {
         member: null,
-	addedAt: new Date(Date.now() - (10 * 60 * 1000))
+        addedAt: new Date(Date.now() - (10 * 60 * 1000))
       }),
       Database.delete('birdypet_flocks', {
         birdypet: this.id

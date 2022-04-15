@@ -196,7 +196,7 @@ var Database = require('../api/helpers/database.js');
     'CREATE TRIGGER \`squawk_adjectives_insert\` AFTER INSERT ON squawkdata.\`species_adjectives\` ' +
     'FOR EACH ROW BEGIN ' +
     ' UPDATE adjectives SET numSpecies = (SELECT COUNT(DISTINCT species) FROM species_adjectives WHERE adjective = NEW.adjective AND species IN (SELECT species FROM variants)) WHERE adjective = NEW.adjective; ' +
-    ' REPLACE INTO squawkdata.counters SELECT birdypets.member, "eggs", adjective, COUNT(DISTINCT variants.species) FROM species_adjectives JOIN variants ON (variants.species = species_adjectives.species) JOIN birdypets ON (birdypets.variant = variants.id) WHERE species_adjectives.adjective = NEW.adjective GROUP BY \`member\`, adjective; ' +
+    ' REPLACE INTO squawkdata.counters SELECT birdypets.member, "eggs", adjective, COUNT(DISTINCT variants.species) FROM species_adjectives JOIN variants ON (variants.species = species_adjectives.species) JOIN birdypets ON (birdypets.variant = variants.id) WHERE species_adjectives.adjective = NEW.adjective AND `member` IS NOT NULL GROUP BY \`member\`, adjective; ' +
     'END'
   );
 
@@ -205,7 +205,7 @@ var Database = require('../api/helpers/database.js');
     'CREATE TRIGGER \`squawk_adjectives_update\` AFTER UPDATE ON squawkdata.\`species_adjectives\` ' +
     'FOR EACH ROW BEGIN ' +
     ' UPDATE adjectives SET numSpecies = (SELECT COUNT(DISTINCT species) FROM species_adjectives WHERE adjective = NEW.adjective AND species IN (SELECT species FROM variants)) WHERE adjective = NEW.adjective; ' +
-    ' REPLACE INTO squawkdata.counters SELECT birdypets.member, "eggs", adjective, COUNT(DISTINCT variants.species) FROM species_adjectives JOIN variants ON (variants.species = species_adjectives.species) JOIN birdypets ON (birdypets.variant = variants.id) WHERE species_adjectives.adjective = NEW.adjective GROUP BY \`member\`, adjective; ' +
+    ' REPLACE INTO squawkdata.counters SELECT birdypets.member, "eggs", adjective, COUNT(DISTINCT variants.species) FROM species_adjectives JOIN variants ON (variants.species = species_adjectives.species) JOIN birdypets ON (birdypets.variant = variants.id) WHERE species_adjectives.adjective = NEW.adjective AND `member` IS NOT NULL GROUP BY \`member\`, adjective; ' +
     'END'
   );
 

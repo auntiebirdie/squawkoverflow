@@ -8,6 +8,8 @@ const Member = require('../models/member.js');
 const Webhook = require('../helpers/webhook.js');
 const Variant = require('../models/variant.js');
 
+const secrets = require('../secrets.json');
+const Tumblr = require('tumblr.js');
 const storage = new Storage();
 const bucket = storage.bucket('squawkoverflow');
 const Jimp = require('jimp');
@@ -89,7 +91,7 @@ module.exports = async (req, res) => {
               let variant = new Variant(key);
 
               await variant.fetch({
-                bird: bird
+                include: ['adjectives']
               });
 
               if (!existing && !variant.special) {
@@ -125,6 +127,30 @@ module.exports = async (req, res) => {
                       url: data.source
                     }
                   }]
+                });
+
+                const tumblr = Tumblr.createClient({
+                  consumer_key: secrets.TUMBLR.OAUTH_KEY,
+                  consumer_secret: secrets.TUMBLR.OAUTH_SECRET,
+                  token: secrets.TUMBLR.squawkoverflow.OAUTH_TOKEN,
+                  token_secret: secrets.TUMBLR.squawkoverflow.OAUTH_TOKENSECRET
+                });
+
+                let lastEgg = variant.bird.adjectives.pop();
+
+
+                await new Promise((resolve, reject) => {
+                  tumblr.createPhotoPost('squawkoverflow', {
+                    type: 'photo',
+                    state: 'queue',
+                    tags: ['squawkoverflow', bird.commonName, bird.scientificName, 'birds', data.credit].join(',').toLowerCase(),
+                    source_url: data.source,
+                    source: variant.image,
+                    caption: `<h2>A new variant has been added!</h2><p>${bird.commonName} <i>(${bird.scientificName})</i><br><a href="${data.source}">© ${data.credit}</a></p><p>It hatches from ${variant.bird.adjectives.join(', ')}, and ${lastEgg} eggs.</p><p><a href="https://squawkoverflow.com/">squawkoverflow - the ultimate bird collecting game</a><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;🥚 hatch &nbsp; &nbsp;❤️ collect &nbsp; &nbsp; 🤝 connect</p>`
+                  }, function(err, resp) {
+			  console.log(err, resp);
+                    resolve();
+                  });
                 });
               }
 

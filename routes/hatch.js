@@ -10,12 +10,12 @@ router.get('/', async (req, res) => {
     }, res).then((response) => {
       API.call('member', 'GET', {
         id: req.session.user,
-        include: ['hasIncubator']
+        include: ['hasIncubator', 'flocks']
       }).then((member) => {
         return res.render('hatch/index', {
           title: 'Hatch an Egg',
           eggs: response,
-          hasIncubator: member.hasIncubator
+          member: member
         });
       });
     })

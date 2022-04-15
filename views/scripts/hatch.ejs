@@ -31,7 +31,7 @@
           birdDisplay.innerHTML = bird.variants.map(function (variant) { return '<div data-id="' + variant.id + '" class="lazy birdypet mini checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" data-bg="' + variant.image + '"></div>'; }).join("");
         }
         else {
-          birdDisplay.remove();
+          birdDisplay.style.display = 'none';
         }
 
         var h3 = hatched.querySelector('h3').querySelector('a');
@@ -93,8 +93,12 @@
                 adjective : egg
               },
               function(birdypet) {
+                
+                document.getElementById('birdDisplay').remove();
                 actions.classList.remove('loadingData');
-                actions.innerHTML = `<a class="btn btn-lg btn-light mb-3" href="/birdypet/${birdypet.id}">🐣 View BirdyPet</a>&nbsp;<a class="btn btn-lg btn-light mb-3" href="/hatch">🥚 Hatch Another Egg</a>`;
+                actions.innerHTML = `<a class="btn btn-lg btn-light mb-3" href="/birdypet/${birdypet.id}">🐣 View BirdyPet</a>&nbsp;`;
+                actions.innerHTML += `<a class="btn btn-lg btn-light mb-3" href="/hatch">🥚 Hatch Another Egg</a>&nbsp;`;
+                actions.innerHTML += `<a class="btn btn-lg btn-light mb-3" data-bs-toggle="modal" data-bs-target="#modal_editBirdyPet" data-id="${birdypet.id}" role="button">✏️ Quick Edit</a>`;
               }
             );
             break;

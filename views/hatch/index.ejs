@@ -30,7 +30,7 @@
       <% } %>
     </div>
 
-    <% if (hasIncubator) { %>
+    <% if (member.hasIncubator) { %>
       <div class="text-center">
         <p><em>You can hatch special eggs containing specific birds!  Go to the <a href="/hatch/incubator">incubator</a> to view them.</em></p>
       </div>
@@ -54,5 +54,7 @@
 
   <%- include('../scripts/hatch.ejs', { page : 'hatch' }) %>
   <%- include('../scripts/membersearch.ejs', { privacy: ['gifts'], include: ['birdData'], bird : 'bird.id' }) %>
+
+  <%- include('../partials/editModal.ejs') %>
 
 <%- include('../footer.ejs') %>
