@@ -6,7 +6,9 @@ module.exports = async (req, res) => {
     case "GET":
       var member = new Member(req.query.id);
 
-      await member.fetch(req.query);
+      await member.fetch(req.query).catch((err) => {
+	      console.log(err);
+      });
 
       return res.json(member);
       break;

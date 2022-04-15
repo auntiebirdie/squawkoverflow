@@ -48,7 +48,24 @@ module.exports = async (req, res) => {
         Promise.allSettled(promises).then(resolve);
       });
     });
-  }).then(() => {
+  }).then(async () => {
+    await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "variant"');
+    await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "variant", birdypets.variant, COUNT(*) FROM birdypets WHERE birdypets.member IS NOT NULL GROUP BY \`member\`, \`variant\`');
+
+    await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "species"');
+    await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "species", variants.species, COUNT(*) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) WHERE birdypets.member IS NOT NULL GROUP BY \`member\`, variants.species');
+    await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "species", "total", COUNT(DISTINCT variants.species) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) WHERE birdypets.member IS NOT NULL GROUP BY \`member\`');
+
+    await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "family"');
+    await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "family", species.family, COUNT(DISTINCT variants.species) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.id) WHERE birdypets.member IS NOT NULL GROUP BY \`member\`, species.family');
+
+    await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "eggs"');
+    await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "eggs", adjective, COUNT(DISTINCT variants.species) FROM species_adjectives JOIN variants ON (variants.species = species_adjectives.species) JOIN birdypets ON (birdypets.variant = variants.id) WHERE birdypets.member IS NOT NULL GROUP BY \`member\`, adjective');
+
+    await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "friendship", "total", COUNT(*) FROM birdypets WHERE friendship = 100 GROUP BY birdypets.member');
+
+    await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "aviary", "total", COUNT(*) FROM birdypets WHERE birdypets.member IS NOT NULL GROUP BY birdypets.member');
+
     return res.sendStatus(200);
   });
 };

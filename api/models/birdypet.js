@@ -43,18 +43,9 @@ class BirdyPet {
             if (member.settings.general_updateWishlist) {
               await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [variant.bird.id, member.id]);
             }
+	  }
 
-            Database.query('SELECT `count` FROM counters WHERE (`member` = ? OR `member` = "SQUAWK") AND type = "species" AND id = "total"', [member.id]).then(async (totals) => {
-              if (totals.length > 1 && totals[0].count == totals[1].count) {
-                await Database.query('INSERT INTO member_badges VALUES (?, "completionist", NOW()) ON DUPLICATE KEY UPDATE badge = badge', [this.member]);
-                await Database.query('');
-              }
-
-              resolve(this);
-            });
-          } else {
             resolve(this);
-          }
         });
       } else {
         reject();

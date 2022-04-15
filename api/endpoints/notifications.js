@@ -71,6 +71,7 @@ module.exports = async (req, res) => {
                   type: 'gift_thanks',
                   data: {
                     "from": req.body.loggedInUser,
+		    "birdypet": notification.data.birdypet,
                     "flair": req.body.data?.flair
                   }
                 })

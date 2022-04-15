@@ -19,7 +19,9 @@
 
   <%- include('../scripts/lazyloader.ejs', { paginate : currentPage, noun: 'birdypet' }) %>
 
+ <% if (locals.loggedInUser) { %>
   <%- include('../partials/editModal.ejs') %>
   <%- include('../partials/giftModal.ejs', { selectedMember : locals.page == 'gift' ? member : null }) %>
+ <% } %>
 
 <%- include('../footer.ejs') %>

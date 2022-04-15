@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
     res.render('home/index', {
       page: "home",
       sidebar: "recentActivity",
-      activity: results
+      activity: results.filter((result) => result)
     });
   });
 });
