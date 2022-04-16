@@ -59,35 +59,12 @@ module.exports = async (req, res) => {
 
       res.json(bird);
       break;
-    case "POST":
-      if (req.body.loggedInUser) {
-        var member = await Members.get(req.body.loggedInUser);
+    case "PUT":
+      var bird = new Bird();
 
-        if (member.contributor || member.admin) {
-          await Database.query('INSERT INTO species_adjectives VALUES (?, ?)', [req.body.id, req.body.adjective]);
+      await bird.create(req.body);
 
-          return res.sendStatus(200);
-        } else {
-          return res.sendStatus(403);
-        }
-      } else {
-        return res.sendStatus(401);
-      }
-      break;
-    case "DELETE":
-      if (req.body.loggedInUser) {
-        var member = await Members.get(req.body.loggedInUser);
-
-        if (member.contributor || member.admin) {
-          await Database.query('DELETE FROM species_adjectives WHERE species = ? AND adjective = ?', [req.body.id, req.body.adjective]);
-
-          return res.sendStatus(200);
-        } else {
-          return res.sendStatus(403);
-        }
-      } else {
-        return res.sendStatus(401);
-      }
+      res.json(bird.id);
       break;
     default:
       return res.sendStatus(405);

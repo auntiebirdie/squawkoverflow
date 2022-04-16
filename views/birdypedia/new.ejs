@@ -1,0 +1,53 @@
+<%- include('../header.ejs') %>
+
+  <%- include('../partials/page-title.ejs', { title : locals.bird ? bird.commonName : 'New Species', subtitle : bird ? 'Edit Species' : '' }) %>
+
+  <div id="form" class="row">
+    <div class="col-12 col-md-6 mx-auto">
+      <h5><label for="form-commonName" >Common Name</label></h5>
+      <input type="text" id="form-commonName" class="form-control mb-3 w-100" value="<%= locals.bird?.commonName %>" <%= loggedInUser.admin ? '' : 'disabled' %>>
+
+      <h5><label for="form-scientificName">Scientific Name</label></h5>
+      <input type="text" id="form-scientificName" class="form-control mb-3 w-100" value="<%= locals.bird?.scientificName %>" <%= loggedInUser.admin ? '' : 'disabled' %>>
+
+      <h5><label for="form-family">Family</label></h5>
+      <select id="form-family" class="form-select mb-3">
+        <option></option>
+       <% for (let family of families) { %>
+        <option value="<%= family.name %>">
+          <%= family.display %>
+        </option>
+       <% } %>
+      </select>
+    </div>
+
+    <div class="col-12 text-center">
+      <a id="submitForm" class="btn btn-dark"><%= locals.bird ? 'Update' : 'Create' %></a>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#submitForm').on('click', function () {
+        var container = document.getElementById('form');
+
+        if (!container.classList.contains('loadingData')) {
+          container.classList.add('loadingData');
+
+          API.call('bird', 'PUT', {
+              <%- locals.bird ? `id: "${bird.id}",` : '' %>
+              family: $('#form-family').val(),
+              commonName: $('#form-commonName').val(),
+              scientificName: $('#form-scientificName').val(),
+            }, function (response) {
+              window.location.replace(`/birdypedia/bird/${response?.replace(/\s/g, '-')}/variant/new`);
+            }, function (error) {
+              container.classList.remove('loadingData');
+            }
+          );
+        }
+      });
+    });
+  </script>
+
+<%- include('../footer.ejs') %>

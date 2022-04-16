@@ -168,6 +168,7 @@ img {
   max-width: 400px;
   left: 50%;
   transform: translateX(-50%);
+  margin-left: 150px;
 }
 
 #errorMessage::before {
@@ -213,6 +214,10 @@ img {
 
   #main {
     padding-right: 0;
+  }
+
+  #errorMessage {
+    margin-left: 300px;
   }
 }
 

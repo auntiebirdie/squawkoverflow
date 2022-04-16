@@ -70,13 +70,13 @@
              select: '#adjectives',
              beforeOnChange: (info) => {
                let newState = info.filter((opt) => opt.selected).map((opt) => opt.value);
-               let method = currentState.length > newState.length ? 'DELETE' : 'POST';
+               let method = currentState.length > newState.length ? 'DELETE' : 'PUT';
                let adjective = method == 'DELETE' ? currentState.find((opt) => !newState.includes(opt)) : newState.find((opt) => !currentState.includes(opt));
 
                adjectives.slim.container.classList.add('loadingData');
                adjectives.disable();
 
-               return API.call('bird', method, { id : '<%= bird.id %>', adjective : adjective }, function () {
+               return API.call('adjective', method, { id : '<%= bird.id %>', adjective : adjective }, function () {
                  adjectives.slim.container.classList.remove('loadingData');
                  adjectives.enable();
                  return true;

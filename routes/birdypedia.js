@@ -63,6 +63,15 @@ router.get('/eggs/:egg', async (req, res) => {
   });
 });
 
+router.get('/bird/new', Middleware.isAdmin, async (req, res) => {
+  var families = await API.call('families', 'GET');
+
+  res.render('birdypedia/new', {
+    bird: null,
+    families: families
+  });
+});
+
 router.get('/bird/:id/variant/:variant', Middleware.isContributor, async (req, res) => {
   API.call('bird', 'GET', {
     loggedInUser: req.session.user,
@@ -96,7 +105,7 @@ router.get('/bird/:id', async (req, res) => {
         title: `${bird.commonName} | Birdypedia`,
         page: 'birdypedia/bird',
         bird: bird,
-	variant: bird.variants.find((variant) => variant.id == req.query.variant) || bird.variants.find((variant) => variant.hatched) || bird.variants[0],
+        variant: bird.variants.find((variant) => variant.id == req.query.variant) || bird.variants.find((variant) => variant.hatched) || bird.variants[0],
         sidebar: 'bird',
         eggs: eggs
       });

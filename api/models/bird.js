@@ -4,7 +4,26 @@ const Redis = require('../helpers/redis.js');
 
 class Bird {
   constructor(id) {
-    this.id = id.replace(/\-/g, ' ');
+    this.id = id?.replace(/\-/g, ' ');
+  }
+
+  create(data) {
+    return new Promise(async (resolve, reject) => {
+      this.id = data.scientificName;
+      this.family = data.family;
+      this.commonName = data.commonName;
+      this.scientificName = data.scientificName;
+
+      Database.create('species', {
+        id: data.scientificName,
+        code: Date.now(),
+        family: data.family,
+        commonName: data.commonName,
+        scientificName: data.scientificName
+      }).then(async () => {
+        resolve(this);
+      });
+    });
   }
 
   fetch(params = {}) {
