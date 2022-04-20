@@ -153,7 +153,7 @@ class Search {
               filters.push('species.id IN (SELECT id FROM counters WHERE type = "species" AND `count` > 0)');
               break;
             case 'copied':
-              filters.push('(SELECT COUNT(*) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) WHERE variants.species = species.id AND birdypets.member IS NULL) > 1');
+              filters.push('species.id IN (SELECT id FROM counters WHERE `member` = "freebirds" AND type = "species" AND `count` > 1)');
               break;
             case 'exchange':
               filters.push('birdypets.id IN (SELECT birdypet FROM exchange_birdypets WHERE exchange = ?)');

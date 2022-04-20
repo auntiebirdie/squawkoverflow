@@ -37,13 +37,15 @@ module.exports = async (req, res) => {
           var params = [];
 
           if (member.settings.general_removeCompleted) {
-            query += ' WHERE adjective NOT IN (SELECT id FROM counters WHERE counters.id = adjectives.adjective AND counters.member = ? AND counters.count = adjectives.numSpecies)';
+            query += ' WHERE adjective NOT IN (SELECT id FROM counters WHERE counters.id = adjectives.adjective AND counters.member = ? AND counters.count = adjectives.numSpecies';
             params.push(member.id);
 
             if (eventEggs.length > 0 && !member.settings.general_removeEvent) {
               query += ' AND counters.id NOT IN (?)';
               params.push(eventEggs);
             };
+
+		  query += ')';
           }
 
           query += ' ORDER BY RAND() LIMIT 6';
@@ -52,6 +54,10 @@ module.exports = async (req, res) => {
 
           for (let egg of eggs) {
             egg.isEvent = eventEggs.includes(egg.adjective) && !member.settings.general_removeEvent;
+
+		  if (egg.isEvent) {
+			  egg.icon = 'eggs/special/easter.png';
+		  }
 
             if (member.tier?.extraInsights) {
               egg.numHatched = await Counters.get('eggs', member.id, egg.adjective);

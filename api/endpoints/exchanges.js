@@ -180,7 +180,7 @@ module.exports = (req, res) => {
                         (req.body.loggedInUser == memberA.id ? memberB.id : memberA.id),
                         "exchange_accepted",
                         {
-                          "from": req.body.loggedInUser == memberA.id ? memberA : memberB,
+                          "from": req.body.loggedInUser == memberA.id ? memberA.id : memberB.id,
                           "exchange": exchange.id
                         }
                       ]
