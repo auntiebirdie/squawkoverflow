@@ -41,8 +41,6 @@ var Database = require('../api/helpers/database.js');
     '  SELECT species INTO v_species FROM variants WHERE id = NEW.variant; ' +
     '  SELECT family INTO v_family FROM species WHERE id = v_species; ' +
 
-	  '  INSERT INTO debug VALUES ("NEW.member", NEW.member), ("OLD.member", OLD.member), ("v_species", v_species), ("v_family", v_family); ' +
-
     '  IF NEW.member IS NOT NULL THEN ' +
     '    INSERT INTO counters VALUES (NEW.member, "variant", NEW.variant, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
     '  ELSE ' +
