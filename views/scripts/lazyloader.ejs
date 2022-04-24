@@ -19,7 +19,7 @@
     var preset = Object.fromEntries(urlParams.entries());
 
     for (var key in preset) {
-      if (document.getElementById(key).slim) {
+      if (document.getElementById(key) && document.getElementById(key).slim) {
         document.getElementById(key).slim.set(preset[key].split(','));
       } else {
         $(`#${key}`).val(preset[key]);

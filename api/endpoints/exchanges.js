@@ -257,7 +257,7 @@ module.exports = (req, res) => {
               });
             }
           } else {
-            throw `${exchange.member.username} has not yet made a decision. You cannot make any changes to the offer until they do.`;
+            throw 'Sorry, but something went wrong.';
           }
         }).catch((err) => {
           res.json({

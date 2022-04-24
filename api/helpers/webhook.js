@@ -12,6 +12,8 @@ module.exports = function(webhook, data) {
         },
       },
       (res) => {
+        res.on('data', () => {});
+
         res.on('end', () => {
           resolve();
         });

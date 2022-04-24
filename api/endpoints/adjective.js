@@ -1,5 +1,6 @@
 const Database = require('../helpers/database.js');
 const Members = require('../collections/members.js');
+const Redis = require('../helpers/redis.js');
 
 module.exports = async (req, res) => {
   switch (req.method) {
@@ -9,6 +10,12 @@ module.exports = async (req, res) => {
 
         if (member.contributor || member.admin) {
           await Database.query('INSERT INTO species_adjectives VALUES (?, ?)', [req.body.id, req.body.adjective]);
+
+          await Redis.sendCommand('KEYS', ['eggs:*'], (err, results) => {
+            for (let result of results) {
+              Redis.del(result);
+            }
+          });
 
           return res.sendStatus(200);
         } else {
@@ -24,6 +31,12 @@ module.exports = async (req, res) => {
 
         if (member.contributor || member.admin) {
           await Database.query('DELETE FROM species_adjectives WHERE species = ? AND adjective = ?', [req.body.id, req.body.adjective]);
+
+          await Redis.sendCommand('KEYS', ['eggs:*'], (err, results) => {
+            for (let result of results) {
+              Redis.del(result);
+            }
+          });
 
           return res.sendStatus(200);
         } else {

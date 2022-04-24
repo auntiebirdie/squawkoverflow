@@ -115,7 +115,7 @@
                   button.style.opacity = null;
                   container.classList.remove('loadingData');
                   errorMessage.classList.remove('d-none');
-                  errorMessage.innerHTML = '⚠️ ' + data.error;
+                  errorMessage.innerHTML = data.error;
                 }
                 else {
                   window.location.reload();
