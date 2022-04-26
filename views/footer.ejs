@@ -45,8 +45,11 @@
 
       $('.modal-title', this).html(button.getAttribute('data-modal-title'));
 
-      
-      $('.modal-body', this).html(button.getAttribute('data-modal-endpoint'));
+      $('.modal-body', this).html('<em>Loading...</em>');
+
+      API.call(button.getAttribute('data-modal-endpoint'), 'GET', {}, function (html) {
+        console.log(html);
+      });
     });
 
     $(document).ready( function () {

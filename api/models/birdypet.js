@@ -43,9 +43,11 @@ class BirdyPet {
             if (member.settings.general_updateWishlist) {
               await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [variant.bird.id, member.id]);
             }
-	  }
 
-            resolve(this);
+            await Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?, NOW())', [this.id, "hatched", member.id]);
+          }
+
+          resolve(this);
         });
       } else {
         reject();
@@ -109,6 +111,10 @@ class BirdyPet {
         let member = new Member(data.member);
 
         await member.fetch();
+
+        if (!this.member) {
+          promises.push(Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?)', [this.id, "collected", data.member]));
+        }
 
         data.addedAt = new Date();
         data.friendship = 0;
