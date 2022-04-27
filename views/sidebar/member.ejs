@@ -1,10 +1,10 @@
 <h5>Collection Progress</h5>
 
 <p class="mb-0 mt-4"><a href="/birdypedia">All Species</a></hp>
-<% var prct = Math.floor(member.totals.species / totalSpecies * 100); %>
+<% var prct = Math.floor(member.totals.species[0] / member.totals.species[1] * 100); %>
 <p class="small mt-0 mb-2"><small></small></p>
 <div class="progress mx-2">
-  <div class="progress-bar<%= prct == 100 ? " bg-success" : "" %>" style="width: <%= prct %>%" role="progressbar" aria-valuenow="<%= member.totals.species %>" aria-valuemin="0" aria-valuemax="<%= totalSpecies %>"><%= prct %>%</div>
+  <div class="progress-bar<%= prct == 100 ? " bg-success" : "" %>" style="width: <%= prct %>%" role="progressbar" aria-valuenow="<%= member.totals.species[0] %>" aria-valuemin="0" aria-valuemax="<%= member.totals.species[1] %>"><%= prct %>%</div>
 </div>
 
 <% for (let family of allFamilies) { %>

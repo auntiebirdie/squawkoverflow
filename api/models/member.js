@@ -298,7 +298,10 @@ class Member {
           case 'totals':
             this.totals = {
               aviary: this.aviary ? this.aviary : await Counters.get('aviary', this.id, 'total'),
-              species: await Counters.get('species', this.id, 'total')
+              species: [
+                await Counters.get('species', this.id, 'total'),
+                await Counters.get('species', 'SQUAWK', 'total')
+              ]
             };
             break;
           case 'wishlist':

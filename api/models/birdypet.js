@@ -44,7 +44,7 @@ class BirdyPet {
               await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ?', [variant.bird.id, member.id]);
             }
 
-            await Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?, NOW())', [this.id, "hatched", member.id]);
+            //await Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?, NOW())', [this.id, "hatched", member.id]);
           }
 
           resolve(this);
@@ -113,7 +113,7 @@ class BirdyPet {
         await member.fetch();
 
         if (!this.member) {
-          promises.push(Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?)', [this.id, "collected", data.member]));
+          //promises.push(Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?)', [this.id, "collected", data.member]));
         }
 
         data.addedAt = new Date();

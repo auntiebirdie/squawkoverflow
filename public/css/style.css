@@ -168,7 +168,6 @@ img {
   max-width: 400px;
   left: 50%;
   transform: translateX(-50%);
-  margin-left: 150px;
 }
 
 #errorMessage::before {
@@ -214,10 +213,6 @@ img {
 
   #main {
     padding-right: 0;
-  }
-
-  #errorMessage {
-    margin-left: 300px;
   }
 }
 
@@ -550,7 +545,7 @@ span.checkmark, span.checkplus {
   left: -10px;
 }
 
-.feature-flock {
+.feature-flock, .grayscale {
   filter: grayscale(1);
 }
 

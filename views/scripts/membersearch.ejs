@@ -43,17 +43,9 @@
             privacy: ['gifts']
           };
 
-          let cache = sessionStorage.getItem(`members-${JSON.stringify(data)}`);
- 
-          if (cache) {
-            resolve(JSON.parse(cache));
-          }
-          else {
             API.call('members', 'GET', data, function (results) {
-              sessionStorage.setItem(`members-${query}-${JSON.stringify(data)}`, JSON.stringify(results));
               resolve(results);
             });
-          }
         }).then((results) => {
           try {
             let wants = document.getElementById('member-wants').checked;

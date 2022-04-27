@@ -28,7 +28,6 @@
         <div class="modal-body"></div>
         <div class="modal-footer">
           <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-success">Save</button>
         </div>
       </div>
     </div>    
@@ -44,11 +43,21 @@
       var button = event.relatedTarget;
 
       $('.modal-title', this).html(button.getAttribute('data-modal-title'));
+      
+      $('.modal-body', this).html('<div class="text-center"><em><div class="spinner-border spinner-border-sm" role="status"></div> Loading...</em></div>');
 
-      $('.modal-body', this).html('<em>Loading...</em>');
+      var data = button.getAttribute('data-modal-params');
 
-      API.call(button.getAttribute('data-modal-endpoint'), 'GET', {}, function (html) {
-        console.log(html);
+      try {
+        data = JSON.parse(data);
+      } catch (err) {
+        data = {};
+      }
+
+      data.format = "html";
+
+      API.call(button.getAttribute('data-modal-endpoint'), 'GET', data, (html) => {
+        $('.modal-body', this).html(html);
       });
     });
 

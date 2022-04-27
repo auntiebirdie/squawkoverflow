@@ -1,14 +1,5 @@
 <% if (locals.page == "birdypet") { %>
         <div class="text-center">
-          <p>
-            <button data-bs-toggle="modal"
-               data-bs-target="#modal"
-               data-modal-title="<%= birdypet.nickname || birdypet.bird.commonName %>'s BirdStory"
-               data-modal-endpoint=""
-               class="btn btn-light">
-              📖 View BirdStory
-            </button>
-          </p>
           <p class="friendshipMeter"><%= birdypet.friendshipMeter %></p>
 
         <% if (locals.loggedInUser && loggedInUser.bugs > 0) { %>

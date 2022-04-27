@@ -17,9 +17,11 @@ module.exports = async (req, res) => {
   if (req.body.variant) {
     variant = req.body.variant;
 
+	  /*
     if (req.body.variant == "iqkTUrXqtN31qnXTtJaVH5") {
       promises.push(Database.query('INSERT INTO counters VALUES (?, "aprfools", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` + 1', [req.body.loggedInUser, new Date().getYear()]));
     }
+    */
 
     var birdypet = new BirdyPet();
 

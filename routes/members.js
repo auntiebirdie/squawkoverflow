@@ -4,7 +4,7 @@ const Middleware = require('../helpers/middleware.js');
 const express = require('express');
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', (req, res) => {
   res.render('members/index', {
     title: 'Members',
     currentPage: (req.query.page || 1) * 1,
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
   });
 });
 
-router.get('/:member', async (req, res) => {
+router.get('/:member', (req, res) => {
   API.call('member', "GET", {
     id: req.params.member,
     include: ['badges', 'birdyBuddy', 'families', 'featuredFlock', 'flocks', 'hasWishlist', 'rank', 'totals']
@@ -30,17 +30,16 @@ router.get('/:member', async (req, res) => {
         page: 'member',
         member: member,
         allFamilies: allFamilies,
-        totalSpecies: 11054, // make this.. .... not manual
         sidebar: 'member'
       });
     });
   });
 });
 
-router.get('/:member/gift', Middleware.isLoggedIn, async (req, res) => {
+router.get('/:member/gift', Middleware.isLoggedIn, (req, res) => {
   API.call('member', 'GET', {
     id: req.params.member
-  }).then(async (member) => {
+  }).then((member) => {
     if (member.settings.privacy_gifts) {
       return res.redirect('/error');
     }

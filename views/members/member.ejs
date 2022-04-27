@@ -17,9 +17,23 @@
       <p><%= new Date(member.joinedAt).toLocaleString('en-US', { dateStyle: "long" }) %></p>
     </div>
     <div class="col-md-3 text-center mb-3">
-     <% for (let badge of member.badges) { %>
-      <img src="https://storage.googleapis.com/squawkoverflow/badges/<%= badge.id %>.png" alt="<%= badge.name %>" data-bs-toggle="tooltip" data-bs-placement="top" title="<%= badge.name %>">
+     <% if (member.badges.length > 0) { %>
+      <% for (let badge of member.badges) { %>
+       <img src="https://storage.googleapis.com/squawkoverflow/badges/<%= badge.id %>.png" alt="<%= badge.name %>" data-bs-toggle="tooltip" data-bs-placement="top" title="<%= badge.name %>">
+      <% } %>
+     <% } else { %>
+       <p class="text-start"><em>No badges... yet!</em></p>
      <% } %>
+     <p class="text-end small">
+       <a class="small" role="button"
+          data-bs-toggle="modal"
+          data-bs-target="#modal"
+          data-modal-title="Member Badges"
+          data-modal-endpoint="/badges"
+          data-modal-params='{"member":"<%= member.id %>"}'
+         <em>... view all badges</em>
+       </a>
+     </p>
     </div>
     <div class="col-md-3 text-center text-md-end">
       <div class="row">
