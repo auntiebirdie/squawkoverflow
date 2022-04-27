@@ -35,7 +35,7 @@ app.use(async function(req, res, next) {
   if (req.session.user) {
     res.locals.loggedInUser = await API.call('member', 'GET', {
       id: req.session.user,
-      include: ['exchangeData', 'notificationCount']
+      include: ['exchangeData', 'notificationCount', 'warnings']
     }).catch((err) => {
       console.log(err);
       delete req.session.user;

@@ -304,6 +304,15 @@ class Member {
               ]
             };
             break;
+          case 'warnings':
+            this.warnings = await Database.getOne('member_warnings', {
+              member: this.id,
+              acknowledgedAt: {
+                comparator: 'IS',
+                value_trusted: 'NULL'
+              }
+            });
+            break;
           case 'wishlist':
             this.wishlist = await Database.get('wishlist', {
               member: this.id

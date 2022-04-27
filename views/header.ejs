@@ -210,6 +210,28 @@
     <script type="text/javascript" src="/js/full-background-image.js" image="banner"></script>
    <% } %>
 
+   <% if (locals.loggedInUser && locals.loggedInUser.warnings) { %>
+    <div class="bg-dark w-75 mx-auto my-4 d-flex rounded p-3 align-items-start">
+      <div>
+        <h4>You have been issued a warning.</h4>
+
+        <p><%= locals.loggedInUser.warnings.message %></p>
+
+        <button id="acknowledgeWarning" data-id="<%= loggedInUser.warnings.id %>" class="btn btn-warning">I acknowledge this warning and understand that repeated offenses may result in suspension of my account.</button>
+      </div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        $('#acknowledgeWarning').on('click', function (e) {
+          API.call('warnings', 'PUT', { warning : e.target.getAttribute('data-id') }, function () {
+            e.target.parentNode.parentNode.remove();
+          });
+	});
+      });
+    </script>
+   <% } %>
+
    <% if (locals.bugFound) { %>
     <div class="bg-light w-75 mx-auto my-4 d-flex rounded p-3 align-items-start">
       <img src="<%= locals.bugFound %>">
