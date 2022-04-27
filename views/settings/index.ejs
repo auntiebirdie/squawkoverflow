@@ -106,28 +106,35 @@
           <div class="col-12 col-md-3 text-md-end">
             <label for="rank">
               Birthday:
-              <div class="small">
+              <p class="small">
                 <small>
                   Get a free BirdyPet of your choice on your birthday!
                 </small>
-              </div>
+              </p>
             </label>
           </div>
-          <div class="col-5 col-md-3">
-            <select name="birthday_date" id="birthday_date" class="form-select">
-              <option value="" disabled <%= member.settings.birthday_date == null ? '' : 'selected' %>>Day</option>
-             <% for (let i = 1; i < 31; i++) { %>
-              <option <%= member.settings.birthday_date == i ? 'selected' : '' %>><%= i %></option>
-             <% } %>
-            </select>
-          </div>
-          <div class="col-7 col-md-6">
-            <select name="birthday_month" id="birthday_month" class="form-select">
-              <option value="" disabled <%= member.settings.birthday_month == null ? '' : 'selected' %>>Month</option>
-             <% for (let i = 0, months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']; i < 12; i++) { %>
-              <option <%= member.settings.birthday_month == i ? 'selected' : '' %> value="<%= i %>"><%= months[i] %></option>
-             <% } %>
-            </select>
+          <div class="col-12 col-md-9">
+            <div class="row">
+              <div class="col-5">
+                 <select name="birthday_date" id="birthday_date" class="form-select">
+                  <option value="" disabled <%= member.settings.birthday_date == null ? '' : 'selected' %>>Day</option>
+                 <% for (let i = 1; i < 31; i++) { %>
+                  <option <%= member.settings.birthday_date == i ? 'selected' : '' %>><%= i %></option>
+                 <% } %>
+                </select>
+              </div>
+              <div class="col-7">
+                <select name="birthday_month" id="birthday_month" class="form-select">
+                  <option value="" disabled <%= member.settings.birthday_month == null ? '' : 'selected' %>>Month</option>
+                 <% for (let i = 0, months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']; i < 12; i++) { %>
+                  <option <%= member.settings.birthday_month == i ? 'selected' : '' %> value="<%= i %>"><%= months[i] %></option>
+                 <% } %>
+                </select>
+              </div>
+              <div class="col-12 small mt-2">
+                <%= member.settings.birthday_date == null || member.settings.birthday_month == null ? "If you've already had your birthday this year, you'll get a free BirdyPet now!" : '' %>
+              </div>
+            </div>
           </div>
         </div>
 
