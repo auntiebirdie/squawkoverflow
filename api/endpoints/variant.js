@@ -117,7 +117,7 @@ module.exports = async (req, res) => {
                   content: "A new variant has been added!",
                   embeds: [{
                     title: bird.commonName,
-                    url: `https://squawkoverflow.com/birdypedia/bird/${bird.id_slug}?variant=${data.id}`,
+                    url: `https://squawkoverflow.com/birdypedia/bird/${bird.id_slug}?variant=${key}`,
                     fields: fields,
                     image: {
                       url: variant.image
