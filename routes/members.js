@@ -64,4 +64,19 @@ router.get('/:member/gift', Middleware.isLoggedIn, (req, res) => {
   });
 });
 
+router.get('/:member/flocks', async (req, res) => {
+  let member = await API.call('member', 'GET', {
+    id: req.params.member
+  });
+
+  let flocks = await API.call('flocks', 'GET', {
+    id: req.params.member
+  });
+
+  res.render('members/flocks', {
+    title: `${member.username}'s Flocks`,
+    flocks: req.session.user == req.params.member ? flocks : flocks.filter((flock) => !flock.private)
+  });
+});
+
 module.exports = router;

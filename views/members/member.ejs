@@ -39,6 +39,9 @@
       <div class="row">
        <% if (member.totals.aviary > 0) { %>
          <div class="col-6 col-md-12 mb-3"><a href="/aviary/<%= member.id %>" class="btn btn-light">🐦 View Aviary</a></div>
+        <% if (member.flocks.length > 0) { %>
+         <div class="col-6 col-md-12 mb-3"><a href="/members/<%= member.id %>/flocks" class="btn btn-light">🏘️ View Flocks</a></div>
+        <% } %>
        <% } %>
        <% if (member.hasWishlist && !member.settings.privacy_wishlist) { %>
          <div class="col-6 col-md-12 mb-3"><a href="/wishlist/<%= member.id %>" class="btn btn-light">❤️ View Wishlist</a></div>

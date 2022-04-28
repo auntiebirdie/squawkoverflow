@@ -1,0 +1,18 @@
+<%- include('../header.ejs') %>
+
+  <%- include('../partials/page-title.ejs', { title : title }) %>
+
+  <div class="row">
+    <% for (let flock of flocks) { %>
+    <div data-id="<%= flock.id %>" data-display-order="<%= flock.displayOrder || 0 %>">
+      <div class="card bg-light border-dark p-3 mb-4">
+        <h3>
+          <a href="/flocks/<%= flock.id %>"><%= flock.name %></a>
+        </h3>
+        <p class="m-0"><%= flock.description %></p>
+      </div>
+    </div>
+    <% } %>
+  </div>
+
+<%- include('../footer.ejs') %>
