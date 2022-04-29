@@ -292,7 +292,7 @@ class Member {
               FROM titles
               LEFT JOIN member_titles ON (member_titles.title = titles.id)
               WHERE \`member\` = ? OR
-              (id < 4 AND id < ?)
+              (id < 5 AND id <= ?)
             `, [this.id, this.tier.id]);
             break;
           case 'totals':
