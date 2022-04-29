@@ -209,8 +209,9 @@
       <h3>Account</h3>
       <div id="accounts" class="ms-4">
        <% for (let auth of [
-            { id: 'discord', label : 'Discord', endpoint: `https://discord.com/api/oauth2/authorize?client_id=885956624777351199&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=identify` },
-            { id: 'google', label : 'Google' }
+            { id: 'discord', label : 'Discord', endpoint: `https://discord.com/api/oauth2/authorize?client_id=885956624777351199&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=identify&state=discord` },
+            { id: 'google', label : 'Google' },
+            { id: 'patreon', label : 'Patreon', endpoint : `https://www.patreon.com/oauth2/authorize?client_id=gWtPmmmFXjwUp5uxjgiEX5rPBF-SqFEK8K6hDbphvwR9A-mISFrwo4VbjURxVVtS&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=identity&state=patreon` }
           ]) {
        %>
          <div class="row mb-3">

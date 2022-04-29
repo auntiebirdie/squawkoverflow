@@ -2,6 +2,7 @@ const Database = require('../helpers/database.js');
 const Member = require('../models/member.js');
 
 const secrets = require('../secrets.json');
+const https = require('https');
 
 module.exports = async (req, res) => {
   if (req.body.konami) {
@@ -17,58 +18,149 @@ module.exports = async (req, res) => {
       }
     });
   } else if (req.body.code) {
-    const DiscordOauth2 = require("discord-oauth2");
-    const oauth = new DiscordOauth2();
+    switch (req.body.state) {
+      case 'discord':
+        const DiscordOauth2 = require("discord-oauth2");
+        const oauth = new DiscordOauth2();
 
-    await oauth.tokenRequest({
-      clientId: secrets.DISCORD.CLIENT_ID,
-      clientSecret: secrets.DISCORD.CLIENT_SECRET,
-      redirectUri: `https://${process.env.NODE_ENV == 'PROD' ? '' : 'dev.'}squawkoverflow.com/${req.body.connect ? 'settings/connect' : 'login'}`,
-      code: req.body.code,
-      scope: 'identify',
-      grantType: 'authorization_code'
-    }).then((response) => {
-      if (response.access_token) {
-        oauth.getUser(response.access_token).then(async (user) => {
-          if (req.body.loggedInUser && req.body.connect) {
-            let member = new Member(req.body.loggedInUser);
+        await oauth.tokenRequest({
+          clientId: secrets.DISCORD.CLIENT_ID,
+          clientSecret: secrets.DISCORD.CLIENT_SECRET,
+          redirectUri: `https://${process.env.NODE_ENV == 'PROD' ? '' : 'dev.'}squawkoverflow.com/${req.body.connect ? 'settings/connect' : 'login'}`,
+          code: req.body.code,
+          scope: 'identify',
+          grantType: 'authorization_code'
+        }).then((response) => {
+          if (response.access_token) {
+            oauth.getUser(response.access_token).then(async (user) => {
+              if (req.body.loggedInUser && req.body.connect) {
+                let member = new Member(req.body.loggedInUser);
 
-            member.exists().then(async (data) => {
-              await Database.query('INSERT INTO member_auth VALUES (?, "discord", ?)', [member.id, user.id]);
+                member.exists().then(async (data) => {
+                  await Database.query('INSERT INTO member_auth VALUES (?, "discord", ?)', [member.id, user.id]);
 
-              res.sendStatus(200);
-            }).catch(() => {
-              res.sendStatus(400);
+                  res.sendStatus(200);
+                }).catch(() => {
+                  res.sendStatus(400);
+                });
+              } else {
+                let member = new Member({
+                  auth: 'discord',
+                  token: user.id
+                });
+
+                member.exists({
+                  createIfNotExists: true,
+                  data: {
+                    username: user.username,
+                    avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`,
+                    tier: 0
+                  }
+                }).then(async (data) => {
+                  await member.set({
+                    lastLoginAt: new Date()
+                  });
+
+                  return res.json(data.id);
+                });
+              }
             });
           } else {
-            let member = new Member({
-              auth: 'discord',
-              token: user.id
-            });
+            console.error(response);
+            return res.sendStatus(400);
+          }
+        }).catch((err) => {
+          return res.sendStatus(400);
+        });
+        break;
+      case 'patreon':
+        new Promise((resolve, reject) => {
+          var request = https.request(`https://www.patreon.com/api/oauth2/token`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+              },
+            },
+            (response) => {
+              var data = "";
 
-            member.exists({
-              createIfNotExists: true,
-              data: {
-                username: user.username,
-                avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`,
-                tier: 0
-              }
-            }).then(async (data) => {
-              await member.set({
-                lastLoginAt: new Date()
+              response.on('data', (chunk) => {
+                data += chunk;
               });
 
-              return res.json(data.id);
+              response.on('end', () => {
+                resolve(JSON.parse(data));
+              });
             });
-          }
+
+          request.write(`code=${req.body.code}&grant_type=authorization_code&client_id=${secrets.PATREON.CLIENT_ID}&client_secret=${secrets.PATREON.CLIENT_SECRET}&redirect_uri=https://${process.env.NODE_ENV == 'PROD' ? '' : 'dev.'}squawkoverflow.com/settings/connect`);
+
+          request.end();
+        }).then((tokens) => {
+          return new Promise((resolve, reject) => {
+            var request = https.request(`https://www.patreon.com/api/oauth2/v2/identity?include=memberships,memberships.currently_entitled_tiers`, {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${tokens.access_token}`,
+                  'User-Agent': 'Patreon-JS'
+                },
+              },
+              (response) => {
+                var data = "";
+
+                response.on('data', (chunk) => {
+                  data += chunk;
+                });
+
+                response.on('end', () => {
+                  resolve(JSON.parse(data));
+                });
+              });
+
+            request.end();
+          });
+        }).then((response) => {
+          const tiers = {
+            '8368212': 0,
+            '7920461': 1,
+            '7920471': 2,
+            '7920495': 3,
+            '7932599': 4
+          };
+
+          const pledge = response.included.find((attr) => attr.type == 'tier');
+
+          let member = new Member(req.body.loggedInUser);
+
+          member.exists().then(async (data) => {
+            var alreadyExists = await Database.count('member_auth', {
+              provider: 'patreon',
+              id: response.data.id
+            });
+
+            if (alreadyExists) {
+              res.status(412).json({
+                error: 'The selected Patreon account is already associated with another member.'
+              });
+            } else {
+              await Promise.all([
+                Database.query('UPDATE members SET tier = ? WHERE id = ?', [tiers[pledge.id], member.id]),
+                Database.query('INSERT INTO member_auth VALUES (?, "patreon", ?)', [member.id, response.data.id]),
+                Database.query('INSERT IGNORE INTO member_badges VALUES (?, "patreon", NOW())', [member.id])
+              ]);
+
+
+              res.sendStatus(200);
+            }
+
+            return res.json({});
+          });
+        }).catch((err) => {
+          console.error(err);
+          return res.sendStatus(400);
         });
-      } else {
-        console.error(response);
-        return res.sendStatus(400);
-      }
-    }).catch((err) => {
-      return res.sendStatus(400);
-    });
+        break;
+    }
   } else if (req.body.credential) {
     const {
       OAuth2Client
