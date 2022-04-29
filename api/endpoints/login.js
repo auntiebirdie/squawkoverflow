@@ -17,58 +17,91 @@ module.exports = async (req, res) => {
       }
     });
   } else if (req.body.code) {
-    const DiscordOauth2 = require("discord-oauth2");
-    const oauth = new DiscordOauth2();
+    switch (req.body.state) {
+      case 'discord':
+        const DiscordOauth2 = require("discord-oauth2");
+        const oauth = new DiscordOauth2();
 
-    await oauth.tokenRequest({
-      clientId: secrets.DISCORD.CLIENT_ID,
-      clientSecret: secrets.DISCORD.CLIENT_SECRET,
-      redirectUri: `https://${process.env.NODE_ENV == 'PROD' ? '' : 'dev.'}squawkoverflow.com/${req.body.connect ? 'settings/connect' : 'login'}`,
-      code: req.body.code,
-      scope: 'identify',
-      grantType: 'authorization_code'
-    }).then((response) => {
-      if (response.access_token) {
-        oauth.getUser(response.access_token).then(async (user) => {
-          if (req.body.loggedInUser && req.body.connect) {
-            let member = new Member(req.body.loggedInUser);
+        await oauth.tokenRequest({
+          clientId: secrets.DISCORD.CLIENT_ID,
+          clientSecret: secrets.DISCORD.CLIENT_SECRET,
+          redirectUri: `https://${process.env.NODE_ENV == 'PROD' ? '' : 'dev.'}squawkoverflow.com/${req.body.connect ? 'settings/connect' : 'login'}`,
+          code: req.body.code,
+          scope: 'identify',
+          grantType: 'authorization_code'
+        }).then((response) => {
+          if (response.access_token) {
+            oauth.getUser(response.access_token).then(async (user) => {
+              if (req.body.loggedInUser && req.body.connect) {
+                let member = new Member(req.body.loggedInUser);
 
-            member.exists().then(async (data) => {
-              await Database.query('INSERT INTO member_auth VALUES (?, "discord", ?)', [member.id, user.id]);
+                member.exists().then(async (data) => {
+                  await Database.query('INSERT INTO member_auth VALUES (?, "discord", ?)', [member.id, user.id]);
 
-              res.sendStatus(200);
-            }).catch(() => {
-              res.sendStatus(400);
+                  res.sendStatus(200);
+                }).catch(() => {
+                  res.sendStatus(400);
+                });
+              } else {
+                let member = new Member({
+                  auth: 'discord',
+                  token: user.id
+                });
+
+                member.exists({
+                  createIfNotExists: true,
+                  data: {
+                    username: user.username,
+                    avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`,
+                    tier: 0
+                  }
+                }).then(async (data) => {
+                  await member.set({
+                    lastLoginAt: new Date()
+                  });
+
+                  return res.json(data.id);
+                });
+              }
             });
           } else {
-            let member = new Member({
-              auth: 'discord',
-              token: user.id
-            });
-
-            member.exists({
-              createIfNotExists: true,
-              data: {
-                username: user.username,
-                avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`,
-                tier: 0
-              }
-            }).then(async (data) => {
-              await member.set({
-                lastLoginAt: new Date()
-              });
-
-              return res.json(data.id);
-            });
+            console.error(response);
+            return res.sendStatus(400);
           }
+        }).catch((err) => {
+          return res.sendStatus(400);
         });
-      } else {
-        console.error(response);
-        return res.sendStatus(400);
-      }
-    }).catch((err) => {
-      return res.sendStatus(400);
-    });
+        break;
+      case 'patreon':
+        const Patreon = require('patreon');
+
+        Patreon.oauth(secrets.PATREON.CLIENT_ID, secrets.PATREON.CLIENT_SECRET).getTokens(req.body.code, `https://${process.env.NODE_ENV == 'PROD' ? '' : 'dev.'}squawkoverflow.com/settings/connect`)
+          .then((response) => {
+            Patreon.patreon(response.access_token)('current_user').then((response) => {
+              const pledges = response.rawJson.data.relationships.pledges.data;
+              const tiers = {
+                '8368212': 1,
+                '7920461': 2,
+                '7920471': 3,
+                '7920495': 4,
+                '7932599': 5
+              };
+
+              if (pledges.length > 0) {
+                const pledge = pledges[0].relationships.reward.id;
+
+                console.log('YOOOO ', pledge);
+              }
+
+              return res.json({});
+            });
+          }).catch((err) => {
+            console.error(err);
+            return res.sendStatus(400);
+          });
+
+        break;
+    }
   } else if (req.body.credential) {
     const {
       OAuth2Client
