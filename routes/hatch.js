@@ -50,9 +50,15 @@ router.get('/incubator', (req, res) => {
   API.call('incubate', 'GET', {
     loggedInUser: req.session.user
   }).then((eggs) => {
-    return res.render('hatch/incubator', {
-      title: 'Incubator',
-      eggs: eggs
+    API.call('member', 'GET', {
+      id: req.session.user,
+      include: ['hasIncubator', 'flocks']
+    }).then((member) => {
+      return res.render('hatch/incubator', {
+        title: 'Incubator',
+        eggs: eggs,
+        member: member
+      });
     });
   });
 });
