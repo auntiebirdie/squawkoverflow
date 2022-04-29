@@ -2,6 +2,7 @@ const Database = require('../helpers/database.js');
 const Member = require('../models/member.js');
 
 const secrets = require('../secrets.json');
+const https = require('https');
 
 module.exports = async (req, res) => {
   if (req.body.konami) {
@@ -73,33 +74,91 @@ module.exports = async (req, res) => {
         });
         break;
       case 'patreon':
-        const Patreon = require('patreon');
+        new Promise((resolve, reject) => {
+          var request = https.request(`https://www.patreon.com/api/oauth2/token`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+              },
+            },
+            (response) => {
+              var data = "";
 
-        Patreon.oauth(secrets.PATREON.CLIENT_ID, secrets.PATREON.CLIENT_SECRET).getTokens(req.body.code, `https://${process.env.NODE_ENV == 'PROD' ? '' : 'dev.'}squawkoverflow.com/settings/connect`)
-          .then((response) => {
-            Patreon.patreon(response.access_token)('current_user').then((response) => {
-              const pledges = response.rawJson.data.relationships.pledges.data;
-              const tiers = {
-                '8368212': 1,
-                '7920461': 2,
-                '7920471': 3,
-                '7920495': 4,
-                '7932599': 5
-              };
+              response.on('data', (chunk) => {
+                data += chunk;
+              });
 
-              if (pledges.length > 0) {
-                const pledge = pledges[0].relationships.reward.id;
-
-                console.log('YOOOO ', pledge);
-              }
-
-              return res.json({});
+              response.on('end', () => {
+                resolve(JSON.parse(data));
+              });
             });
-          }).catch((err) => {
-            console.error(err);
-            return res.sendStatus(400);
-          });
 
+          request.write(`code=${req.body.code}&grant_type=authorization_code&client_id=${secrets.PATREON.CLIENT_ID}&client_secret=${secrets.PATREON.CLIENT_SECRET}&redirect_uri=https://${process.env.NODE_ENV == 'PROD' ? '' : 'dev.'}squawkoverflow.com/settings/connect`);
+
+          request.end();
+        }).then((tokens) => {
+          return new Promise((resolve, reject) => {
+            var request = https.request(`https://www.patreon.com/api/oauth2/v2/identity?include=memberships,memberships.currently_entitled_tiers`, {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${tokens.access_token}`,
+                  'User-Agent': 'Patreon-JS'
+                },
+              },
+              (response) => {
+                var data = "";
+
+                response.on('data', (chunk) => {
+                  data += chunk;
+                });
+
+                response.on('end', () => {
+                  resolve(JSON.parse(data));
+                });
+              });
+
+            request.end();
+          });
+        }).then((response) => {
+          const tiers = {
+            '8368212': 0,
+            '7920461': 1,
+            '7920471': 2,
+            '7920495': 3,
+            '7932599': 4
+          };
+
+          const pledge = response.included.find((attr) => attr.type == 'tier');
+
+          let member = new Member(req.body.loggedInUser);
+
+          member.exists().then(async (data) => {
+            var alreadyExists = await Database.count('member_auth', {
+              provider: 'patreon',
+              id: response.data.id
+            });
+
+            if (alreadyExists) {
+              res.status(412).json({
+                error: 'The selected Patreon account is already associated with another member.'
+              });
+            } else {
+              await Promise.all([
+                Database.query('UPDATE members SET tier = ? WHERE id = ?', [tiers[pledge.id], member.id]),
+                Database.query('INSERT INTO member_auth VALUES (?, "patreon", ?)', [member.id, response.data.id]),
+                Database.query('INSERT IGNORE INTO member_badges VALUES (?, "patreon", NOW())', [member.id])
+              ]);
+
+
+              res.sendStatus(200);
+            }
+
+            return res.json({});
+          });
+        }).catch((err) => {
+          console.error(err);
+          return res.sendStatus(400);
+        });
         break;
     }
   } else if (req.body.credential) {

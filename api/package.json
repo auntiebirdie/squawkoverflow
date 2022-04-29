@@ -20,7 +20,6 @@
     "mariadb": "^2.0.0",
     "node-trello": "^1.3.0",
     "object-hash": "^3.0.0",
-    "patreon": "^0.4.1",
     "random-seed": "^0.3.0",
     "redis": "^3.0.0",
     "short-uuid": "^4.2.0",
