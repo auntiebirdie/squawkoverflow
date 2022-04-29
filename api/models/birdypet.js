@@ -149,7 +149,7 @@ class BirdyPet {
             }
           }
         });
-      } else if (data.variant != this.variant.id) {
+      } else if (data.variant && data.variant != this.variant.id) {
         await Database.query('SELECT * FROM exchanges WHERE id IN (SELECT exchange FROM exchange_birdypets WHERE birdypet = ? AND statusA + statusB BETWEEN 0 AND 3)', [this.id]).then(async (exchanges) => {
           for (let exchange of exchanges) {
             promises.push(Database.query('UPDATE exchange_birdypets SET variant = ? WHERE exchange = ? AND birdypet = ?', [data.variant, exchange.id, this.id]));
