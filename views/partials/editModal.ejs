@@ -58,6 +58,9 @@
 
             lazyLoadInstance.update();
           }
+          else {
+            $('.birdypets', modal_editBirdyPet._element).html('');
+          }
 
           $('.btn-success', modal_editBirdyPet._element).removeClass('disabled').attr('data-id', button.getAttribute('data-id'));
           $('.modal-body', modal_editBirdyPet._element).removeClass('loadingData');

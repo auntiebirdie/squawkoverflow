@@ -1,5 +1,6 @@
 const Member = require('../models/member.js');
 const BirdyPet = require('../models/birdypet.js');
+const Variant = require('../models/variant.js');
 
 const Database = require('../helpers/database.js');
 
@@ -59,8 +60,15 @@ module.exports = async (req, res) => {
           switch (key) {
             case 'nickname':
             case 'description':
-            case 'variant':
               toUpdate[key] = req.body[key];
+              break;
+            case 'variant':
+              var variant = new Variant(req.body[key]);
+              await variant.fetch();
+
+              if (variant.bird.id == birdypet.bird.id) {
+                toUpdate[key] = req.body[key];
+              }
               break;
             case 'flocks':
               var oldFlocks = birdypet.flocks || [];
