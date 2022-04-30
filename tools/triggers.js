@@ -219,7 +219,7 @@ var Database = require('../api/helpers/database.js');
     'CREATE TRIGGER \`squawk_adjectives_delete\` AFTER DELETE ON squawkdata.\`species_adjectives\` ' +
     'FOR EACH ROW BEGIN ' +
     ' UPDATE adjectives SET numSpecies = (SELECT COUNT(DISTINCT species) FROM species_adjectives WHERE adjective = OLD.adjective AND species IN (SELECT species FROM variants)) WHERE adjective = OLD.adjective; ' +
-    ' REPLACE INTO squawkdata.counters SELECT birdypets.member, "eggs", adjective, COUNT(DISTINCT variants.species) FROM species_adjectives JOIN variants ON (variants.species = species_adjectives.species) JOIN birdypets ON (birdypets.variant = variants.id) WHERE species_adjectives.adjective = OLD.adjective GROUP BY \`member\`, adjective; ' +  
+    ' REPLACE INTO squawkdata.counters SELECT birdypets.member, "eggs", adjective, COUNT(DISTINCT variants.species) FROM species_adjectives JOIN variants ON (variants.species = species_adjectives.species) JOIN birdypets ON (birdypets.variant = variants.id) WHERE species_adjectives.adjective = OLD.adjective AND birdypets.member IS NOT NULL GROUP BY \`member\`, adjective; ' +  
     'END'
   );
 

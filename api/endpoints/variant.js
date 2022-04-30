@@ -50,10 +50,10 @@ module.exports = async (req, res) => {
 
       if (existing) {
         var key = existing.id;
-          await Database.query('UPDATE squawkdata.variants SET source = ?, subspecies = ?, credit = ?, full = ?, special = ?, filetype = ?, label = ? WHERE id = ?', [data.source, data.subspecies, data.credit, data.full, data.special, data.filetype, data.label, key]);
+          await Database.query('UPDATE squawkdata.variants SET source = ?, subspecies = ?, credit = ?, full = ?, special = ?, filetype = ?, label = ? WHERE id = ?', [data.source, data.subspecies, data.credit.trim(), data.full, data.special, data.filetype, data.label, key]);
       } else {
         var key = uuid.generate();
-          await Database.query('INSERT INTO squawkdata.variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())', [key, data.species, data.subspecies, data.label, data.credit, data.source, data.url, data.filetype, data.full, data.special]);
+          await Database.query('INSERT INTO squawkdata.variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())', [key, data.species, data.subspecies, data.label, data.credit.trim(), data.source, data.url, data.filetype, data.full, data.special]);
       }
 
       if (data.url && !data.url.startsWith('https://storage.googleapis.com/squawkoverflow')) {
