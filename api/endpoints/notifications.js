@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
       let promises = [];
 
       for (let notification of notifications) {
-        let data = notification.data;
+        let data = notification.data || {};
 
         if (data.from) {
           data.from = new Member(data.from);

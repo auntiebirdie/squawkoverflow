@@ -144,7 +144,7 @@ module.exports = async (req, res) => {
               });
             } else {
               await Promise.all([
-                Database.query('UPDATE members SET tier = ? WHERE id = ?', [tiers[pledge.id], member.id]),
+                Database.query('UPDATE members SET tier = ? WHERE id = ? AMD tier <= 5', [tiers[pledge.id], member.id]),
                 Database.query('INSERT INTO member_auth VALUES (?, "patreon", ?)', [member.id, response.data.id]),
                 Database.query('INSERT IGNORE INTO member_badges VALUES (?, "patreon", NOW())', [member.id])
               ]);
