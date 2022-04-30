@@ -90,10 +90,10 @@
           case "keep":
             API.call('collect', 'POST', {
                 variant: birdy.getAttribute('data-id'),
+                incubator: <%= page == 'incubate' ? 'true' : 'false' %>,
                 adjective : egg
               },
               function(birdypet) {
-                
                 document.getElementById('birdDisplay').remove();
                 actions.classList.remove('loadingData');
                 actions.innerHTML = `<a class="btn btn-lg btn-light mb-3" href="/birdypet/${birdypet.id}">🐣 View BirdyPet</a>&nbsp;`;

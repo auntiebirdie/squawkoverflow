@@ -6,6 +6,12 @@
     <h3><em>You can hatch another egg in <span><%= timeUntil < 1 ? `${Math.round(timeUntil * 60)} second${Math.round(timeUntil * 60) != 1 ? 's' : ''}` : `${Math.round(timeUntil)} minute${Math.round(timeUntil) != 1 ? 's' : ''}` %></span>.</em></h3>
   </div>
 
+  <% if (member.hasIncubator) { %>
+    <div class="text-center">
+      <p><em>You can hatch special eggs containing specific birds!  Go to the <a href="/hatch/incubator">incubator</a> to view them.</em></p>
+    </div>
+  <% } %>
+
   <div class="row text-center mt-5">
     <div class="col">
       <p><small><em><a href="/faq#tier-limits" target="_blank">Why are there limits and how can I remove them?</a></em></small></p>

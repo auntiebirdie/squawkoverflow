@@ -46,10 +46,26 @@ module.exports = (req, res) => {
         member: member.id
       });
     } else {
-      if (req.body.variant == "iqkTUrXqtN31qnXTtJaVH5") {
-        promises.push(Database.query('INSERT INTO counters VALUES (?, "aprfools", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` + 1', [member.id, new Date().getYear()]));
+      var updateLastHatchedAt = true;
+
+      if (req.body.incubator) {
+        let canIncubate = await Database.count('member_variants', {
+          member: member.id,
+          variant: variant
+        });
+
+        if (canIncubate) {
+          updateLastHatchedAt = false;
+        } else {
+          return res.json({
+            error: "Oops!  You can't incubate that bird!"
+          });
+        }
       }
-      promises.push(Database.query('UPDATE members SET lastHatchAt = NOW() WHERE id = ?', [member.id]));
+
+      if (updateLastHatchedAt) {
+        promises.push(Database.query('UPDATE members SET lastHatchAt = NOW() WHERE id = ?', [member.id]));
+      }
 
       await birdypet.create({
         variant: variant,
