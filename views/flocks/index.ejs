@@ -51,22 +51,23 @@
       Sortable.create(document.getElementById('sortable'), {
         handle: '.draggable',
         onUpdate: function (e) {
-          var item = e.item;
-          var prev = item.previousElementSibling ? (item.previousElementSibling.getAttribute('data-display-order') * 1) : 0;
-          var next = item.nextElementSibling ? (item.nextElementSibling.getAttribute('data-display-order') * 1) : prev + 100;
+          var cards = $('#sortable > div');
+          var displayOrder = 100;
+          var flocks = {};
 
-          var displayOrder = (prev + next) / 2;
+          for (let flock of cards) {
+            flocks[flock.getAttribute('data-id')] = displayOrder;
+            flock.setAttribute('data-display-order', displayOrder);
+            displayOrder += 100;
+          }
 
-          item.setAttribute('data-display-order', displayOrder);
+          $('#sortable').addClass('loadingData');
 
-          item.classList.add('loadingData');
-
-          API.call('flock', 'PUT', {
-             id: item.getAttribute('data-id'),
-             displayOrder : displayOrder
+          API.call('flocks', 'PUT', {
+              flocks: flocks
             },
             function(data) {
-              item.classList.remove('loadingData');
+              $('#sortable').removeClass('loadingData');
             }
           );
         }

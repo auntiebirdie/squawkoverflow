@@ -1,7 +1,5 @@
 const Flock = require('../models/flock.js');
 
-const Redis = require('../helpers/redis.js');
-
 module.exports = async (req, res) => {
   let flock = new Flock(req.query?.id || req.body?.id);
 
