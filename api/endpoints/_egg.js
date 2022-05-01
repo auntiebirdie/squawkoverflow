@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
     image.getBuffer(Jimp[`MIME_PNG`], async (err, buff) => {
       await file.save(buff);
 
-      await Database.query('INSERT INTO member_badges SELECT members.id, "egg-designer", NOW() FROM members JOIN member_auth ON (members.id = member_auth.member) WHERE member_auth.provider = "discord"  AND member_auth.id = ?', [req.body.member]);
+      await Database.query('INSERT IGNORE INTO member_badges SELECT members.id, "egg-designer", NOW() FROM members JOIN member_auth ON (members.id = member_auth.member) WHERE member_auth.provider = "discord"  AND member_auth.id = ?', [req.body.member]);
 
       await Redis.sendCommand('KEYS', ['eggs:*'], (err, results) => {
         for (let result of results) {
