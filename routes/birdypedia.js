@@ -63,7 +63,7 @@ router.get('/eggs/:egg', async (req, res) => {
   });
 });
 
-router.get('/bird/new', Middleware.isAdmin, async (req, res) => {
+router.get('/bird/new', Middleware.isContributor, async (req, res) => {
   var families = await API.call('families', 'GET');
 
   res.render('birdypedia/new', {
@@ -75,7 +75,8 @@ router.get('/bird/new', Middleware.isAdmin, async (req, res) => {
 router.get('/bird/:id/variant/:variant', Middleware.isContributor, async (req, res) => {
   API.call('bird', 'GET', {
     loggedInUser: req.session.user,
-    id: req.params.id
+    id: req.params.id,
+    include: ['variants', 'artist']
   }).then((bird) => {
     if (bird) {
       res.render('birdypedia/variant', {

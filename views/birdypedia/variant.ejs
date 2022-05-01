@@ -10,8 +10,24 @@
       <h5><label for="form-source">Source</label></h5>
       <input type="text" id="form-source" class="form-control mb-3 w-100" value="<%= variant?.source %>">
 
-      <h5><label for="form-credit">Credit</label></h5>
-      <input type="text" id="form-credit" class="form-control mb-3 w-100" value="<%= variant?.credit %>">
+      <div class="row mb-3">
+        <div class="col-6">
+          <h5><label for="form-credit">Credit</label></h5>
+          <input type="text" id="form-credit" class="form-control mb-3 w-100" value="<%= variant?.credit %>">
+        </div>
+        <div class="col-6">
+          <h5><label for="form-member">Member</label></h5>
+          <div id="memberSearch" class="mb-3">
+            <input class="typeahead form-control" type="text">
+          </div>
+
+          <div id="memberDisplay">
+           <% if (variant && variant.artist) { %>
+            <h3><img src="<%= variant.artist.avatar %>" class="rounded" width="75" data-id="<%= variant.artist.id %>" onerror="missingMemberAvatar(this)"> <%= variant.artist.username %></h3>
+           <% } %>
+          </div>
+        </div>
+      </div>
 
       <div class="row mb-3">
         <div class="col-6">
@@ -48,6 +64,8 @@
     </div>
   </div>
 
+  <%- include('../scripts/membersearch.ejs') %>
+
   <script type="text/javascript">
     $(document).ready(function () {
       $('#form-url').on('change', function () {
@@ -67,6 +85,7 @@
               species: '<%= bird.id %>',
               subspecies: $('#form-subspecies').val(),
               credit: $('#form-credit').val(),
+              artist: $('img', '#memberDisplay').attr('data-id'),
               full: $('#form-full').is(':checked'),
               special: $('#form-special').is(':checked'),
               label: $('#form-label').val()

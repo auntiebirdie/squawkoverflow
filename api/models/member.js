@@ -47,7 +47,11 @@ class Member {
       } else {
         var member = await Database.getOne('members', {
           'id': this.id
-        });
+        }).catch((err) => {
+		this.id = null;
+
+		resolve({});
+	});
       }
 
       if (!member) {

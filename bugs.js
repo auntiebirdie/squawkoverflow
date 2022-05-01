@@ -58,6 +58,8 @@ app.post('/', (req, res) => {
         }, {
           bugs: (member.bugs * 1) + 1
         });
+
+        await Database.query('INSERT IGNORE INTO member_badges VALUES (?, "bug", NOW())', [member.id]);
       }
     }
 

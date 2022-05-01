@@ -39,8 +39,8 @@
           let data = {
             search: query,
             bird: $('#memberSearch').attr('data-bird') || "",
-            include: ['birdData'],
-            privacy: ['gifts']
+            <%- locals.include ? `include: ${JSON.stringify(include)},` : "" %>
+            <%- locals.privacy ? `privacy: ${JSON.stringify(privacy)},` : "" %>
           };
 
             API.call('members', 'GET', data, function (results) {

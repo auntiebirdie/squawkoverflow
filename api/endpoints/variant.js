@@ -20,7 +20,9 @@ module.exports = async (req, res) => {
     case "GET":
       let variant = new Variant(req.query.id);
 
-      await variant.fetch();
+      await variant.fetch({
+        include: req.query.include
+      });
 
       res.json(variant);
       break;
@@ -50,10 +52,16 @@ module.exports = async (req, res) => {
 
       if (existing) {
         var key = existing.id;
-          await Database.query('UPDATE squawkdata.variants SET source = ?, subspecies = ?, credit = ?, full = ?, special = ?, filetype = ?, label = ? WHERE id = ?', [data.source, data.subspecies, data.credit.trim(), data.full, data.special, data.filetype, data.label, key]);
+        await Database.query('UPDATE variants SET source = ?, subspecies = ?, credit = ?, full = ?, special = ?, filetype = ?, label = ? WHERE id = ?', [data.source, data.subspecies, data.credit.trim(), data.full, data.special, data.filetype, data.label, key]);
       } else {
         var key = uuid.generate();
-          await Database.query('INSERT INTO squawkdata.variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())', [key, data.species, data.subspecies, data.label, data.credit.trim(), data.source, data.url, data.filetype, data.full, data.special]);
+        await Database.query('INSERT INTO variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())', [key, data.species, data.subspecies, data.label, data.credit.trim(), data.source, data.url, data.filetype, data.full, data.special]);
+      }
+
+      if (data.artist) {
+        await Database.query('INSERT IGNORE INTO member_badges VALUES (?, "artist", NOW())', [data.artist]);
+        await Database.query('DELETE FROM member_variants WHERE variant = ? AND type = "artist"', [key]);
+        await Database.query('INSERT IGNORE INTO member_variants VALUES (?, ?, "artist")', [data.artist, key]);
       }
 
       if (data.url && !data.url.startsWith('https://storage.googleapis.com/squawkoverflow')) {
@@ -140,7 +148,7 @@ module.exports = async (req, res) => {
                     source: variant.image,
                     caption: `<h2>A new variant has been added!</h2><p>${bird.commonName} <i>(${bird.scientificName})</i><br><a href="${data.source}">© ${data.credit}</a></p><p>It hatches from ${variant.bird.adjectives.join(', ')}, and ${lastEgg} eggs.</p><p><a href="https://squawkoverflow.com/">squawkoverflow - the ultimate bird collecting game</a><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;🥚 hatch &nbsp; &nbsp;❤️ collect &nbsp; &nbsp; 🤝 connect</p>`
                   }, function(err, resp) {
-			  console.log(err, resp);
+                    console.log(err, resp);
                     resolve();
                   });
                 });

@@ -16,7 +16,7 @@
     </div>    
   </div>
 
-  <%- include('../scripts/membersearch.ejs') %>
+  <%- include('../scripts/membersearch.ejs', { include : ["birdData"], privacy: ["gifts"] }) %>
 
   <script>
     var modal_giftBirdyPet = new bootstrap.Modal(document.getElementById('modal_giftBirdyPet'));

@@ -1,4 +1,5 @@
 const Member = require('../models/member.js');
+const Database = require('../helpers/database.js');
 const chance = require('chance').Chance();
 
 module.exports = (req, res) => {
@@ -13,7 +14,8 @@ module.exports = (req, res) => {
       promises.push(
         member.set({
           bugs: (member.bugs * 1) + ((req.body.bugs || 1) * 1)
-        })
+        }),
+        req.body.awardBadge ? Database.query('INSERT IGNORE INTO member_badges VALUES (?, "bug", NOW())', [member.id]) : null
       );
     }
 

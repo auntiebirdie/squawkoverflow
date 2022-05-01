@@ -4,13 +4,17 @@ const Member = require('../models/member.js');
 module.exports = async (req, res) => {
   switch (req.method) {
     case "GET":
-      var member = new Member(req.query.id);
+      if (req.query.id) {
+        var member = new Member(req.query.id);
 
-      await member.fetch(req.query).catch((err) => {
-	      console.log(err);
-      });
+        await member.fetch(req.query).catch((err) => {
+          console.log(err);
+        });
 
-      return res.json(member);
+        return res.json(member);
+      } else {
+        return res.json({});
+      }
       break;
     case "PUT":
       var member = new Member(req.body.loggedInUser);

@@ -1,4 +1,5 @@
 const Bird = require('./bird.js');
+const Member = require('./member.js');
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 
@@ -9,7 +10,9 @@ class Variant {
 
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
-      Database.getOne('variants', { id : this.id }).then( async (variant) => {
+      Database.getOne('variants', {
+        id: this.id
+      }).then(async (variant) => {
         for (let key in variant) {
           if (!params.fields || params.fields.includes(key)) {
             this[key] = variant[key];
@@ -21,7 +24,9 @@ class Variant {
         if (!params.bird) {
           bird = new Bird(variant.species);
 
-          await bird.fetch({ include: params.include });
+          await bird.fetch({
+            include: params.include
+          });
 
           this.bird = bird;
         } else {
@@ -32,6 +37,19 @@ class Variant {
 
         if (params.include?.includes('memberData') && params.member) {
           await this.fetchMemberData(params.member);
+        }
+
+        if (params.include?.includes('artist')) {
+          let artist = await Database.getOne('member_variants', {
+            variant: this.id,
+            type: 'artist'
+          });
+
+          if (artist) {
+            this.artist = new Member(artist.member);
+
+            await this.artist.fetch();
+          }
         }
 
         resolve(this);

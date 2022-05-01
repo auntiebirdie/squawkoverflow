@@ -5,10 +5,10 @@
   <div id="form" class="row">
     <div class="col-12 col-md-6 mx-auto">
       <h5><label for="form-commonName" >Common Name</label></h5>
-      <input type="text" id="form-commonName" class="form-control mb-3 w-100" value="<%= locals.bird?.commonName %>" <%= loggedInUser.admin ? '' : 'disabled' %>>
+      <input type="text" id="form-commonName" class="form-control mb-3 w-100" value="<%= locals.bird?.commonName %>">
 
       <h5><label for="form-scientificName">Scientific Name</label></h5>
-      <input type="text" id="form-scientificName" class="form-control mb-3 w-100" value="<%= locals.bird?.scientificName %>" <%= loggedInUser.admin ? '' : 'disabled' %>>
+      <input type="text" id="form-scientificName" class="form-control mb-3 w-100" value="<%= locals.bird?.scientificName %>">
 
       <h5><label for="form-family">Family</label></h5>
       <select id="form-family" class="form-select mb-3">

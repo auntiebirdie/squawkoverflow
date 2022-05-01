@@ -88,6 +88,7 @@ var Database = require('../api/helpers/database.js');
   await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "species"');
   await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "species", variants.species, COUNT(*) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) WHERE birdypets.member IS NOT NULL GROUP BY \`member\`, variants.species');
   await Database.query('REPLACE INTO squawkdata.counters SELECT IFNULL(birdypets.member, "freebirds"), "species", "total", COUNT(DISTINCT variants.species) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) GROUP BY \`member\`');
+  await Database.query('REPLACE INTO squawkdata.counters SELECT "SQUAWK", "species", "total", COUNT(*) FROM species');
 
   await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "family"');
   await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "family", species.family, COUNT(DISTINCT variants.species) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.id) WHERE birdypets.member IS NOT NULL GROUP BY \`member\`, species.family');
