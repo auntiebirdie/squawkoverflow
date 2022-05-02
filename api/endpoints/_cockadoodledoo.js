@@ -31,9 +31,7 @@ module.exports = (req, res) => {
     }
 
     /* Make sure the SQUAWK counters are correct... */
-    await Database.query('UPDATE counters SET `count` = (SELECT COUNT(*) FROM species) WHERE `member` = "SQUAWK"');
-	  await Database.query('REPLACE INTO counters SELECT counters.member, "family", species.family, COUNT(*) total FROM counters JOIN species ON (counters.id = species.id) WHERE type = "birdypedia" GROUP BY counters.member, species.family');
-	  //await Database.query('REPLACE INTO counters SELECT counters.member, "eggs", species_adjectives.adjective, COUNT(*) total FROM counters JOIN species_adjectives ON (counters.id = species_.id) WHERE type = "birdypedia" GROUP BY counters.member, species_adjectives.adjective');
+    await Database.query('UPDATE counters SET `count` = (SELECT COUNT(DISTINCT species.id) FROM species JOIN variants ON (variants.species = species.id)) WHERE `member` = "SQUAWK"');
 
     /* Clean up old data */
     await Database.query('DELETE FROM counters WHERE `member` NOT IN (select id from members)');
