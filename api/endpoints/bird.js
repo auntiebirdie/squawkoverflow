@@ -13,32 +13,34 @@ module.exports = async (req, res) => {
         await bird.fetch({
           include: ['variants', 'adjectives', 'memberData', 'artist'],
           member: req.query.loggedInUser
-        });
+        }).then(async () => {
+          if (req.query.include?.includes('members')) {
+            let promises = [];
 
-        if (req.query.include?.includes('members')) {
-          let promises = [];
+            await Members.all().then((members) => {
+              for (let member of members) {
+                if (!member.settings.privacy_profile) {
+                  promises.push(Counters.get('species', member.id, bird.id).then(async (result) => {
+                    member.owned = result;
+                    member.wishlisted = await Database.count('wishlist', {
+                      member: member.id,
+                      species: bird.id,
+                      intensity: [1, 2]
+                    });
 
-          await Members.all().then((members) => {
-            for (let member of members) {
-              if (!member.settings.privacy_profile) {
-                promises.push(Counters.get('species', member.id, bird.id).then(async (result) => {
-                  member.owned = result;
-                  member.wishlisted = await Database.count('wishlist', {
-                    member: member.id,
-                    species: bird.id,
-                    intensity: [1, 2]
-                  });
-
-                  return member;
-                }));
+                    return member;
+                  }));
+                }
               }
-            }
-          });
+            });
 
-          await Promise.all(promises).then(async (responses) => {
-            bird.members = responses.filter((response) => (response.owned + response.wishlisted) > 0);
-          });
-        }
+            await Promise.all(promises).then(async (responses) => {
+              bird.members = responses.filter((response) => (response.owned + response.wishlisted) > 0);
+            });
+          }
+        }).catch((err) => {
+          bird = null;
+        });
       } else if (req.query.taxonomy) {
         var birds = await Birds.fetch('*', req.query.taxonomy);
 

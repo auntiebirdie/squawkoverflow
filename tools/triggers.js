@@ -18,8 +18,10 @@ var Database = require('../api/helpers/database.js');
     '    INSERT INTO counters VALUES (NEW.member, "aviary", "total", 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
     '    INSERT INTO counters VALUES (NEW.member, "variant", NEW.variant, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
     '    INSERT INTO counters VALUES (NEW.member, "species", v_species, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
+    '    INSERT INTO counters VALUES (NEW.member, "birdypedia", NEW.variant, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\`; ' +
 
     '    IF v_newSpecies = 0 THEN ' +
+    '      INSERT INTO counters VALUES (NEW.member, "birdypedia", v_species, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\`; ' +
     '      INSERT INTO counters VALUES (NEW.member, "family", v_family, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
     '      INSERT INTO counters VALUES (NEW.member, "species", "total", 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
     '      INSERT INTO counters SELECT NEW.member, "eggs", adjective, 1 FROM species_adjectives WHERE species = v_species ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
@@ -59,8 +61,10 @@ var Database = require('../api/helpers/database.js');
 
     '      INSERT INTO counters VALUES (NEW.member, "aviary", "total", 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
     '      INSERT INTO counters VALUES (NEW.member, "species", v_species, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
+    '      INSERT INTO counters VALUES (NEW.member, "birdypedia", NEW.variant, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\`; ' +
 
     '      IF v_newSpecies = 0 THEN ' +
+    '        INSERT INTO counters VALUES (NEW.member, "birdypedia", v_species, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\`; ' +
     '        INSERT INTO counters VALUES (NEW.member, "family", v_family, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
     '        INSERT INTO counters VALUES (NEW.member, "species", "total", 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
     '        INSERT INTO counters SELECT NEW.member, "eggs", adjective, 1 FROM species_adjectives WHERE species = v_species ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
@@ -70,36 +74,9 @@ var Database = require('../api/helpers/database.js');
     '    IF OLD.member IS NOT NULL THEN ' +
     '      INSERT INTO squawkdata.counters VALUES (OLD.member, "aviary", "total", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
     '      INSERT INTO squawkdata.counters VALUES (OLD.member, "species", v_species, 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
-
-    '      SELECT IFNULL(\`count\`, 0) INTO v_newSpecies FROM counters WHERE \`member\` = OLD.member AND type = "species" AND id = v_species; ' +
-
-    '      IF v_newSpecies = 0 THEN ' +
-    '        INSERT INTO counters VALUES (OLD.member, "family", v_family, 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
-    '        INSERT INTO counters VALUES (OLD.member, "species", "total", 0) ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
-    '        INSERT INTO counters SELECT OLD.member, "eggs", adjective, 0 FROM species_adjectives WHERE species = v_species ON DUPLICATE KEY UPDATE \`count\` = \`count\` - 1; ' +
-    '      END IF; ' +
     '    END IF; ' +
     '  END IF; ' +
     'END');
-
-  await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "variant"');
-  await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "variant", birdypets.variant, COUNT(*) FROM birdypets WHERE birdypets.member IS NOT NULL GROUP BY \`member\`, \`variant\`');
-
-  await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "species"');
-  await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "species", variants.species, COUNT(*) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) WHERE birdypets.member IS NOT NULL GROUP BY \`member\`, variants.species');
-  await Database.query('REPLACE INTO squawkdata.counters SELECT IFNULL(birdypets.member, "freebirds"), "species", "total", COUNT(DISTINCT variants.species) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) GROUP BY \`member\`');
-  await Database.query('REPLACE INTO squawkdata.counters SELECT "SQUAWK", "species", "total", COUNT(*) FROM species');
-
-  await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "family"');
-  await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "family", species.family, COUNT(DISTINCT variants.species) FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.id) WHERE birdypets.member IS NOT NULL GROUP BY \`member\`, species.family');
-
-  await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "eggs"');
-  await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "eggs", adjective, COUNT(DISTINCT variants.species) FROM species_adjectives JOIN variants ON (variants.species = species_adjectives.species) JOIN birdypets ON (birdypets.variant = variants.id) WHERE birdypets.member IS NOT NULL GROUP BY \`member\`, adjective');
-
-  await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "friendship", "total", COUNT(*) FROM birdypets WHERE friendship = 100 GROUP BY birdypets.member');
-
-  await Database.query('REPLACE INTO squawkdata.counters SELECT birdypets.member, "aviary", "total", COUNT(*) FROM birdypets WHERE birdypets.member IS NOT NULL GROUP BY birdypets.member');
-
 
   await Database.query('DROP TRIGGER IF EXISTS squawk_exchanges_update');
   await Database.query(
@@ -192,17 +169,11 @@ var Database = require('../api/helpers/database.js');
     ' END IF; ' +
     'END');
 
-    await Database.query('UPDATE squawkdata.counters SET \`count\` = 0 WHERE type = "exchanges"');
-    await Database.query('REPLACE INTO squawkdata.counters SELECT exchanges.memberA, "exchanges", "waitingOnMe", COUNT(*) FROM exchanges WHERE (statusA = 1 AND statusB = 1) OR (statusA = 1 AND statusB = 2) GROUP BY memberA');
-    await Database.query('REPLACE INTO squawkdata.counters SELECT exchanges.memberB, "exchanges", "waitingOnMe", COUNT(*) FROM exchanges WHERE (statusA = 2 AND statusB = 1) OR (statusA = 2 AND statusB = 0) OR (statusA = 1 AND statusB = 0) GROUP BY memberB');
-
-
   await Database.query('DROP TRIGGER IF EXISTS squawk_adjectives_insert');
   await Database.query(
     'CREATE TRIGGER \`squawk_adjectives_insert\` AFTER INSERT ON squawkdata.\`species_adjectives\` ' +
     'FOR EACH ROW BEGIN ' +
     ' UPDATE adjectives SET numSpecies = (SELECT COUNT(DISTINCT species) FROM species_adjectives WHERE adjective = NEW.adjective AND species IN (SELECT species FROM variants)) WHERE adjective = NEW.adjective; ' +
-    ' REPLACE INTO squawkdata.counters SELECT birdypets.member, "eggs", adjective, COUNT(DISTINCT variants.species) FROM species_adjectives JOIN variants ON (variants.species = species_adjectives.species) JOIN birdypets ON (birdypets.variant = variants.id) WHERE species_adjectives.adjective = NEW.adjective AND `member` IS NOT NULL GROUP BY \`member\`, adjective; ' +
     'END'
   );
 
@@ -211,7 +182,6 @@ var Database = require('../api/helpers/database.js');
     'CREATE TRIGGER \`squawk_adjectives_update\` AFTER UPDATE ON squawkdata.\`species_adjectives\` ' +
     'FOR EACH ROW BEGIN ' +
     ' UPDATE adjectives SET numSpecies = (SELECT COUNT(DISTINCT species) FROM species_adjectives WHERE adjective = NEW.adjective AND species IN (SELECT species FROM variants)) WHERE adjective = NEW.adjective; ' +
-    ' REPLACE INTO squawkdata.counters SELECT birdypets.member, "eggs", adjective, COUNT(DISTINCT variants.species) FROM species_adjectives JOIN variants ON (variants.species = species_adjectives.species) JOIN birdypets ON (birdypets.variant = variants.id) WHERE species_adjectives.adjective = NEW.adjective AND `member` IS NOT NULL GROUP BY \`member\`, adjective; ' +
     'END'
   );
 
@@ -220,7 +190,6 @@ var Database = require('../api/helpers/database.js');
     'CREATE TRIGGER \`squawk_adjectives_delete\` AFTER DELETE ON squawkdata.\`species_adjectives\` ' +
     'FOR EACH ROW BEGIN ' +
     ' UPDATE adjectives SET numSpecies = (SELECT COUNT(DISTINCT species) FROM species_adjectives WHERE adjective = OLD.adjective AND species IN (SELECT species FROM variants)) WHERE adjective = OLD.adjective; ' +
-    ' REPLACE INTO squawkdata.counters SELECT birdypets.member, "eggs", adjective, COUNT(DISTINCT variants.species) FROM species_adjectives JOIN variants ON (variants.species = species_adjectives.species) JOIN birdypets ON (birdypets.variant = variants.id) WHERE species_adjectives.adjective = OLD.adjective AND birdypets.member IS NOT NULL GROUP BY \`member\`, adjective; ' +  
     'END'
   );
 

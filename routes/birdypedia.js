@@ -95,7 +95,7 @@ router.get('/bird/:id', async (req, res) => {
     id: req.params.id,
     include: ['members']
   }).then(async (bird) => {
-    if (bird && bird.variants.length > 0) {
+    if (bird && bird.variants?.length > 0) {
       let eggs = [];
 
       if (req.session.user && (res.locals.loggedInUser.admin || res.locals.loggedInUser.contributor)) {
@@ -106,7 +106,7 @@ router.get('/bird/:id', async (req, res) => {
         title: `${bird.commonName} | Birdypedia`,
         page: 'birdypedia/bird',
         bird: bird,
-        variant: bird.variants.find((variant) => variant.id == req.query.variant) || bird.variants.find((variant) => variant.hatched) || bird.variants[0],
+        variant: bird.variants.find((variant) => variant.id == req.query.variant) || bird.variants.find((variant) => !variant.special) || bird.variants[0],
         sidebar: 'bird',
         eggs: eggs
       });

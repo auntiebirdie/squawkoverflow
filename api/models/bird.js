@@ -44,6 +44,10 @@ class Bird {
           });
         }
 
+        if (!result) {
+		return reject();
+        }
+
         for (let key in result) {
           if (!params.fields || params.fields.includes(key)) {
             this[key] = result[key];
@@ -98,6 +102,7 @@ class Bird {
         species: this.id
       }).then((wishlist) => wishlist ? wishlist.intensity : 0);
       this.owned = await Counters.get('species', memberId, this.id);
+      this.discovered = await Counters.get('birdypedia', memberId, this.id);
 
       resolve({
         wishlisted: this.wishlisted,

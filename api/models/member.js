@@ -22,7 +22,8 @@ class Member {
         tier: data.tier || 0,
         serverMember: data.serverMember || false,
         joinedAt: new Date(),
-        lastLoginAt: new Date()
+        lastLoginAt: new Date(),
+        lastActivityAt: new Date()
       }).then(() => {
         Database.create('member_auth', {
           member: id,
@@ -48,10 +49,10 @@ class Member {
         var member = await Database.getOne('members', {
           'id': this.id
         }).catch((err) => {
-		this.id = null;
+          this.id = null;
 
-		resolve({});
-	});
+          resolve({});
+        });
       }
 
       if (!member) {
@@ -158,10 +159,6 @@ class Member {
           break;
         }
       }
-
-      let inactiveMonths = new Date().setMonth(new Date().getMonth() - 3);
-
-      this.active = true; //member.lastLogin > inactiveMonths || member.lastHatchedAt > inactiveMonths;
 
       let promises = [];
 

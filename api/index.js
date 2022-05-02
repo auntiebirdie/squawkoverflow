@@ -14,6 +14,12 @@ exports.api = (req, res) => {
       data[key] = JSON.parse(data[key]);
     }
 
+    if (req.method == "POST" && data.loggedInUser) {
+      const Database = require('./helpers/database.js');
+
+      Database.query('UPDATE members SET lastActivityAt = NOW() WHERE id = ?', [data.loggedInUser]);
+    }
+
     req.logger.info({
       req: {
         method: req.method,

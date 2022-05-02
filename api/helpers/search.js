@@ -32,6 +32,7 @@ class Search {
           break;
         case 'member':
           query += 'members.id FROM members LEFT JOIN counters ON (counters.member = members.id AND counters.type = "aviary" AND counters.id = "total")';
+		      filters.push('member.lastActivityAt > DATE_SUB(NOW(), INTERVAL 6 MONTH)');
           break;
         case 'wishlist':
           query += 'species.id FROM species JOIN wishlist ON (species.id = wishlist.species AND wishlist.member = ? AND wishlist.intensity > 0)';
