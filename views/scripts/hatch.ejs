@@ -41,11 +41,8 @@
         var h5 = hatched.querySelector('h5');
         var text = "";
 
-        if (bird.owned > 1) {
-          text += `<div><span class="checkplus"></span> <em>You have more than one of this species</em></div>`;
-        }
-        else if (bird.owned == 1) {
-          text += `<div><span class="checkmark"></span> <em>You have this species</em></div>`;
+        if (bird.discovered) {
+          text += `<div><span class="checkmark"></span> <em>You have collected this species (${bird.owned} in aviary)</em></div>`;
         }
 
         if (bird.wishlisted) {
