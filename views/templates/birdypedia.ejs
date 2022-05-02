@@ -14,11 +14,11 @@
        <% } %>
       </div>
       <div class="h100">
-        <div class="bg-white lazy birdypet ${model.variants.find((variant) => variant.hatched) ? "hatched" : "unhatched"} checkmark${model.owned >= 2 ? 2 : model.owned}"
-               data-bg="${model.variants.find((variant) => variant.hatched)?.image || model.variants[0].image}"
+        <div class="bg-white lazy birdypet checkmark${model.owned >= 2 ? 2 : model.owned} ${model.discovered ? 'hatched' : 'unhatched'}"
+               data-bg="${model.variants[0].image}"
         ></div>
         <h6 class="p-1 bg-white birdypets text-center">
-          ${model.variants.length > 1 ? model.variants.map(function (variant) { return '<div class="lazy birdypet mini ' + (variant.hatched ? "hatched" : "unhatched") + ' checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" data-bg="' + variant.image + '"></div>'; }).join("") : '<div class="birdypet mini disabled"></div>'}
+          ${model.variants.length > 1 ? model.variants.map(function (variant) { return '<div class="lazy birdypet mini ' + (model.discovered ? "hatched" : "unhatched") + ' checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" data-bg="' + variant.image + '"></div>'; }).join("") : '<div class="birdypet mini disabled"></div>'}
         </h6>
        </div>
        <div class="card-body">

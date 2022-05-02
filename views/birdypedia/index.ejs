@@ -17,12 +17,6 @@
       var variant = event.target;
       var full = variant.parentNode.parentNode.parentNode.querySelector('.birdypet');
       full.style.backgroundImage = variant.style.backgroundImage;
-      if (variant.className.includes('unhatched')) {
-        $(full).removeClass('hatched').addClass('unhatched');
-      }
-      else {
-        $(full).removeClass('unhatched').addClass('hatched');
-      }
     });
   </script>
 <%- include('../footer.ejs') %>

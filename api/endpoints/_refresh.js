@@ -43,6 +43,9 @@ module.exports = async (req, res) => {
                 serverMember: false
               });
             }
+
+            promises.push(Database.query('REPLACE INTO counters SELECT counters.member, "eggs" type, species_adjectives.adjective id, COUNT(DISTINCT species) total FROM counters JOIN species_adjectives ON (counters.id = species_adjectives.species) WHERE `member` = ? AND type = "birdypedia" GROUP BY species_adjectives.adjective', [siteMember.member]));
+            promises.push(Database.query('REPLACE INTO counters SELECT counters.member, "family", species.family, COUNT(*) total FROM counters JOIN species ON (counters.id = species.id) WHERE `member` = ? AND type = "birdypedia" GROUP BY species.family', [siteMember.member]));
           }
 
           Promise.allSettled(promises).then(resolve);

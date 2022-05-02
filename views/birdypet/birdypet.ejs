@@ -51,7 +51,7 @@
               <div class="row mb-3">
                 <div class="col-3 col-md-2 text-center">
                   <div class="d-inline-block p-1 <%= birdypet.variant.id == variant.id ? 'border border-1 border-primary' : '' %>">
-                    <div class="m-0 birdypet mini <%= variant.hatched ? "hatched" : "unhatched" %> checkmark<%= variant.hatched >= 2 ? 2 : variant.hatched %>" data-id="<%= variant.id %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" style="background-image: url('<%= variant.image %>');"></div>
+                    <div class="m-0 birdypet mini checkmark<%= variant.hatched >= 2 ? 2 : variant.hatched %>" data-id="<%= variant.id %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" style="background-image: url('<%= variant.image %>');"></div>
                   </div>
                 </div>
                 <div class="col-9 small">
