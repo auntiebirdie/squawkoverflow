@@ -41,25 +41,29 @@
 
   <script type="text/javascript">
     $(document).ready(function () {
-      $('input[name="progressDisplay"]').on('change', function () {
-        let display = $('input[name="progressDisplay"]:checked').val();
-
-        sessionStorage.setItem('progressDisplay', display);
-
-        $('.progress-bar').each((i, bar) => {
-          switch (display) {
-            case 'percent':
-               bar.innerHTML = Math.floor(bar.getAttribute('aria-valuenow') / bar.getAttribute('aria-valuemax') * 100) + '%';
-               break;
-            case 'fraction':
-              bar.innerHTML = bar.getAttribute('aria-valuenow') + '/' + bar.getAttribute('aria-valuemax') ;
-              break;
-          }
-        });
-      });
+      $('input[name="progressDisplay"]').on('change', updateDisplay);
 
       $('input[name="progressDisplay"][value="' + (sessionStorage.getItem('progressDisplay') || 'percent') + '"]').click();
+
+      updateDisplay();
     });
+
+    function updateDisplay () {
+      let display = $('input[name="progressDisplay"]:checked').val();
+
+      sessionStorage.setItem('progressDisplay', display);
+
+      $('.progress-bar').each((i, bar) => {
+        switch (display) {
+          case 'percent':
+             bar.innerHTML = Math.floor(bar.getAttribute('aria-valuenow') / bar.getAttribute('aria-valuemax') * 100) + '%';
+             break;
+          case 'fraction':
+            bar.innerHTML = bar.getAttribute('aria-valuenow') + '/' + bar.getAttribute('aria-valuemax') ;
+            break;
+        }
+      });
+    }
   </script>
  
 <%- include('../footer.ejs') %>

@@ -67,7 +67,7 @@ class Variant {
       }
 
       this.hatched = await Counters.get('variant', memberId, this.id);
-      this.discovered = this.special ? await Counterse.get('birdypedia', memberId, this.id) : null;
+      this.discovered = this.special ? await Counters.get('birdypedia', memberId, this.id) : null;
 
       resolve(this);
     });

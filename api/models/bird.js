@@ -44,6 +44,10 @@ class Bird {
           });
         }
 
+        if (!result) {
+		return reject();
+        }
+
         for (let key in result) {
           if (!params.fields || params.fields.includes(key)) {
             this[key] = result[key];

@@ -97,6 +97,13 @@
         urlParams.set('variant', variant.getAttribute('data-id'));
 
         window.history.replaceState(null, '', window.location.pathname + '?' + urlParams.toString());
+
+        if (variant.className.includes('unhatched')) {
+          $(full).removeClass('hatched').addClass('unhatched');
+        }
+        else {
+          $(full).removeClass('unhatched').addClass('hatched');
+        }
       });
     });
   </script>
