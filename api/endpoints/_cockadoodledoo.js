@@ -33,9 +33,6 @@ module.exports = (req, res) => {
     /* Make sure the SQUAWK counters are correct... */
     await Database.query('UPDATE counters SET `count` = (SELECT COUNT(DISTINCT species.id) FROM species JOIN variants ON (variants.species = species.id)) WHERE `member` = "SQUAWK"');
 
-    /* Clean up old data */
-    await Database.query('DELETE FROM counters WHERE `member` NOT IN (select id from members)');
-
     resolve();
   }).then(() => {
     return res.sendStatus(200);
