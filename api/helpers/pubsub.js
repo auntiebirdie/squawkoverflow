@@ -68,57 +68,8 @@ exports.receive = function(message, context) {
                 }
               });
             }));
-
-            promises.push(Database.getOne('adjectives', {
-              adjective: data.adjective
-            }).then((egg) => {
-              Webhook('birdwatching', {
-                content: " ",
-                embeds: [{
-                  title: variant.bird.commonName,
-                  description: `<@${member.auth.find((auth) => auth.provider == 'discord').id}> hatched the ${data.adjective} egg!`,
-                  url: `https://squawkoverflow.com/birdypet/${data.birdypet}`,
-                  image: {
-                    url: variant.image
-                  },
-                  thumbnail: {
-                    url: `https://storage.googleapis.com/squawkoverflow/${ egg.icon || 'eggs/D/default.png' }`
-                  }
-                }]
-              })
-            }));
-          } else if (data.freebird) {
-            Webhook('birdwatching', {
-              content: " ",
-              embeds: [{
-                title: variant.bird.commonName,
-                description: `<@${member.auth.find((auth) => auth.provider == 'discord').id}> excitedly adds a new bird to ${member.preferredPronoun.cases.determiner} aviary!`,
-                url: `https://squawkoverflow.com/birdypet/${data.birdypet}`,
-                image: {
-                  url: variant.image
-                },
-                thumbnail: {
-                  url: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/282/hatching-chick_1f423.png'
-                }
-              }]
-            });
-          } else if (data.wishlist) {
-            Webhook('birdwatching', {
-              content: " ",
-              embeds: [{
-                title: variant.bird.commonName,
-                description: `<@${member.auth.find((auth) => auth.provider == 'discord').id}> attracted a beloved bird with a bug!`,
-                url: `https://squawkoverflow.com/birdypet/${birdypet.id}`,
-                image: {
-                  url: variant.image
-                },
-                thumbnail: {
-                  url: Chance.pickone(require('./data/bugs.json'))
-                }
-              }]
-            });
           } else if (data.birthday) {
-            Webhook('birdwatching', {
+            Webhook('squawkchat', {
               content: " ",
               embeds: [{
                 title: variant.bird.commonName,

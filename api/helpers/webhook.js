@@ -4,10 +4,6 @@ const secrets = require('../secrets.json');
 module.exports = function(webhook, data) {
   webhook = process.env.NODE_ENV == 'PROD' ? webhook : 'testing';
 
-if (webhook == "birdwatching") {
-	return true;
-}
-
   return new Promise((resolve, reject) => {
     const req = https.request(`https://discord.com/api/webhooks/${secrets.DISCORD.WEBHOOK[webhook].ID}/${secrets.DISCORD.WEBHOOK[webhook].TOKEN}`, {
         method: 'POST',
