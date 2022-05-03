@@ -166,7 +166,7 @@ module.exports = (req, res) => {
                         member: exchange.memberB
                       }));
 
-                      //promises.push(Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?)', [birdypet.id, "exchanged", exchange.memberA]));
+                      promises.push(Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?)', [birdypet.id, "exchanged", exchange.memberA]));
                     }
 
                     for (let birdypet of exchange.birdypetsB) {
@@ -174,7 +174,7 @@ module.exports = (req, res) => {
                         member: exchange.memberA
                       }));
 
-                      //promises.push(Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?)', [birdypet.id, "exchanged", exchange.memberB]));
+                      promises.push(Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?)', [birdypet.id, "exchanged", exchange.memberB]));
                     }
 
                     promises.push(Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, 'The offer was accepted by both parties!']));

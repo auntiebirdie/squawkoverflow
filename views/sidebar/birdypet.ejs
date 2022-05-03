@@ -8,18 +8,28 @@
           <% } %>
         <% } %>
 
+        <p>
+          <button data-bs-toggle="modal"
+             data-bs-target="#modal"
+             data-id="<%= birdypet.id %>"
+             data-modal-title="<%= birdypet.nickname || birdypet.bird.commonName %>'s BirdStory"
+             class="btn btn-light">
+            📖 BirdStory
+          </button>
+        </p>
+
         <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
-            <p><a id="makeBirdyBuddy" class="btn btn-light <%= member.birdyBuddy == birdypet.id ? 'disabled' : '' %>">💖 Make Birdy Buddy</a></p>
-            <p>
-              <button data-bs-toggle="modal"
-                 data-bs-target="#modal_giftBirdyPet"
-                 data-bird="<%= birdypet.bird.id %>"i
-                 data-id="<%= birdypet.id %>"
-                 class="btn btn-light">
-                🎁 Gift to Someone
-              </button>
-            </p>
-            <p><a href="/birdypet/release/<%= birdypet.id %>" class="btn btn-light">👋 Release Bird</a></p>
+          <p><a id="makeBirdyBuddy" class="btn btn-light <%= member.birdyBuddy == birdypet.id ? 'disabled' : '' %>">💖 Make Birdy Buddy</a></p>
+          <p>
+            <button data-bs-toggle="modal"
+               data-bs-target="#modal_giftBirdyPet"
+               data-bird="<%= birdypet.bird.id %>"i
+               data-id="<%= birdypet.id %>"
+               class="btn btn-light">
+              🎁 Gift to Someone
+            </button>
+          </p>
+          <p><a href="/birdypet/release/<%= birdypet.id %>" class="btn btn-light">👋 Release Bird</a></p>
         <% } %>
         </div>
 

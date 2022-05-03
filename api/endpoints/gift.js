@@ -45,7 +45,7 @@ module.exports = async (req, res) => {
           });
         }
 
-        //promises.push(Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?)', [this.id, "gifted", fromMember.id]));
+        promises.push(Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?)', [this.id, "gifted", fromMember.id]));
 
         promises.push(Database.create('notifications', {
           id: Database.key(),
