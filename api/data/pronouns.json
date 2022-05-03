@@ -85,5 +85,16 @@
       "possessive": "rei's",
       "reflexive": "remself"
     }
+  },
+  "ne": {
+    "label": "ne/nem",
+    "pronouny": "https://pronouny.xyz/pronouns/593c1626975dfa1000d4ec9b",
+    "cases": {
+      "subject": "ne",
+      "object": "nem",
+      "determiner": "nir",
+      "possessive": "nirs",
+      "reflexive": "nemself"
+    }
   }
 }

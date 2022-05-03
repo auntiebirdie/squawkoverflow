@@ -4,7 +4,7 @@
     var content = "";
 
     if (currentPage > 2) {
-      content += `<li class="page-item"><a class="page-link" role="button">1</a></li>`;
+      content += `<li class="page-item"><a class="page-link" <%- locals.linkTo ? `href="${linkTo}?page=1"` : '' %> role="button">1</a></li>`;
     }
 
     if (currentPage > 3) {
@@ -20,7 +20,7 @@
     }
 
     if (currentPage < totalPages - 1) {
-      content += `<li class="page-item"><a class="page-link" role="button">${totalPages}</a></li>`;
+      content += `<li class="page-item"><a class="page-link" <%- locals.linkTo ? `href="${linkTo}?page=\$\{totalPages\}"` : '' %> role="button">${totalPages}</a></li>`;
     }
 
     for (let pagination of paginations) {

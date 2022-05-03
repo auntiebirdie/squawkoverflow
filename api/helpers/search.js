@@ -32,7 +32,6 @@ class Search {
           break;
         case 'member':
           query += 'members.id FROM members LEFT JOIN counters ON (counters.member = members.id AND counters.type = "aviary" AND counters.id = "total")';
-		      filters.push('members.lastActivityAt > DATE_SUB(NOW(), INTERVAL 6 MONTH)');
           break;
         case 'wishlist':
           query += 'species.id FROM species JOIN wishlist ON (species.id = wishlist.species AND wishlist.member = ? AND wishlist.intensity > 0)';
@@ -164,6 +163,9 @@ class Search {
               filters.push('birdypets.id NOT IN (SELECT birdypet FROM exchange_birdypets WHERE exchange = ?)');
               params.push(input.exchangeData);
               break;
+            case 'active':
+              filters.push('members.lastActivityAt > DATE_SUB(NOW(), INTERVAL 6 MONTH)');
+              break;
           }
         }
 
@@ -220,7 +222,7 @@ class Search {
           query += 'members.joinedAt';
           break;
         case 'activeAt':
-          query += 'GREATEST(members.lastLoginAt, members.lastHatchAt)';
+          query += 'members.lastActivityAt';
           break;
         case 'username':
           query += 'members.username';

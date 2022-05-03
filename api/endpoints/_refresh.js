@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
                 serverMember: true
               });
             } else {
-              promises.push(Database.query('DELETE FROM member_badges WHERE member = ? AND badge = "discord"', [siteMember.member]));
+              promises.push(Database.query('DELETE FROM member_badges WHERE `member` = ? AND badge = "discord"', [siteMember.member]));
 
               Database.set('members', {
                 id: siteMember.member
