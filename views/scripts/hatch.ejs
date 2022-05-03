@@ -64,6 +64,8 @@
         hatched.classList.remove('d-none');
 
         lazyLoadInstance.update();
+      }, function (err) {
+        window.location.href = window.location.href;
       });
     });
 
@@ -96,6 +98,9 @@
                 actions.innerHTML = `<a class="btn btn-lg btn-light mb-3" href="/birdypet/${birdypet.id}">🐣 View BirdyPet</a>&nbsp;`;
                 actions.innerHTML += `<a class="btn btn-lg btn-light mb-3" href="/hatch">🥚 Hatch Another Egg</a>&nbsp;`;
                 actions.innerHTML += `<a class="btn btn-lg btn-light mb-3" data-bs-toggle="modal" data-bs-target="#modal_editBirdyPet" data-id="${birdypet.id}" role="button">✏️ Quick Edit</a>`;
+              },
+              function (err) {
+                window.location.href = window.location.href;
               }
             );
             break;

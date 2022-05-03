@@ -45,7 +45,7 @@ module.exports = async (req, res) => {
               params.push(eventEggs);
             };
 
-		  query += ')';
+            query += ')';
           }
 
           query += ' ORDER BY RAND() LIMIT 6';
@@ -55,9 +55,9 @@ module.exports = async (req, res) => {
           for (let egg of eggs) {
             egg.isEvent = eventEggs.includes(egg.adjective) && !member.settings.general_removeEvent;
 
-		  if (egg.isEvent) {
-			  egg.icon = 'eggs/special/easter.png';
-		  }
+            if (egg.isEvent) {
+              egg.icon = 'eggs/special/easter.png';
+            }
 
             if (member.tier?.extraInsights) {
               egg.numHatched = await Counters.get('eggs', member.id, egg.adjective);
@@ -74,15 +74,12 @@ module.exports = async (req, res) => {
 
       await member.fetch();
 
-      var today = new Date();
-      var isAprFools = (today.getMonth() + '-' + today.getDate()) == '3-1';
+      let timeUntil = member.tier.eggTimer ? (Date.now() - new Date(member.lastHatchAt).getTime()) / 60000 : 0;
 
-      if (isAprFools && await Counters.get('aprfools', member.id, today.getYear()) < 3) {
-        var isEventEgg = true;
-        var hatched = {
-          species: 'Psittacosaurus mongoliensis',
-          id: 'iqkTUrXqtN31qnXTtJaVH5'
-        };
+      if (timeUntil < member.tier.eggTimer) {
+        timeUntil = member.tier.eggTimer - timeUntil;
+
+        return res.status(403).send('You can hatch another egg in ' + (timeUntil < 1 ? (Math.round(timeUntil * 60) + ' second' + (Math.round(timeUntil * 60) != 1 ? 's' : '')) : (Math.round(timeUntil) + ' minute' + (Math.round(timeUntil) != 1 ? 's' : ''))) + '.');
       } else {
         var isEventEgg = eventEggs.includes(req.body.egg) && chance.bool() && !member.settings.general_removeEvent;
 
@@ -91,21 +88,21 @@ module.exports = async (req, res) => {
         } else {
           var hatched = await Database.query('SELECT species FROM species_adjectives WHERE adjective = ? AND species IN (SELECT species FROM variants) ORDER BY RAND() LIMIT 1', [req.body.egg]);
         }
-      }
 
-      if (hatched) {
-        var bird = new Bird(hatched.species);
+        if (hatched) {
+          var bird = new Bird(hatched.species);
 
-        await bird.fetch({
-          member: member.id,
-          include: ['memberData', 'variants']
-        });
+          await bird.fetch({
+            member: member.id,
+            include: ['memberData', 'variants']
+          });
 
-        bird.variants = bird.variants.filter((variant) => isEventEgg ? variant.id == hatched.id : !variant.special);
+          bird.variants = bird.variants.filter((variant) => isEventEgg ? variant.id == hatched.id : !variant.special);
 
-        return res.status(200).json(bird);
-      } else {
-        return res.sendStatus(404);
+          return res.status(200).json(bird);
+        } else {
+          return res.sendStatus(404);
+        }
       }
       break;
     default:
