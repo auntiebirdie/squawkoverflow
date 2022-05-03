@@ -11,3 +11,8 @@
     --bs-secondary: #DDF600;
     --bs-primary: #444D00;
 }
+
+a:not(.btn):hover,
+.nav-menu a:hover, .nav-menu .active, .nav-menu .active:focus, .nav-menu li:hover>a {
+	color: var(--bs-light) !important;
+}
