@@ -96,5 +96,16 @@
       "possessive": "nirs",
       "reflexive": "nemself"
     }
+  },
+  "star": {
+    "label": "star/stars",
+    "pronouny": "https://pronouny.xyz/pronouns/5dd039d39afb87001581f952",
+    "cases": {
+      "subject": "star",
+      "object": "star",
+      "determiner": "stars",
+      "possessive": "stars",
+      "reflexive": "starself"
+    }
   }
 }
