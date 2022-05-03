@@ -61,6 +61,14 @@ module.exports = (req, res) => {
             error: "Oops!  You can't incubate that bird!"
           });
         }
+      } else {
+        let timeUntil = member.tier.eggTimer ? (Date.now() - new Date(member.lastHatchAt).getTime()) / 60000 : 0;
+
+        if (timeUntil < member.tier.eggTimer) {
+          timeUntil = member.tier.eggTimer - timeUntil;
+
+          return resolve(res.status(403).send('You can hatch another egg in ' + (timeUntil < 1 ? (Math.round(timeUntil * 60) + ' second' + (Math.round(timeUntil * 60) != 1 ? 's' : '')) : (Math.round(timeUntil) + ' minute' + (Math.round(timeUntil) != 1 ? 's' : ''))) + '.'));
+        }
       }
 
       if (updateLastHatchedAt) {
