@@ -39,6 +39,8 @@
           let data = {
             search: query,
             bird: $('#memberSearch').attr('data-bird') || "",
+            filters: ['active'],
+            sort: 'activeAt',
             <%- locals.include ? `include: ${JSON.stringify(include)},` : "" %>
             <%- locals.privacy ? `privacy: ${JSON.stringify(privacy)},` : "" %>
           };
@@ -59,7 +61,7 @@
             }
           } catch (err) { console.log(err); }
 
-          asyncResults(results);
+          asyncResults(results.sort((a, b) => a.wishlisted == b.wishlisted ? a.owned - b.owned : b.wishlisted - a.wishlisted));
         });
       },
       limit: Infinity,

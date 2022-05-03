@@ -76,10 +76,9 @@
 
     $(actions).on('click', '[data-action]', function (e) {
       var button = e.currentTarget;
+      var action = button.getAttribute('data-action');
 
-      if (!button.style.opacity && !button.disabled) { 
-        var action = button.getAttribute('data-action');
-
+      if (!button.style.opacity && !button.disabled && (action != "gift" || selectedMember)) { 
         actions.classList.add('loadingData');
         actions.innerHTML = "";
 
