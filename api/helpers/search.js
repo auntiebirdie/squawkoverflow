@@ -45,20 +45,20 @@ class Search {
         if (exactMatch) {
           input.search = exactMatch[1];
         } else {
-          input.search = input.search.replace(/\s/g, '* ') + '*';
+          input.search = '("' + input.search + '")';
         }
 
         if (kind == 'member') {
           filters.push(exactMatch ? 'members.username = ?' : 'MATCH(members.username) AGAINST (? IN BOOLEAN MODE)');
           params.push(input.search);
         } else if (kind == 'birdypet') {
-          filters.push(exactMatch ? 'birdypets.nickname = ? OR species.commonName = ? OR species.scientificName = ?' : '(MATCH(birdypets.nickname) AGAINST (? IN BOOLEAN MODE) OR MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE))');
+          filters.push(exactMatch ? '(birdypets.nickname = ? OR species.commonName = ? OR species.scientificName = ?)' : '(MATCH(birdypets.nickname) AGAINST (? IN BOOLEAN MODE) OR MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE))');
           if (exactMatch) {
             params.push(input.search);
           }
           params.push(input.search, input.search);
         } else {
-          filters.push(exactMatch ? 'species.commonName = ? OR species.scientificName = ?' : 'MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)');
+          filters.push(exactMatch ? '(species.commonName = ? OR species.scientificName = ?)' : 'MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)');
           if (exactMatch) {
             params.push(input.search);
           }
@@ -256,8 +256,6 @@ class Search {
       }
 
       query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC');
-
-	    console.log(query, params);
 
       Database.query(query, params).then((birds) => {
         var totalPages = birds.length;

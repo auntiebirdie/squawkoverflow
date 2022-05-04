@@ -49,7 +49,10 @@ module.exports = async (req, res) => {
       var member = new Member(req.body.loggedInUser);
 
       await Promise.all([
-        birdypet.fetch(),
+        birdypet.fetch({
+          include: ['memberData'],
+          member: member.id
+        }),
         member.fetch()
       ]);
 

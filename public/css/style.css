@@ -214,6 +214,14 @@ img {
   #main {
     padding-right: 0;
   }
+
+  .mobile-sidebar-active {
+    /* overflow: hidden; */
+  }
+
+  .mobile-sidebar-active #sidebar {
+    right: 0;
+  }
 }
 
 @media (max-width: 1199px) {
@@ -223,6 +231,14 @@ img {
 
   #main, #footer {
     padding-left: 0;
+  }
+
+  .mobile-nav-active {
+    /* overflow: hidden; */
+  }
+
+  .mobile-nav-active #navbar {
+    left: 0;
   }
 }
 
@@ -311,19 +327,6 @@ img {
   left: auto;
 }
 
-.mobile-nav-active,
-.mobile-sidebar-active {
-  overflow: hidden;
-}
-
-.mobile-nav-active #navbar {
-  left: 0;
-}
-
-.mobile-sidebar-active #sidebar {
-  right: 0;
-}
-
 #home-banner {
   position: relative;
   height: 600px;
@@ -392,6 +395,7 @@ img {
   margin-bottom: 20px;
   padding-bottom: 10px;
   position: relative;
+  word-break: break-word;
 }
 
 .page-title h1::after {
@@ -424,7 +428,8 @@ img {
 }
 
 .card-body {
-	background: var(--bs-light);
+  background: var(--bs-light);
+  word-break: break-word;
 }
 
 .card .birdypets {
