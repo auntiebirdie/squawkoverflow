@@ -12,7 +12,11 @@
       </div>
      <% } %>
       <img id="birdy" src="<%= variant.image %>" class="birdypet full <%= bird.discovered ? "hatched" : "unhatched" %>">
-      <a class="attribution bg-light" href="<%= variant.source %>" target="_blank" rel="noopener">&copy; <%= variant.credit %></a>
+      <a class="attribution bg-light" href="<%= variant.source %>" target="_blank" rel="noopener">
+     <% if (variant.source != "n/a") { %>
+        &copy; <%= variant.credit %>
+     <% } %>
+      </a>
     </span>
   </div>
 
@@ -92,7 +96,12 @@
         full.src = variant.getAttribute('data-image');
 
         attribution.href = variant.getAttribute('data-source');
-        attribution.innerHTML = `&copy; ${variant.getAttribute('data-credit')}`;
+        if (attribution.href != "n/a") {
+          attribution.innerHTML = `&copy; ${variant.getAttribute('data-credit')}`;
+        }
+        else {
+          attribution.innerHTML = "";
+        }
 
         urlParams.set('variant', variant.getAttribute('data-id'));
 

@@ -123,6 +123,33 @@
             $('input, textarea', container).attr('disabled', false);
           });
         }
+
+        function modalTemplate (model) {
+          let html = "";
+
+          switch (model.what) {
+            case "hatched":
+              html += `🐣 Hatched by `;
+              break;
+            case "collected":
+              html += `❤️  Collected by `;
+              break;
+            case "gifted":
+              html += `🎁 Gifted by `;
+              break;
+            case "exchanged":
+              html += `🤝 Exchanged with `;
+              break;
+          }
+
+          try {
+            html += `<a href="/members/${model.who.id}">${model.who.username}</a>`;
+          } catch (err) {
+            html += 'someone';
+          }
+
+          return `<div>${html}</div>`;
+        }
       </script>
 
       <%- include('../partials/giftModal.ejs') %>

@@ -2,10 +2,23 @@
 
   <%- include('../partials/page-title.ejs', { title : bird.commonName, subtitle : variant ? 'Edit Variant' : 'Upload New Variant' }) %>
 
-  <div id="form" class="row">
+  <form id="form" class="row">
     <div class="col-12 col-md-8 mb-4">
-      <h5><label for="form-url" >Image URL</label></h5>
-      <input type="text" id="form-url" class="form-control mb-3 w-100" value="<%= variant?.image %>">
+      <div class="row mb-3">
+        <div class="col-6">
+          <h5><label for="form-image" >Image</label></h5>
+          <input type="text" id="form-image" class="form-control mb-3 w-100"> 
+        </div>
+        <div class="col-6">
+          <h5><label for="form-license">License</label></h5>
+          <select id="form-license" class="form-select">
+            <option value="">(n/a)</option>
+           <% for (let license of ["CC BY-SA 3.0", "PD-US-expired"]) { %>
+            <option <%= variant?.license == license ? "selected" : "" %>><%= license %></option>
+           <% } %>
+          </select>
+        </div>
+      </div>
 
       <h5><label for="form-source">Source</label></h5>
       <input type="text" id="form-source" class="form-control mb-3 w-100" value="<%= variant?.source %>">
@@ -62,14 +75,29 @@
     <div class="col-12 text-center">
       <a id="submitVariant" class="btn btn-dark"><%= variant ? 'Update' : 'Upload' %></a>
     </div>
-  </div>
+  </form>
 
   <%- include('../scripts/membersearch.ejs', { include : ['self'] }) %>
 
   <script type="text/javascript">
     $(document).ready(function () {
-      $('#form-url').on('change', function () {
-        $('#form-preview').attr('src', $('#form-url').val());
+      var reader = new FileReader();
+
+      $('#form-image').on('change', function () {
+/*
+        if(this.files[0].size > 1048576){
+          alert("Please limit files to 1MB or less (emphasis on less)");
+          this.value = "";
+        }
+        else {
+          reader.onload = function() {
+            $('#form-preview').attr('src', reader.result);
+          }
+
+          reader.readAsDataURL(event.target.files[0]);
+        }
+*/
+        $('#form-preview').attr('src', $('#form-image').val());
       });
 
       $('#submitVariant').on('click', function () {
@@ -80,8 +108,9 @@
 
           API.call('variant', 'POST', {
               <%- variant ? `id: "${variant.id}",` : '' %>
-              url: $('#form-url').val(),
+              image: $('#form-image').val(),
               source: $('#form-source').val(),
+              license: $('#form-license').val(),
               species: '<%= bird.id %>',
               subspecies: $('#form-subspecies').val(),
               credit: $('#form-credit').val(),

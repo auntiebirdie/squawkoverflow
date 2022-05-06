@@ -4,7 +4,7 @@ const Redis = require('../helpers/redis.js');
 module.exports = (req, res) => {
   Redis.zrange('families', '-inf', '+inf', 'BYSCORE', (err, results) => {
     if (results.length == 0) {
-      Database.query('SELECT name, display, (SELECT COUNT(*) FROM species WHERE family = taxonomy.name AND id IN (SELECT species FROM variants)) AS total FROM taxonomy WHERE type = "family" ORDER BY name').then((results) => {
+      Database.query('SELECT name, display, (SELECT COUNT(*) FROM species WHERE family = taxonomy.name) AS total FROM taxonomy WHERE type = "family" ORDER BY name').then((results) => {
         let promises = [];
 
         for (let i = 0, len = results.length; i < len; i++) {

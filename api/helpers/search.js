@@ -14,7 +14,7 @@ class Search {
 
       switch (kind) {
         case 'bird':
-          query += 'DISTINCT species.id FROM species JOIN variants ON (species.id = variants.species AND variants.special = 0)';
+          query += 'DISTINCT species.id FROM species';
           filters.push('species.id IN (SELECT species FROM variants)');
           break;
         case 'birdypet':

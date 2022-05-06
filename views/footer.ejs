@@ -54,9 +54,13 @@
         data = {};
       }
 
-      data.format = "html";
+      API.call(button.getAttribute('data-modal-endpoint'), 'GET', data, (results) => {
+        var html = "";
 
-      API.call(button.getAttribute('data-modal-endpoint'), 'GET', data, (html) => {
+        for (let i = 0, len = results.length; i < len; i++) {
+          html += modalTemplate(results[i]);
+        }
+
         $('.modal-body', this).html(html);
       });
     });

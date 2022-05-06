@@ -7,6 +7,7 @@
 
 * {
   box-sizing: border-box;
+  word-break: break-word;
 }
 
 body {
@@ -215,10 +216,6 @@ img {
     padding-right: 0;
   }
 
-  .mobile-sidebar-active {
-    /* overflow: hidden; */
-  }
-
   .mobile-sidebar-active #sidebar {
     right: 0;
   }
@@ -231,10 +228,6 @@ img {
 
   #main, #footer {
     padding-left: 0;
-  }
-
-  .mobile-nav-active {
-    /* overflow: hidden; */
   }
 
   .mobile-nav-active #navbar {
@@ -395,7 +388,6 @@ img {
   margin-bottom: 20px;
   padding-bottom: 10px;
   position: relative;
-  word-break: break-word;
 }
 
 .page-title h1::after {
@@ -429,7 +421,6 @@ img {
 
 .card-body {
   background: var(--bs-light);
-  word-break: break-word;
 }
 
 .card .birdypets {

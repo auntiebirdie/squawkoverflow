@@ -117,7 +117,7 @@ module.exports = async (req, res) => {
         return res.sendStatus(403);
       }
       break;
-      defualt:
+      default:
         return res.sendStatus(405);
   }
 };
