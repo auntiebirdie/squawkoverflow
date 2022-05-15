@@ -1,0 +1,25 @@
+<div class="col-6 col-md-4 d-flex align-items-stretch">
+  <div class="w-100 pb-3 px-2">
+    <div class="h-100 card">
+      <div class="birdypet-actions">
+       <button class="btn btn-sm btn-light"
+           data-bs-toggle="modal"
+           data-bs-target="#modal_giftBirdyPet"
+           data-bird="${model.bird.id}"
+           data-id="${model.id}"
+           role="button">
+          🎁
+       </button>
+      </div>
+      <div class="h-100">
+        <div class="bg-white lazy birdypet"
+               data-bg="${model.image}"
+        ></div>
+       </div>
+       <div class="card-body">
+        <h3 class="text-center">${model.bird.commonName}</h3>
+        <h6 class="text-center"><em>${model.bird.scientificName}</em></h6>
+      </div>
+    </div>
+  </div>
+</div>

@@ -21,6 +21,11 @@
          <% if (egg.isEvent) { %>
           <h6 class="small">🎉 This egg can hatch a special event bird!</h6>
          <% } %>
+         <% if (egg.isNeeded) { %>
+          <h6 class="small">🌟 This egg can hatch a bird you need!</h6>
+         <% } else if (egg.isWanted) { %>
+          <h6 class="small">❤️ This egg can hatch a bird you want!</h6>
+         <% } %>
         </div>
         <% } %>
       <% } else if (loggedInUser.settings.general_removeCompleted) { %>

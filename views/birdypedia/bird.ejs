@@ -2,7 +2,20 @@
 
   <%- include('../partials/page-title.ejs', { title : bird.commonName, subtitle : bird.scientificName }) %>
 
-  <div class="text-center mb-4">
+  <% var licenses = {
+       "CC0" : "https://creativecommons.org/publicdomain/zero/1.0/",
+       "CC-BY 1.0" : "https://creativecommons.org/licenses/by/1.0/",
+       "CC-BY 2.0" : "https://creativecommons.org/licenses/by/2.0/",
+       "CC-BY 3.0" : "https://creativecommons.org/licenses/by/3.0/",
+       "CC-BY 4.0" : "https://creativecommons.org/licenses/by/4.0/",
+       "CC-BY-SA 1.0" : "https://creativecommons.org/licenses/by-sa/1.0/",
+       "CC-BY-SA 2.0" : "https://creativecommons.org/licenses/by-sa/2.0/",
+       "CC-BY-SA 3.0" : "https://creativecommons.org/licenses/by-sa/3.0/",
+       "CC-BY-SA 4.0" : "https://creativecommons.org/licenses/by-sa/4.0/"
+     }
+  %>
+
+  <div class="text-center mb-4 position-relative">
     <span class="h-100 d-inline-block position-relative">
      <% if (locals.loggedInUser) { %>
       <div class="birdypet-actions">
@@ -12,11 +25,23 @@
       </div>
      <% } %>
       <img id="birdy" src="<%= variant.image %>" class="birdypet full <%= bird.discovered ? "hatched" : "unhatched" %>">
-      <a class="attribution bg-light" href="<%= variant.source %>" target="_blank" rel="noopener">
+    </span>
+    <br>
+    <span id="attribution" class="bg-light d-inline-block mt-2 px-2 py-1 small" style="display: <%= variant.source == "n/a" ? "none" : "inline-block" %>">
      <% if (variant.source != "n/a") { %>
-        &copy; <%= variant.credit %>
-     <% } %>
+      &copy;
+
+      <a id="attribution-license" class="small mt-1" href="<%= licenses[variant.license] %>" target="_blank" rel="noopener" style="display: <%= variant.license ? "inline-block" : "none" %>">
+        <%= variant.license %>
       </a>
+
+      <a id="attribution-credit" class="small" href="<%= variant.source %>" target="_blank" rel="noopener">
+        <%= variant.credit %>
+      </a>
+
+      <span id="attribution-notes" class="bg-dark rounded-circle px-2 ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="<%= variant.notes %>" style="display: <%= variant.notes ? "inline-block" : "none" %>">ℹ</span>
+
+     <% } %>
     </span>
   </div>
 
@@ -91,16 +116,40 @@
       $('#birdDisplay').on('click', '.birdypet.mini', function (event) {
         var variant = event.target;
         var full = document.getElementById('birdy');
-        var attribution = document.querySelector('.attribution');
+        var attribution = document.getElementById('attribution');
+        var credit = document.getElementById('attribution-credit');
+        var license = document.getElementById('attribution-license');
+        var notes = document.getElementById('attribution-notes');
+
+        var licenses = <%- JSON.stringify(licenses) %>;
 
         full.src = variant.getAttribute('data-image');
 
-        attribution.href = variant.getAttribute('data-source');
-        if (attribution.href != "n/a") {
-          attribution.innerHTML = `&copy; ${variant.getAttribute('data-credit')}`;
+        if (variant.getAttribute('data-source').startsWith('http')) {
+          attribution.style.display = "inline-block";
+          credit.href = variant.getAttribute('data-source');
+          credit.innerHTML = variant.getAttribute('data-credit');
+
+          if (variant.getAttribute('data-license')) {
+            license.style.display = "inline-block";
+            license.href = licenses[variant.getAttribute('data-license')];
+            license.innerHTML = variant.getAttribute('data-license');
+          }
+          else {
+            license.style.display = "none";
+          }
+
+          if (variant.getAttribute('data-notes') && variant.getAttribute('data-notes') != "null") {
+            notes.style.display = "inline-block";
+            notes.setAttribute('title', decodeURIComponent(variant.getAttribute('data-notes')));
+            tooltipList.forEach((tooltip) => tooltip.update());
+          }
+          else {
+            notes.style.display = "none";
+          }
         }
         else {
-          attribution.innerHTML = "";
+          attribution.style.display = "none";
         }
 
         urlParams.set('variant', variant.getAttribute('data-id'));
@@ -117,4 +166,5 @@
     });
   </script>
 
+<%- include('../scripts/tooltips.ejs') %>
 <%- include('../footer.ejs') %>

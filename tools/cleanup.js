@@ -5,7 +5,7 @@ var Database = require('../api/helpers/database.js');
 
   await Database.query('DROP TRIGGER IF EXISTS squawk_birdypets_update');
 
-  var birdypets = await Database.query('SELECT birdypets.id FROM birdypets JOIN variants AS original ON (birdypets.variant = original.id) WHERE original.source = "n/a" AND original.species IN (SELECT species FROM variants WHERE species = original.species AND id != original.id) ORDER BY birdypets.variant LIMIT 500');
+  var birdypets = await Database.query('SELECT birdypets.id FROM birdypets JOIN variants AS original ON (birdypets.variant = original.id) WHERE original.source = "n/a" AND original.species IN (SELECT species FROM variants WHERE species = original.species AND id != original.id) AND original.species IN (SELECT id FROM species WHERE family LIKE ?)', [process.argv[2] + '%']);
 
   for (let birdypet of birdypets) {
     console.log('Migrating ' + birdypet.id);

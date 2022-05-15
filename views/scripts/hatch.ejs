@@ -12,14 +12,9 @@
 
       eggs.classList.add('loadingData');
 
-      API.call('<%= page == 'incubate' ? 'incubate' : 'hatch' %>', 'POST', { egg : egg }, function (data) {
-       <% if (page == 'hatch') { %>
+      API.call('hatch', 'POST', { egg : egg }, function (data) {
         bird = data;
         hatched.querySelector('h1').innerHTML = hatched.querySelector('h1').innerHTML.replace('%adjective%', egg);
-       <% } else { %>
-         bird = data.bird;
-         bird.variants = [data];
-       <% } %>
 
         birdy.setAttribute('data-src', bird.variants[0].image);
         birdy.setAttribute('data-id', bird.variants[0].id);
@@ -88,7 +83,7 @@
           case "keep":
             API.call('collect', 'POST', {
                 variant: birdy.getAttribute('data-id'),
-                incubator: <%= page == 'incubate' ? 'true' : 'false' %>,
+                incubator: false,
                 adjective : egg
               },
               function(birdypet) {

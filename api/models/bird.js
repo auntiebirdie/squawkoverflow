@@ -45,7 +45,7 @@ class Bird {
         }
 
         if (!result) {
-		return reject();
+          return reject();
         }
 
         for (let key in result) {
@@ -75,7 +75,21 @@ class Bird {
             artist: params.artist
           });
 
-          this.variants.sort((a, b) => ((a.full ? -1 : 1) || (a.subspecies || "").localeCompare(b.subspecies) || (a.label || "").localeCompare(b.label) || (a.credit || "").localeCompare(b.credit)));
+          this.variants.sort((a, b) => {
+            if (a.full != b.full) {
+              return a.full ? -1 : 1;
+            } else if (a.style != b.style) {
+              return a.style == 1 ? -1 : 1;
+            } else if (a.credit != b.credit) {
+              return (a.credit || "").localeCompare(b.credit);
+            } else if (a.subspecies != b.subspecies) {
+              return (a.subspecies || "").localeCompare(b.subspecies);
+            } else if (a.label != b.label) {
+              return (a.label || "").localeCompare(b.label);
+            } else {
+              return 0;
+            }
+          });
         }
 
         if (params.include?.includes('adjectives')) {

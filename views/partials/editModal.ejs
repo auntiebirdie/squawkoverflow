@@ -53,14 +53,9 @@
             $('input[name="flocks"][value="' + flock + '"]').prop('checked', true);
           }
 
-          if (!birdypet.variant.special) {
-            $('.birdypets', modal_editBirdyPet._element).html(birdypet.bird.variants.filter((variant) => !variant.special).map(function (variant) { return '<div data-id="' + variant.id + '" class="' + (variant.id == birdypet.variant.id ? 'border border-4 border-primary' : '') + ' lazy birdypet mini checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" data-bg="' + variant.image + '"></div>'; }).join(""));
+            $('.birdypets', modal_editBirdyPet._element).html(birdypet.bird.variants.map(function (variant) { return '<div data-id="' + variant.id + '" class="' + (variant.id == birdypet.variant.id ? 'border border-4 border-primary' : '') + ' lazy birdypet mini checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" data-bg="' + variant.image + '"></div>'; }).join(""));
 
             lazyLoadInstance.update();
-          }
-          else {
-            $('.birdypets', modal_editBirdyPet._element).html('');
-          }
 
           $('.btn-success', modal_editBirdyPet._element).removeClass('disabled').attr('data-id', button.getAttribute('data-id'));
           $('.modal-body', modal_editBirdyPet._element).removeClass('loadingData');

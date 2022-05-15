@@ -3,6 +3,7 @@ const Birds = require('../collections/birds.js');
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 const Members = require('../collections/members.js');
+const Variant = require('../models/variant.js');
 
 module.exports = async (req, res) => {
   switch (req.method) {
@@ -65,6 +66,7 @@ module.exports = async (req, res) => {
       var bird = new Bird();
 
       await bird.create(req.body);
+
 
       res.json(bird.id);
       break;

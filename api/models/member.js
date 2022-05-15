@@ -353,6 +353,7 @@ class Member {
       promises.push(Database.query('DELETE FROM flocks WHERE `member` = ?', [this.id]));
       promises.push(Database.query('DELETE FROM exchange_birdypets WHERE exchange IN (SELECT id FROM exchanges WHERE `memberA` = ? OR `memberB` = ?)', [this.id, this.id]));
       promises.push(Database.query('DELETE FROM wishlist WHERE `member` = ?', [this.id]));
+      promises.push(Database.query('DELETE FROM notifications WHERE `member` = ? OR JSON_EXTRACT(data, "$.from") = ?', [this.id]));
 
       Promise.all(promises).then(async () => {
         await Database.query('UPDATE birdypets SET `member` = NULL, friendship = 0 WHERE `member` = ?', [this.id]);

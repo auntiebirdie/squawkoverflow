@@ -15,7 +15,7 @@
       </div>
       <div class="h100">
         <div class="bg-white lazy birdypet checkmark${model.owned >= 2 ? 2 : model.owned} ${model.discovered ? 'hatched' : 'unhatched'}"
-               data-bg="${model.variants.find((variant) => !variant.special).image}"
+               data-bg="${model.variants[0].image}"
         ></div>
         <h6 class="p-1 bg-white birdypets text-center">
           ${model.variants.length > 1 ? model.variants.filter((variant) => !variant.special).map((variant) => '<div class="lazy birdypet mini ' + (model.discovered ? "hatched" : "unhatched") + ' checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" data-bg="' + variant.image + '"></div>').join("") : '<div class="birdypet mini disabled"></div>'}

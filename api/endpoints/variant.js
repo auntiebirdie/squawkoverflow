@@ -56,7 +56,7 @@ module.exports = async (req, res) => {
 
           await bird.fetch();
 
-          data.filetype = data.image.split('.').pop().split('?').shift(); //data.filetype = data.image.split(';')[0].split('/')[1];
+          data.filetype = data.image.split('.').pop().split('?').shift().toLowerCase(); //data.filetype = data.image.split(';')[0].split('/')[1];
 
           let file = bucket.file(`birds/${key.slice(0, 1)}/${key.slice(0, 2)}/${key}.${data.filetype}`);
 
@@ -85,9 +85,9 @@ module.exports = async (req, res) => {
         }
       }).then(async () => {
         if (existing) {
-          await Database.query('UPDATE variants SET source = ?, subspecies = ?, credit = ?, license = ?, full = ?, special = ?, filetype = ?, label = ? WHERE id = ?', [data.source, data.subspecies, data.credit?.trim(), data.license, data.full, data.special, data.filetype || existing.filetype, data.label, key]);
+          await Database.query('UPDATE variants SET source = ?, subspecies = ?, credit = ?, license = ?, notes = ?, full = ?, special = ?, filetype = ?, style = ?, label = ? WHERE id = ?', [data.source, data.subspecies, data.credit?.trim(), data.license, data.notes, data.full, data.special, data.filetype || existing.filetype, data.style, data.label, key]);
         } else {
-          await Database.query('INSERT INTO variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())', [key, data.species, data.subspecies, data.label, data.credit?.trim(), data.source, data.license, data.filetype, data.full, data.special]);
+          await Database.query('INSERT INTO variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())', [key, data.species, data.subspecies, data.label, data.credit?.trim(), data.source, data.license, data.notes, data.filetype, data.style, data.full, data.special]);
         }
 
         let variant = new Variant(key);
@@ -95,6 +95,26 @@ module.exports = async (req, res) => {
         await variant.fetch({
           include: ['adjectives']
         });
+
+        /* Temporary migration automation */
+
+        var birdypets = await Database.query('SELECT birdypets.id FROM birdypets JOIN variants AS original ON (birdypets.variant = original.id) WHERE original.source = "n/a" AND original.species IN (SELECT species FROM variants WHERE species = original.species AND source != "n/a")');
+        var promises = [];
+
+        for (let birdypet of birdypets) {
+          promises.push(Database.query('UPDATE birdypets JOIN variants AS original ON (birdypets.variant = original.id) SET variant = COALESCE((SELECT id FROM variants WHERE source != "n/a" AND species = original.species LIMIT 1), birdypets.variant) WHERE birdypets.id = ?', [birdypet.id]));
+        }
+
+        await Promise.all(promises);
+
+        var duplicates = await Database.query('SELECT id FROM variants WHERE source ="n/a" AND species IN (SELECT species FROM variants WHERE source != "n/a") AND id NOT IN (SELECT variant FROM birdypets)');
+	promises = [];
+
+        for (let variant of duplicates) {
+          promises.push(Database.query('DELETE FROM variants WHERE id = ?', [variant.id]));
+        }
+
+        await Promise.all(promises);
 
         if (!existing && !variant.special) {
           let fields = [];

@@ -14,8 +14,7 @@ class Search {
 
       switch (kind) {
         case 'bird':
-          query += 'DISTINCT species.id FROM species';
-          filters.push('species.id IN (SELECT species FROM variants)');
+          query += 'DISTINCT species.id FROM species JOIN variants ON (species.id = variants.species)';
           break;
         case 'birdypet':
           query += 'birdypets.id FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.id)';
@@ -29,6 +28,11 @@ class Search {
         case 'freebird':
           query += 'birdypets.id, birdypets.variant, birdypets.nickname FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.id)';
           filters.push('birdypets.member IS NULL AND birdypets.addedAt <= DATE_SUB(NOW(), INTERVAL 10 MINUTE)');
+          break;
+        case 'incubator':
+          query += 'variants.id FROM variants JOIN member_variants ON (variants.id = member_variants.variant) JOIN species ON (variants.species = species.id)';
+          filters.push('member_variants.member = ?');
+          params.push(input.loggedInUser);
           break;
         case 'member':
           query += 'members.id FROM members LEFT JOIN counters ON (counters.member = members.id AND counters.type = "aviary" AND counters.id = "total")';
@@ -228,6 +232,8 @@ class Search {
             query += 'birdypets.addedAt';
           } else if (kind == 'wishlist') {
             query += 'wishlist.addedAt';
+          } else if (kind == 'incubator') {
+            query += 'variants.addedAt';
           }
           break;
         case 'joinedAt':
@@ -250,6 +256,8 @@ class Search {
             query += 'birdypets.addedAt';
           } else if (kind == 'member') {
             query += 'members.username';
+          } else if (kind == 'incubator') {
+            query += 'variants.addedAt';
           } else {
             query += 'species.commonName';
           }

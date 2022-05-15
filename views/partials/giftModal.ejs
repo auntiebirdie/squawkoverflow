@@ -23,7 +23,11 @@
 
     $('#modal_giftBirdyPet').on('show.bs.modal', function (event) {
       $('#memberSearch').attr('data-bird', event.relatedTarget.getAttribute('data-bird'));
+     <% if (locals.page == 'incubator') { %>
+      $('#memberSearch').attr('data-variant', event.relatedTarget.getAttribute('data-id'));
+     <% } else { %>
       $('#memberSearch').attr('data-birdypet', event.relatedTarget.getAttribute('data-id'));
+     <% } %>
 
       switch ("<%= locals.page %>") {
         case "aviary":
@@ -52,7 +56,11 @@
 
         API.call('gift', 'POST', {
           member: $('img', '#memberDisplay').attr('data-id'),
+         <% if (locals.page == 'incubator') { %>
+          variant : $('#memberSearch').attr('data-variant')
+         <% } else { %>
           birdypet: $('#memberSearch').attr('data-birdypet')
+         <% } %>
         }, () => {
           switch ("<%= locals.page %>") {
             case "birdypet":

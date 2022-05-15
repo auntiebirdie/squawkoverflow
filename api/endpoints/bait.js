@@ -21,7 +21,7 @@ module.exports = (req, res) => {
       promises.push(Database.query('INSERT INTO counters VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE count = 1', [member.id, 'bait', "", 1]));
 
       let birdypet = new BirdyPet();
-      let variant = await Database.query('SELECT variants.id, variants.species FROM variants JOIN wishlist ON (variants.species = wishlist.species) WHERE wishlist.member = ? AND special = 0 ORDER BY wishlist.intensity DESC, RAND() LIMIT 1', [member.id]);
+      let variant = await Database.query('SELECT variants.id, variants.species FROM variants JOIN wishlist ON (variants.species = wishlist.species) WHERE wishlist.member = ? AND wishlist.intensity > 0 ORDER BY wishlist.intensity DESC, RAND() LIMIT 1', [member.id]);
 
       await birdypet.create({
         variant: variant.id,

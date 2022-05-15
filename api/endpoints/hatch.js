@@ -62,7 +62,29 @@ module.exports = async (req, res) => {
             if (member.tier?.extraInsights) {
               egg.numHatched = await Counters.get('eggs', member.id, egg.adjective);
             }
-          };
+
+            egg.isNeeded = await Database.count('wishlist', {
+              member: member.id,
+              intensity: 1,
+              species: {
+                comparator: 'IN',
+                value_trusted: '(SELECT species FROM species_adjectives WHERE adjective = ?)',
+                value: egg.adjective
+              }
+            });
+
+            if (egg.isNeeded == 0) {
+              egg.isWanted = await Database.count('wishlist', {
+                member: member.id,
+                intensity: 2,
+                species: {
+                  comparator: 'IN',
+                  value_trusted: '(SELECT species FROM species_adjectives WHERE adjective = ?)',
+                  value: egg.adjective
+                }
+              });
+            }
+          }
 
           return res.status(200).json(eggs);
         }

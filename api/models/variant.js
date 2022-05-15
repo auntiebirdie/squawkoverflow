@@ -39,34 +39,102 @@ class Variant {
             case "Acanthizidae":
             case "Acrocephalidae":
             case "Aegithalidae":
+            case "Aegithinidae":
             case "Aegothelidae":
             case "Alaudidae":
             case "Alcedinidae":
             case "Alcidae":
             case "Alcippeidae":
+            case "Anatidae":
+            case "Anhingidae":
+            case "Apodidae":
+            case "Ardeidae":
+            case "Balaenicipitidae":
+            case "Bucconidae":
+            case "Bucerotidae":
+            case "Capitonidae":
+            case "Caprimulgidae":
+            case "Cardinalidae":
+            case "Casuariidae":
             case "Cathartidae":
+            case "Charadriidae":
+            case "Ciconiidae":
             case "Coliidae":
             case "Columbidae":
             case "Corvidae":
+            case "Cuculidae":
             case "Diomedeidae":
             case "Falconidae":
             case "Falcunculidae":
+            case "Fregatidae":
+            case "Galbulidae":
+            case "Gruidae":
+            case "Haematopodidae":
+            case "Hydrobatidae":
             case "Laniidae":
             case "Laridae":
+            case "Lybiidae":
+            case "Maluridae":
+            case "Meropidae":
             case "Momotidae":
+            case "Monarchidae":
+            case "Musophagidae":
+            case "Nectariniidae":
+            case "Oceanitidae":
+            case "Odontophoridae":
             case "Oriolidae":
+            case "Otididae":
+            case "Pachycephalidae":
+            case "Paradisaeidae":
+            case "Paradoxornithidae":
+            case "Paridae":
+            case "Parulidae":
+            case "Passerellidae":
+            case "Passeridae":
+            case "Pellorneidae":
+            case "Petroicidae":
+            case "Phaethontidae":
+            case "Phalacrocoracidae":
             case "Phasianidae":
+            case "Phylloscopidae":
+            case "Picidae":
+            case "Pipridae":
+            case "Pittidae":
+            case "Platysteiridae":
+            case "Ploceidae":
+            case "Pluvianidae":
+            case "Podargidae":
+            case "Podicipedidae":
+            case "Polioptilidae":
+            case "Procellariidae":
+            case "Psittacidae":
             case "Psittaculidae":
+            case "Pteroclidae":
+            case "Ptilonorhynchidae":
+            case "Pycnonotidae":
+            case "Rallidae":
+            case "Ramphastidae":
+            case "Rhinocryptidae":
+            case "Rhipiduridae":
             case "Sagittariidae":
+            case "Sarothruridae":
+            case "Scolopacidae":
             case "Scopidae":
+            case "Sittidae":
             case "Spheniscidae":
-            case "Threskiomithidae":
+            case "Strigidae":
+            case "Sturnidae":
+            case "Sylviidae":
+            case "Thamnophilidae":
+            case "Thraupidae":
+            case "Threskiornithidae":
             case "Timaliidae":
             case "Tinamidae":
             case "Tityridae":
             case "Todidae":
             case "Trochilidae":
             case "Troglodytidae":
+            case "Trogonidae":
             case "Turdidae":
             case "Turnicidae":
             case "Tyrannidae":

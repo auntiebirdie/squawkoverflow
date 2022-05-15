@@ -49,18 +49,19 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/incubator', (req, res) => {
-  API.call('incubate', 'GET', {
-    loggedInUser: req.session.user
-  }).then((eggs) => {
-    API.call('member', 'GET', {
-      id: req.session.user,
-      include: ['hasIncubator', 'flocks']
-    }).then((member) => {
-      return res.render('hatch/incubator', {
-        title: 'Incubator',
-        eggs: eggs,
-        member: member
-      });
+  API.call('member', 'GET', {
+    id: req.session.user,
+    include: ['hasIncubator', 'flocks']
+  }).then(async (member) => {
+    return res.render('hatch/incubator', {
+      title: 'Incubator',
+      page: 'incubator',
+      member: member,
+      allFamilies: await API.call('families', 'GET'),
+      families: await API.call('incubate', 'HEAD', { loggedInUser : req.session.user }),
+      currentPage: (req.query.page || 1) * 1,
+      sidebar: 'filters',
+      sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'addedAt-ASC', 'addedAt-DESC'],
     });
   });
 });

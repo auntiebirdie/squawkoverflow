@@ -2,31 +2,14 @@
 
   <%- include('../partials/page-title.ejs', { title : "Incubator" }) %>
 
-  <div id="eggs" class="incubator">
-    <div class="row text-center mb-5 align-items-center">
-      <% if (eggs.length > 0) { %>
-        <% for (var egg of eggs) { %>
-        <div class="col-6 col-md-4 col-lg-2 mb-3">
-          <a data-egg="<%= egg.id %>" class="mb-2" role="button">
-            <h3>
-              <img src="<%= egg.image %>" class="p-5 rounded-circle">
-            </h3>
-          </a>
-          <h4><%= egg.bird.commonName %></h4>
-          <h6><%= egg.label %></h6>
-        </div>
-        <% } %>
-      <% } %>
-    </div>
-  </div>
+  <%- include('../partials/pagination.ejs') %>
 
-  <div id="hatched" class="d-none">
-    <%- include('../partials/hatch.ejs') %>
-  </div>
+  <div id="lazyLoader" class="row g-0" data-endpoint="incubate"></div>
 
-  <%- include('../scripts/hatch.ejs', { page : 'incubate' }) %>
-  <%- include('../scripts/membersearch.ejs', { privacy: ['gifts'], include: ['birdData'] }) %>
+  <%- include('../partials/pagination.ejs') %>
 
-  <%- include('../partials/editModal.ejs') %>
+  <%- include('../scripts/lazyloader.ejs', { template: '../templates/incubator.ejs', paginate: currentPage }) %>
+
+  <%- include('../partials/giftModal.ejs', { selectedMember : null }) %>
 
 <%- include('../footer.ejs') %>

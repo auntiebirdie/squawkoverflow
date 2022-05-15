@@ -1,8 +1,6 @@
 var Database = require('../api/helpers/database.js');
 
 (async () => {
-  await Database.query('DROP TRIGGER IF EXISTS squawk_birdypets_update');
-
   var birdypets = await Database.query('SELECT birdypets.id FROM birdypets JOIN variants AS original ON (birdypets.variant = original.id) WHERE original.source = "n/a" AND original.species IN (SELECT species FROM variants WHERE species = original.species AND source != "n/a")');
   var promises = [];
 
