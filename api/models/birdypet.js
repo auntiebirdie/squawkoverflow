@@ -41,11 +41,11 @@ class BirdyPet {
             await member.fetch();
 
             if (member.settings.general_updateWishlistWANT) {
-              promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 1', [variant.bird.id, member.id]));
+              await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 1', [variant.bird.id, member.id]);
             }
 
             if (member.settings.general_updateWishlistNEED) {
-              promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 2', [variant.bird.id, member.id]));
+              await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 2', [variant.bird.id, member.id]);
             }
 
             //await Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?, NOW())', [this.id, "hatched", member.id]);

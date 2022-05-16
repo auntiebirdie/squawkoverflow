@@ -65,7 +65,7 @@ module.exports = async (req, res) => {
 
             egg.isNeeded = await Database.count('wishlist', {
               member: member.id,
-              intensity: 1,
+              intensity: 2,
               species: {
                 comparator: 'IN',
                 value_trusted: '(SELECT species FROM species_adjectives WHERE adjective = ?)',
@@ -76,7 +76,7 @@ module.exports = async (req, res) => {
             if (egg.isNeeded == 0) {
               egg.isWanted = await Database.count('wishlist', {
                 member: member.id,
-                intensity: 2,
+                intensity: 1,
                 species: {
                   comparator: 'IN',
                   value_trusted: '(SELECT species FROM species_adjectives WHERE adjective = ?)',

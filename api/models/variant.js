@@ -48,7 +48,9 @@ class Variant {
             case "Anatidae":
             case "Anhingidae":
             case "Apodidae":
+		  case "Apterygidae":
             case "Ardeidae":
+		  case "Artamidae":
             case "Balaenicipitidae":
             case "Bucconidae":
             case "Bucerotidae":

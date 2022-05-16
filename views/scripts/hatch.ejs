@@ -83,7 +83,6 @@
           case "keep":
             API.call('collect', 'POST', {
                 variant: birdy.getAttribute('data-id'),
-                incubator: false,
                 adjective : egg
               },
               function(birdypet) {
@@ -94,7 +93,7 @@
                 actions.innerHTML += `<a class="btn btn-lg btn-light mb-3" data-bs-toggle="modal" data-bs-target="#modal_editBirdyPet" data-id="${birdypet.id}" role="button">✏️ Quick Edit</a>`;
               },
               function (err) {
-                window.location.href = window.location.href;
+                setTimeout(function () { window.location.href = window.location.href; }, 2500);
               }
             );
             break;

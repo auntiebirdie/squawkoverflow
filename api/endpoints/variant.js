@@ -72,7 +72,7 @@ module.exports = async (req, res) => {
             }
 
             await image
-              .autocrop()
+              //.autocrop()
               .quality(90)
               .getBuffer(Jimp[`MIME_${mimes[data.filetype]}`], async (err, buff) => {
                 await file.save(buff);
