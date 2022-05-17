@@ -50,6 +50,12 @@ module.exports = async (req, res) => {
         await Database.query('INSERT IGNORE INTO member_variants VALUES (?, ?, "artist")', [data.artist, key]);
       }
 
+      if (!data.credit || data.credit?.trim() == "") {
+        data.credit = "Unknown";
+      }
+
+      data.credit = data.credit.trim();
+
       await new Promise(async (resolve, reject) => {
         if (data.image) {
           let bird = new Bird(data.species);
@@ -72,7 +78,6 @@ module.exports = async (req, res) => {
             }
 
             await image
-              //.autocrop()
               .quality(90)
               .getBuffer(Jimp[`MIME_${mimes[data.filetype]}`], async (err, buff) => {
                 await file.save(buff);
@@ -85,10 +90,20 @@ module.exports = async (req, res) => {
         }
       }).then(async () => {
         if (existing) {
-          await Database.query('UPDATE variants SET source = ?, subspecies = ?, credit = ?, license = ?, notes = ?, full = ?, special = ?, filetype = ?, style = ?, label = ? WHERE id = ?', [data.source, data.subspecies, data.credit?.trim(), data.license, data.notes, data.full, data.special, data.filetype || existing.filetype, data.style, data.label, key]);
+          await Database.query('UPDATE variants SET source = ?, subspecies = ?, credit = ?, license = ?, notes = ?, full = ?, special = ?, filetype = ?, style = ?, label = ? WHERE id = ?', [data.source, data.subspecies, data.credit, data.license, data.notes, data.full, data.special, data.filetype || existing.filetype, data.style, data.label, key]);
+
+          if (data.credit != existing.credit) {
+            await Database.query('UPDATE artists SET numVariants = numVariants - 1, numIllustrations = numIllustrations - ?, numPhotos = numPhotos - ? WHERE name = ?', [data.style == 1 ? 1 : 0, data.style == 2 ? 1 : 0, existing.credit]);
+            await Database.query('UPDATE artists SET numVariants = numVariants + 1, numIllustrations = numIllustrations + ?, numPhotos = numPhotos + ? WHERE name = ?', [data.style == 1 ? 1 : 0, data.style == 2 ? 1 : 0, data.credit]);
+          } else if (data.style != existing.style) {
+            await Database.query('UPDATE artists SET numIllustrations = numIllustrations + ?, numPhotos = numPhotos + ? WHERE name = ?', [data.style == 1 ? 1 : -1, data.style == 2 ? 1 : -1, data.credit]);
+          }
         } else {
-          await Database.query('INSERT INTO variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())', [key, data.species, data.subspecies, data.label, data.credit?.trim(), data.source, data.license, data.notes, data.filetype, data.style, data.full, data.special]);
+          await Database.query('INSERT INTO variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())', [key, data.species, data.subspecies, data.label, data.credit, data.source, data.license, data.notes, data.filetype, data.style, data.full, data.special]);
+          await Database.query('INSERT INTO artists (?, 1, ?, ?) ON DUPLICATE KEY UPDATE numVariants = numVariants + 1, numIllustrations = numIllustrations + ?, numPhotos = numPhotos + ?', [data.credit, data.style == 1 ? 1 : 0, data.style == 2 ? 1 : 0, data.style == 1 ? 1 : 0, data.style == 1 ? 1 : 0]);
         }
+
+        await Redis.del(`variants:${key}`);
 
         let variant = new Variant(key);
 
@@ -108,7 +123,7 @@ module.exports = async (req, res) => {
         await Promise.all(promises);
 
         var duplicates = await Database.query('SELECT id FROM variants WHERE source ="n/a" AND species IN (SELECT species FROM variants WHERE source != "n/a") AND id NOT IN (SELECT variant FROM birdypets)');
-	promises = [];
+        promises = [];
 
         for (let variant of duplicates) {
           promises.push(Database.query('DELETE FROM variants WHERE id = ?', [variant.id]));

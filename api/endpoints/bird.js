@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
             await Members.all().then((members) => {
               for (let member of members) {
                 if (!member.settings.privacy_profile) {
-                  promises.push(Counters.get('species', member.id, bird.id).then(async (result) => {
+			promises.push(Counters.get('species', member.id, bird.id).then(async (result) => {
                     member.owned = result;
                     member.wishlisted = await Database.count('wishlist', {
                       member: member.id,

@@ -14,6 +14,12 @@
         <span class="d-block label">Eggs</span>
       </a>
     </li>
+    <li class="nav-item pb-2">
+      <a href="/birdypedia/artists">
+        <span class="icon d-inline-block fs-4">🎨</span>
+        <span class="d-block label">Artists</span>
+      </a>
+    </li>
   </ul>
 <% } %>
 
@@ -70,18 +76,6 @@
       select: '#flocks'
     });
   </script>
-<% } %>
-
-<% if (locals.artists) { %>
-  <h5>Artist</h5>
-  <select id="artist" class="form-select mb-4">
-    <option value="">[ALL]</option>
-   <% for (var artist of artists) { %>
-    <option value="<%= artist.name %>" <%= locals.selectedArtist && selectedArtist.toLowerCase() == artist.name.toLowerCase() ? "selected" : "" %>>
-      <%= artist.name %>
-    </option>
-   <% } %>
-  </select>
 <% } %>
 
 <% if (locals.sortFields) { %>

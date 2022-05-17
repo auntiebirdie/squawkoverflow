@@ -1,3 +1,4 @@
+const Cache = require('../helpers/cache.js');
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
@@ -39,6 +40,15 @@ class BirdyPet {
             let member = new Member(data.member);
 
             await member.fetch();
+
+            await Cache.increment(`species:${member.id}:${variant.bird.id}`, 'birdypets JOIN variants ON (birdypets.variant = variants.id)', {
+              'member': member.id,
+              'species': variant.bird.id
+            });
+
+            await Cache.increment(`aviary:${member.id}`, 'birdypets', {
+              'member': member.id
+            })
 
             if (member.settings.general_updateWishlistWANT) {
               await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 1', [variant.bird.id, member.id]);
@@ -116,8 +126,36 @@ class BirdyPet {
 
         await member.fetch();
 
+        promises.push(Cache.increment(`aviary:${data.member}`, 'birdypets', {
+          member: data.member
+        }));
+
+        promises.push(Cache.increment(`species:${data.member}:${this.bird.id}`, 'birdypets JOIN variants ON (birdypets.variant = variants.id)', {
+          member: data.member,
+          species: this.bird.id
+        }));
+
+        promises.push(Cache.increment(`variant:${data.member}:${this.variant.id}`, 'birdypets', {
+          member: data.member,
+          variant: this.variant.id
+        }));
+
         if (!this.member) {
           //promises.push(Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?)', [this.id, "collected", data.member]));
+        } else {
+          promises.push(Cache.decrement(`aviary:${this.member}`, 'birdypets', {
+            member: this.member
+          }));
+
+          promises.push(Cache.decrement(`species:${this.member}:${this.bird.id}`, 'birdypets JOIN variants ON (birdypets.variant = variants.id)', {
+            member: this.member,
+            species: this.bird.id
+          }));
+
+          promises.push(Cache.decrement(`variant:${this.member}:${this.variant.id}`, 'birdypets', {
+            member: this.member,
+            variant: this.variant.id
+          }));
         }
 
         data.addedAt = new Date();
