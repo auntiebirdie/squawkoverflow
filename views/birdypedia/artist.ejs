@@ -1,10 +1,6 @@
 <%- include('../header.ejs') %>
 
-  <%- include('../partials/page-title.ejs', { title : "Birdypedia" }) %> 
-
-  <p class="text-center">
-    <em>Click the 🤍 to add a bird to your wishlist. Click the ❤️ to mark it as NEED on your wishlist. Click the 🌟 to remove the bird from your wishlist. Rinse, repeat!</em>
-  </p>
+  <%- include('../partials/page-title.ejs', { title: artist.name }) %>
 
   <%- include('../partials/happy-birthday.ejs') %>
 
@@ -14,13 +10,14 @@
 
   <%- include('../partials/pagination.ejs') %>
 
-  <%- include('../scripts/lazyloader.ejs', { template: '../templates/birdypedia.ejs', paginate: currentPage }) %>
+  <%- include('../scripts/lazyloader.ejs', { template: '../templates/birdypedia.ejs', paginate: currentPage, skipParams : true }) %>
 
   <script type="text/javascript">
-    $('#lazyLoader').on('click', '.birdypet.mini[data-bg]', function (event) {
+    $('#lazyLoader').on('click', '.birdypet.mini', function (event) {
       var variant = event.target;
       var full = variant.parentNode.parentNode.parentNode.querySelector('.birdypet');
       full.style.backgroundImage = variant.style.backgroundImage;
     });
   </script>
+
 <%- include('../footer.ejs') %>

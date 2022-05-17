@@ -1,0 +1,15 @@
+    <div class="col-12 col-md-6 pb-4">
+      <div class="pb-1">
+        <a href="/birdypedia/artists/${encodeURIComponent(model.name)}">
+          ${model.name}
+        </a><br>
+        <small class="ps-1 text-muted">
+          (${model.numIllustrations > 0 ? (model.numIllustrations + ' illustration' + (model.numIllustrations == 1 ? '' : 's') + (model.numPhotos > 0 ? ', ' : '')) : ''}${model.numPhotos > 0 ? (model.numPhotos + ' photo' + (model.numPhotos == 1 ? '' : 's')) : ''})
+        </small>
+      </div>
+      <div class="px-3 pb-3>
+        <h6 class="p-1 birdypets">
+          ${model.variants.map((variant) => '<div class="lazy birdypet mini ' + (variant.bird.discovered ? "hatched" : "unhatched") + ' checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" data-bg="' + variant.image + '"></div>').join("")}
+        </h6>
+      </div>
+    </div>

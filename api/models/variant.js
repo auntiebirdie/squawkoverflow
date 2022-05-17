@@ -2,6 +2,7 @@ const Bird = require('./bird.js');
 const Member = require('./member.js');
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
+const Redis = require('../helpers/redis.js');
 
 class Variant {
   constructor(id) {
@@ -10,19 +11,36 @@ class Variant {
 
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
-      Database.getOne('variants', {
-        id: this.id
-      }).then(async (variant) => {
-        for (let key in variant) {
+
+      const identifier = `variants:${this.id}`;
+
+      Redis.hgetall(identifier, async (err, result) => {
+        if (!result) {
+          result = await Database.getOne('variants', {
+            id: this.id
+          }).then(async (variant) => {
+            for (let key in variant) {
+              await Redis.hset(identifier, key, `${variant[key]}`);
+            }
+
+            return variant;
+          });
+        }
+
+        if (!result) {
+          return reject();
+        }
+
+        for (let key in result) {
           if (!params.fields || params.fields.includes(key)) {
-            this[key] = variant[key];
+            this[key] = result[key];
           }
         }
 
         let bird = null;
 
         if (!params.bird) {
-          bird = new Bird(variant.species);
+          bird = new Bird(this.species);
 
           await bird.fetch({
             include: params.include
@@ -48,17 +66,27 @@ class Variant {
             case "Anatidae":
             case "Anhingidae":
             case "Apodidae":
-		  case "Apterygidae":
+            case "Apterygidae":
             case "Ardeidae":
-		  case "Artamidae":
+            case "Artamidae":
             case "Balaenicipitidae":
+            case "Bernieridae":
             case "Bucconidae":
             case "Bucerotidae":
+            case "Bucorvidae":
+            case "Buphagidae":
+            case "Burhinidae":
+            case "Cacatuidae":
+            case "Calcariidae":
+            case "Callaeidae":
+            case "Calyptomenidae":
             case "Capitonidae":
             case "Caprimulgidae":
             case "Cardinalidae":
             case "Casuariidae":
             case "Cathartidae":
+            case "Certhiidae":
+            case "Chaetopidae":
             case "Charadriidae":
             case "Ciconiidae":
             case "Coliidae":
@@ -159,7 +187,7 @@ class Variant {
               break;
           }
         } else {
-          this.image = `https://storage.googleapis.com/squawkoverflow/birds/${this.id.slice(0, 1)}/${this.id.slice(0, 2)}/${this.id}.${variant.filetype ? variant.filetype : "jpg"}`;
+          this.image = `https://storage.googleapis.com/squawkoverflow/birds/${this.id.slice(0, 1)}/${this.id.slice(0, 2)}/${this.id}.${this.filetype ? this.filetype : "jpg"}`;
         }
 
         if (params.include?.includes('memberData') && params.member) {

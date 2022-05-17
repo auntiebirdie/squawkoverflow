@@ -4,8 +4,8 @@ const Member = require('../models/member.js');
 class Search {
   query(kind, input) {
     return new Promise(async (resolve, reject) => {
-      var birdsPerPage = 24;
-      var page = (--input.page || 0) * birdsPerPage;
+      var perPage = input.perPage || 24;
+      var page = (--input.page || 0) * perPage;
       var output = [];
 
       let query = 'SELECT ';
@@ -13,6 +13,10 @@ class Search {
       let params = [];
 
       switch (kind) {
+        case 'artist':
+          query += 'artists.name, artists.numVariants, artists.numIllustrations, artists.numPhotos FROM artists';
+          filters.push('artists.numVariants > 0');
+          break;
         case 'bird':
           query += 'DISTINCT species.id FROM species JOIN variants ON (species.id = variants.species)';
           break;
@@ -52,7 +56,10 @@ class Search {
           input.search = '("' + input.search + '")';
         }
 
-        if (kind == 'member') {
+        if (kind == 'artist') {
+          filters.push(exactMatch ? 'artists.name = ?' : 'MATCH(artists.name) AGAINST (? IN BOOLEAN MODE)');
+          params.push(input.search);
+        } else if (kind == 'member') {
           filters.push(exactMatch ? 'members.username = ?' : 'MATCH(members.username) AGAINST (? IN BOOLEAN MODE)');
           params.push(input.search);
         } else if (kind == 'birdypet') {
@@ -252,7 +259,9 @@ class Search {
           query += 'MAX(variants.addedAt)';
           break;
         default:
-          if (kind == 'birdypet') {
+          if (kind == 'artist') {
+            query += 'artists.name';
+          } else if (kind == 'birdypet') {
             query += 'birdypets.addedAt';
           } else if (kind == 'member') {
             query += 'members.username';
@@ -268,12 +277,12 @@ class Search {
       Database.query(query, params).then((birds) => {
         var totalPages = birds.length;
 
-        for (let i = page, len = Math.min(page + birdsPerPage, birds.length); i < len; i++) {
+        for (let i = page, len = Math.min(page + perPage, birds.length); i < len; i++) {
           output.push(birds[i]);
         }
 
         resolve({
-          totalPages: Math.ceil(totalPages / birdsPerPage),
+          totalPages: Math.ceil(totalPages / perPage),
           totalResults: birds.length,
           results: output
         });

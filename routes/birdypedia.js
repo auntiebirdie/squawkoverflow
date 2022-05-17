@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
   });
 });
 
-router.get('/eggs/:letter([A-Za-z]{1})?', async (req, res) => {
+router.get('/eggs/:letter([A-Za-z]{1})?', (req, res) => {
   var letter = req.params.letter ? req.params.letter.toUpperCase() : 'A';
 
   API.call('eggs', 'GET', {
@@ -41,7 +41,7 @@ router.get('/eggs/:letter([A-Za-z]{1})?', async (req, res) => {
   });
 });
 
-router.get('/eggs/:egg', async (req, res) => {
+router.get('/eggs/:egg', (req, res) => {
   API.call('eggs', 'GET', {
     loggedInUser: req.session.user,
     adjective: req.params.egg
@@ -51,6 +51,37 @@ router.get('/eggs/:egg', async (req, res) => {
         title: `${egg.adjective.charAt(0).toUpperCase() + egg.adjective.slice(1)} Egg | Birdypedia`,
         page: 'birdypedia',
         egg: egg,
+        currentPage: (req.query.page || 1) * 1,
+        sidebar: 'filters',
+        sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
+        filters: ['unwishlisted-My', 'wanted-My', 'needed-My'],
+        extraFilters: ['unhatched-My', 'isolated-My', 'duplicated-My', 'somewhere']
+      });
+    } else {
+      res.redirect('/error');
+    }
+  });
+});
+
+router.get('/artists', (req, res) => {
+  res.render('birdypedia/artists', {
+    title: 'Artists | Birdypedia',
+    page: 'birdypedia',
+    currentPage: (req.query.page || 1) * 1,
+    sidebar: 'filters'
+  });
+});
+
+router.get('/artists/:artist', (req, res) => {
+  API.call('artists', 'GET', {
+    loggedInUser: req.session.user,
+    artist: req.params.artist
+  }).then((artist) => {
+    if (artist) {
+      res.render('birdypedia/artist', {
+        title: `${artist.name} | Artists | Birdypedia`,
+        page: 'birdypedia',
+        artist: artist,
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
         sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],

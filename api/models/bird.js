@@ -1,4 +1,5 @@
 const Database = require('../helpers/database.js');
+const Cache = require('../helpers/cache.js');
 const Counters = require('../helpers/counters.js');
 const Redis = require('../helpers/redis.js');
 
@@ -115,7 +116,7 @@ class Bird {
         member: memberId,
         species: this.id
       }).then((wishlist) => wishlist ? wishlist.intensity : 0);
-      this.owned = await Counters.get('species', memberId, this.id);
+	          this.owned = await Counters.get('species', memberId, this.id);
       this.discovered = await Counters.get('birdypedia', memberId, this.id);
 
       resolve({

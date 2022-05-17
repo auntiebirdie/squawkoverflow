@@ -11,5 +11,48 @@
   <%- include('../scripts/lazyloader.ejs', { template: '../templates/incubator.ejs', paginate: currentPage }) %>
 
   <%- include('../partials/giftModal.ejs', { selectedMember : null }) %>
+  <%- include('../partials/editModal.ejs') %>
+
+  <script>
+    $(document).ready(() => {
+      $('#lazyLoader').on('click', '.birdypet-actions button[data-action]', (e) => {
+      var button = e.currentTarget;
+      var action = button.getAttribute('data-action');
+
+      if (!button.disabled) {
+        button.setAttribute('disabled', true);
+        button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+        switch (button.getAttribute('data-action')) {
+          case "hatch":
+            API.call('collect', 'POST', {
+                variant: button.getAttribute('data-variant'),
+                incubator: true
+              },
+              function(birdypet) {
+                button.setAttribute('data-id', birdypet.id);
+
+                $('#modal_editBirdyPet').modal('show', button);
+
+                button.innerHTML = '🥚';
+                button.removeAttribute('disabled');
+              }
+            );
+            break;
+          case "release":
+            API.call('release', 'POST', {
+                variant : button.getAttribute('data-id')
+              },
+              function(data) {
+                button.innerHTML = '👋';
+                button.removeAttribute('disabled');
+              }
+            );
+            break;
+          }
+        }
+      });
+    });
+  </script>
 
 <%- include('../footer.ejs') %>

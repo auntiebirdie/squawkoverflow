@@ -118,7 +118,7 @@
           <%- locals.extraFilters ? `extraFilters: Array.from($('input:checked', '#extraFilters')).map((checkbox) => checkbox.value),` : '' %>
           <%- locals.families ? `family : $('#family').is(':visible') ? $('#family').val() : '',` : '' %>
           <%- locals.flocks ? `flocks : flocks ? flocks : '',` : '' %>
-          <%- locals.artists ? `artist : $('#artist').is(':visible') ? $('#artist').val() : '',` : '' %>
+          <%- locals.artist ? `artist : "${artist.name}",` : '' %>
           <%- locals.page == 'wishlist' ? `intensity: Array.from($('input:checked', '#intensity')).map((checkbox) => checkbox.value),` : '' %>
           <%- locals.egg ? `adjectives : "${egg.adjective}",` : '' %>
         },
