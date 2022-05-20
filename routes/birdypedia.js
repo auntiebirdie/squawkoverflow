@@ -7,14 +7,12 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   var families = await API.call('families', 'GET');
-  var artists = await API.call('artists', 'GET');
 
   res.render('birdypedia', {
     title: 'Birdypedia',
     page: 'birdypedia',
     allFamilies: families,
     families: families.map((family) => family.name),
-    artists: artists,
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
     sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'variants-DESC'],
@@ -68,7 +66,8 @@ router.get('/artists', (req, res) => {
     title: 'Artists | Birdypedia',
     page: 'birdypedia',
     currentPage: (req.query.page || 1) * 1,
-    sidebar: 'filters'
+    sidebar: 'filters',
+    style: true
   });
 });
 
@@ -84,6 +83,7 @@ router.get('/artists/:artist', (req, res) => {
         artist: artist,
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
+	style: true,
         sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
         filters: ['unwishlisted-My', 'wanted-My', 'needed-My'],
         extraFilters: ['unhatched-My', 'isolated-My', 'duplicated-My', 'somewhere']

@@ -122,6 +122,24 @@ class Search {
         filters.push('birdypets.id NOT IN (SELECT birdypet FROM birdypet_flocks JOIN flocks ON (birdypet_flocks.flock = flocks.id) WHERE flocks.protected = 1)');
       }
 
+      if (input.style) {
+        if (kind == 'artist') {
+          switch (input.style) {
+            case 1:
+            case '1':
+              filters.push('numIllustrations > 0 AND numPhotos = 0');
+              break;
+            case 2:
+            case '2':
+              filters.push('numIllustrations = 0 AND numPhotos > 0');
+              break;
+          }
+        } else {
+          filters.push('variants.style IN (?)');
+          params.push(input.style.split(','));
+        }
+      }
+
       if (input.loggedInUser && (Array.isArray(input.filters) || Array.isArray(input.extraFilters))) {
         if (Array.isArray(input.extraFilters)) {
           let member = new Member(input.loggedInUser);

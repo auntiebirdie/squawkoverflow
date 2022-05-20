@@ -26,7 +26,7 @@
               <% } %>
 
 
-              <small>&copy; <a href="/birdypedia?artist=<%= encodeURIComponent(variant.credit) %>"><%= variant.credit %></a></small><br>
+              <small>&copy; <a href="/birdypedia/artists/<%= encodeURIComponent(variant.credit) %>"><%= variant.credit %></a></small><br>
               <%- variant.subspecies ? `<em>${variant.subspecies}</em><br>` : '' %>
               <%- variant.label ? `${variant.label}` : '' %>
             </div>

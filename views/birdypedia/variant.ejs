@@ -34,17 +34,19 @@
       <div class="row mb-3">
         <div class="col-6">
           <h5><label for="form-credit">Credit</label></h5>
-          <input type="text" id="form-credit" class="form-control mb-3 w-100" value="<%= variant?.credit %>">
+          <div class="mb-3">
+            <input class="typeahead form-control" type="text" id="form-credit" value="<%= variant?.credit %>">
+          </div>
         </div>
         <div class="col-6">
-          <h5><label for="form-member">Member</label></h5>
+          <h5><label for="form-member">Contributor</label></h5>
           <div id="memberSearch" class="mb-3">
-            <input class="typeahead form-control" type="text">
+            <input class="typeahead form-control" type="text" value="<%= variant?.contributor?.username %>">
           </div>
 
           <div id="memberDisplay">
-           <% if (variant && variant.artist) { %>
-            <h3><img src="<%= variant.artist.avatar %>" class="rounded" width="75" data-id="<%= variant.artist.id %>" onerror="missingMemberAvatar(this)"> <%= variant.artist.username %></h3>
+           <% if (variant && variant.contributor) { %>
+            <h3><img src="<%= variant.contributor.avatar %>" class="rounded" width="75" data-id="<%= variant.contributor.id %>" onerror="missingMemberAvatar(this)"> <%= variant.contributor.username %></h3>
            <% } %>
           </div>
         </div>
@@ -89,7 +91,7 @@
     </div>
   </form>
 
-  <%- include('../scripts/membersearch.ejs', { include : ['self'] }) %>
+  <%- include('../scripts/membersearch.ejs', { include : ['self'], selectedMember : variant ? variant.contributor : null }) %>
 
   <script type="text/javascript">
     $(document).ready(function () {
@@ -112,6 +114,44 @@
         $('#form-preview').attr('src', $('#form-image').val());
       });
 
+      $('#form-credit').typeahead({
+        hint: false,
+        highlight: true,
+        minLength: 1
+      },
+      {
+        name: 'credit',
+        displayKey: 'name',
+        async: true,
+        source: function (query, syncResults, asyncResults) {
+            let data = {
+              search: query
+            };
+
+            API.call('artists', 'GET', data, function (results) {
+            asyncResults(results);
+          });
+        },
+        limit: Infinity,
+        templates: {
+          empty: function () {
+            return '<div class="px-1 py-2"><em>No artists found.</em></div>';
+          },
+          pending: function () {
+            return '<div class="mx-1 fst-italic"><div class="spinner-border spinner-border-sm" role="status"></div> Searching...</div>';
+          },
+          suggestion: function (data) {
+            var text = '<div class="px-1 py-2">';
+
+            text += `${data.name}`;
+
+            text += '</div>';
+
+            return text;
+          }
+        }
+      });
+
       $('#submitVariant').on('click', function () {
         var container = document.getElementById('form');
 
@@ -128,7 +168,7 @@
               species: '<%= bird.id %>',
               subspecies: $('#form-subspecies').val(),
               credit: $('#form-credit').val(),
-              artist: $('img', '#memberDisplay').attr('data-id'),
+              contributor: $('img', '#memberDisplay').attr('data-id'),
               full: $('#form-full').is(':checked'),
               special: $('#form-special').is(':checked'),
               label: $('#form-label').val()

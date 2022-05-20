@@ -10,205 +10,193 @@ class Variant {
   }
 
   fetch(params = {}) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
 
-      const identifier = `variants:${this.id}`;
-
-      Redis.hgetall(identifier, async (err, result) => {
-        if (!result) {
-          result = await Database.getOne('variants', {
-            id: this.id
-          }).then(async (variant) => {
-            for (let key in variant) {
-              await Redis.hset(identifier, key, `${variant[key]}`);
-            }
-
-            return variant;
-          });
-        }
-
-        if (!result) {
-          return reject();
-        }
-
-        for (let key in result) {
-          if (!params.fields || params.fields.includes(key)) {
-            this[key] = result[key];
-          }
-        }
-
-        let bird = null;
-
-        if (!params.bird) {
-          bird = new Bird(this.species);
-
-          await bird.fetch({
-            include: params.include
-          });
-
-          this.bird = bird;
-        } else {
-          bird = params.bird;
-        }
-
-        if (this.source.startsWith('https://birdsoftheworld') || this.source == "n/a") {
-          switch (bird.family) {
-            case "Acanthisittidae":
-            case "Acanthizidae":
-            case "Acrocephalidae":
-            case "Aegithalidae":
-            case "Aegithinidae":
-            case "Aegothelidae":
-            case "Alaudidae":
-            case "Alcedinidae":
-            case "Alcidae":
-            case "Alcippeidae":
-            case "Anatidae":
-            case "Anhingidae":
-            case "Apodidae":
-            case "Apterygidae":
-            case "Ardeidae":
-            case "Artamidae":
-            case "Balaenicipitidae":
-            case "Bernieridae":
-            case "Bucconidae":
-            case "Bucerotidae":
-            case "Bucorvidae":
-            case "Buphagidae":
-            case "Burhinidae":
-            case "Cacatuidae":
-            case "Calcariidae":
-            case "Callaeidae":
-            case "Calyptomenidae":
-            case "Capitonidae":
-            case "Caprimulgidae":
-            case "Cardinalidae":
-            case "Casuariidae":
-            case "Cathartidae":
-            case "Certhiidae":
-            case "Chaetopidae":
-            case "Charadriidae":
-            case "Ciconiidae":
-            case "Coliidae":
-            case "Columbidae":
-            case "Corvidae":
-            case "Cuculidae":
-            case "Diomedeidae":
-            case "Falconidae":
-            case "Falcunculidae":
-            case "Fregatidae":
-            case "Galbulidae":
-            case "Gruidae":
-            case "Haematopodidae":
-            case "Hydrobatidae":
-            case "Laniidae":
-            case "Laridae":
-            case "Lybiidae":
-            case "Maluridae":
-            case "Meropidae":
-            case "Momotidae":
-            case "Monarchidae":
-            case "Musophagidae":
-            case "Nectariniidae":
-            case "Oceanitidae":
-            case "Odontophoridae":
-            case "Oriolidae":
-            case "Otididae":
-            case "Pachycephalidae":
-            case "Paradisaeidae":
-            case "Paradoxornithidae":
-            case "Paridae":
-            case "Parulidae":
-            case "Passerellidae":
-            case "Passeridae":
-            case "Pellorneidae":
-            case "Petroicidae":
-            case "Phaethontidae":
-            case "Phalacrocoracidae":
-            case "Phasianidae":
-            case "Phylloscopidae":
-            case "Picidae":
-            case "Pipridae":
-            case "Pittidae":
-            case "Platysteiridae":
-            case "Ploceidae":
-            case "Pluvianidae":
-            case "Podargidae":
-            case "Podicipedidae":
-            case "Polioptilidae":
-            case "Procellariidae":
-            case "Psittacidae":
-            case "Psittaculidae":
-            case "Pteroclidae":
-            case "Ptilonorhynchidae":
-            case "Pycnonotidae":
-            case "Rallidae":
-            case "Ramphastidae":
-            case "Rhinocryptidae":
-            case "Rhipiduridae":
-            case "Sagittariidae":
-            case "Sarothruridae":
-            case "Scolopacidae":
-            case "Scopidae":
-            case "Sittidae":
-            case "Spheniscidae":
-            case "Strigidae":
-            case "Sturnidae":
-            case "Sylviidae":
-            case "Thamnophilidae":
-            case "Thraupidae":
-            case "Threskiornithidae":
-            case "Timaliidae":
-            case "Tinamidae":
-            case "Tityridae":
-            case "Todidae":
-            case "Trochilidae":
-            case "Troglodytidae":
-            case "Trogonidae":
-            case "Turdidae":
-            case "Turnicidae":
-            case "Tyrannidae":
-            case "Tytonidae":
-            case "Vangidae":
-            case "Viduidae":
-            case "Vireonidae":
-            case "Zosteropidae":
-              this.image = `https://storage.googleapis.com/squawkoverflow/birds/${bird.family}.png`;
-              break;
-            case "Accipitridae":
-              if (bird.commonName.includes('Vulture') || bird.commonName.includes('Condor')) {
-                this.image = `https://storage.googleapis.com/squawkoverflow/birds/${bird.family}2.png`;
-              } else {
-                this.image = `https://storage.googleapis.com/squawkoverflow/birds/${bird.family}.png`;
-              }
-              break;
-            default:
-              this.image = 'https://squawkoverflow.com/img/placeholder.jpeg';
-              break;
-          }
-        } else {
-          this.image = `https://storage.googleapis.com/squawkoverflow/birds/${this.id.slice(0, 1)}/${this.id.slice(0, 2)}/${this.id}.${this.filetype ? this.filetype : "jpg"}`;
-        }
-
-        if (params.include?.includes('memberData') && params.member) {
-          await this.fetchMemberData(params.member);
-        }
-
-        if (params.include?.includes('artist')) {
-          let artist = await Database.getOne('member_variants', {
-            variant: this.id,
-            type: 'artist'
-          });
-
-          if (artist) {
-            this.artist = new Member(artist.member);
-
-            await this.artist.fetch();
-          }
-        }
-
-        resolve(this);
+      var result = await Database.getOne('variants', {
+        id: this.id
       });
+
+      if (!result) {
+        return reject();
+      }
+
+      for (let key in result) {
+        if (!params.fields || params.fields.includes(key)) {
+          this[key] = result[key];
+        }
+      }
+
+      let bird = null;
+
+      if (!params.bird) {
+        bird = new Bird(this.species);
+
+        await bird.fetch({
+          include: params.include
+        });
+
+        this.bird = bird;
+      } else {
+        bird = params.bird;
+      }
+
+      if (this.source.startsWith('https://birdsoftheworld') || this.source == "n/a") {
+        switch (bird.family) {
+          case "Acanthisittidae":
+          case "Acanthizidae":
+          case "Acrocephalidae":
+          case "Aegithalidae":
+          case "Aegithinidae":
+          case "Aegothelidae":
+          case "Alaudidae":
+          case "Alcedinidae":
+          case "Alcidae":
+          case "Alcippeidae":
+          case "Anatidae":
+          case "Anhingidae":
+          case "Apodidae":
+          case "Apterygidae":
+          case "Ardeidae":
+          case "Artamidae":
+          case "Balaenicipitidae":
+          case "Bernieridae":
+          case "Bucconidae":
+          case "Bucerotidae":
+          case "Bucorvidae":
+          case "Buphagidae":
+          case "Burhinidae":
+          case "Cacatuidae":
+          case "Calcariidae":
+          case "Callaeidae":
+          case "Calyptomenidae":
+          case "Capitonidae":
+          case "Caprimulgidae":
+          case "Cardinalidae":
+          case "Casuariidae":
+          case "Cathartidae":
+          case "Certhiidae":
+          case "Chaetopidae":
+          case "Charadriidae":
+          case "Ciconiidae":
+          case "Coliidae":
+          case "Columbidae":
+          case "Corvidae":
+          case "Cuculidae":
+          case "Diomedeidae":
+          case "Falconidae":
+          case "Falcunculidae":
+          case "Fregatidae":
+          case "Galbulidae":
+          case "Gruidae":
+          case "Haematopodidae":
+          case "Hydrobatidae":
+          case "Laniidae":
+          case "Laridae":
+          case "Lybiidae":
+          case "Maluridae":
+          case "Meropidae":
+          case "Momotidae":
+          case "Monarchidae":
+          case "Musophagidae":
+          case "Nectariniidae":
+          case "Oceanitidae":
+          case "Odontophoridae":
+          case "Oriolidae":
+          case "Otididae":
+          case "Pachycephalidae":
+          case "Paradisaeidae":
+          case "Paradoxornithidae":
+          case "Paridae":
+          case "Parulidae":
+          case "Passerellidae":
+          case "Passeridae":
+          case "Pellorneidae":
+          case "Petroicidae":
+          case "Phaethontidae":
+          case "Phalacrocoracidae":
+          case "Phasianidae":
+          case "Phylloscopidae":
+          case "Picidae":
+          case "Pipridae":
+          case "Pittidae":
+          case "Platysteiridae":
+          case "Ploceidae":
+          case "Pluvianidae":
+          case "Podargidae":
+          case "Podicipedidae":
+          case "Polioptilidae":
+          case "Procellariidae":
+          case "Psittacidae":
+          case "Psittaculidae":
+          case "Pteroclidae":
+          case "Ptilonorhynchidae":
+          case "Pycnonotidae":
+          case "Rallidae":
+          case "Ramphastidae":
+          case "Rhinocryptidae":
+          case "Rhipiduridae":
+          case "Sagittariidae":
+          case "Sarothruridae":
+          case "Scolopacidae":
+          case "Scopidae":
+          case "Sittidae":
+          case "Spheniscidae":
+          case "Strigidae":
+          case "Sturnidae":
+          case "Sylviidae":
+          case "Thamnophilidae":
+          case "Thraupidae":
+          case "Threskiornithidae":
+          case "Timaliidae":
+          case "Tinamidae":
+          case "Tityridae":
+          case "Todidae":
+          case "Trochilidae":
+          case "Troglodytidae":
+          case "Trogonidae":
+          case "Turdidae":
+          case "Turnicidae":
+          case "Tyrannidae":
+          case "Tytonidae":
+          case "Vangidae":
+          case "Viduidae":
+          case "Vireonidae":
+          case "Zosteropidae":
+            this.image = `https://storage.googleapis.com/squawkoverflow/birds/${bird.family}.png`;
+            break;
+          case "Accipitridae":
+            if (bird.commonName.includes('Vulture') || bird.commonName.includes('Condor')) {
+              this.image = `https://storage.googleapis.com/squawkoverflow/birds/${bird.family}2.png`;
+            } else {
+              this.image = `https://storage.googleapis.com/squawkoverflow/birds/${bird.family}.png`;
+            }
+            break;
+          default:
+            this.image = 'https://squawkoverflow.com/img/placeholder.jpeg';
+            break;
+        }
+      } else {
+        this.image = `https://storage.googleapis.com/squawkoverflow/birds/${this.id.slice(0, 1)}/${this.id.slice(0, 2)}/${this.id}.${this.filetype ? this.filetype : "jpg"}`;
+      }
+
+      if (params.include?.includes('memberData') && params.member) {
+        await this.fetchMemberData(params.member);
+      }
+
+      if (params.include?.includes('artist')) {
+        let artist = await Database.getOne('member_variants', {
+          variant: this.id,
+          type: 'artist'
+        });
+
+        if (artist) {
+          this.artist = new Member(artist.member);
+
+          await this.artist.fetch();
+        }
+      }
+
+      resolve(this);
     });
   }
 

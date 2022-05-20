@@ -44,10 +44,10 @@ module.exports = async (req, res) => {
 
       var key = existing ? existing.id : uuid.generate();
 
-      if (data.artist) {
-        await Database.query('INSERT IGNORE INTO member_badges VALUES (?, "artist", NOW())', [data.artist]);
-        await Database.query('DELETE FROM member_variants WHERE variant = ? AND type = "artist"', [key]);
-        await Database.query('INSERT IGNORE INTO member_variants VALUES (?, ?, "artist")', [data.artist, key]);
+      if (data.contributor) {
+        await Database.query('INSERT IGNORE INTO member_badges VALUES (?, "contributor", NOW())', [data.contributor]);
+        await Database.query('DELETE FROM member_variants WHERE variant = ? AND type = "contributor"', [key]);
+        await Database.query('INSERT IGNORE INTO member_variants VALUES (?, ?, "contributor")', [data.contributor, key]);
       }
 
       if (!data.credit || data.credit?.trim() == "") {
@@ -100,10 +100,8 @@ module.exports = async (req, res) => {
           }
         } else {
           await Database.query('INSERT INTO variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())', [key, data.species, data.subspecies, data.label, data.credit, data.source, data.license, data.notes, data.filetype, data.style, data.full, data.special]);
-          await Database.query('INSERT INTO artists (?, 1, ?, ?) ON DUPLICATE KEY UPDATE numVariants = numVariants + 1, numIllustrations = numIllustrations + ?, numPhotos = numPhotos + ?', [data.credit, data.style == 1 ? 1 : 0, data.style == 2 ? 1 : 0, data.style == 1 ? 1 : 0, data.style == 1 ? 1 : 0]);
+          await Database.query('INSERT INTO artists VALUES (?, 1, ?, ?) ON DUPLICATE KEY UPDATE numVariants = numVariants + 1, numIllustrations = numIllustrations + ?, numPhotos = numPhotos + ?', [data.credit, data.style == 1 ? 1 : 0, data.style == 2 ? 1 : 0, data.style == 1 ? 1 : 0, data.style == 1 ? 1 : 0]);
         }
-
-        await Redis.del(`variants:${key}`);
 
         let variant = new Variant(key);
 

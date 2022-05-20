@@ -23,7 +23,9 @@ module.exports = async (req, res) => {
         if (data.from) {
           data.from = new Member(data.from);
 
-          await data.from.fetch();
+          await data.from.fetch().catch((err) => {
+		  data.from = null;
+	  });
         }
 
         if (data.birdypet) {

@@ -110,4 +110,22 @@
   <%- include('../scripts/tooltips.ejs') %>
   <%- include('../scripts/feedbug.ejs') %>
 
+  <script>
+    function modalTemplate (model) {
+      let html = "";
+      let memberBadge = <%- JSON.stringify(member.badges) %>.find((badge) => badge.id == model.id);
+
+      html += '<div class="row align-items-center mb-2">';
+      html += '<div class="col-2 text-center">';
+      html += `<img src="https://storage.googleapis.com/squawkoverflow/badges/${model.id}.png" class="${memberBadge ? '' : 'grayscale'}">`;
+      html += '</div>';
+      html += `<div class="col-10 ${memberBadge ? '' : 'text-muted'}">`;
+      html += model.name.replace(' ([COUNTER])', '');
+      html += '</div>';
+      html += '</div>';
+
+      return `<div>${html}</div>`;
+    }
+  </script>
+
 <%- include('../footer.ejs') %>

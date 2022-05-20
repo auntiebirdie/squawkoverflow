@@ -66,7 +66,9 @@ class Member {
             });
           });
         } else {
-          reject();
+          this.id = null;
+
+          resolve({});
         }
       } else {
         this.id = member.id;
@@ -78,7 +80,11 @@ class Member {
 
   fetch(params = {}) {
     return new Promise(async (resolve, reject) => {
-      var member = await this.exists(params).catch(reject);
+      var member = await this.exists(params);
+
+      if (!member) {
+        return reject();
+      }
 
       for (let key in member) {
         if (!params.fields || params.fields.includes(key)) {
@@ -353,7 +359,7 @@ class Member {
       promises.push(Database.query('DELETE FROM flocks WHERE `member` = ?', [this.id]));
       promises.push(Database.query('DELETE FROM exchange_birdypets WHERE exchange IN (SELECT id FROM exchanges WHERE `memberA` = ? OR `memberB` = ?)', [this.id, this.id]));
       promises.push(Database.query('DELETE FROM wishlist WHERE `member` = ?', [this.id]));
-      promises.push(Database.query('DELETE FROM notifications WHERE `member` = ? OR JSON_EXTRACT(data, "$.from") = ?', [this.id]));
+      promises.push(Database.query('DELETE FROM notifications WHERE `member` = ?', [this.id]));
 
       Promise.all(promises).then(async () => {
         await Database.query('UPDATE birdypets SET `member` = NULL, friendship = 0 WHERE `member` = ?', [this.id]);

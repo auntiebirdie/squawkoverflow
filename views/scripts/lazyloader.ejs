@@ -119,6 +119,7 @@
           <%- locals.families ? `family : $('#family').is(':visible') ? $('#family').val() : '',` : '' %>
           <%- locals.flocks ? `flocks : flocks ? flocks : '',` : '' %>
           <%- locals.artist ? `artist : "${artist.name}",` : '' %>
+          <%- locals.style ? `style : $('#style').is(':visible') ? $('#style').val() : '',` : '' %>
           <%- locals.page == 'wishlist' ? `intensity: Array.from($('input:checked', '#intensity')).map((checkbox) => checkbox.value),` : '' %>
           <%- locals.egg ? `adjectives : "${egg.adjective}",` : '' %>
         },

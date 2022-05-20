@@ -46,26 +46,8 @@ module.exports = (req, res) => {
       });
     });
   } else {
-    Redis.zrange('artists', '-inf', '+inf', 'BYSCORE', (err, results) => {
-      if (results.length == 0) {
-        Database.query('SELECT DISTINCT credit AS name FROM variants ORDER BY name ASC').then((results) => {
-          let promises = [];
-
-          for (let i = 0, len = results.length; i < len; i++) {
-            promises.push(Redis.zadd('artists', i, JSON.stringify(results[i])));
-          }
-
-          Promise.all(promises).then(() => {
-            res.json(results);
-          });
-        });
-      } else {
-        for (let i = 0, len = results.length; i < len; i++) {
-          results[i] = JSON.parse(results[i]);
-        }
-
-        res.json(results);
-      }
+    Database.query('SELECT name, MATCH (name) AGAINST (? IN NATURAL LANGUAGE MODE) AS relevance FROM artists WHERE MATCH (name) AGAINST (? IN NATURAL LANGUAGE MODE) AND numVariants > 0 ORDER BY relevance', [req.query.search, req.query.search]).then((results) => {
+      res.json(results);
     });
   }
 };

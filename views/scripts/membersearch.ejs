@@ -1,6 +1,6 @@
 <script type="text/javascript">
   var memberSearch, memberButton, memberDisplay;
-  var selectedMember = null;
+  var selectedMember = <%- locals.selectedMember ? JSON.stringify(selectedMember) : 'null' %>;
   var _TRAPCARD = false;
 
   $(document).ready(function () {
@@ -21,7 +21,7 @@
 
   function setupMemberSearch () {
     memberSearch.typeahead({
-      hint: true,
+      hint: false,
       highlight: true,
       minLength: 0
     },
@@ -59,7 +59,7 @@
             else if (wants || needs) {
               results = results.filter((result) => result.wishlisted == (wants ? 1 : 2));
             }
-          } catch (err) { console.log(err); }
+          } catch (err) { }
 
           asyncResults(results.sort((a, b) => a.wishlisted == b.wishlisted ? a.owned - b.owned : b.wishlisted - a.wishlisted));
         });
@@ -103,25 +103,28 @@
     }).on('typeahead:selected', function (obj, member) {
       selectedMember = member;
 
-      if (member) {
-        memberDisplay.html(`<h3><img src="${member.avatar}" class="rounded" width="75" data-id="${member.id}" onerror="missingMemberAvatar(this)"> ${member.username}</h3>`);
-        memberButton.attr('disabled', false);
-      }
-      else {
-        memberDisplay.html("");
-        memberButton.attr('disabled', true);
-      }
+      updateMemberDisplay();
     }).on('typeahead:autocomplete', function (obj, member) {
       selectedMember = member;
 
-      if (member) {
-        memberDisplay.html(`<h3><img src="${member.avatar}" class="rounded" width="75" data-id="${member.id}" onerror="missingMemberAvatar(this)"> ${member.username}</h3>`);
+      updateMemberDisplay();
+    }).on('typeahead:change', function (obj, member) {
+      if (selectedMember.username != member) {
+        selectedMember = null;
+
+        updateMemberDisplay();
+      }
+    });
+
+    function updateMemberDisplay() {
+      if (selectedMember) {
+        memberDisplay.html(`<h3><img src="${selectedMember.avatar}" class="rounded" width="75" data-id="${selectedMember.id}" onerror="missingMemberAvatar(this)"> ${selectedMember.username}</h3>`);
         memberButton.attr('disabled', false);
       }
       else {
         memberDisplay.html("");
         memberButton.attr('disabled', true);
       }
-    });
+    }
   }
 </script>
