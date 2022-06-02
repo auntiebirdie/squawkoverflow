@@ -6,7 +6,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <%- include('../partials/membersearch.ejs') %>
+          <%- include('../partials/membersearch.ejs', { include : ['birdData'] }) %>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
@@ -16,7 +16,7 @@
     </div>    
   </div>
 
-  <%- include('../scripts/membersearch.ejs', { include : ["birdData"], privacy: ["gifts"] }) %>
+  <%- include('../scripts/membersearch.ejs', { include : ['birdData'], privacy: ['gifts'] }) %>
 
   <script>
     var modal_giftBirdyPet = new bootstrap.Modal(document.getElementById('modal_giftBirdyPet'));

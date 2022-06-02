@@ -118,7 +118,7 @@
 
     function updateMemberDisplay() {
       if (selectedMember) {
-        memberDisplay.html(`<h3><img src="${selectedMember.avatar}" class="rounded" width="75" data-id="${selectedMember.id}" onerror="missingMemberAvatar(this)"> ${selectedMember.username}</h3>`);
+        memberDisplay.html(`<img src="${selectedMember.avatar}" class="rounded" width="45" data-id="${selectedMember.id}" onerror="missingMemberAvatar(this)">`);
         memberButton.attr('disabled', false);
       }
       else {

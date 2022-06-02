@@ -83,7 +83,7 @@ router.get('/artists/:artist', (req, res) => {
         artist: artist,
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
-	style: true,
+        style: true,
         sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
         filters: ['unwishlisted-My', 'wanted-My', 'needed-My'],
         extraFilters: ['unhatched-My', 'isolated-My', 'duplicated-My', 'somewhere']
@@ -116,6 +116,21 @@ router.get('/bird/:id/variant/:variant', Middleware.isContributor, async (req, r
       });
     } else {
       res.redirect(`/birdypedia/bird/${req.params.id}`);
+    }
+  });
+});
+
+router.get('/bird/:id/edit', Middleware.isContributor, async (req, res) => {
+  API.call('bird', 'GET', {
+    id: req.params.id
+  }).then(async (bird) => {
+    if (bird) {
+      res.render('birdypedia/new', {
+        bird: bird,
+        families: await API.call('families', 'GET')
+      });
+    } else {
+      res.redirect('/error');
     }
   });
 });

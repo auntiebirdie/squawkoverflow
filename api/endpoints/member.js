@@ -24,20 +24,26 @@ module.exports = async (req, res) => {
         include: ['profile']
       });
 
-      toUpdate.settings = member.settings;
+      if (req.body.member && member.admin) {
+        member = new Member(req.body.member);
 
-      for (let key in req.body) {
-        switch (key) {
-          case "birdyBuddy":
-          case "featuredFlock":
-          case "username":
-          case "avatar":
-          case "birdatar":
-            toUpdate[key] = req.body[key];
-            break;
-          case "pronouns":
-            toUpdate[key] = JSON.parse(req.body[key]);
-            break;
+        toUpdate.contributor = req.body.contributor;
+      } else {
+        toUpdate.settings = member.settings;
+
+        for (let key in req.body) {
+          switch (key) {
+            case "birdyBuddy":
+            case "featuredFlock":
+            case "username":
+            case "avatar":
+            case "birdatar":
+              toUpdate[key] = req.body[key];
+              break;
+            case "pronouns":
+              toUpdate[key] = JSON.parse(req.body[key]);
+              break;
+          }
         }
       }
 

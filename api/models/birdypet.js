@@ -1,5 +1,4 @@
 const Cache = require('../helpers/cache.js');
-const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
 
@@ -48,7 +47,7 @@ class BirdyPet {
 
             await Cache.increment(`aviary:${member.id}`, 'birdypets', {
               'member': member.id
-            })
+            });
 
             if (member.settings.general_updateWishlistWANT) {
               await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 1', [variant.bird.id, member.id]);
@@ -58,7 +57,7 @@ class BirdyPet {
               await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 2', [variant.bird.id, member.id]);
             }
 
-            //await Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?, NOW())', [this.id, "hatched", member.id]);
+            await Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?, NOW())', [this.id, "hatched", member.id]);
           }
 
           resolve(this);
@@ -141,7 +140,7 @@ class BirdyPet {
         }));
 
         if (!this.member) {
-          //promises.push(Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?)', [this.id, "collected", data.member]));
+          promises.push(Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?, NOW())', [this.id, "collected", data.member]));
         } else {
           promises.push(Cache.decrement(`aviary:${this.member}`, 'birdypets', {
             member: this.member
@@ -237,39 +236,60 @@ class BirdyPet {
   }
 
   delete() {
-    return Promise.all([
-      Database.set('birdypets', {
-        id: this.id
-      }, {
-        member: null,
-        addedAt: new Date(Date.now() - (10 * 60 * 1000))
-      }),
-      Database.delete('birdypet_flocks', {
-        birdypet: this.id
-      }),
-      Database.query('SELECT * FROM exchanges WHERE id IN (SELECT exchange FROM exchange_birdypets WHERE birdypet = ? AND statusA + statusB BETWEEN 0 AND 3)', [this.id]).then(async (exchanges) => {
-        for (let exchange of exchanges) {
-          let toUpdate = {};
+    return new Promise(async (resolve, reject) => {
+      await this.fetch();
 
-          if (exchange.statusA == 2) {
-            toUpdate.statusA = 1;
+      return Promise.all([
+        Database.set('birdypets', {
+          id: this.id
+        }, {
+          member: null,
+          addedAt: new Date(Date.now() - (10 * 60 * 1000))
+        }),
+        Database.set('members', {
+          id: this.member,
+          birdyBuddy: this.id
+        }, {
+          birdyBuddy: null
+        }),
+        Database.delete('birdypet_flocks', {
+          birdypet: this.id
+        }),
+        Cache.decrement(`aviary:${this.member}`, 'birdypets', {
+          member: this.member
+        }),
+        Cache.decrement(`species:${this.member}:${this.bird.id}`, 'birdypets JOIN variants ON (birdypets.variant = variants.id)', {
+          member: this.member,
+          species: this.bird.id
+        }),
+        Cache.decrement(`variant:${this.member}:${this.variant.id}`, 'birdypets', {
+          member: this.member,
+          variant: this.variant.id
+        }),
+        Database.query('SELECT * FROM exchanges WHERE id IN (SELECT exchange FROM exchange_birdypets WHERE birdypet = ? AND statusA + statusB BETWEEN 0 AND 3)', [this.id]).then(async (exchanges) => {
+          for (let exchange of exchanges) {
+            let toUpdate = {};
+
+            if (exchange.statusA == 2) {
+              toUpdate.statusA = 1;
+            }
+
+            if (exchange.statusB == 2) {
+              toUpdate.statusB = 1;
+            }
+
+            await Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${this.bird.commonName} was removed from the offer because it was released.`]);
+
+            await Database.set('exchanges', {
+              id: exchange.id
+            }, toUpdate);
           }
 
-          if (exchange.statusB == 2) {
-            toUpdate.statusB = 1;
-          }
-
-          await Database.query('INSERT INTO exchange_logs VALUES (?, ?, NOW())', [exchange.id, `${this.bird.commonName} was removed from the offer because it was released.`]);
-
-          await Database.set('exchanges', {
-            id: exchange.id
-          }, toUpdate);
-        }
-
-        await Database.query('DELETE FROM exchange_birdypets WHERE birdypet = ?', [this.id]);
-      }),
-      Redis.del(`birdypet:${this.id}`),
-    ]);
+          await Database.query('DELETE FROM exchange_birdypets WHERE birdypet = ?', [this.id]);
+        }),
+        Redis.del(`birdypet:${this.id}`),
+      ]).then(resolve);
+    });
   }
 }
 

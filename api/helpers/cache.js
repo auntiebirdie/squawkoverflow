@@ -8,11 +8,11 @@ class Cache {
         if (!result) {
           Database.count(query, params).then(async (result) => {
             Redis.set(id, result, () => {
-              resolve(result);
+              resolve(result * 1);
             });
           });
         } else {
-          resolve(result);
+          resolve(result * 1);
         }
       });
     });

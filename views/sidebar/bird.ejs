@@ -1,3 +1,9 @@
+       <% if (locals.loggedInUser && loggedInUser.contributor) { %>
+        <div class="text-center mb-4">         
+          <p><a href="/birdypedia/bird/<%= bird.id_slug %>/edit" class="btn btn-light">✏️ Edit Species</a></p>
+        </div>
+       <% } %>
+
         <h5>Scientific Name</h5>
         <p><%= bird.scientificName %></p>
 

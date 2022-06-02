@@ -1,3 +1,18 @@
+<% if (locals.loggedInUser && loggedInUser.admin && loggedInUser.id != member.id) { %>
+  <p>
+    <input type="checkbox" id="isContributor" value="1" <%= member.contributor ? 'checked' : '' %> class="form-check-input">
+    <label for="isContributor" class="form-check-label">Contributor</label>
+  </p>
+
+  <script>
+    $(document).ready(function () {
+      $('#isContributor').on('change', function (e) {
+        API.call('member', 'PUT', { member : '<%= member.id %>', contributor: e.target.checked });
+      });
+    });
+  </script>
+<% } %>
+
 <h5>Collection Progress</h5>
 
 <p class="mb-0 mt-4"><a href="/birdypedia">All Species</a></hp>

@@ -10,7 +10,6 @@ module.exports = (req, res) => {
 
     response.results = response.results.map((result) => {
       result = new Member(result.id);
-
         promises.push(result.fetch(req.query));
 
         return result;
@@ -22,6 +21,7 @@ module.exports = (req, res) => {
     });
   } else {
     return Members.all().then(async (members) => {
+	    console.log('MEMBERS FETCHED');
       let promises = [];
 
       if (!req.query.include?.includes('self') && req.query.loggedInUser) {
@@ -34,6 +34,8 @@ module.exports = (req, res) => {
         });
       }
 
+	    console.log('MEMBERS FILTERED');
+
       if (req.query.search) {
         try {
           let substrRegex = new RegExp(req.query.search, 'i');
@@ -42,6 +44,8 @@ module.exports = (req, res) => {
             return substrRegex.test(member.username);
           });
         } catch (err) {}
+
+	      console.log('MEMBERS SEARCHED');
       }
 
       if (req.query.include?.includes('birdData')) {
@@ -51,9 +55,12 @@ module.exports = (req, res) => {
             member.wishlisted = data.wishlisted;
           }));
         }
+
+	      console.log('BIRD DATA');
       }
 
       await Promise.all(promises);
+	    console.log('FETCHED');
 
       return res.json(members);
     });

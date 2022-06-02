@@ -8,13 +8,13 @@
       <input type="text" id="form-commonName" class="form-control mb-3 w-100" value="<%= locals.bird?.commonName %>">
 
       <h5><label for="form-scientificName">Scientific Name</label></h5>
-      <input type="text" id="form-scientificName" class="form-control mb-3 w-100" value="<%= locals.bird?.scientificName %>">
+      <input type="text" id="form-scientificName" class="form-control mb-3 w-100" value="<%= locals.bird?.scientificName %>" <%= locals.bird ? 'disabled="true"' : '' %>>
 
       <h5><label for="form-family">Family</label></h5>
-      <select id="form-family" class="form-select mb-3">
+      <select id="form-family" class="form-select mb-3" <%= locals.bird ? 'disabled="true"' : '' %>>
         <option></option>
        <% for (let family of families) { %>
-        <option value="<%= family.name %>">
+        <option value="<%= family.name %>" <%= locals.bird?.family == family.name ? 'selected' : '' %>>
           <%= family.display %>
         </option>
        <% } %>
@@ -40,7 +40,7 @@
               commonName: $('#form-commonName').val(),
               scientificName: $('#form-scientificName').val(),
             }, function (response) {
-              window.location.replace(`/birdypedia/bird/${response?.replace(/\s/g, '-')}/variant/new`);
+              window.location.replace(`/birdypedia/bird/${response?.replace(/\s/g, '-')}<%= locals.bird? '' : '/variant/new' %>`);
             }, function (error) {
               container.classList.remove('loadingData');
             }

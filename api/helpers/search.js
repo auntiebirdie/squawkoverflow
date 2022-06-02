@@ -53,7 +53,7 @@ class Search {
         if (exactMatch) {
           input.search = exactMatch[1];
         } else {
-          input.search = '("' + input.search + '")';
+          input.search = input.search.replace("'", "");
         }
 
         if (kind == 'artist') {
@@ -69,11 +69,19 @@ class Search {
           }
           params.push(input.search, input.search);
         } else {
-          filters.push(exactMatch ? '(species.commonName = ? OR species.scientificName = ?)' : 'MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE)');
           if (exactMatch) {
-            params.push(input.search);
+            filters.push('(species.commonName = ? OR species.scientificName = ?)');
+            params.push(input.search, input.search);
+          } else {
+            if (input.search.split(' ').length > 1) {
+              filters.push('(MATCH(species.commonName, species.scientificName) AGAINST (?))');
+		    params.push(input.search);
+              //params.push(input.search, "(" + input.search.split(" ").map((tmp) => `+"${tmp}"`).join(" ") + ")");
+	    } else {
+                filters.push('MATCH(species.commonName, species.scientificName) AGAINST (?)');
+                params.push(input.search);
+            }
           }
-          params.push(input.search);
         }
       }
 
@@ -292,16 +300,16 @@ class Search {
 
       query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC');
 
-      Database.query(query, params).then((birds) => {
-        var totalPages = birds.length;
+      Database.query(query, params).then((results) => {
+        var totalPages = results.length;
 
-        for (let i = page, len = Math.min(page + perPage, birds.length); i < len; i++) {
-          output.push(birds[i]);
+        for (let i = page, len = Math.min(page + perPage, results.length); i < len; i++) {
+          output.push(results[i]);
         }
 
         resolve({
           totalPages: Math.ceil(totalPages / perPage),
-          totalResults: birds.length,
+          totalResults: results.length,
           results: output
         });
       });

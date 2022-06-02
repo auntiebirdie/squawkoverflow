@@ -46,7 +46,7 @@ module.exports = (req, res) => {
       });
     });
   } else {
-    Database.query('SELECT name, MATCH (name) AGAINST (? IN NATURAL LANGUAGE MODE) AS relevance FROM artists WHERE MATCH (name) AGAINST (? IN NATURAL LANGUAGE MODE) AND numVariants > 0 ORDER BY relevance', [req.query.search, req.query.search]).then((results) => {
+    Database.query('SELECT name, MATCH (name) AGAINST (? IN BOOLEAN MODE) AS relevance FROM artists WHERE MATCH (name) AGAINST (? IN BOOLEAN MODE) AND numVariants > 0 ORDER BY relevance', [req.query.search, req.query.search]).then((results) => {
       res.json(results);
     });
   }

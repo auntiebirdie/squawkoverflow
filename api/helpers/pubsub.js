@@ -39,6 +39,7 @@ exports.receive = function(message, context) {
 
     switch (data.action) {
       case "COLLECT":
+        const Cache = require(__dirname + '/../helpers/cache.js');
         const Database = require(__dirname + '/../helpers/database.js');
         const Redis = require(__dirname + '/../helpers/redis.js');
         const Variant = require(__dirname + '/../models/variant.js');
@@ -53,11 +54,20 @@ exports.receive = function(message, context) {
           variant.fetch()
         ]);
 
-        Database.query('SELECT `count` FROM counters WHERE (`member` = ? OR `member` = "SQUAWK") AND type = "species" AND id = "total" GROUP BY `member` ORDER BY FIELD(`member`, "SQUAWK") DESC', [member.id]).then(async (totals) => {
-          if (totals.length > 1 && totals[1].count >= totals[0].count) {
-            await Database.query('INSERT INTO member_badges VALUES (?, "completionist", NOW()) ON DUPLICATE KEY UPDATE badge = badge', [this.member]);
+        let memberTotal = await Cache.count(`species:${member.id}`, 'counters JOIN species ON (counters.id = species.id)', {
+          member: member.id,
+          type: 'birdypedia',
+          count: {
+            comparator: '>',
+            value_trusted: 0
           }
         });
+
+        let squawkTotal = await Cache.count('species', 'species');
+
+        if (memberTotal * 1 >= squawkTotal * 1) {
+          await Database.query('INSERT INTO member_badges VALUES (?, "completionist", NOW()) ON DUPLICATE KEY UPDATE badge = badge', [member.id]);
+        }
 
         if (member.serverMember && !member.settings.privacy_activity) {
           if (data.adjective) {

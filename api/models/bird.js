@@ -27,9 +27,22 @@ class Bird {
     });
   }
 
+  set(data) {
+    return new Promise(async (resolve, reject) => {
+      await Database.set('species', {
+        id: this.id
+      }, data);
+
+      for (let key in data) {
+        await Redis.hset(`species:${this.id}`, key, data[key]);
+      }
+
+      resolve();
+    });
+  }
+
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
-
       const identifier = `species:${this.id}`;
 
       Redis.hgetall(identifier, async (err, result) => {
@@ -116,7 +129,8 @@ class Bird {
         member: memberId,
         species: this.id
       }).then((wishlist) => wishlist ? wishlist.intensity : 0);
-	          this.owned = await Counters.get('species', memberId, this.id);
+
+      this.owned = await Counters.get('species', memberId, this.id);
       this.discovered = await Counters.get('birdypedia', memberId, this.id);
 
       resolve({

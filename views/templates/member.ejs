@@ -9,7 +9,7 @@
       <p class="small mb-0"><em>Last Active: ${model.lastActive}</em></p>
     </div>
     <div class="col-2 d-flex">
-      <span class="small text-center align-self-center">🐦<br>${(model.aviary * 1).toLocaleString('en-US')}</span>
+      <span class="small text-center align-self-center">🐦<br>${Intl.NumberFormat('en', { notation : 'compact' }).format(model.aviary * 1)}</span>
     </div>
   </div>
 </div>

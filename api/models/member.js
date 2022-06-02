@@ -1,3 +1,4 @@
+const Cache = require('../helpers/cache.js');
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
@@ -82,7 +83,7 @@ class Member {
     return new Promise(async (resolve, reject) => {
       var member = await this.exists(params);
 
-      if (!member) {
+      if (!member || !member.id) {
         return reject();
       }
 
@@ -174,7 +175,9 @@ class Member {
             this.auth = await Database.query('SELECT provider, id FROM member_auth WHERE `member` = ?', [this.id]);
             break;
           case 'aviary':
-            this.aviary = await Counters.get('aviary', this.id, "total");
+            this.aviary = await Cache.count(`aviary:${member.id}`, 'birdypets', {
+              'member': this.id
+            });
             break;
           case 'badges':
             this.badges = await Database.query('SELECT badges.* FROM badges JOIN member_badges ON (member_badges.badge = badges.id) WHERE member_badges.member = ? ORDER BY displayOrder', [this.id]);
@@ -267,7 +270,9 @@ class Member {
             });
             break;
           case 'rank':
-            var total = this.aviary ? this.aviary : await Counters.get('aviary', this.id, 'total');
+            var total = this.aviary ? this.aviary : await Cache.count(`aviary:${member.id}`, 'birdypets', {
+              'member': this.id
+            });
 
             this.ranks = require('../data/ranks.json').map((rank) => {
               return {
@@ -304,10 +309,12 @@ class Member {
             break;
           case 'totals':
             this.totals = {
-              aviary: this.aviary ? this.aviary : await Counters.get('aviary', this.id, 'total'),
+              aviary: this.aviary ? this.aviary : await Cache.count(`aviary:${member.id}`, 'birdypets', {
+              'member': this.id
+            }),
               species: [
-                await Counters.get('species', this.id, 'total'),
-                await Counters.get('species', 'SQUAWK', 'total')
+                await Cache.count(`species:${this.id}`, 'counters JOIN species ON (counters.id = species.id)', { member: this.id, type: 'birdypedia', count: { comparator: '>', value_trusted: 0 } }),
+                await Cache.count('species', 'species', {})
               ]
             };
             break;

@@ -1,4 +1,5 @@
   <div id="memberSearch" data-bird="<%= locals.bird ? bird : "" %>">
+   <% if (locals.include && include.includes('birdData')) { %>
     <div class="row text-center">
       <div class="col-6 p-3">
         <div class="form-check form-check-inline">
@@ -18,12 +19,15 @@
         </div>
       </div>
     </div>
-
-    <input class="typeahead form-control" type="text">
-  </div>
-
-  <div id="memberDisplay" class="mt-4">
-   <% if (locals.selectedMember) { %>
-     <h3><img src="<%= selectedMember.avatar %>" class="rounded" width="75" data-id="<%= selectedMember.id %>" onerror="missingMemberAvatar(this)"> <%= selectedMember.username %></h3>
    <% } %>
+
+    <div class="position-relative w-75 mx-auto">
+      <input class="typeahead form-control" type="text">
+
+      <div id="memberDisplay" class="position-absolute" style="left: -50px; top: -3px;">
+       <% if (locals.selectedMember) { %>
+         <img src="<%= selectedMember.avatar %>" class="rounded" width="45" data-id="<%= selectedMember.id %>" onerror="missingMemberAvatar(this)">
+       <% } %>
+      </div>
+    </div>
   </div>

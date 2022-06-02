@@ -21,7 +21,7 @@
           <h5><label for="form-license">License</label></h5>
           <select id="form-license" class="form-select">
             <option value="">(n/a)</option>
-           <% for (let license of ["CC0", "CC-BY 1.0", "CC-BY 2.0", "CC-BY 3.0", "CC-BY 4.0", "CC-BY-SA 1.0", "CC-BY-SA 2.0", "CC-BY-SA 3.0", "CC-BY-SA 4.0"]) { %>
+           <% for (let license of ["CC0", "CC-BY 1.0", "CC-BY 2.0", "CC-BY 3.0", "CC-BY 4.0", "CC-BY-SA 1.0", "CC-BY-SA 2.0", "CC-BY-SA 3.0", "CC-BY-SA 4.0", "Pixabay"]) { %>
             <option <%= variant?.license == license ? "selected" : "" %>><%= license %></option>
            <% } %>
           </select>
@@ -39,15 +39,12 @@
           </div>
         </div>
         <div class="col-6">
-          <h5><label for="form-member">Contributor</label></h5>
-          <div id="memberSearch" class="mb-3">
-            <input class="typeahead form-control" type="text" value="<%= variant?.contributor?.username %>">
-          </div>
+          <h5><label>Contributor</label></h5>
+          <%- include('../partials/membersearch.ejs', { selectedMember : variant?.contributor }) %>
 
-          <div id="memberDisplay">
-           <% if (variant && variant.contributor) { %>
-            <h3><img src="<%= variant.contributor.avatar %>" class="rounded" width="75" data-id="<%= variant.contributor.id %>" onerror="missingMemberAvatar(this)"> <%= variant.contributor.username %></h3>
-           <% } %>
+          <div class="form-check form-check-inline small">
+            <input class="form-check-input" type="checkbox" id="form-artist" <%= variant && variant.contributor && variant.contributor.id == variant.artist?.id ? 'checked' : '' %>>
+            <label class="form-check-label" for="form-artist">Contributor is also artist/photographer</label>
           </div>
         </div>
       </div>

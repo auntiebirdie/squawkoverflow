@@ -1,3 +1,4 @@
+const Audit = require('../helpers/audit.js');
 const Bird = require('../models/bird.js');
 const Birds = require('../collections/birds.js');
 const Counters = require('../helpers/counters.js');
@@ -21,7 +22,7 @@ module.exports = async (req, res) => {
             await Members.all().then((members) => {
               for (let member of members) {
                 if (!member.settings.privacy_profile) {
-			promises.push(Counters.get('species', member.id, bird.id).then(async (result) => {
+                  promises.push(Counters.get('species', member.id, bird.id).then(async (result) => {
                     member.owned = result;
                     member.wishlisted = await Database.count('wishlist', {
                       member: member.id,
@@ -63,10 +64,23 @@ module.exports = async (req, res) => {
       res.json(bird);
       break;
     case "PUT":
-      var bird = new Bird();
+      var bird = new Bird(req.body.id);
 
-      await bird.create(req.body);
+      var member = await Members.get(req.body.loggedInUser);
 
+      if (member.contributor || member.admin) {
+        if (req.body.id) {
+          if (req.body.commonName) {
+            await bird.set({
+              'commonName': req.body.commonName
+            });
+            await Audit.log('update species', req.body);
+          }
+        } else {
+          await bird.create(req.body);
+          await Audit.log('create species', req.body);
+        }
+      }
 
       res.json(bird.id);
       break;
