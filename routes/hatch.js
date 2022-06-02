@@ -19,6 +19,7 @@ router.get('/', async (req, res) => {
         });
       })
       .catch((err) => {
+	      console.log(err);
         switch (err.code) {
           case 401:
           case "401":
@@ -26,13 +27,13 @@ router.get('/', async (req, res) => {
             break;
           case 403:
           case "403":
-            if (err.response.data.timeUntil > 0) {
+            if (err.response.timeUntil > 0) {
               return res.render('hatch/timer.ejs', {
                 title: 'Hatch an Egg',
-                timeUntil: err.response.data.timeUntil,
+                timeUntil: err.response.timeUntil,
                 member: member
               });
-            } else if (err.response.data.aviaryFull) {
+            } else if (err.response.aviaryFull) {
               return res.render('hatch/full.ejs', {
                 title: 'Hatch an Egg',
                 member: member
