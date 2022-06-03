@@ -10,7 +10,8 @@ exports.publish = function(topic, action, body) {
       action
     };
 
-    if (secrets.ENV == 'PROD') {
+    //    if (secrets.ENV == 'PROD') {
+    if (false) {
       const pubsub = new PubSub();
 
       pubsub.topic(topic).publish(Buffer.from(JSON.stringify(data))).then(() => {
