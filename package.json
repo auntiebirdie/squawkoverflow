@@ -12,7 +12,6 @@
   "author": "seppukawaii",
   "license": "ISC",
   "dependencies": {
-    "@google-cloud/connect-datastore": "^5.0.3",
     "@google-cloud/logging-bunyan": "^4.0.0",
     "@google-cloud/pubsub": "^3.0.1",
     "@google-cloud/storage": "^5.20.5",
@@ -22,6 +21,7 @@
     "discord.js": "^13.7.0",
     "ejs": "^3.1.6",
     "express": "^4.17.3",
+    "express-mysql-session": "^2.1.8",
     "express-session": "^1.17.2",
     "express-useragent": "^1.0.15",
     "google-auth-library": "^7.14.0",

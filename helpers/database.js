@@ -9,7 +9,6 @@ Database.prototype.connect = function() {
     if (!this.conn) {
       this.conn = await mariadb.createConnection({
         host: secrets.DB[secrets.ENV].HOST,
-        socketPath: secrets.DB[secrets.ENV].SOCKET,
         user: secrets.DB[secrets.ENV].USER,
         password: secrets.DB[secrets.ENV].PASS,
         allowPublicKeyRetrieval: true,
