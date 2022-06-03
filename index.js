@@ -3,6 +3,7 @@ const chance = require('chance').Chance();
 const express = require('express');
 const useragent = require('express-useragent');
 const app = express();
+const secrets = require('./secrets.json');
 
 app.get('/_ah/warmup', (req, res) => {
   res.send("🌄🐓");
@@ -40,7 +41,7 @@ app.use(async function(req, res, next) {
     });
 
     if (res.locals.loggedInUser) {
-      res.locals.ENV = process.env.NODE_ENV ? 'production' : 'DEV';
+      res.locals.ENV = secrets.ENV;
 
       menu.push({
         "icon": "🥚",

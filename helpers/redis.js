@@ -1,7 +1,6 @@
 const secrets = require('../secrets.json');
 const redis = require('redis');
 
-let DB = process.env.NODE_ENV == 'production' ? 'PROD' : 'DEV';
 var connection = null;
 
 class Redis {
@@ -9,7 +8,7 @@ class Redis {
     return new Promise(async (resolve, reject) => {
       if (!connection) {
         connection = redis.createClient({
-          url: `redis://${secrets.REDIS[DB].USER}:${secrets.REDIS[DB].AUTH}@${secrets.REDIS[DB].HOST}:${secrets.REDIS[DB].PORT}`
+          url: `redis://${secrets.REDIS[secrets.ENV].USER}:${secrets.REDIS[secrets.ENV].AUTH}@${secrets.REDIS[secrets.ENV].HOST}:${secrets.REDIS[secrets.ENV].PORT}`
         });
 
         await connection.connect();

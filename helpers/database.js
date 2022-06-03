@@ -7,13 +7,10 @@ function Database() {}
 Database.prototype.connect = function() {
   return new Promise(async (resolve, reject) => {
     if (!this.conn) {
-      let ENV = process.env.NODE_ENV == 'production' ? 'PROD' : 'DEV';
-
-      this.conn = await mariadb.createConnection({
-        host: secrets.DB[ENV].HOST,
-        socketPath: secrets.DB[ENV].SOCKET,
-        user: secrets.DB[ENV].USER,
-        password: secrets.DB[ENV].PASS,
+        host: secrets.DB[secrets.ENV].HOST,
+        socketPath: secrets.DB[secrets.ENV].SOCKET,
+        user: secrets.DB[secrets.ENV].USER,
+        password: secrets.DB[secrets.ENV].PASS,
         allowPublicKeyRetrieval: true,
         bigIntAsNumber: true
       });

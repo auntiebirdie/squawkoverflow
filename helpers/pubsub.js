@@ -1,6 +1,7 @@
 const {
   PubSub
 } = require('@google-cloud/pubsub');
+const secrets = require('../secrets.json');
 
 exports.publish = function(topic, action, body) {
   return new Promise((resolve, reject) => {
@@ -9,7 +10,7 @@ exports.publish = function(topic, action, body) {
       action
     };
 
-    if (process.env.NODE_ENV == 'PROD') {
+    if (secrets.ENV == 'PROD') {
       const pubsub = new PubSub();
 
       pubsub.topic(topic).publish(Buffer.from(JSON.stringify(data))).then(() => {
