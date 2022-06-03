@@ -5,9 +5,7 @@ const useragent = require('express-useragent');
 const app = express();
 
 app.get('/_ah/warmup', (req, res) => {
-  API.call('ping').then(() => {
-    res.send("🌄🐓");
-  });
+  res.send("🌄🐓");
 });
 
 app.set('view engine', 'ejs');
@@ -42,7 +40,7 @@ app.use(async function(req, res, next) {
     });
 
     if (res.locals.loggedInUser) {
-      res.locals.ENV = process.env.NODE_ENV ? 'PROD' : 'DEV';
+      res.locals.ENV = process.env.NODE_ENV ? 'production' : 'DEV';
 
       menu.push({
         "icon": "🥚",
