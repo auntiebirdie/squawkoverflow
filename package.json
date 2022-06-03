@@ -2,12 +2,11 @@
   "name": "squawkoverflow",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node app.js",
     "bugs": "node bugs.js",
-    "deploy": "gcloud app deploy && gcloud app versions list --format='value(version.id)' --sort-by='~version.createTime' | tail -n +3 | xargs -r gcloud app versions delete --quiet",
-    "dev": "DEV=true node index.js | bunyan"
+    "dev": "DEV=true node app.js | bunyan"
   },
   "author": "seppukawaii",
   "license": "ISC",
