@@ -14,7 +14,8 @@ Database.prototype.connect = function() {
         socketPath: secrets.DB[ENV].SOCKET,
         user: secrets.DB[ENV].USER,
         password: secrets.DB[ENV].PASS,
-	      bigIntAsNumber: true
+        allowPublicKeyRetrieval: true,
+        bigIntAsNumber: true
       });
 
       this.conn.query('USE squawkdata');
