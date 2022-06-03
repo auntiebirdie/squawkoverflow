@@ -1,7 +1,6 @@
 const Database = require('../helpers/database.js');
 
-module.exports = (req, res) => {
-  return new Promise(async (resolve, reject) => {
+(async () => {
     /* New Day New Bait! */
     await Database.query('UPDATE counters SET `count` = 0 WHERE type = "bait"');
 
@@ -30,11 +29,5 @@ module.exports = (req, res) => {
       }
     }
 
-    /* Make sure the SQUAWK counters are correct... */
-    await Database.query('UPDATE counters SET `count` = (SELECT COUNT(DISTINCT species.id) FROM species) WHERE `member` = "SQUAWK"');
-
-    resolve();
-  }).then(() => {
-    return res.sendStatus(200);
-  });
-};
+	process.exit(0);
+})();
