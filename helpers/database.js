@@ -7,6 +7,7 @@ function Database() {}
 Database.prototype.connect = function() {
   return new Promise(async (resolve, reject) => {
     if (!this.conn) {
+      this.conn = await mariadb.createConnection({
         host: secrets.DB[secrets.ENV].HOST,
         socketPath: secrets.DB[secrets.ENV].SOCKET,
         user: secrets.DB[secrets.ENV].USER,
