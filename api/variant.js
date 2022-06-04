@@ -163,7 +163,7 @@ module.exports = async (req, res) => {
             }]
           });
 
-          res.json(data.id);
+          res.json(key);
         } else {
           res.json(data.id);
         }
