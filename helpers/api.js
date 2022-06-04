@@ -16,21 +16,19 @@ exports.call = (endpoint, method = "GET", data = {}, headers = {}) => {
 
     try {
       require(`../api/${endpoint}.js`)(options, {
-          json: (response) => {
-              resolve(response);
-          },
-          ok: () => {
-		  resolve({});
-	  },
-          error: (code, response) => {
-            console.log(code, response);
-
-            reject({
-              code: code,
-              response: response
-            });
-          }
-        });
+        json: (response) => {
+          resolve(response);
+        },
+        ok: () => {
+          resolve({});
+        },
+        error: (code, response) => {
+          reject({
+            code: code,
+            response: response
+          });
+        }
+      });
     } catch (err) {
       console.log(err);
       reject(err);
