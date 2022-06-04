@@ -30,7 +30,6 @@ exports.call = (endpoint, method = "GET", data = {}, headers = {}) => {
         }
       });
     } catch (err) {
-      console.log(err);
       reject(err);
     }
   });
