@@ -89,14 +89,21 @@ class Variant {
           case "Galbulidae":
           case "Gruidae":
           case "Haematopodidae":
+          case "Hirundinidae":
           case "Hydrobatidae":
           case "Laniidae":
           case "Laridae":
           case "Lybiidae":
+          case "Malaconotidae":
           case "Maluridae":
+          case "Meliphagidae":
+          case "Megapodiidae":
           case "Meropidae":
+          case "Mimidae":
           case "Momotidae":
           case "Monarchidae":
+          case "Motacillidae":
+          case "Muscicapidae":
           case "Musophagidae":
           case "Nectariniidae":
           case "Oceanitidae":
