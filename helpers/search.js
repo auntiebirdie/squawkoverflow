@@ -27,7 +27,7 @@ class Search {
           break;
         case 'birdypet':
           select.push('birdypets.id');
-          tables.push('birdypets', 'JOIN variants ON (birdypets.variants = variants.id)', 'JOIN species ON (variants.species = species.id)');
+          tables.push('birdypets', 'JOIN variants ON (birdypets.variant = variants.id)', 'JOIN species ON (variants.species = species.id)');
           filters.push('birdypets.member = ?');
           params.push(input.member);
 
