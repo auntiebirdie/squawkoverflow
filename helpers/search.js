@@ -80,7 +80,6 @@ class Search {
             select.push('MATCH(birdypets.nickname) AGAINST (?) + MATCH(species.cleanName, species.scientificName) AGAINST (?) relevancy');
             filters.push('(MATCH(birdypets.nickname) AGAINST (?) OR MATCH(species.cleanName, species.scientificName) AGAINST (?))');
             params.push(input.search, input.search, input.search, input.search);
-            having = "HAVING relevancy > 15";
           }
         } else {
           if (exactMatch) {
