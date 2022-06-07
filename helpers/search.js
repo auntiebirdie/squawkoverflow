@@ -9,19 +9,25 @@ class Search {
       var output = [];
 
       let query = 'SELECT ';
+      let select = [];
+      let tables = [];
       let filters = [];
+      let having = "";
       let params = [];
 
       switch (kind) {
         case 'artist':
-          query += 'artists.name, artists.numVariants, artists.numIllustrations, artists.numPhotos FROM artists';
+          select.push('artists.name', 'artists.numVariants', 'artists.numIllustrations', 'artists.numPhotos');
+          tables.push('artists');
           filters.push('artists.numVariants > 0');
           break;
         case 'bird':
-          query += 'DISTINCT species.id FROM species JOIN variants ON (species.id = variants.species)';
+          select.push('DISTINCT species.id');
+          tables.push('species', 'JOIN variants ON (species.id = variants.species)');
           break;
         case 'birdypet':
-          query += 'birdypets.id FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.id)';
+          select.push('birdypets.id');
+          tables.push('birdypets', 'JOIN variants ON (birdypets.variants = variants.id)', 'JOIN species ON (variants.species = species.id)');
           filters.push('birdypets.member = ?');
           params.push(input.member);
 
@@ -30,19 +36,23 @@ class Search {
           }
           break;
         case 'freebird':
-          query += 'birdypets.id, birdypets.variant, birdypets.nickname FROM birdypets JOIN variants ON (birdypets.variant = variants.id) JOIN species ON (variants.species = species.id)';
+          select.push('birdypets.id', 'birdypets.variant', 'birdypets.nickname');
+          tables.push('birdypets', 'JOIN variants ON (birdypets.variant = variants.id)', 'JOIN species ON (variants.species = species.id');
           filters.push('birdypets.member IS NULL AND birdypets.addedAt <= DATE_SUB(NOW(), INTERVAL 10 MINUTE)');
           break;
         case 'incubator':
-          query += 'variants.id FROM variants JOIN member_variants ON (variants.id = member_variants.variant) JOIN species ON (variants.species = species.id)';
+          select.push('variants.id');
+          tables.push('variants', 'JOIN member_variants ON (variants.id = member_variants.variant)', 'JOIN species ON (variants.species = species.id)');
           filters.push('member_variants.member = ?');
           params.push(input.loggedInUser);
           break;
         case 'member':
-          query += 'members.id FROM members LEFT JOIN counters ON (counters.member = members.id AND counters.type = "aviary" AND counters.id = "total")';
+          select.push('members.id');
+          tables.push('members', 'LEFT JOIN counters ON (counters.member = members.id AND counters.type = "aviary" AND counters.id = "total")');
           break;
         case 'wishlist':
-          query += 'species.id FROM species JOIN wishlist ON (species.id = wishlist.species AND wishlist.member = ? AND wishlist.intensity > 0)';
+          select.push('species.id');
+          tables.push('species', 'JOIN wishlist ON (species.id = wishlist.species AND wishlist.member = ? AND wishlist.intensity > 0)');
           params.push(input.id);
           break;
       }
@@ -73,14 +83,10 @@ class Search {
             filters.push('(species.commonName = ? OR species.scientificName = ?)');
             params.push(input.search, input.search);
           } else {
-            if (input.search.split(' ').length > 1) {
-              filters.push('(MATCH(species.commonName, species.scientificName) AGAINST (?))');
-		    params.push(input.search);
-              //params.push(input.search, "(" + input.search.split(" ").map((tmp) => `+"${tmp}"`).join(" ") + ")");
-	    } else {
-                filters.push('MATCH(species.commonName, species.scientificName) AGAINST (?)');
-                params.push(input.search);
-            }
+            select.push('MATCH(species.commonName, species.scientificName) AGAINST (?) relevancy');
+            filters.push('MATCH(species.commonName, species.scientificName) AGAINST (?)');
+            params.push(input.search, input.search);
+            having = "HAVING relevancy > 10";
           }
         }
       }
@@ -111,7 +117,7 @@ class Search {
       }
 
       if (input.adjectives) {
-        query += ' JOIN species_adjectives ON (species.id = species_adjectives.species)';
+        tables.push(' JOIN species_adjectives ON (species.id = species_adjectives.species)');
         filters.push('species_adjectives.adjective = ?');
         params.push(input.adjectives);
       }
@@ -234,6 +240,8 @@ class Search {
         }
       }
 
+      query += select.join(', ') + ' FROM ' + tables.join(' ');
+
       if (filters.length > 0) {
         query += ' WHERE ' + filters.join(' AND ');
       }
@@ -241,6 +249,8 @@ class Search {
       if (kind == 'bird') {
         query += ' GROUP BY species.id';
       }
+
+      query += ' ' + having;
 
       query += ' ORDER BY ';
 

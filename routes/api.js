@@ -13,9 +13,11 @@ router.all('/*', async (req, res) => {
     API.call(endpoint, req.method, data, req.headers).then((response) => {
       res.json(response);
     }).catch((err) => {
+	    console.log(err);
       res.json(err);
     });
   } catch (err) {
+	  console.log(err);
     res.json(err);
   }
 });
