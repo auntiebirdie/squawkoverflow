@@ -12,7 +12,6 @@ class Search {
       let select = [];
       let tables = [];
       let filters = [];
-      let having = "";
       let params = [];
 
       switch (kind) {
@@ -89,7 +88,6 @@ class Search {
             select.push('MATCH(species.cleanName, species.scientificName) AGAINST (?) relevancy');
             filters.push('MATCH(species.cleanName, species.scientificName) AGAINST (?)');
             params.push(input.search, input.search);
-            having = "HAVING relevancy > 10";
           }
         }
       }
@@ -253,8 +251,6 @@ class Search {
         query += ' GROUP BY species.id';
       }
 
-      query += ' ' + having;
-
       query += ' ORDER BY ';
 
       switch (input.sort) {
@@ -314,7 +310,7 @@ class Search {
       query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC');
 
       Database.query(query, params).then((results) => {
-        if (results.length > 0 && having != '') {
+        if (results.length > 0 && results[0].relevancy) {
           let maxRelevancy = Math.max(...results.map((result) => result.relevancy));
           results = results.filter((result) => result.relevancy >= (maxRelevancy * .75));
         }
