@@ -63,28 +63,32 @@ class Search {
         if (exactMatch) {
           input.search = exactMatch[1];
         } else {
-          input.search = input.search.replace("'", "");
+          input.search = input.search.replace(/\'/g, '').replace(/\-/g, ' ');
         }
 
         if (kind == 'artist') {
-          filters.push(exactMatch ? 'artists.name = ?' : 'MATCH(artists.name) AGAINST (? IN BOOLEAN MODE)');
+          filters.push(exactMatch ? 'artists.name = ?' : 'MATCH(artists.name) AGAINST (?)');
           params.push(input.search);
         } else if (kind == 'member') {
-          filters.push(exactMatch ? 'members.username = ?' : 'MATCH(members.username) AGAINST (? IN BOOLEAN MODE)');
+          filters.push(exactMatch ? 'members.username = ?' : 'MATCH(members.username) AGAINST (?)');
           params.push(input.search);
         } else if (kind == 'birdypet') {
-          filters.push(exactMatch ? '(birdypets.nickname = ? OR species.commonName = ? OR species.scientificName = ?)' : '(MATCH(birdypets.nickname) AGAINST (? IN BOOLEAN MODE) OR MATCH(species.commonName, species.scientificName) AGAINST (? IN BOOLEAN MODE))');
           if (exactMatch) {
-            params.push(input.search);
+            filters.push('(birdypets.nickname = ? OR species.commonName = ? OR species.cleanName = ? OR species.scientificName = ?)');
+            params.push(input.search, input.search, input.search, input.search);
+          } else {
+            select.push('MATCH(birdypets.nickname) AGAINST (?) + MATCH(species.cleanName, species.scientificName) AGAINST (?) relevancy');
+            filters.push('(MATCH(birdypets.nickname) AGAINST (?) OR MATCH(species.cleanName, species.scientificName) AGAINST (?))');
+            params.push(input.search, input.search, input.search, input.search);
+            having = "HAVING relevancy > 15";
           }
-          params.push(input.search, input.search);
         } else {
           if (exactMatch) {
-            filters.push('(species.commonName = ? OR species.scientificName = ?)');
+            filters.push('(species.commonName = ? OR species.cleanName = ? OR species.scientificName = ?)');
             params.push(input.search, input.search);
           } else {
-            select.push('MATCH(species.commonName, species.scientificName) AGAINST (?) relevancy');
-            filters.push('MATCH(species.commonName, species.scientificName) AGAINST (?)');
+            select.push('MATCH(species.cleanName, species.scientificName) AGAINST (?) relevancy');
+            filters.push('MATCH(species.cleanName, species.scientificName) AGAINST (?)');
             params.push(input.search, input.search);
             having = "HAVING relevancy > 10";
           }
@@ -309,6 +313,8 @@ class Search {
       }
 
       query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC');
+
+	    console.log(query);
 
       Database.query(query, params).then((results) => {
         var totalPages = results.length;

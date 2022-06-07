@@ -72,7 +72,8 @@ module.exports = async (req, res) => {
         if (req.body.id) {
           if (req.body.commonName) {
             await bird.set({
-              'commonName': req.body.commonName
+              'commonName': req.body.commonName,
+              'cleanName': req.body.commonName.replace(/\'/g, '').replace(/\-/g, ' ')
             });
             await Audit.log('update species', req.body);
           }
