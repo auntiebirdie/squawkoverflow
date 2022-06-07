@@ -86,6 +86,7 @@ class Variant {
           case "Falconidae":
           case "Falcunculidae":
           case "Fregatidae":
+		case "Fringillidae":
           case "Galbulidae":
           case "Gruidae":
           case "Haematopodidae":
