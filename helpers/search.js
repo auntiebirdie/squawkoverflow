@@ -127,7 +127,7 @@ class Search {
       }
 
       if (input.artist) {
-        filters.push('species.id IN (SELECT a.species FROM variants a WHERE a.credit = ?)');
+        filters.push('variants.credit = ?');
         params.push(input.artist);
       }
 
