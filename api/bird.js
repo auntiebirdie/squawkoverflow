@@ -71,7 +71,7 @@ module.exports = async (req, res) => {
       if (member.contributor || member.admin) {
         if (req.body.id) {
           if (req.body.commonName) {
-            let commonName = req.body.commonName.replace(/\ʻ/g, "'");
+            let commonName = req.body.commonName.replace(/\ʻ/g, "'").trim();
 
             await bird.set({
               'commonName': commonName,
