@@ -89,7 +89,7 @@ module.exports = async (req, res) => {
         }
       }).then(async () => {
         if (existing) {
-          await Database.query('UPDATE variants SET source = ?, subspecies = ?, credit = ?, license = ?, notes = ?, full = ?, special = ?, filetype = ?, style = ?, label = ? WHERE id = ?', [data.source, data.subspecies, data.credit, data.license, data.notes, data.full, data.special, data.filetype || existing.filetype, data.style, data.label, key]);
+          await Database.query('UPDATE variants SET source = ?, subspecies = ?, credit = ?, license = ?, notes = ?, full = ?, special = ?, filetype = ?, style = ?, label = ?, updatedAt = NOW() WHERE id = ?', [data.source, data.subspecies, data.credit, data.license, data.notes, data.full, data.special, data.filetype || existing.filetype, data.style, data.label, key]);
 
           if (data.credit != existing.credit) {
             await Database.query('UPDATE artists SET numVariants = numVariants - 1, numIllustrations = numIllustrations - ?, numPhotos = numPhotos - ? WHERE name = ?', [data.style == 1 ? 1 : 0, data.style == 2 ? 1 : 0, existing.credit]);
@@ -98,8 +98,8 @@ module.exports = async (req, res) => {
             await Database.query('UPDATE artists SET numIllustrations = numIllustrations + ?, numPhotos = numPhotos + ? WHERE name = ?', [data.style == 1 ? 1 : -1, data.style == 2 ? 1 : -1, data.credit]);
           }
         } else {
-          await Database.query('INSERT INTO variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())', [key, data.species, data.subspecies, data.label, data.credit, data.source, data.license, data.notes, data.filetype, data.style, data.full, data.special]);
-          await Database.query('INSERT INTO artists VALUES (?, 1, ?, ?) ON DUPLICATE KEY UPDATE numVariants = numVariants + 1, numIllustrations = numIllustrations + ?, numPhotos = numPhotos + ?', [data.credit, data.style == 1 ? 1 : 0, data.style == 2 ? 1 : 0, data.style == 1 ? 1 : 0, data.style == 1 ? 1 : 0]);
+          await Database.query('INSERT INTO variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())', [key, data.species, data.subspecies, data.label, data.credit, data.source, data.license, data.notes, data.filetype, data.style, data.full, data.special]);
+          await Database.query('INSERT INTO artists VALUES (?, 1, ?, ?) ON DUPLICATE KEY UPDATE numVariants = numVariants + 1, numIllustrations = numIllustrations + ?, numPhotos = numPhotos + ?', [data.credit, data.style == 1 ? 1 : 0, data.style == 2 ? 1 : 0, data.style == 1 ? 1 : 0, data.style == 2 ? 1 : 0]);
         }
 
         let variant = new Variant(key);
