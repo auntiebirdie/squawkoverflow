@@ -37,7 +37,7 @@ class Search {
           break;
         case 'freebird':
           select.push('birdypets.id', 'birdypets.variant', 'birdypets.nickname');
-          tables.push('birdypets', 'JOIN variants ON (birdypets.variant = variants.id)', 'JOIN species ON (variants.species = species.id');
+          tables.push('birdypets', 'JOIN variants ON (birdypets.variant = variants.id)', 'JOIN species ON (variants.species = species.id)');
           filters.push('birdypets.member IS NULL AND birdypets.addedAt <= DATE_SUB(NOW(), INTERVAL 10 MINUTE)');
           break;
         case 'incubator':
@@ -313,8 +313,6 @@ class Search {
       }
 
       query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC');
-
-	    console.log(query);
 
       Database.query(query, params).then((results) => {
         var totalPages = results.length;
