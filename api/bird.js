@@ -71,9 +71,11 @@ module.exports = async (req, res) => {
       if (member.contributor || member.admin) {
         if (req.body.id) {
           if (req.body.commonName) {
+            let commonName = req.body.commonName.replace(/\ʻ/g, "'");
+
             await bird.set({
-              'commonName': req.body.commonName,
-              'cleanName': req.body.commonName.replace(/\'/g, '').replace(/\-/g, ' ')
+              'commonName': commonName,
+              'cleanName': commonName.replace(/\'/g, '').replace(/\-/g, ' ')
             });
             await Audit.log('update species', req.body);
           }
