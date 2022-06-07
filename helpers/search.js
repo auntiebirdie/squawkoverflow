@@ -315,6 +315,11 @@ class Search {
       query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC');
 
       Database.query(query, params).then((results) => {
+        if (results.length > 0 && having != '') {
+          let maxRelevancy = Math.max(...results.map((result) => result.relevancy));
+          results = results.filter((result) => result.relevancy >= (maxRelevancy * .75));
+        }
+
         var totalPages = results.length;
 
         for (let i = page, len = Math.min(page + perPage, results.length); i < len; i++) {
