@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node app.js",
     "bugs": "node bugs.js",
-    "dev": "DEV=true node app.js | bunyan"
+    "dev": "DEV=true node app.js | bunyan",
+    "restart": "forever stop squawk && rm ~/.forever/squawk.log && forever start --uid=squawk app.js"
   },
   "author": "seppukawaii",
   "license": "ISC",
