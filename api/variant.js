@@ -61,7 +61,7 @@ module.exports = async (req, res) => {
 
           await bird.fetch();
 
-          data.filetype = data.files.image.originalFilename.split('.').pop().toLowerCase();
+          data.filetype = data.files.image.type.split('/').pop();
 
           let file = bucket.file(`birds/${key.slice(0, 1)}/${key.slice(0, 2)}/${key}.${data.filetype}`);
 
