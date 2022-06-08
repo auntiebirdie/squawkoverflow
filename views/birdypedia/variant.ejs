@@ -7,7 +7,7 @@
       <div class="row mb-3">
         <div class="col-6">
           <h5><label for="form-image">Image</label></h5>
-          <input type="text" id="form-image" class="form-control mb-3 w-100"> 
+          <input type="file" id="form-image" class="form-control mb-3 w-100" accept="image/png, image/jpeg, image/jpg"> 
         </div>
         <div class="col-3">
           <h5><label for="form-style">Style</label></h5>
@@ -95,7 +95,6 @@
       var reader = new FileReader();
 
       $('#form-image').on('change', function () {
-/*
         if(this.files[0].size > 1048576){
           alert("Please limit files to 1MB or less (emphasis on less)");
           this.value = "";
@@ -107,8 +106,6 @@
 
           reader.readAsDataURL(event.target.files[0]);
         }
-*/
-        $('#form-preview').attr('src', $('#form-image').val());
       });
 
       $('#form-credit').typeahead({
@@ -139,9 +136,9 @@
         if (!container.classList.contains('loadingData')) {
           container.classList.add('loadingData');
 
-          API.call('variant', 'POST', {
+          API.call('variant', 'UPLOAD', {
               <%- variant ? `id: "${variant.id}",` : '' %>
-              image: $('#form-image').val(),
+              image: $('#form-image').get(0).files[0],
               source: $('#form-source').val(),
               style: $('#form-style').val(),
               license: $('#form-license').val(),
@@ -150,8 +147,8 @@
               subspecies: $('#form-subspecies').val(),
               credit: $('#form-credit').val(),
               contributor: $('img', '#memberDisplay').attr('data-id'),
-              full: $('#form-full').is(':checked'),
-              special: $('#form-special').is(':checked'),
+              full: $('#form-full').is(':checked') ? 1 : 0,
+              special: $('#form-special').is(':checked') ? 1 : 0,
               label: $('#form-label').val()
             }, function (response) {
               window.location.replace('/birdypedia/bird/<%= bird.id_slug %>?variant=' + response);

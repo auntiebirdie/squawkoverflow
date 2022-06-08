@@ -2,17 +2,19 @@ const API = require('./helpers/api.js');
 const chance = require('chance').Chance();
 const express = require('express');
 const useragent = require('express-useragent');
+const formData = require('express-form-data');
+const os = require('os');
 const app = express();
 const secrets = require('./secrets.json');
-
-app.get('/_ah/warmup', (req, res) => {
-  res.send("🌄🐓");
-});
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.json());
 app.use(useragent.express());
+app.use(formData.parse({
+  uploadDir: os.tmpdir(),
+  autoClean: true
+}));
 
 app.use(require('./helpers/session.js'));
 

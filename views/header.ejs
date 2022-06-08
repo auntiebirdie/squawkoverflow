@@ -41,14 +41,28 @@
 	}
 
 	let querystring = method == 'GET' ? '?' + $.param(data) : '';
+	      
+        if (method == "UPLOAD") {
+          var form = new FormData();
+
+          for (let key of Object.keys(data)) {
+            form.append(key, data[key]);
+          }
+
+          data = form;
+        }
+        else {
+          data = method != 'GET' ? JSON.stringify(data) : null;
+        }
 
         API.currentRequest[endpoint] = $.ajax({
           cache: false,
           url: `/api/${endpoint}${querystring}`,
-          method: method,
-          data: method != 'GET' ? JSON.stringify(data) : null,
+          method: method == "UPLOAD" ? "POST" : method,
+          data: data,
           dataType: 'json',
-          contentType: 'application/json',
+          contentType: method == "UPLOAD" ? false : 'application/json',
+          processData: method == "UPLOAD" ? false : true,
           success: function (res) {
             API.currentRequest[endpoint] = null;
 

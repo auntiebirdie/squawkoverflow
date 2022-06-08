@@ -56,16 +56,16 @@ module.exports = async (req, res) => {
       data.credit = data.credit.trim();
 
       await new Promise(async (resolve, reject) => {
-        if (data.image) {
+        if (data.files?.image) {
           let bird = new Bird(data.species);
 
           await bird.fetch();
 
-          data.filetype = data.image.split('.').pop().split('?').shift().toLowerCase(); //data.filetype = data.image.split(';')[0].split('/')[1];
+          data.filetype = data.files.image.originalFilename.split('.').pop().toLowerCase();
 
           let file = bucket.file(`birds/${key.slice(0, 1)}/${key.slice(0, 2)}/${key}.${data.filetype}`);
 
-          await Jimp.read(data.image).then(async (image) => {
+          await Jimp.read(data.files.image.path).then(async (image) => {
             var mimes = {
               "jpg": "JPEG",
               "jpeg": "JPEG",

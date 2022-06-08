@@ -12,6 +12,7 @@ router.all('/*', async (req, res) => {
     let endpoint = req.path.match(/\/?(\b[A-Za-z]+\b)/)[1];
 
     data.loggedInUser = req.session.user;
+    data.files = req.files;
 
     log.req = {
       method: req.method,
