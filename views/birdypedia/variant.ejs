@@ -111,28 +111,26 @@
         $('#form-preview').attr('src', $('#form-image').val());
       });
 
-      API.call('artists', 'GET', {}, function (knownArtists) {
-        $('#form-credit').typeahead({
-          hint: false,
-          highlight: true,
-          minLength: 1,
-        },
-        {
-          name: 'credit',
-          source: new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.whitespace,
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            local: knownArtists.map((artist) => artist.name)
-          }),
-          templates: {
-            empty: function () {
-              return '<div class="px-1 py-2"><em>No artists found.</em></div>';
-            },
-            suggestion: function (data) {
-              return '<div class="px-1 py-2">' + data + '</div>';
-            }
+      $('#form-credit').typeahead({
+        hint: false,
+        highlight: true,
+        minLength: 1,
+      },
+      {
+        name: 'credit',
+        source: new Bloodhound({
+          datumTokenizer: Bloodhound.tokenizers.whitespace,
+          queryTokenizer: Bloodhound.tokenizers.whitespace,
+          local: <%- JSON.stringify(artists) %>
+        }),
+        templates: {
+          empty: function () {
+            return '<div class="px-1 py-2"><em>No artists found.</em></div>';
+          },
+          suggestion: function (data) {
+            return '<div class="px-1 py-2">' + data + '</div>';
           }
-        });
+        }
       });
 
       $('#submitVariant').on('click', function () {

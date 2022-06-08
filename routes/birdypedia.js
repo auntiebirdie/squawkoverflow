@@ -108,11 +108,12 @@ router.get('/bird/:id/variant/:variant', Middleware.isContributor, async (req, r
     loggedInUser: req.session.user,
     id: req.params.id,
     include: ['variants', 'artist']
-  }).then((bird) => {
+  }).then(async (bird) => {
     if (bird) {
       res.render('birdypedia/variant', {
         bird: bird,
-        variant: bird.variants.find((variant) => variant.id == req.params.variant)
+        variant: bird.variants.find((variant) => variant.id == req.params.variant),
+	artists: await API.call('artists', 'GET').then((artists) => artists.map((artist) => artist.name))
       });
     } else {
       res.redirect(`/birdypedia/bird/${req.params.id}`);
