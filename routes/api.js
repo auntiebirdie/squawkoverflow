@@ -1,6 +1,5 @@
 const API = require('../helpers/api.js');
 const Logger = require('../helpers/logger.js');
-const uuid = require('short-uuid');
 
 const express = require('express');
 const router = express.Router();
@@ -9,41 +8,40 @@ router.all('/*', async (req, res) => {
   try {
     let data = (req.method == "GET" || req.method == "HEAD" ? req.query : req.body) || {};
     let endpoint = req.path.match(/\/?(\b[A-Za-z]+\b)/)[1];
-    let tx = uuid.generate();
 
     data.loggedInUser = req.session.user;
 
-    Logger.info({
+    var log = {
       req: {
-        tx: tx,
         method: req.method,
         url: endpoint,
         headers: req.headers,
         data: data
       }
-    }, `${tx} /${req.method} ${endpoint} ${JSON.stringify(Object.fromEntries(Object.entries(data).filter((a) => ["id", "member", "loggedInUser"].includes(a[0]) )))}`);
+      str: `${tx} /${req.method} ${endpoint} ${JSON.stringify(Object.fromEntries(Object.entries(data).filter((a) => ["id", "member", "loggedInUser"].includes(a[0]) )))}`
+    };
 
     API.call(endpoint, req.method, data, req.headers).then((response) => {
       Logger.info({
-        req: {
-          tx: tx
-        },
+        req: log.req,
         res: response
+      }, log.str);
 
-      }, `${tx} /${req.method} ${endpoint} 200 SUCCESS`);
       res.json(response);
     }).catch((err) => {
       Logger.info({
-        tx: tx,
+        req: log.req,
         err: err
-      });
+      }, log.str);
+
       res.json(err);
     });
   } catch (err) {
     Logger.info({
-      tx: tx,
+      req: log.req,
       err: err
-    });
+    }, log.str);
+
     res.json(err);
   }
 });
