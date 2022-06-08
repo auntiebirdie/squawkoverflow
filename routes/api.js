@@ -24,8 +24,7 @@ router.all('/*', async (req, res) => {
 
     API.call(endpoint, req.method, data, req.headers).then((response) => {
       Logger.info({
-        req: log.req,
-        res: response
+        req: log.req
       }, log.str);
 
       res.json(response);
