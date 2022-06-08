@@ -17,7 +17,7 @@ router.all('/*', async (req, res) => {
         url: endpoint,
         headers: req.headers,
         data: data
-      }
+      },
       str: `${tx} /${req.method} ${endpoint} ${JSON.stringify(Object.fromEntries(Object.entries(data).filter((a) => ["id", "member", "loggedInUser"].includes(a[0]) )))}`
     };
 
