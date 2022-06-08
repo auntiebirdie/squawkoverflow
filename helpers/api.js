@@ -1,3 +1,5 @@
+const Logger = require('./logger.js');
+
 exports.call = (endpoint, method = "GET", data = {}, headers = {}) => {
   return new Promise(async (resolve, reject) => {
     const allowedHeaders = ['x-patreon-signature', 'x-patreon-event'];
