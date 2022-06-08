@@ -39,7 +39,7 @@ module.exports = (req, res) => {
         res.json(birdypet.id);
       });
     } else {
-      res.status(404).send("You have no bugs!");
+      res.error(403, "You have no bugs!");
     }
   });
 };

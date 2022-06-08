@@ -114,6 +114,7 @@
       </div>
 
       <nav class="nav-menu navbar">
+       <% if (locals.siteMenu) { %>
         <ul>
          <% siteMenu.forEach( function (item) { %> 
           <li class="nav-item pb-2">
@@ -193,6 +194,7 @@
 	 <% } %>
         <% } %>
         </ul>
+       <% } %>
       </nav>
     </div>
   </div>
