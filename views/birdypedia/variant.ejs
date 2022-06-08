@@ -111,42 +111,28 @@
         $('#form-preview').attr('src', $('#form-image').val());
       });
 
-      $('#form-credit').typeahead({
-        hint: false,
-        highlight: true,
-        minLength: 1
-      },
-      {
-        name: 'credit',
-        displayKey: 'name',
-        async: true,
-        source: function (query, syncResults, asyncResults) {
-            let data = {
-              search: query
-            };
-
-            API.call('artists', 'GET', data, function (results) {
-            asyncResults(results);
-          });
+      API.call('artists', 'GET', {}, function (knownArtists) {
+        $('#form-credit').typeahead({
+          hint: false,
+          highlight: true,
+          minLength: 1,
         },
-        limit: Infinity,
-        templates: {
-          empty: function () {
-            return '<div class="px-1 py-2"><em>No artists found.</em></div>';
-          },
-          pending: function () {
-            return '<div class="mx-1 fst-italic"><div class="spinner-border spinner-border-sm" role="status"></div> Searching...</div>';
-          },
-          suggestion: function (data) {
-            var text = '<div class="px-1 py-2">';
-
-            text += `${data.name}`;
-
-            text += '</div>';
-
-            return text;
+        {
+          name: 'credit',
+          source: new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.whitespace,
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            local: knownArtists.map((artist) => artist.name)
+          }),
+          templates: {
+            empty: function () {
+              return '<div class="px-1 py-2"><em>No artists found.</em></div>';
+            },
+            suggestion: function (data) {
+              return '<div class="px-1 py-2">' + data + '</div>';
+            }
           }
-        }
+        });
       });
 
       $('#submitVariant').on('click', function () {

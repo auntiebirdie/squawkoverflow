@@ -5,7 +5,7 @@ const express = require('express');
 const router = express.Router();
 
 router.all('/*', async (req, res) => {
-	var log = {};
+  var log = {};
 
   try {
     let data = (req.method == "GET" || req.method == "HEAD" ? req.query : req.body) || {};
@@ -13,14 +13,14 @@ router.all('/*', async (req, res) => {
 
     data.loggedInUser = req.session.user;
 
-    log.req =  {
-        method: req.method,
-        url: endpoint,
-        headers: req.headers,
-        data: data
-      };
+    log.req = {
+      method: req.method,
+      url: endpoint,
+      headers: req.headers,
+      data: data
+    };
 
-	  log.str = `/${req.method} ${endpoint} ${JSON.stringify(Object.fromEntries(Object.entries(data).filter((a) => ["id", "member", "loggedInUser"].includes(a[0]) )))}`;
+    log.str = `/${req.method} ${endpoint} ${JSON.stringify(Object.fromEntries(Object.entries(data).filter((a) => ["id", "member", "loggedInUser"].includes(a[0]) )))}`;
 
     API.call(endpoint, req.method, data, req.headers).then((response) => {
       Logger.info({
