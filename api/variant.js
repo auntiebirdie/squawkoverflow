@@ -98,7 +98,7 @@ module.exports = async (req, res) => {
             await Database.query('UPDATE artists SET numIllustrations = numIllustrations + ?, numPhotos = numPhotos + ? WHERE name = ?', [data.style == 1 ? 1 : -1, data.style == 2 ? 1 : -1, data.credit]);
           }
         } else {
-          await Database.query('INSERT INTO variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())', [key, data.species, data.subspecies, data.label, data.credit, data.source, data.license, data.notes, data.filetype, data.style, data.full, data.special]);
+          await Database.query('INSERT INTO variants VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())', [key, data.species, data.subspecies, data.label, data.credit, data.source, data.license, data.notes, data.filetype || "", data.style, data.full, data.special]);
           await Database.query('INSERT INTO artists VALUES (?, 1, ?, ?) ON DUPLICATE KEY UPDATE numVariants = numVariants + 1, numIllustrations = numIllustrations + ?, numPhotos = numPhotos + ?', [data.credit, data.style == 1 ? 1 : 0, data.style == 2 ? 1 : 0, data.style == 1 ? 1 : 0, data.style == 2 ? 1 : 0]);
         }
 
