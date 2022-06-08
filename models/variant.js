@@ -86,7 +86,7 @@ class Variant {
           case "Falconidae":
           case "Falcunculidae":
           case "Fregatidae":
-		case "Fringillidae":
+          case "Fringillidae":
           case "Galbulidae":
           case "Gruidae":
           case "Haematopodidae":
@@ -184,7 +184,7 @@ class Variant {
             break;
         }
       } else {
-        this.image = `https://storage.googleapis.com/squawkoverflow/birds/${this.id.slice(0, 1)}/${this.id.slice(0, 2)}/${this.id}.${this.filetype ? this.filetype : "jpg"}`;
+        this.image = `https://storage.googleapis.com/squawkoverflow/birds/${this.id.slice(0, 1)}/${this.id.slice(0, 2)}/${this.id}.${this.filetype ? this.filetype : "jpg"}?u=${new Date(this.updatedAt).getTime()}`;
       }
 
       if (params.include?.includes('memberData') && params.member) {
