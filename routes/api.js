@@ -21,9 +21,16 @@ router.all('/*', async (req, res) => {
         headers: req.headers,
         data: data
       }
-    }, `/${req.method} ${endpoint} ${JSON.stringify(Object.fromEntries(Object.entries(data).filter((a) => ["id", "member", "loggedInUser"].includes(a[0]) )))}`);
+    }, `${tx} /${req.method} ${endpoint} ${JSON.stringify(Object.fromEntries(Object.entries(data).filter((a) => ["id", "member", "loggedInUser"].includes(a[0]) )))}`);
 
     API.call(endpoint, req.method, data, req.headers).then((response) => {
+      Logger.info({
+        req: {
+          tx: tx
+        },
+        res: response
+
+      }, `${tx} /${req.method} ${endpoint} 200 SUCCESS`);
       res.json(response);
     }).catch((err) => {
       Logger.info({
