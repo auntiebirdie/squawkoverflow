@@ -86,8 +86,9 @@ class Search {
             params.push(input.search, input.search);
           } else {
             select.push('MATCH(species.cleanName, species.scientificName) AGAINST (?) relevancy');
+            params.unshift(input.search);
             filters.push('MATCH(species.cleanName, species.scientificName) AGAINST (?)');
-            params.push(input.search, input.search);
+            params.push(input.search);
           }
         }
       }
