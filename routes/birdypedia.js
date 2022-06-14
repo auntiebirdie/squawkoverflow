@@ -139,8 +139,7 @@ router.get('/bird/:id/edit', Middleware.isContributor, async (req, res) => {
 router.get('/bird/:id', async (req, res) => {
   API.call('bird', 'GET', {
     loggedInUser: req.session.user,
-    id: req.params.id,
-    include: ['members']
+    id: req.params.id
   }).then(async (bird) => {
     if (bird && bird.variants?.length > 0) {
       let eggs = [];

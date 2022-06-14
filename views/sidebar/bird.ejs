@@ -13,56 +13,6 @@
         <h5 class="pt-3">Order</h5>
         <p><%= bird.order %></p>
 
-        <h5 class="pt-3">
-          Variants
-         <% if (locals.loggedInUser && loggedInUser.contributor) { %>
-          <a href="/birdypedia/bird/<%= bird.id_slug %>/variant/new" class="btn btn-sm btn-light p-1 ms-3">+ new</a>
-         <% } %>
-        </h5>
-        <div id="birdDisplay">
-         <% for (var variant of bird.variants) { %>
-         <% if (!variant.special) { %>
-          <div class="row mb-3">
-            <div class="col-3 g-0 text-end">
-              <div class="bg-white border border-1 m-0 birdypet mini <%= bird.discovered ? "hatched" : "unhatched" %> checkmark<%= Math.min(2, variant.hatched) %>" data-id="<%= variant.id %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" data-license="<%= variant.license %>" data-notes="<%= encodeURIComponent(variant.notes) %>" style="background-image: url('<%= variant.image %>');"></div>
-            </div>
-            <div class="col-9 small">
-              <% if (locals.loggedInUser && loggedInUser.contributor) { %>
-                <a href="/birdypedia/bird/<%= bird.id_slug %>/variant/<%= variant.id %>" class="btn btn-sm btn-light m-2 float-end">edit</a>
-              <% } %>
-
-
-              <small>&copy; <a href="/birdypedia/artists/<%= encodeURIComponent(variant.credit) %>"><%= variant.credit %></a></small><br>
-              <%- variant.subspecies ? `<em>${variant.subspecies}</em><br>` : '' %>
-              <%- variant.label ? `${variant.label}` : '' %>
-            </div>
-          </div>
-         <% } %>
-         <% } %>
-
-       <% if (bird.variants.find((variant) => variant.special)) { %>
-        <h6>Special Variants</h6>
-         <% for (var variant of bird.variants) { %>
-         <% if (variant.special) { %>
-          <div class="row mb-3">
-            <div class="col-3 g-0 text-end">
-              <div class="bg-white border border-1 m-0 birdypet mini <%= variant.hatched ? "hatched" : "unhatched" %> checkmark<%= Math.min(2, variant.hatched) %>" data-id="<%= variant.id %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" data-license="<%= variant.license %>" data-notes="<%= encodeURIComponent(variant.notes) %>" style="background-image: url('<%= variant.image %>');"></div>
-            </div>
-            <div class="col-9 small">
-              <% if (locals.loggedInUser && loggedInUser.contributor) { %>
-                <a href="/birdypedia/bird/<%= bird.id_slug %>/variant/<%= variant.id %>" class="btn btn-sm btn-light m-2 float-end">edit</a>
-              <% } %>
-
-              <small>&copy; <a href="/birdypedia?artist=<%= encodeURIComponent(variant.credit) %>"><%= variant.credit %></a></small><br>
-              <%- variant.subspecies ? `<em>${variant.subspecies}</em><br>` : '' %>
-              <%- variant.label ? `${variant.label}` : '' %>
-            </div>
-          </div>
-         <% } %>
-         <% } %>
-       <% } %>
-        </div>
-
         <h5 class="pt-3">Eggs</h5>
        <% if (locals.loggedInUser && loggedInUser.contributor) { %> 
          <select id="adjectives" multiple>
@@ -106,4 +56,14 @@
           <a href="/birdypedia/eggs/<%= adjective %>"><%= adjective %></a><br>
         <% } %>
         </p>
+       <% } %>
+
+         <h5 class="pt-3">Learn More</h5>
+         <div>
+           <a href="https://avibase.bsc-eoc.org/search.jsp?qstr=<%= encodeURIComponent(bird.scientificName) %>" target="_blank">Avibase</a>
+         </div>
+       <% if (bird.code) { %>
+         <div>
+           <a href="https://ebird.org/species/<%= bird.code %>" target="_blank">eBird</a>
+         </div>
        <% } %>
