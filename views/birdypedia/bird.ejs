@@ -58,8 +58,16 @@
           <div class="row mb-3">
          <% for (var variant of bird.variants) { %>
          <% if (!variant.special) { %>
-            <div class="col-3 mb-3 text-center">
+            <div class="col-3 col-md-6 col-lg-4 mb-3 text-center">
               <div class="m-0 birdypet mini <%= bird.discovered ? "hatched" : "unhatched" %> checkmark<%= Math.min(2, variant.hatched) %>" data-id="<%= variant.id %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" data-license="<%= variant.license %>" data-notes="<%= encodeURIComponent(variant.notes) %>" style="background-image: url('<%= variant.image %>');"></div>
+              <% if (locals.loggedInUser && loggedInUser.contributor) { %>
+                <a href="/birdypedia/bird/<%= bird.id_slug %>/variant/<%= variant.id %>" class="btn btn-sm btn-light mb-2">edit</a>
+              <% } %>
+              <div class="small">
+                <small>&copy; <a href="/birdypedia/artists/<%= encodeURIComponent(variant.credit) %>"><%= variant.credit %></a></small><br>
+                <%- variant.subspecies ? `<em>${variant.subspecies}</em><br>` : '' %>
+                <%- variant.label ? `${variant.label}` : '' %>
+              </div>
             </div>
          <% } %>
          <% } %>
