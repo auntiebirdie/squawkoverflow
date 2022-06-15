@@ -10,6 +10,7 @@
 
         <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
             <p><a id="makeBirdyBuddy" class="btn btn-light <%= member.birdyBuddy == birdypet.id ? 'disabled' : '' %>">💖 Make Birdy Buddy</a></p>
+            <p><a class="btn btn-light" data-bs-toggle="modal" data-bs-target="#modal_editBirdyPet" data-id="<%= birdypet.id %>" role="button">✏️  Edit Details</a></p>
             <p>
               <button data-bs-toggle="modal"
                  data-bs-target="#modal_giftBirdyPet"

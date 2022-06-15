@@ -84,6 +84,9 @@
               $('div[data-id="' + birdypet.id + '"]').replaceWith(template((birdypet)));
               lazyLoadInstance.update();
             }
+            else if (typeof saveBirdyPet != "undefined") {
+              saveBirdyPet(birdypet);
+            }
             else {
               $('#birdy').attr('src', $('.birdypet.border-primary', modal_editBirdyPet._element).attr('data-bg'));
             }
