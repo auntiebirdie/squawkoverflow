@@ -83,6 +83,10 @@ class Variant {
           case "Corvidae":
           case "Cuculidae":
           case "Diomedeidae":
+		case "Estrildidae":
+		case "Leiothrichidae":
+		case "Cisticolidae":
+		case "Furnariidae":
           case "Falconidae":
           case "Falcunculidae":
           case "Fregatidae":
