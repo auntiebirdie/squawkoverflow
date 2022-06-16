@@ -80,8 +80,9 @@ class Search {
             params.push(input.search, input.search, input.search, input.search);
           } else {
             select.push('MATCH(birdypets.nickname) AGAINST (?) + MATCH(species.cleanName, species.scientificName) AGAINST (?) relevancy');
+            params.unshift(input.search, input.search);
             filters.push('(MATCH(birdypets.nickname) AGAINST (?) OR MATCH(species.cleanName, species.scientificName) AGAINST (?))');
-            params.push(input.search, input.search, input.search, input.search);
+            params.push(input.search, input.search);
           }
         } else {
           if (exactMatch) {
