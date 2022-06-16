@@ -61,6 +61,11 @@ class Search {
 
       if (input.search) {
         let exactMatch = input.search.match(/^\"(.*)\"$/);
+        let searchFields = {
+          'commonName': 'species.cleanName',
+          'scientificName': 'species.scientificName',
+          'nickname': 'birdypets.nickname'
+        };
 
         if (exactMatch) {
           input.search = exactMatch[1];
@@ -74,24 +79,14 @@ class Search {
         } else if (kind == 'member') {
           filters.push(exactMatch ? 'members.username = ?' : 'MATCH(members.username) AGAINST (?)');
           params.push(input.search);
-        } else if (kind == 'birdypet') {
-          if (exactMatch) {
-            filters.push('(birdypets.nickname = ? OR species.commonName = ? OR species.cleanName = ? OR species.scientificName = ?)');
-            params.push(input.search, input.search, input.search, input.search);
-          } else {
-            select.push('MATCH(birdypets.nickname) AGAINST (?) + MATCH(species.cleanName, species.scientificName) AGAINST (?) relevancy');
-            params.unshift(input.search, input.search);
-            filters.push('(MATCH(birdypets.nickname) AGAINST (?) OR MATCH(species.cleanName, species.scientificName) AGAINST (?))');
-            params.push(input.search, input.search);
-          }
         } else {
           if (exactMatch) {
-            filters.push('(species.commonName = ? OR species.cleanName = ? OR species.scientificName = ?)');
-            params.push(input.search, input.search);
+            filters.push(`${searchFields[input.searchField] || 'species.cleanName'} = ?`);
+            params.push(input.search);
           } else {
-            select.push('MATCH(species.cleanName, species.scientificName) AGAINST (?) relevancy');
+            select.push(`MATCH(${searchFields[input.searchField] || 'species.cleanName'}) AGAINST (?) relevancy`);
             params.unshift(input.search);
-            filters.push('MATCH(species.cleanName, species.scientificName) AGAINST (?)');
+            filters.push(`MATCH(${searchFields[input.searchField] || 'species.cleanName'}) AGAINST (?)`);
             params.push(input.search);
           }
         }
@@ -318,6 +313,8 @@ class Search {
       }
 
       query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC');
+
+	    console.log(query, params);
 
       Database.query(query, params).then((results) => {
         if (results.length > 0 && results[0].relevancy) {

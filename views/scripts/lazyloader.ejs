@@ -78,9 +78,13 @@
 
     if (search) {
       urlParams.set('search', search);
+     <% if (locals.searchFields) { %>
+      urlParams.set('searchField', $('#searchField').val());
+     <% } %>
     }
     else {
       urlParams.delete('search');
+      urlParams.delete('searchField');
     }
 
     $('select', '#sidebar').each( (i, select) => {
@@ -114,6 +118,7 @@
           sort: sort.val() && sort.val().includes('-') ? sort.val().split('-').shift() : sort.val(),
           sortDir: sort.val() && sort.val().includes('-') ? sort.val().split('-').pop() : 'ASC',
           search : search,
+          <%- locals.searchFields ? `searchField: $('#searchField').val(),` : '' %>
           <%- locals.filters ? `filters : Array.from($('input:checked', '#filters')).map((checkbox) => checkbox.value),` : '' %>
           <%- locals.extraFilters ? `extraFilters: Array.from($('input:checked', '#extraFilters')).map((checkbox) => checkbox.value),` : '' %>
           <%- locals.families ? `family : $('#family').is(':visible') ? $('#family').val() : '',` : '' %>

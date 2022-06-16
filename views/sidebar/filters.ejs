@@ -42,6 +42,13 @@
 <% } %>
 
   <h5>Search</h5>
+<% if (locals.searchFields) { %>
+  <select id="searchField" class="form-select mb-2">
+   <% for (var field of searchFields) { %>
+    <option value="<%= field.id %>"><%= field.name %></option>
+   <% } %>
+  </select>
+<% } %>
   <input id="search" type="text" name="search" class="form-control mb-4">
 
 <% if (locals.families) { %>
