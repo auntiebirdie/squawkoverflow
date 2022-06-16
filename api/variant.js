@@ -43,7 +43,7 @@ module.exports = async (req, res) => {
 
       var key = existing ? existing.id : uuid.generate();
 
-      if (data.contributor) {
+      if (data.contributor && data.contributor != "undefined") {
         await Database.query('INSERT IGNORE INTO member_badges VALUES (?, "contributor", NOW())', [data.contributor]);
         await Database.query('DELETE FROM member_variants WHERE variant = ? AND type = "contributor"', [key]);
         await Database.query('INSERT IGNORE INTO member_variants VALUES (?, ?, "contributor")', [data.contributor, key]);
