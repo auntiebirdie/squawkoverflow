@@ -69,6 +69,7 @@ class Variant {
           case "Calcariidae":
           case "Callaeidae":
           case "Calyptomenidae":
+          case "Campephagidae":
           case "Capitonidae":
           case "Caprimulgidae":
           case "Cardinalidae":
@@ -78,26 +79,29 @@ class Variant {
           case "Chaetopidae":
           case "Charadriidae":
           case "Ciconiidae":
+          case "Cisticolidae":
           case "Coliidae":
           case "Columbidae":
           case "Corvidae":
+          case "Cracidae":
           case "Cuculidae":
           case "Diomedeidae":
-		case "Estrildidae":
-		case "Leiothrichidae":
-		case "Cisticolidae":
-		case "Furnariidae":
+          case "Estrildidae":
           case "Falconidae":
           case "Falcunculidae":
           case "Fregatidae":
           case "Fringillidae":
+          case "Furnariidae":
           case "Galbulidae":
+          case "Grallariidae":
           case "Gruidae":
           case "Haematopodidae":
           case "Hirundinidae":
           case "Hydrobatidae":
+          case "Icteridae":
           case "Laniidae":
           case "Laridae":
+          case "Leiothrichidae":
           case "Lybiidae":
           case "Malaconotidae":
           case "Maluridae":
