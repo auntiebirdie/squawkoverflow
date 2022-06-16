@@ -115,7 +115,7 @@
 
   <%- include('../partials/pagination.ejs') %>
 
-  <%- include('../scripts/lazyloader.ejs', { paginate: currentPage }) %>
+  <%- include('../scripts/lazyloader.ejs', { paginate: currentPage, skipParams : true }) %>
 
   <script type="text/javascript">
     $(document).ready(function () {
