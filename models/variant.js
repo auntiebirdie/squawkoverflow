@@ -208,6 +208,19 @@ class Variant {
         }
       }
 
+      if (params.include?.includes('contributor')) {
+        let contributor = await Database.getOne('member_variants', {
+          variant: this.id,
+          type: 'contributor'
+        });
+
+        if (contributor) {
+          this.contributor = new Member(contributor.member);
+
+          await this.contributor.fetch();
+        }
+      }
+
       resolve(this);
     });
   }

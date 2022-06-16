@@ -107,7 +107,7 @@ router.get('/bird/:id/variant/:variant', Middleware.isContributor, async (req, r
   API.call('bird', 'GET', {
     loggedInUser: req.session.user,
     id: req.params.id,
-    include: ['variants', 'artist']
+    include: ['variants', 'artist', 'contributor']
   }).then(async (bird) => {
     if (bird) {
       res.render('birdypedia/variant', {

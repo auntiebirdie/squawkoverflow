@@ -22,7 +22,7 @@
    <% } %>
 
     <div class="position-relative w-75 mx-auto">
-      <input class="typeahead form-control" type="text">
+      <input class="typeahead form-control" type="text" value="<%= locals.selectedMember ? selectedMember.username : "" %>">
 
       <div id="memberDisplay" class="position-absolute" style="left: -50px; top: -3px;">
        <% if (locals.selectedMember) { %>
