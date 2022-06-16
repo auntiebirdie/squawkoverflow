@@ -9,7 +9,7 @@
       </div>
       <div class="px-3 pb-3>
         <h6 class="p-1 birdypets">
-          ${model.variants.map((variant) => '<div class="lazy birdypet mini ' + (variant.bird.discovered ? "hatched" : "unhatched") + ' checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" data-bg="' + variant.image + '"></div>').join("")}
+          ${model.variants.map((variant) => '<div class="lazy birdypet mini <% if (locals.loggedInUser) { %>' + (variant.bird.discovered ? "hatched" : "unhatched") + '<% } %> checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" data-bg="' + variant.image + '"></div>').join("")}
         </h6>
       </div>
     </div>

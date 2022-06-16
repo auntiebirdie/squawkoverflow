@@ -30,7 +30,7 @@
           </button>
         </div>
        <% } %>
-        <img id="birdy" src="<%= variant.image %>" class="birdypet full <%= bird.discovered ? "hatched" : "unhatched" %>">
+        <img id="birdy" src="<%= variant.image %>" class="birdypet full <%= !locals.loggedInUser || bird.discovered ? "hatched" : "unhatched" %>">
       </span>
       <br>
       <span id="attribution" class="bg-light d-inline-block mt-2 px-2 py-1 small" style="display: <%= variant.source == "n/a" ? "none" : "inline-block" %>">
@@ -63,7 +63,7 @@
          <% for (var variant of bird.variants) { %>
          <% if (!variant.special) { %>
             <div class="col-3 col-md-6 col-lg-4 mb-3 text-center">
-              <div class="m-0 birdypet mini <%= bird.discovered ? "hatched" : "unhatched" %> checkmark<%= Math.min(2, variant.hatched) %>" data-id="<%= variant.id %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" data-license="<%= variant.license %>" data-notes="<%= encodeURIComponent(variant.notes) %>" style="background-image: url('<%= variant.image %>');"></div>
+              <div class="m-0 birdypet mini <%= !locals.loggedInUser || bird.discovered ? "hatched" : "unhatched" %> checkmark<%= Math.min(2, variant.hatched) %>" data-id="<%= variant.id %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" data-license="<%= variant.license %>" data-notes="<%= encodeURIComponent(variant.notes) %>" style="background-image: url('<%= variant.image %>');"></div>
               <% if (locals.loggedInUser && loggedInUser.contributor) { %>
                 <a href="/birdypedia/bird/<%= bird.id_slug %>/variant/<%= variant.id %>" class="btn btn-sm btn-light mb-2">edit</a>
               <% } %>
@@ -83,7 +83,7 @@
          <% if (variant.special) { %>
           <div class="row mb-3">
             <div class="col-3 g-0 text-end">
-              <div class="bg-white border border-1 m-0 birdypet mini <%= variant.hatched ? "hatched" : "unhatched" %> checkmark<%= Math.min(2, variant.hatched) %>" data-id="<%= variant.id %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" data-license="<%= variant.license %>" data-notes="<%= encodeURIComponent(variant.notes) %>" style="background-image: url('<%= variant.image %>');"></div>
+              <div class="bg-white border border-1 m-0 birdypet mini <%= !locals.loggedInUser || variant.hatched ? "hatched" : "unhatched" %> checkmark<%= Math.min(2, variant.hatched) %>" data-id="<%= variant.id %>" data-image="<%= variant.image %>" data-credit="<%= variant.credit %>" data-source="<%= variant.source %>" data-license="<%= variant.license %>" data-notes="<%= encodeURIComponent(variant.notes) %>" style="background-image: url('<%= variant.image %>');"></div>
             </div>
             <div class="col-9 small">
               <% if (locals.loggedInUser && loggedInUser.contributor) { %>
