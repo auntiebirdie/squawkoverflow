@@ -204,7 +204,7 @@ class Variant {
         if (artist) {
           this.artist = new Member(artist.member);
 
-          await this.artist.fetch();
+          await this.artist.fetch().catch((err) => this.artist = null);
         }
       }
 
@@ -217,7 +217,7 @@ class Variant {
         if (contributor) {
           this.contributor = new Member(contributor.member);
 
-          await this.contributor.fetch();
+          await this.contributor.fetch().catch((err) => this.contributor = null);
         }
       }
 
