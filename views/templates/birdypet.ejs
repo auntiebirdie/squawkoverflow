@@ -38,6 +38,9 @@
         </h6>
       </div>
       <div class="card-body">
+       <% if (locals.page == "birdypedia/bird") { %>
+        <h6 class="small"><a href="/members/${model.member.id}">${model.member.username}</a>'s</h6>
+       <% } %>
         <h3 class="text-center"><a href="/birdypet/${model.id}">${model.nickname ? model.nickname : model.bird.commonName}</a></h3>
         <h6 class="text-center">${model.nickname ? model.bird.commonName : (model.variant.label ? model.variant.label : '&nbsp;')}</h6>
       </div>

@@ -33,7 +33,7 @@
         <img id="birdy" src="<%= variant.image %>" class="birdypet full <%= !locals.loggedInUser || bird.discovered ? "hatched" : "unhatched" %>">
       </span>
       <br>
-      <span id="attribution" class="bg-light d-inline-block mt-2 px-2 py-1 small" style="display: <%= variant.source == "n/a" ? "none" : "inline-block" %>">
+      <span id="attribution" class="bg-light d-inline-block px-2 py-1 small" style="display: <%= variant.source == "n/a" ? "none" : "inline-block" %>">
        <% if (variant.source != "n/a") { %>
         &copy;
 
@@ -98,6 +98,20 @@
         </div>
     </div>
   </div>
+
+  <div class="my-5 pt-3">
+    <h2 class="text-center">
+      BirdyPets
+    </h2>
+  </div>  
+
+  <%- include('../partials/pagination.ejs') %>
+
+  <div id="lazyLoader" class="row g-0" data-endpoint="aviary" data-params='{"species":"<%= bird.id %>","memberInfo":true}'></div>
+
+  <%- include('../partials/pagination.ejs') %>
+
+  <%- include('../scripts/lazyloader.ejs', { paginate: currentPage }) %>
 
   <script type="text/javascript">
     $(document).ready(function () {

@@ -106,6 +106,14 @@ class BirdyPet {
             this.flocks = [];
           }
 
+          if (params.include?.includes('memberInfo')) {
+            const Member = require('./member.js');
+
+            this.member = new Member(this.member);
+
+            await this.member.fetch();
+          }
+
           resolve(this);
         } else {
           resolve(null);

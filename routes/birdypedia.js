@@ -113,7 +113,7 @@ router.get('/bird/:id/variant/:variant', Middleware.isContributor, async (req, r
       res.render('birdypedia/variant', {
         bird: bird,
         variant: bird.variants.find((variant) => variant.id == req.params.variant),
-	artists: await API.call('artists', 'GET').then((artists) => artists.map((artist) => artist.name))
+        artists: await API.call('artists', 'GET').then((artists) => artists.map((artist) => artist.name))
       });
     } else {
       res.redirect(`/birdypedia/bird/${req.params.id}`);
@@ -154,7 +154,8 @@ router.get('/bird/:id', async (req, res) => {
         bird: bird,
         variant: bird.variants.find((variant) => variant.id == req.query.variant) || bird.variants.find((variant) => !variant.special) || bird.variants[0],
         sidebar: 'bird',
-        eggs: eggs
+        eggs: eggs,
+        currentPage: (req.query.page || 1) * 1
       });
     } else {
       res.redirect('/birdypedia');

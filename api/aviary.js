@@ -11,6 +11,10 @@ module.exports = async (req, res) => {
 
       let includes = [];
 
+      if (req.query.memberInfo) {
+        includes.push('memberInfo');
+      }
+
       if (req.query.memberData) {
         includes.push('memberData');
       }

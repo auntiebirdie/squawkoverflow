@@ -27,10 +27,13 @@ class Search {
         case 'birdypet':
           select.push('birdypets.id');
           tables.push('birdypets', 'JOIN variants ON (birdypets.variant = variants.id)', 'JOIN species ON (variants.species = species.id)');
-          filters.push('birdypets.member = ?');
-          params.push(input.member);
 
-          if (input.member != input.loggedInUser) {
+          if (input.member) {
+            filters.push('birdypets.member = ?');
+            params.push(input.member);
+          }
+
+          if (!input.member || input.member != input.loggedInUser) {
             filters.push('birdypets.id NOT IN (SELECT birdypet FROM birdypet_flocks JOIN flocks ON (birdypet_flocks.flock = flocks.id) WHERE flocks.private = 1)');
           }
           break;
@@ -91,6 +94,11 @@ class Search {
             params.push(input.search);
           }
         }
+      }
+
+      if (input.species) {
+        filters.push('species.id = ?');
+        params.push(input.species);
       }
 
       if (input.family) {
