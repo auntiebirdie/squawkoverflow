@@ -21,7 +21,7 @@
           <h5><label for="form-license">License</label></h5>
           <select id="form-license" class="form-select">
             <option value="">(n/a)</option>
-           <% for (let license of ["CC0", "CC-BY 1.0", "CC-BY 2.0", "CC-BY 3.0", "CC-BY 4.0", "CC-BY-SA 1.0", "CC-BY-SA 2.0", "CC-BY-SA 3.0", "CC-BY-SA 4.0", "CC-BY-NC 1.0", "CC-BY-NC 2.0", "CC-BY-NC 3.0", "CC-BY-NC 4.0", "Pixabay"]) { %>
+           <% for (let license of ["CC0", "CC-BY 1.0", "CC-BY 2.0", "CC-BY 3.0", "CC-BY 4.0", "CC-BY-SA 1.0", "CC-BY-SA 2.0", "CC-BY-SA 3.0", "CC-BY-SA 4.0", "CC-BY-NC 1.0", "CC-BY-NC 2.0", "CC-BY-NC 3.0", "CC-BY-NC 4.0", "CC-BY-NC-SA 1.0", "CC-BY-NC-SA 2.0", "CC-BY-NC-SA 3.0", "CC-BY-NC-SA 4.0", "Pixabay"]) { %>
             <option <%= variant?.license == license ? "selected" : "" %>><%= license %></option>
            <% } %>
           </select>
