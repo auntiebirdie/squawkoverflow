@@ -37,7 +37,7 @@
         <img id="birdy" src="<%= variant.image %>" class="birdypet full <%= !locals.loggedInUser || bird.discovered ? "hatched" : "unhatched" %>">
       </span>
       <br>
-      <span id="attribution" class="bg-light d-inline-block px-2 py-1 small" style="display: <%= variant.source == "n/a" ? "none" : "inline-block" %>">
+      <span id="attribution" class="bg-light d-inline-block px-2 py-1" style="display: <%= variant.source == "n/a" ? "none" : "inline-block" %>">
        <% if (variant.source != "n/a") { %>
         &copy;
 
@@ -45,7 +45,7 @@
           <%= variant.license %>
         </a>
 
-        <a id="attribution-credit" class="small" href="<%= variant.source %>" target="_blank" rel="noopener">
+        <a id="attribution-credit" href="<%= variant.source %>" target="_blank" rel="noopener">
           <%= variant.credit %>
         </a>
 
