@@ -4,6 +4,8 @@ const Logger = require('../helpers/logger.js');
 const express = require('express');
 const router = express.Router();
 
+BigInt.prototype.toJSON = function() { return this.toString() };
+
 router.all('/*', async (req, res) => {
   var data = (req.method == "GET" || req.method == "HEAD" ? req.query : req.body) || {};
 
