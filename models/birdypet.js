@@ -118,6 +118,8 @@ class BirdyPet {
         } else {
           resolve(null);
         }
+      }).catch((err) => {
+        resolve(null);
       });
     });
   }
