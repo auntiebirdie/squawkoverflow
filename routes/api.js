@@ -5,24 +5,31 @@ const express = require('express');
 const router = express.Router();
 
 router.all('/*', async (req, res) => {
-  var log = {};
+  var data = (req.method == "GET" || req.method == "HEAD" ? req.query : req.body) || {};
 
-  try {
-    let data = (req.method == "GET" || req.method == "HEAD" ? req.query : req.body) || {};
-    let endpoint = req.path.match(/\/?(\b[A-Za-z]+\b)/)[1];
+  data.loggedInUser = req.session.user;
+  data.files = req.files;
 
-    data.loggedInUser = req.session.user;
-    data.files = req.files;
-
-    log.req = {
+  var log = {
+    req: {
       method: req.method,
-      url: endpoint,
+      url: req.path,
       headers: req.headers,
       data: data
-    };
+    }
+  };
 
-    log.str = `/${req.method} ${endpoint} ${JSON.stringify(Object.fromEntries(Object.entries(data).filter((a) => ["id", "member", "loggedInUser"].includes(a[0]) )))}`;
+  try {
+    var endpoint = req.path.match(/\/?(\b[A-Za-z]+\b)/)[1];
 
+    log.req.url = req.path;
+  } catch (err) {
+    var endpoint = null;
+  }
+
+  log.str = `/${req.method} ${endpoint || req.path} ${JSON.stringify(Object.fromEntries(Object.entries(data).filter((a) => ["id", "member", "loggedInUser"].includes(a[0]) )))}`;
+
+  try {
     API.call(endpoint, req.method, data, req.headers).then((response) => {
       Logger.info({
         req: log.req
