@@ -1,3 +1,5 @@
+require( 'trace-unhandled/register' );
+
 const Logger = require('./logger.js');
 
 exports.call = (endpoint, method = "GET", data = {}, headers = {}) => {

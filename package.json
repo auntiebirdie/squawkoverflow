@@ -33,6 +33,7 @@
     "random-seed": "^0.3.0",
     "redis": "^4.1.0",
     "short-uuid": "^4.2.0",
+    "trace-unhandled": "^2.0.1",
     "tumblr.js": "^3.0.0"
   }
 }
