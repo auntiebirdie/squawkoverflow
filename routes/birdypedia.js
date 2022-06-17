@@ -15,6 +15,7 @@ router.get('/', async (req, res) => {
     families: families.map((family) => family.name),
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
+	  searchFields: [{ id : 'cleanName', name : 'Common Name' }, { id : 'scientificName', name : 'Scientific Name' }],
     sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'variants-DESC'],
     filters: ['unwishlisted-My', 'wanted-My', 'needed-My'],
     extraFilters: ['unhatched-My', 'isolated-My', 'duplicated-My', 'somewhere']
@@ -51,6 +52,7 @@ router.get('/eggs/:egg', (req, res) => {
         egg: egg,
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
+	      searchFields: [{ id : 'cleanName', name : 'Common Name' }, { id : 'scientificName', name : 'Scientific Name' }],
         sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
         filters: ['unwishlisted-My', 'wanted-My', 'needed-My'],
         extraFilters: ['unhatched-My', 'isolated-My', 'duplicated-My', 'somewhere']
@@ -84,6 +86,7 @@ router.get('/artists/:artist', (req, res) => {
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
         style: true,
+	      searchFields: [{ id : 'cleanName', name : 'Common Name' }, { id : 'scientificName', name : 'Scientific Name' }],
         sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
         filters: ['unwishlisted-My', 'wanted-My', 'needed-My'],
         extraFilters: ['unhatched-My', 'isolated-My', 'duplicated-My', 'somewhere']

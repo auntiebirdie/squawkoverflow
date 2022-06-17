@@ -314,8 +314,6 @@ class Search {
 
       query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC');
 
-	    console.log(query, params);
-
       Database.query(query, params).then((results) => {
         if (results.length > 0 && results[0].relevancy) {
           let maxRelevancy = Math.max(...results.map((result) => result.relevancy));

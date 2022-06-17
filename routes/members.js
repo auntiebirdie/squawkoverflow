@@ -56,6 +56,7 @@ router.get('/:member/gift', Middleware.isLoggedIn, (req, res) => {
         families: loggedInUser.families.filter((family) => family.owned > 0).map((family) => family.name),
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
+	      searchFields: [{ id : 'cleanName', name : 'Common Name' }, { id : 'scientificName', name : 'Scientific Name' }, { id : 'nickname', name : 'Nickname' }],
         sortFields: ['hatchedAt-DESC', 'hatchedAt-ASC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
         filters: ['wanted-Their', 'needed-Their'],
         extraFilters: ['unhatched-Their', 'duplicated-My']

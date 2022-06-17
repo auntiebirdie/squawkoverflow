@@ -10,6 +10,7 @@ router.get('/', Middleware.isLoggedIn, async (req, res) => {
     page: 'freebirds',
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
+	  searchFields: [{ id : 'cleanName', name : 'Common Name' }, { id : 'scientificName', name : 'Scientific Name' }],
     sortFields: ['freedAt-DESC', 'freedAt-ASC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
     filters: ['copied', 'wanted-My', 'needed-My'],
     extraFilters: ['unhatched-My', 'isolated-My', 'duplicated-My']

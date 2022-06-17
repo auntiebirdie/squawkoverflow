@@ -44,6 +44,7 @@ router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
     allFamilies: await API.call('families', 'GET'),
     families: member.families.map((family) => family.name),
     sidebar: 'filters',
+	  searchFields: [{ id : 'cleanName', name : 'Common Name' }, { id : 'scientificName', name : 'Scientific Name' }, { id : 'nickname', name : 'Nickname' }],
     sortFields: ['hatchedAt-ASC', 'hatchedAt-DESC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'friendship-DESC', 'friendship-ASC'],
     extraFilters: ['isolated-My', 'duplicated-My']
   });
@@ -67,6 +68,7 @@ router.get('/:flock', async (req, res) => {
     allFamilies: await API.call('families', 'GET'),
     families: flock.families,
     sidebar: 'filters',
+	  searchFields: [{ id : 'cleanName', name : 'Common Name' }, { id : 'scientificName', name : 'Scientific Name' }, { id : 'nickname', name : 'Nickname' }],
     sortFields: ['hatchedAt-ASC', 'hatchedAt-DESC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'friendship-DESC', 'friendship-ASC'],
     filters: member.id == req.session.user ? false : ['wanted-My', 'needed-My'],
     extraFilters: member.id == req.session.user ? ['isolated-My', 'duplicated-My'] : ['unhatched-My']

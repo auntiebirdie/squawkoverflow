@@ -62,6 +62,7 @@ router.get('/incubator', (req, res) => {
       families: await API.call('incubate', 'HEAD', { loggedInUser : req.session.user }),
       currentPage: (req.query.page || 1) * 1,
       sidebar: 'filters',
+	    searchFields: [{ id : 'cleanName', name : 'Common Name' }, { id : 'scientificName', name : 'Scientific Name' }],
       sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'addedAt-ASC', 'addedAt-DESC'],
     });
   });

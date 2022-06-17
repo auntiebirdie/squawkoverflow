@@ -58,6 +58,7 @@ router.get('/:member', async (req, res, next) => {
     families: families,
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
+	  searchFields: [{ id : 'cleanName', name : 'Common Name' }, { id : 'scientificName', name : 'Scientific Name' }],
     sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'addedAt-DESC', 'addedAt-ASC'],
     extraFilters: req.session.user == req.params.member ? ['hatched-My', 'unhatched-My', 'somewhere'] : ['hatched-My', 'duplicated-My']
   });
