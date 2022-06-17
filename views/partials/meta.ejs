@@ -66,4 +66,4 @@
 
  <% } %>
 
- <link rel="alternate" type="application/json+oembed" href="http<%= locals.ENV == "PROD" ? 's://' : '://dev.' %>squawkoverflow.com/oembed?data=<%= encodeURIComponent(JSON.stringify(oembed)) %>">
+ <link rel="alternate" type="application/json+oembed" href="<%= locals.HOST %>/oembed?data=<%= encodeURIComponent(JSON.stringify(oembed)) %>">

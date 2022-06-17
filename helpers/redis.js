@@ -8,7 +8,7 @@ class Redis {
     return new Promise(async (resolve, reject) => {
       if (!connection) {
         connection = redis.createClient({
-          url: `redis://${secrets.REDIS[secrets.ENV].USER}:${secrets.REDIS[secrets.ENV].AUTH}@${secrets.REDIS[secrets.ENV].HOST}:${secrets.REDIS[secrets.ENV].PORT}`
+          url: `redis://${secrets.REDIS.USER}:${secrets.REDIS.AUTH}@${secrets.REDIS.HOST}:${secrets.REDIS.PORT}`
         });
 
         await connection.connect();

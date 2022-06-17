@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
         await oauth.tokenRequest({
           clientId: secrets.DISCORD.CLIENT_ID,
           clientSecret: secrets.DISCORD.CLIENT_SECRET,
-          redirectUri: `https://${secrets.ENV == 'PROD' ? '' : 'dev.'}squawkoverflow.com/${req.body.connect ? 'settings/connect' : 'login'}`,
+          redirectUri: `${secrets.HOST}/${req.body.connect ? 'settings/connect' : 'login'}`,
           code: req.body.code,
           scope: 'identify',
           grantType: 'authorization_code'
@@ -93,7 +93,7 @@ module.exports = async (req, res) => {
               });
             });
 
-          request.write(`code=${req.body.code}&grant_type=authorization_code&client_id=${secrets.PATREON.CLIENT_ID}&client_secret=${secrets.PATREON.CLIENT_SECRET}&redirect_uri=https://${secrets.ENV == 'PROD' ? '' : 'dev.'}squawkoverflow.com/settings/connect`);
+          request.write(`code=${req.body.code}&grant_type=authorization_code&client_id=${secrets.PATREON.CLIENT_ID}&client_secret=${secrets.PATREON.CLIENT_SECRET}&redirect_uri=${secrets.HOST}/settings/connect`);
 
           request.end();
         }).then((tokens) => {

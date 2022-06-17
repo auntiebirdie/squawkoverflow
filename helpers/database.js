@@ -8,9 +8,9 @@ Database.prototype.connect = function() {
   return new Promise(async (resolve, reject) => {
     if (!this.conn) {
       this.conn = await mariadb.createConnection({
-        host: secrets.DB[secrets.ENV].HOST,
-        user: secrets.DB[secrets.ENV].USER,
-        password: secrets.DB[secrets.ENV].PASS,
+        host: secrets.DB.HOST,
+        user: secrets.DB.USER,
+        password: secrets.DB.PASS,
         allowPublicKeyRetrieval: true,
         bigIntAsNumber: true
       });

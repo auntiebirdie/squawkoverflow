@@ -43,7 +43,7 @@ app.use(async function(req, res, next) {
     });
 
     if (res.locals.loggedInUser) {
-      res.locals.ENV = secrets.ENV;
+      res.locals.HOST = secrets.HOST;
 
       menu.push({
         "icon": "🥚",

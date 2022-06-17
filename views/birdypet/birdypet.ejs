@@ -6,27 +6,31 @@
     })
   %>
 
-        <div class="text-center">
-          <span class="h-100 d-inline-block position-relative">
-           <% if (locals.loggedInUser && loggedInUser.id != birdypet.member) { %>
-            <div class="birdypet-actions">
-              <button class="wishlist-heart btn btn-sm" data-id="<%= birdypet.bird.id %>" role="button">
-                <%= birdypet.bird.wishlisted ? (birdypet.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
-              </button>
-            </div>
-           <% } %>
-            <img id="birdy" src="<%= birdypet.variant.image %>" class="birdypet full">
-            <span class="birdymessage border border-1 border-secondary" style="display: none;"></span>
-          </span>
-        </div>
+    <div class="row">
+      <div class="text-center col-12 <% if (birdypet.description) { %>col-md-8<% } %>">
+        <span class="h-100 d-inline-block position-relative">
+         <% if (locals.loggedInUser && loggedInUser.id != birdypet.member) { %>
+          <div class="birdypet-actions">
+            <button class="wishlist-heart btn btn-sm" data-id="<%= birdypet.bird.id %>" role="button">
+              <%= birdypet.bird.wishlisted ? (birdypet.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍' %>
+            </button>
+          </div>
+         <% } %>
+          <img id="birdy" src="<%= birdypet.variant.image %>" class="birdypet full">
+          <span class="birdymessage border border-1 border-secondary" style="display: none;"></span>
+        </span>
+      </div>
 
-      <% if (birdypet.description) { %>
-        <div class="w-75 mx-auto my-4 bg-light rounded p-3 pb-1 text-break">
-        <% for (var para of birdypet.descriptionHTML.split("\r\n")) { %>
+     <% if (birdypet.description) { %>
+      <div class="col-12 col-md-4">
+        <div class="w-75 mx-auto my-4 bg-light rounded p-3 pb-1">
+         <% for (var para of birdypet.descriptionHTML.split("\r\n")) { %>
           <p><%- para %></p>
-        <% } %>
+         <% } %>
         </div>
-      <% } %>
+      </div>
+     <% } %>
+    </div>
 
     <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
       <script type="text/javascript">

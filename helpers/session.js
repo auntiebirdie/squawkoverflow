@@ -4,9 +4,9 @@ const MySQLStore = require('express-mysql-session')(session);
 
 module.exports = session({
   store: new MySQLStore({
-	  host: secrets.DB[secrets.ENV].HOST,
-	  user: secrets.DB[secrets.ENV].USER,
-	  password: secrets.DB[secrets.ENV].PASS,
+	  host: secrets.DB.HOST,
+	  user: secrets.DB.USER,
+	  password: secrets.DB.PASS,
 	  database: 'sessions'
   }),
   secret: secrets.SESSION_TOKEN,

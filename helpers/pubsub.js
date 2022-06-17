@@ -10,7 +10,7 @@ exports.publish = function(topic, action, body) {
       action
     };
 
-    //    if (secrets.ENV == 'PROD') {
+    // TODO: re-enable pubsub for PROD
     if (false) {
       const pubsub = new PubSub();
 
