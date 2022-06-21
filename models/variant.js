@@ -76,6 +76,7 @@ class Variant {
           case "Casuariidae":
           case "Cathartidae":
           case "Certhiidae":
+		case "Cettiidae":
           case "Chaetopidae":
           case "Charadriidae":
           case "Ciconiidae":
@@ -99,6 +100,7 @@ class Variant {
           case "Hirundinidae":
           case "Hydrobatidae":
           case "Icteridae":
+		case "Indicatoridae":
           case "Laniidae":
           case "Laridae":
           case "Leiothrichidae":

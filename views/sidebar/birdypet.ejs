@@ -9,19 +9,30 @@
         <% } %>
 
         <% if (locals.loggedInUser && member.id == locals.loggedInUser.id) { %>
-            <p><a id="makeBirdyBuddy" class="btn btn-light <%= member.birdyBuddy == birdypet.id ? 'disabled' : '' %>">💖 Make Birdy Buddy</a></p>
-            <p><a class="btn btn-light" data-bs-toggle="modal" data-bs-target="#modal_editBirdyPet" data-id="<%= birdypet.id %>" role="button">✏️  Edit Details</a></p>
-            <p>
-              <button data-bs-toggle="modal"
-                 data-bs-target="#modal_giftBirdyPet"
-                 data-bird="<%= birdypet.bird.id %>"i
-                 data-id="<%= birdypet.id %>"
-                 class="btn btn-light">
-                🎁 Gift to Someone
-              </button>
-            </p>
-            <p><a href="/birdypet/release/<%= birdypet.id %>" class="btn btn-light">👋 Release Bird</a></p>
+          <p><a id="makeBirdyBuddy" class="btn btn-light <%= member.birdyBuddy == birdypet.id ? 'disabled' : '' %>">💖 Make Birdy Buddy</a></p>
+          <p><a class="btn btn-light" data-bs-toggle="modal" data-bs-target="#modal_editBirdyPet" data-id="<%= birdypet.id %>" role="button">✏️  Edit Details</a></p>
+          <p>
+            <button data-bs-toggle="modal"
+               data-bs-target="#modal_giftBirdyPet"
+               data-bird="<%= birdypet.bird.id %>"i
+               data-id="<%= birdypet.id %>"
+               class="btn btn-light">
+              🎁 Gift to Someone
+            </button>
+          </p>
+          <p><a href="/birdypet/release/<%= birdypet.id %>" class="btn btn-light">👋 Release Bird</a></p>
         <% } %>
+
+          <p>
+            <button data-bs-toggle="modal"
+                data-bs-target="#modal"
+                data-modal-title="<%= birdypet.nickname || birdypet.bird.commonName %>'s BirdStory"
+                data-modal-endpoint="birdstory"
+                data-modal-params='{"birdypet":"<%= birdypet.id %>"}'
+                class="btn btn-light">
+              📖 Read BirdStory
+            </button>
+          </p>
         </div>
 
         <h6 class="mt-4">Common Name</h6>
