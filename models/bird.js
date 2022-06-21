@@ -17,12 +17,21 @@ class Bird {
 
       Database.create('species', {
         id: data.scientificName,
-        code: Date.now(),
+        code: "",
         family: data.family,
         commonName: data.commonName,
         scientificName: data.scientificName
-      }).then(async () => {
-        resolve(this);
+      }).then(() => {
+        Database.create('variants', {
+          id: Database.key(),
+          species: data.scientificName,
+          source: "n/a",
+          credit: "n/a",
+          full: 0,
+          special: 0
+        }).then(() => {
+          resolve(this);
+        });
       });
     });
   }
