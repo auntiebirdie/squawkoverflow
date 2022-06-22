@@ -67,3 +67,22 @@
            <a href="https://ebird.org/species/<%= bird.code %>" target="_blank">eBird</a>
          </div>
        <% } %>
+
+        <% if (false) { %>
+         <h5>Contribute Art</h5>
+         <p>Are you an artist, or do you know of some public domain art for this bird? Your help is greatly appreciated in ensuring that SQUAWK is overflowing with birds!</p>
+
+         <p>Please send us a link to where the image can be found and one of our volunteer contributors will take a look at adding it to the site. Thank you so much!</p>
+
+         <input id="contributeArt" type="text" class="form-control mb-3 w-100">
+         <button id="submitContribution" class="btn btn-dark" role="button">Submit</button>
+
+         <p><em>If you have any questions, please <a href="https://squawkoverflow.com/faq#contribute-art">check the FAQ</a>, reach out on <a href="https://discord.com/invite/h87wansdg2"">the Discord server</a>, or send us an email directly at <a href="mailto:contribute@squawkoverflow.com">contribute@squawkoverflow.com</a>.</em></p>
+
+         <script>
+           $(document).ready(function () {
+             $('#submitContribution').on('click', function () {
+             });
+           });
+         </script>
+        <% } %>

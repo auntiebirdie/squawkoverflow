@@ -123,7 +123,24 @@ router.get('/', async (req, res) => {
 
 	    <p>This list may change as new ideas come to light. Feel free to suggest some of your own on the Discord server or send us an email at <a href="mailto:patreon@squawkoverflow.com">patreon@squawkoverflow.com</a>!</p>
 	  `
-    }
+    },
+	  {
+		  slug: 'contribute-art',
+		  question: 'I have art I would like to contribute! How does that work?',
+		  answer: `
+                    <p>First of all, thank you!  SQUAWK is largely a volunteer effort, so all the help we can get is appreciated.</p>
+
+		    <p>If you are the artist, there are some important things you may want to know:</p>
+		    
+		    <ol>
+		      <li>Your art will not be used in any merchandising (because we don't have any) or advertisements (we also don't have any).</li>
+		      <li>We have no plans to profit off your art.  In the event that there is any overages from the Patreon that exceed server and hosting costs, those will be funneled into more art.</li>
+		      <li>You retain full rights and ownership of your work and may revoke permission for its usage on SQUAWK at any time, no questions asked.</li>
+		    </ol>
+
+		    <p>If you are NOT the artist and the work is not Public Domain or Creative Commons, it would be greatly appreciated if the link you include has information on how we could get in touch with the artist.  Otherwise, we won't use non-PD/non-CC art without permission.</p>
+		  `
+	  }
   ];
 
   res.render('faq/index', {
