@@ -85,6 +85,7 @@ class Variant {
           case "Coliidae":
           case "Columbidae":
           case "Corvidae":
+          case "Cotingidae":
           case "Cracidae":
           case "Cuculidae":
           case "Diomedeidae":
@@ -105,6 +106,7 @@ class Variant {
           case "Laniidae":
           case "Laridae":
           case "Leiothrichidae":
+          case "Locustellidae":
           case "Lybiidae":
           case "Malaconotidae":
           case "Maluridae":
