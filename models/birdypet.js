@@ -56,8 +56,6 @@ class BirdyPet {
             if (member.settings.general_updateWishlistNEED) {
               await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 2', [variant.bird.id, member.id]);
             }
-
-            await Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?, NOW())', [this.id, "hatched", member.id]);
           }
 
           resolve(this);
@@ -149,9 +147,7 @@ class BirdyPet {
           variant: this.variant.id
         }));
 
-        if (!this.member) {
-          promises.push(Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?, NOW())', [this.id, "collected", data.member]));
-        } else {
+        if (this.member) {
           promises.push(Cache.decrement(`aviary:${this.member}`, 'birdypets', {
             member: this.member
           }));
