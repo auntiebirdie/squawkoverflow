@@ -21,7 +21,17 @@ router.get('/:member', async (req, res, next) => {
       flocks: member.flocks,
       currentPage: (req.query.page || 1) * 1,
       sidebar: 'filters',
-      searchFields: [{ id : 'cleanName', name : 'Common Name' }, { id : 'scientificName', name : 'Scientific Name' }, { id : 'nickname', name : 'Nickname' }],
+      style: true,
+      searchFields: [{
+        id: 'cleanName',
+        name: 'Common Name'
+      }, {
+        id: 'scientificName',
+        name: 'Scientific Name'
+      }, {
+        id: 'nickname',
+        name: 'Nickname'
+      }],
       sortFields: ['addedAt-DESC', 'addedAt-ASC', 'hatchedAt-DESC', 'hatchedAt-ASC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'friendship-DESC', 'friendship-ASC'],
       filters: member.id == req.session.user ? ['isolated-My', 'duplicated-My'] : ['wanted-My', 'needed-My'],
       extraFilters: member.id == req.session.user ? ['someone'] : ['duplicated-Their', 'unhatched-My', 'isolated-My', 'duplicated-My']

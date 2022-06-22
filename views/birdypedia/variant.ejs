@@ -15,6 +15,7 @@
            <% i = 1; for (let style of ["Illustration", "Photo"]) { %>
             <option value="<%= i %>" <%= variant?.style == i ? "selected" : "" %>><%= style %></option>
            <% i++; } %>
+            <option value="-1" <%= variant?.style == -1 ? "selected" : "" %>>Placeholder</option>
           </select>
         </div>
         <div class="col-6 col-md-3">
