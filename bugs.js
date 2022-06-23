@@ -42,7 +42,7 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
   const secrets = require('./secrets.json');
-  const Database = require('./api/helpers/database.js');
+  const Database = require('./helpers/database.js');
   const Trello = require('node-trello');
   const trello = new Trello(secrets.TRELLO.KEY, secrets.TRELLO.TOKEN);
 
@@ -102,4 +102,4 @@ app.post('/', (req, res) => {
   });
 });
 
-app.listen(process.env.PORT || 8080);
+app.listen(8065);
