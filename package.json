@@ -4,10 +4,10 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "bugs": "node bugs.js",
+    "start": "rm ~/.forever/squawk.logs && forever start -s --uid=squawk app.js",
+    "bugs": "rm ~/.forever/bugs.logs && forever start -s --uid=bugs bugs.js",
     "dev": "DEV=true node app.js | bunyan",
-    "restart": "forever stop squawk && rm ~/.forever/squawk.log && forever start --uid=squawk app.js"
+    "restart": "forever stop squawk && npm run start"
   },
   "author": "seppukawaii",
   "license": "ISC",
