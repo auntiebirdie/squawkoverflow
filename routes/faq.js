@@ -125,6 +125,19 @@ router.get('/', async (req, res) => {
 	  `
     },
 	  {
+		  slug: 'wishlist',
+		  question: 'What is the wishlist for? What is the purpose of "want" vs. "need"?',
+		  answer: `
+                    <p>The purpose of the wishlist and the "want" vs. "need" intesnity includes:
+
+		    <ul>
+		      <li>When hatching, if an egg can hatch a bird on your wishlist, there will be an indicator on the egg. This indicator will also display whether or not it's a bird you want or one you need, so you can prioritize hatching eggs that have your absolute favorite birds in them.</li>
+                      <li>When another member wants to gift a bird they've hatched or from their aviary, they can filter and/or sort the member list by wishlist intensity. This makes it easier for birdypets to find their way to the aviaries that want them most!</li>
+		      <li>If you get a bug through wandering the site or reporting a bug, you can use it as bait on your wishlist to attract a bird you want or need. Birds marked as need will be prioritized over birds marked as want.</li>
+		    </ul>
+		  `
+	  },
+	  {
 		  slug: 'contribute-art',
 		  question: 'I have art I would like to contribute! How does that work?',
 		  answer: `
@@ -139,6 +152,8 @@ router.get('/', async (req, res) => {
 		    </ol>
 
 		    <p>If you are NOT the artist and the work is not Public Domain or Creative Commons, it would be greatly appreciated if the link you include has information on how we could get in touch with the artist.  Otherwise, we won't use non-PD/non-CC art without permission.</p>
+
+		    <p>Currently, we accept submissions through <a href="https://discord.com/invite/h87wansdg2" target="_blank">our Discord server</a> or by sending an email to <a href="mailto:contribute@squawkoverflow.com">contribute@squawkoverflow.com</a>.</p>
 		  `
 	  }
   ];

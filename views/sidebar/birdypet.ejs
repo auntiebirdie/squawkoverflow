@@ -48,7 +48,7 @@
                   html += `🎁 Gifted by `;
                   break;
                 case "exchanged":
-                  html += `🤝 Exchanged with `;
+                  html += `🤝 Exchanged by `;
                   break;
               }
 
@@ -58,7 +58,13 @@
                 html += 'someone';
               }
 
-              return `<div>${html}</div>`;
+              try {
+                if (model.who2?.id) {
+                  html += `to <a href="${model.who2.id}">${model.who2.username}</a>`;
+                }
+              } catch (err) { }
+
+              return `<p>${html}</p>`;
             }
           </script>
         </div>
