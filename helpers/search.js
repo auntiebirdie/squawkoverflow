@@ -81,8 +81,13 @@ class Search {
           params.push(input.search);
         } else {
           if (exactMatch) {
-            filters.push(`${searchFields[input.searchField] || 'species.cleanName'} = ?`);
-            params.push(input.search);
+            if (input.searchField != "commonName") {
+              filters.push(`${searchFields[input.searchField]} = ?`);
+              params.push(input.search);
+            } else {
+              filters.push('(species.commonName = ? OR species.cleanName = ?)');
+              params.push(input.search, input.search);
+            }
           } else {
             select.push(`MATCH(${searchFields[input.searchField] || 'species.cleanName'}) AGAINST (?) relevancy`);
             params.unshift(input.search);
