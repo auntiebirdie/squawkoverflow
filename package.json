@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "rm ~/.forever/squawk.logs && forever start -s --uid=squawk app.js",
-    "bugs": "rm ~/.forever/bugs.logs && forever start -s --uid=bugs bugs.js",
+    "start": "rm -f ~/.forever/squawk.logs && forever start -s --uid=squawk app.js",
+    "bugs": "rm -f ~/.forever/bugs.logs && forever start -s --uid=bugs bugs.js",
     "dev": "DEV=true node app.js | bunyan",
     "restart": "forever stop squawk && npm run start"
   },
