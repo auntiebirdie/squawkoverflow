@@ -7,7 +7,7 @@ class Cache {
       Redis.sendCommand(['GET', id]).then((result) => {
         if (!result) {
           Database.count(query, params).then(async (result) => {
-            Redis.sendCommand(['SET', id, `${result}`]).then(() => {
+            Redis.sendCommand(['SET', id, `${result * 1}`]).then(() => {
               resolve(result * 1);
             });
           });
