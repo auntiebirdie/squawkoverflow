@@ -320,7 +320,7 @@ class Search {
       query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC');
 
       Database.query(query, params).then((results) => {
-        if (results.length > 0 && results[0].relevancy) {
+        if (results.length > 0 && (results[0].relevancy || (input.searchField != "scientificName"))) {
           let maxRelevancy = Math.max(...results.map((result) => result.relevancy));
           results = results.filter((result) => result.relevancy >= (maxRelevancy * .75));
         }
