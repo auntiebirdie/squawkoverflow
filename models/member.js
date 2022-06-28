@@ -9,11 +9,7 @@ const Flock = require('./flock.js');
 
 class Member {
   constructor(id) {
-    try {
-      this.id = JSON.parse(id);
-    } catch (err) {
-      this.id = id;
-    }
+    this.id = id;
   }
 
   create(data) {
