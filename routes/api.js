@@ -20,8 +20,6 @@ router.all('/*', async (req, res) => {
     data.loggedInUser = req.session.user;
   }
 
-  console.log(data);
-
   data.files = req.files;
 
   var log = {
