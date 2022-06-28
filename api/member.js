@@ -38,10 +38,8 @@ module.exports = async (req, res) => {
             case "username":
             case "avatar":
             case "birdatar":
-              toUpdate[key] = req.body[key];
-              break;
             case "pronouns":
-              toUpdate[key] = JSON.parse(req.body[key]);
+              toUpdate[key] = req.body[key];
               break;
           }
         }
