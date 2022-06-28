@@ -15,7 +15,7 @@ router.all('/*', async (req, res) => {
   if (data.loggedInUser && req.headers['knockknock'] == secrets.WHOSTHERE) {
     try {
       data.loggedInUser = JSON.parse(data.loggedInUser);
-    } catch (err) {}
+    } catch (err) { }
   } else {
     data.loggedInUser = req.session.user;
   }
