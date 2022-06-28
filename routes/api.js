@@ -10,7 +10,7 @@ BigInt.prototype.toJSON = function() { return this.toString() };
 router.all('/*', async (req, res) => {
   var data = (req.method == "GET" || req.method == "HEAD" ? req.query : req.body) || {};
 
-  if (!data.loggedInUser || req.headers.get('KNOCKKNOCK') != secrets.WHOSTHERE) {
+  if (!data.loggedInUser || req.headers.get('knockknock') != secrets.WHOSTHERE) {
     data.loggedInUser = req.session.user;
   }
 
