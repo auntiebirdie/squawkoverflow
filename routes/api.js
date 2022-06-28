@@ -13,12 +13,17 @@ router.all('/*', async (req, res) => {
   var data = (req.method == "GET" || req.method == "HEAD" ? req.query : req.body) || {};
 
   if (data.loggedInUser && req.headers['knockknock'] == secrets.WHOSTHERE) {
-    try {
-      data.loggedInUser = JSON.parse(data.loggedInUser);
-    } catch (err) { }
+    data.loggedInUser = data.loggedInUser;
   } else {
     data.loggedInUser = req.session.user;
   }
+
+  for (let key in data) {
+    try {
+      data[key] = JSON.parse(data[key]);
+    } catch (err) {}
+  }
+
 
   data.files = req.files;
 

@@ -3,6 +3,8 @@ const API = require('../helpers/api.js');
 const express = require('express');
 const router = express.Router();
 
+const secrets = require('../secrets.json');
+
 router.get('/', async (req, res) => {
   API.call('activity', 'GET').then((results) => {
     res.render('home/index', {
@@ -27,7 +29,7 @@ router.get('/login', (req, res) => {
     });
   } else {
     res.render('home/login', {
-      redirectUri: 'https://' + (process.env.DEV ? 'dev.' : '') + 'squawkoverflow.com/login'
+      redirectUri: secrets.HOST + '/login'
     });
   }
 });
