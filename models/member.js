@@ -9,7 +9,11 @@ const Flock = require('./flock.js');
 
 class Member {
   constructor(id) {
-    this.id = id;
+    try {
+      this.id = JSON.parse(id);
+    } catch (err) {
+      this.id = id;
+    }
   }
 
   create(data) {
@@ -310,10 +314,17 @@ class Member {
           case 'totals':
             this.totals = {
               aviary: this.aviary ? this.aviary : await Cache.count(`aviary:${member.id}`, 'birdypets', {
-              'member': this.id
-            }),
+                'member': this.id
+              }),
               species: [
-                await Cache.count(`species:${this.id}`, 'counters JOIN species ON (counters.id = species.id)', { member: this.id, type: 'birdypedia', count: { comparator: '>', value_trusted: 0 } }),
+                await Cache.count(`species:${this.id}`, 'counters JOIN species ON (counters.id = species.id)', {
+                  member: this.id,
+                  type: 'birdypedia',
+                  count: {
+                    comparator: '>',
+                    value_trusted: 0
+                  }
+                }),
                 await Cache.count('species', 'species', {})
               ]
             };
