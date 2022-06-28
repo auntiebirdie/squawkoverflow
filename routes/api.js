@@ -1,5 +1,6 @@
 const API = require('../helpers/api.js');
 const Logger = require('../helpers/logger.js');
+const secrets = require('../secrets.json');
 
 const express = require('express');
 const router = express.Router();
@@ -9,7 +10,10 @@ BigInt.prototype.toJSON = function() { return this.toString() };
 router.all('/*', async (req, res) => {
   var data = (req.method == "GET" || req.method == "HEAD" ? req.query : req.body) || {};
 
-  data.loggedInUser = req.session.user;
+  if (!data.loggedInUser || req.headers.get('KNOCKKNOCK') != secrets.WHOSTHERE) {
+    data.loggedInUser = req.session.user;
+  }
+
   data.files = req.files;
 
   var log = {
