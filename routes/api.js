@@ -5,14 +5,22 @@ const secrets = require('../secrets.json');
 const express = require('express');
 const router = express.Router();
 
-BigInt.prototype.toJSON = function() { return this.toString() };
+BigInt.prototype.toJSON = function() {
+  return this.toString()
+};
 
 router.all('/*', async (req, res) => {
   var data = (req.method == "GET" || req.method == "HEAD" ? req.query : req.body) || {};
 
-  if (!data.loggedInUser || req.headers.get('knockknock') != secrets.WHOSTHERE) {
+  if (data.loggedInUser && req.headers['knockknock'] == secrets.WHOSTHERE) {
+    try {
+      data.loggedInUser = JSON.parse(data.loggedInUser);
+    } catch (err) {}
+  } else {
     data.loggedInUser = req.session.user;
   }
+
+  console.log(data);
 
   data.files = req.files;
 
