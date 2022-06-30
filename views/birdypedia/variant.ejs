@@ -44,8 +44,8 @@
           <%- include('../partials/membersearch.ejs', { selectedMember : variant?.contributor }) %>
 
           <div class="form-check form-check-inline small mt-2 ms-5">
-            <input class="form-check-input" type="checkbox" id="form-artist" <%= variant && variant.contributor && variant.contributor.id == variant.artist?.id ? 'checked' : '' %>>
-            <label class="form-check-label" for="form-artist">Contributor is also artist/photographer</label>
+            <input class="form-check-input" type="checkbox" id="form-creator" <%= variant && variant.contributor && variant.contributor.id == variant.creator?.id ? 'checked' : '' %>>
+            <label class="form-check-label" for="form-creator">Contributor is also artist/photographer</label>
           </div>
         </div>
       </div>
@@ -148,7 +148,7 @@
               subspecies: $('#form-subspecies').val(),
               credit: $('#form-credit').val(),
               contributor: $('img', '#memberDisplay').attr('data-id'),
-              isArtist: $('#form-artist').is(':checked') ? 1 : 0,
+              creator: $('#form-creator').is(':checked') ? 1 : 0,
               full: $('#form-full').is(':checked') ? 1 : 0,
               special: $('#form-special').is(':checked') ? 1 : 0,
               label: $('#form-label').val()
