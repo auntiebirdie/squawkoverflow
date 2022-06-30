@@ -4,8 +4,7 @@ module.exports = {
       name: "squawk",
       script: "app.js",
       instances: 2,
-      exec_mode: "cluster",
-      watch: ".",
+      exec_mode: "cluster"
     }
   ]
 }
