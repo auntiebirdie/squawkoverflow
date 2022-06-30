@@ -204,16 +204,16 @@ class Variant {
         await this.fetchMemberData(params.member);
       }
 
-      if (params.include?.includes('artist')) {
-        let artist = await Database.getOne('member_variants', {
+      if (params.include?.includes('creator')) {
+        let creator = await Database.getOne('member_variants', {
           variant: this.id,
-          type: 'artist'
+          type: 'creator'
         });
 
-        if (artist) {
-          this.artist = new Member(artist.member);
+        if (creator) {
+          this.creator = new Member(creator.member);
 
-          await this.artist.fetch().catch((err) => this.artist = null);
+          await this.creator.fetch().catch((err) => this.creator = null);
         }
       }
 

@@ -49,11 +49,11 @@ module.exports = async (req, res) => {
         await Database.query('DELETE FROM member_variants WHERE variant = ? AND type = "contributor"', [key]);
         await Database.query('INSERT IGNORE INTO member_variants VALUES (?, ?, "contributor")', [data.contributor, key]);
 
-        if (data.isArtist) {
+        if (data.creator) {
           await Database.query('INSERT IGNORE INTO member_badges VALUES (?, ?, NOW())', [data.contributor, data.style == 1 ? 'artist' : 'photographer']);
-          await Database.query('INSERT IGNORE INTO member_variants VALUES (?, ?, "artist")', [data.contributor, key]);
+          await Database.query('INSERT IGNORE INTO member_variants VALUES (?, ?, "creator")', [data.contributor, key]);
         } else {
-          await Database.query('DELETE FROM member_variants WHERE `member` = ? AND variant = ? AND type = "artist"', [data.contributor, key]);
+          await Database.query('DELETE FROM member_variants WHERE `member` = ? AND variant = ? AND type = "creator"', [data.contributor, key]);
         }
       }
 
