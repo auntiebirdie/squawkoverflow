@@ -42,13 +42,9 @@
 
   <%- include('../partials/spacer.ejs') %>
 
-  <h3 class="mb-3">Add/Remove Birds</h3>
+  <h3 class="mb-5"><span class="border border-2 border-primary p-1 mx-2">Add</span>/<span class="border border-2 border-secondary border-dashed p-1 mx-2">Remove</span> Birds</h3>
 
-  <p>
-    <span class="border border-2 border-primary p-1 mx-2">In Flock</span>  <span class="border border-2 border-secondary border-dashed p-1 mx-2">Not In Flock</span>
-  </p>
-
-  <div id="lazyLoader" class="row g-0" data-endpoint="aviary" data-params='{"member":"<%= loggedInUser.id %>"}'></div>
+  <div id="lazyLoader" class="row g-0" data-endpoint="aviary" data-params='{"member":"<%= loggedInUser.id %>","inFlock":"<%= flock.id %>"}'></div>
 
   <%- include('../scripts/lazyloader.ejs', { skipParams : true, template: '../templates/flock.ejs' }) %>
 

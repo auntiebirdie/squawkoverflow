@@ -232,6 +232,14 @@ class Search {
             case 'active':
               filters.push('members.lastActivityAt > DATE_SUB(NOW(), INTERVAL 6 MONTH)');
               break;
+            case 'inFlock':
+              filters.push('birdypets.id IN (SELECT a.birdypet FROM birdypet_flocks a WHERE a.flock = ?)');
+              params.push(input.inFlock);
+              break;
+            case 'notInFlock':
+              filters.push('birdypets.id NOT IN (SELECt a.birdypet FROM birdypet_flocks a WHERE a.flock = ?)');
+              params.push(input.inFlock);
+              break;
           }
         }
 
