@@ -43,7 +43,7 @@
           <h5><label>Contributor</label></h5>
           <%- include('../partials/membersearch.ejs', { selectedMember : variant?.contributor }) %>
 
-          <div class="form-check form-check-inline small">
+          <div class="form-check form-check-inline small mt-2 ms-5">
             <input class="form-check-input" type="checkbox" id="form-artist" <%= variant && variant.contributor && variant.contributor.id == variant.artist?.id ? 'checked' : '' %>>
             <label class="form-check-label" for="form-artist">Contributor is also artist/photographer</label>
           </div>
