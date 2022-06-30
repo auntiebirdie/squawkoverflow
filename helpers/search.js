@@ -43,7 +43,7 @@ class Search {
           filters.push('birdypets.member IS NULL AND birdypets.addedAt <= DATE_SUB(NOW(), INTERVAL 10 MINUTE)');
           break;
         case 'incubator':
-          select.push('DISTINCT variants.id');
+          select.push('variants.id');
           tables.push('variants', 'JOIN member_variants ON (variants.id = member_variants.variant)', 'JOIN species ON (variants.species = species.id)');
           filters.push('member_variants.member = ?');
           params.push(input.loggedInUser);
@@ -259,6 +259,8 @@ class Search {
 
       if (kind == 'bird') {
         query += ' GROUP BY species.id';
+      } else if (kind == 'incubator') {
+        query += ' GROUP BY variants.id';
       }
 
       query += ' ORDER BY ';
