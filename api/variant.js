@@ -48,6 +48,13 @@ module.exports = async (req, res) => {
         await Database.query('INSERT IGNORE INTO member_badges VALUES (?, "contributor", NOW())', [data.contributor]);
         await Database.query('DELETE FROM member_variants WHERE variant = ? AND type = "contributor"', [key]);
         await Database.query('INSERT IGNORE INTO member_variants VALUES (?, ?, "contributor")', [data.contributor, key]);
+
+        if (data.isArtist) {
+          await Database.query('INSERT IGNORE INTO member_badges VALUES (?, ?, NOW())', [data.contributor, data.style == 1 ? 'artist' : 'photographer']);
+          await Database.query('INSERT IGNORE INTO member_variants VALUES (?, ?, "artist")', [data.contributor, key]);
+        } else {
+          await Database.query('DELETE FROM member_variants WHERE `member` = ? AND variant = ? AND type = "artist"', [data.contributor, key]);
+        }
       }
 
       if (!data.credit || data.credit?.trim() == "") {
