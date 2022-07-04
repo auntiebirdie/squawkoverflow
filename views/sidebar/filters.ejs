@@ -150,7 +150,7 @@
   }
 %>
 
-<% if (locals.filters || (locals.extraFilters && locals.loggedInUser?.tier.extraInsights)) { %>
+<% if (locals.filters || locals.extraFilters) { %>
   <h5>Filters</h5>
   <div class="mb-4">
    <% if (locals.filters) { %>
@@ -167,7 +167,7 @@
     </div>
    <% } %>
 
-   <% if (locals.extraFilters && locals.loggedInUser?.tier.extraInsights) { %>
+   <% if (locals.extraFilters) { %>
     <div id="extraFilters">
      <% for (var filter of extraFilters) { %>
       <% let context = filter.split('-').pop() %>
