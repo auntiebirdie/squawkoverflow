@@ -1,0 +1,17 @@
+<%- include('../header.ejs') %>
+
+  <%- include('../partials/page-title.ejs', {
+      title: locals.page == 'gift' ? {
+        text : `Send Gift to ${member.username}`
+      }
+    })
+  %>
+
+  <div class="text-center pb-5 mx-auto w-75">
+    <div class="bg-light p-4">
+      <p><%= member.username %> is not accepting gifts at this time, but thank you for the kind thought!
+    </div>
+  </div>
+
+
+<%- include('../footer.ejs') %>
