@@ -161,7 +161,7 @@ class Search {
           }
         } else {
           filters.push('variants.style IN (?)');
-          params.push(input.style.split(','));
+          params.push(input.style.toString().split(','));
         }
       }
 
