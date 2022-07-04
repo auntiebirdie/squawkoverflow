@@ -171,9 +171,7 @@ class Search {
 
           await member.fetch();
 
-          if (member.tier.extraInsights) {
             input.filters = Array.isArray(input.filters) ? [...input.filters, ...input.extraFilters] : input.extraFilters;
-          }
         }
 
         var intensity = [];
