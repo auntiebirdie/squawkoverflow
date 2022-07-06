@@ -20,7 +20,7 @@ class Member {
         id: id,
         username: data.username,
         avatar: data.avatar,
-        tier: data.tier || 0,
+        supporter: data.supporter || 0,
         serverMember: data.serverMember || false,
         joinedAt: new Date(),
         lastLoginAt: new Date(),
@@ -122,14 +122,12 @@ class Member {
         this.settings.theme_style = 'dark';
       }
 
-      this.tier = await Database.query('SELECT * FROM tiers WHERE id = ?', [member.tier || 0]).then(([tier]) => tier);
-
-      if (typeof this.settings.title != "undefined" && this.settings.title != this.tier.id) {
+      if (typeof this.settings.title != "undefined") {
         this.title = await Database.getOne('titles', {
           id: this.settings.title
         }).then((title) => title.name);
       } else {
-        this.title = this.tier.name;
+        this.title = 'Birder';
       }
 
       // TODO : clean up this mess
@@ -303,9 +301,8 @@ class Member {
               SELECT titles.*
               FROM titles
               LEFT JOIN member_titles ON (member_titles.title = titles.id)
-              WHERE \`member\` = ? OR
-              (id < 5 AND id <= ?)
-            `, [this.id, this.tier.id]);
+              WHERE \`member\` = ? OR id = 0
+            `, [this.id]);
             break;
           case 'totals':
             this.totals = {

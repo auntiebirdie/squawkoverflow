@@ -13,7 +13,7 @@
             </h3>
             <h4><%= egg.adjective %></h4>
           </a>
-         <% if (loggedInUser.tier.extraInsights) { %>
+         <% if (loggedInUser.supporter) { %>
           <h5 class="text-muted">
             <%= egg.numHatched %>/<%= egg.numSpecies %>
           </h5>
@@ -44,7 +44,7 @@
     <div class="row text-center mt-5">
       <div class="col">
         <p><small><em><a href="/faq#weird-eggs" target="_blank">What's with the weird eggs?</a></em></small></p>
-       <% if (loggedInUser.tier.extraInsights) { %>
+       <% if (loggedInUser.supporter) { %>
         <p><small><em><a href="/faq#extra-insights" target="_blank">What do the numbers below the eggs mean?</a></em></small></p>
        <% } %>
       </div>

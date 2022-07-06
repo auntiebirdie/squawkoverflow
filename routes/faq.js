@@ -20,8 +20,7 @@ router.get('/', async (req, res) => {
 	  <li>You can hatch a new egg once every 10 minutes.</li>
 	  <li>You can have up to 12,000 birds in your aviary.</li>
 	</ul>
-	<p>There is a Patreon where you can pick a support level that matches the playstyle you want.  For $3, you can hatch eggs as much as you want, as often as you want.  For $5, your aviary can contain as many birds as your heart desires. For $10, there are some <a href="#extra-insights">extra insights</a> that become available to you.</p>
-	<p>It's completely optional to become a supporter, but it is deeply appreciated! You can support us at <a href="https://patreon.com/squawkoverflow" target="_blank">patreon.com/squawkoverflow</a>.</p>
+	<p>There is a Patreon where you can remove these limits using a pay-what-you-want model. It's our intent for SQUAWK to be enjoyed without supporting, but it is deeply appreciated! You can support us at <a href="https://patreon.com/squawkoverflow" target="_blank">patreon.com/squawkoverflow</a>.</p>
       `
     },
     {
@@ -61,64 +60,24 @@ router.get('/', async (req, res) => {
       slug: 'tier-limits',
       question: 'Why are there limits and how can I remove them?',
       answer: `
-		  <p>In order to offset hosting costs, <a href="https://patreon.com/squawkoverflow">we have a Patreon</a>, but we also have what we hope is a very reasonable free tier.  For free, you can hatch an egg every 10 minutes and have up to 12,000 birds in your aviary, which is enough for one of every species plus extra of your favorites!</p>
+        <p>In order to offset hosting costs, <a href="https://patreon.com/squawkoverflow">we have a "pay-what-you-want" Patreon</a>, but we also have what we hope is a very reasonable free tier.  For free, you can hatch an egg every 10 minutes and have up to 12,000 birds in your aviary, which is enough for one of every species plus extra of your favorites!</p>
 
-                  <p>Additionally, every tier will grant the title of that tier and the ones below it.  For example, a Bird Fanatic can choose to display the title Bird Collector on their profile while still enjoying the extra insights!</p>
-
-                  <p>The subscription tiers available through our Patreon are:</p>
-
-		  <div class="row text-center py-3">
-		    <div class="col-sm-6 col-lg-3 pb-5">
-		      <h5><strong>Bird Lover</strong></h5>
-
-		      <h6 class="pb-3"><em>$3/mo</em></h6>
-
-		      <p><small>No time limit on hatching eggs</small></p>
-                      <p><small>Patron-only Discord channel</small></p>
-		    </div>
-                    <div class="col-sm-6 col-lg-3 pb-5">
-                      <h5><strong>Bird Collector</strong></h5>
-
-                      <h6 class="pb-3"><em>$5/mo</em></h6>
-
-		      <p><small>No limit on aviary size</small></p>
-                      <p><small>No time limit on hatching eggs</small></p>
-                      <p><small>Patron-only Discord channel</small></p>
-                    </div>
-                    <div class="col-sm-6 col-lg-3 pb-5">
-                      <h5><strong>Bird Fanatic</strong></h5>
-
-                      <h6 class="pb-3"><em>$10/mo</em></h6>
+                  <p>The perks available through our Patreon are:</p>
 
 		      <p><small>Extra insights</small></p>
 		      <p><small>No limit on aviary size</small></p>
                       <p><small>No time limit on hatching eggs</small></p>
                       <p><small>Patron-only Discord channel</small></p>
-                    </div>
-                    <div class="col-sm-6 col-lg-3 pb-5">
-                      <h5><strong>V.I.B</strong></h5>
-
-                      <h6 class="pb-3"><em>$25/mo</em></h6>
-
-		      <p><small>A special variant of your pet</small></p>
-		      <p><small>Custom title of your choice</small></p>
-		      <p><small>Extra insights</small></p>
-		      <p><small>No limit on aviary size</small></p>
-                      <p><small>No time limit on hatching eggs</small></p>
-                      <p><small>Patron-only Discord channel</small></p>
-                    </div>
-		  </div>
 		  `
     },
     {
       slug: 'extra-insights',
-      question: 'What are the extra insights available to Bird Fanatics?',
+      question: 'What are the extra insights available to supporters?',
       answer: `
-            <p>Supporting our Patreon at the $10 level gives you extra insights... but what does that mean, exactly?</p>
+            <p>Supporting our Patreon gives you extra insights... but what does that mean, exactly?</p>
 
 	    <ul>
 	      <li>When hatching eggs, you will see a #x/#y text below the egg. This indicates how many species can hatch from the egg (#y) and how many of them you have in your aviary (#x).</li>
-	      <li>When viewing an aviary, you will have more filter options than normal. You can filter to show duplicates in an aviary, any birds that are on your wishlist, or birds you don't have yet when viewing someone else's aviary!</li>
 	    </ul>
 
 	    <p>This list may change as new ideas come to light. Feel free to suggest some of your own on the Discord server or send us an email at <a href="mailto:patreon@squawkoverflow.com">patreon@squawkoverflow.com</a>!</p>

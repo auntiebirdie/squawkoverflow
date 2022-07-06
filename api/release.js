@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
 
     await birdypet.create({
       variant: req.body.variant,
-      addedAt: member.tier.eggTimer ? new Date() : new Date(Date.now() - (10 * 60 * 1000)),
+      addedAt: member.supporter ? new Date() : new Date(Date.now() - (10 * 60 * 1000)),
       hatchedAt: new Date()
     });
 

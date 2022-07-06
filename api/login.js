@@ -53,8 +53,7 @@ module.exports = async (req, res) => {
                   createIfNotExists: true,
                   data: {
                     username: user.username,
-                    avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`,
-                    tier: 0
+                    avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`
                   }
                 }).then(async (data) => {
                   await member.set({
@@ -120,15 +119,7 @@ module.exports = async (req, res) => {
             request.end();
           });
         }).then((response) => {
-          const tiers = {
-            '8368212': 0,
-            '7920461': 1,
-            '7920471': 2,
-            '7920495': 3,
-            '7932599': 4
-          };
-
-          const pledge = response.included.find((attr) => attr.type == 'tier');
+          const pledge = response.included?.find((attr) => attr.type == 'tier');
 
           let member = new Member(req.body.loggedInUser);
 
@@ -143,11 +134,18 @@ module.exports = async (req, res) => {
                 error: 'The selected Patreon account is already associated with another member.'
               });
             } else {
-              await Promise.all([
-                Database.query('UPDATE members SET tier = ? WHERE id = ? AND tier <= 5', [tiers[pledge.id], member.id]),
-                Database.query('INSERT INTO member_auth VALUES (?, "patreon", ?)', [member.id, response.data.id]),
-                Database.query('INSERT IGNORE INTO member_badges VALUES (?, "patreon", NOW())', [member.id])
-              ]);
+              if (pledge) {
+                await Promise.all([
+                  Database.query('UPDATE members SET supporter = 1 WHERE supporter < 5', [member.id]),
+                  Database.query('INSERT INTO member_auth VALUES (?, "patreon", ?)', [member.id, response.data.id]),
+                  Database.query('INSERT IGNORE INTO member_badges VALUES (?, "patreon", NOW())', [member.id])
+                ]);
+              } else {
+                await Promise.all([
+                  Database.query('UPDATE members SET supporter = 0 WHERE supporter < 5', [member.id]),
+                  Database.query('INSERT INTO member_auth VALUES (?, "patreon", ?)', [member.id, response.data.id])
+                ]);
+              }
 
 
               res.ok();
@@ -206,8 +204,7 @@ module.exports = async (req, res) => {
             createIfNotExists: true,
             data: {
               username: payload.name,
-              avatar: payload.picture ? payload.picture : '',
-              tier: 0
+              avatar: payload.picture ? payload.picture : ''
             }
           }).then(async (data) => {
             await member.set({

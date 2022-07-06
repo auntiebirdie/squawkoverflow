@@ -63,11 +63,11 @@ module.exports = (req, res) => {
             error: "Oops!  You can't incubate that bird!"
           });
         }
-      } else {
-        let timeUntil = member.tier.eggTimer ? (Date.now() - new Date(member.lastHatchAt).getTime()) / 60000 : 0;
+      } else if (!member.suppoter) {
+        let timeUntil = (Date.now() - new Date(member.lastHatchAt).getTime()) / 60000;
 
-        if (timeUntil < member.tier.eggTimer) {
-          timeUntil = member.tier.eggTimer - timeUntil;
+        if (timeUntil < 10) {
+          timeUntil = 10 - timeUntil;
 
           return resolve(res.error(403, 'You can hatch another egg in ' + (timeUntil < 1 ? (Math.round(timeUntil * 60) + ' second' + (Math.round(timeUntil * 60) != 1 ? 's' : '')) : (Math.round(timeUntil) + ' minute' + (Math.round(timeUntil) != 1 ? 's' : ''))) + '.'));
         }

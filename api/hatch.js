@@ -21,16 +21,16 @@ module.exports = async (req, res) => {
         include: ['totals']
       });
 
-      if (member.tier.aviaryLimit && member.totals.aviary >= member.tier.aviaryLimit) {
+      if (!member.supporter && member.totals.aviary >= 12000) {
         return res.error(403, {
           aviaryFull: true
         });
       } else {
-        let timeUntil = member.tier.eggTimer ? (Date.now() - new Date(member.lastHatchAt).getTime()) / 60000 : 0;
+        let timeUntil = (Date.now() - new Date(member.lastHatchAt).getTime()) / 60000;
 
-        if (timeUntil < member.tier.eggTimer) {
+        if (!member.supporter && timeUntil < 10) {
           return res.error(403, {
-            timeUntil: member.tier.eggTimer - timeUntil
+            timeUntil: 10 - timeUntil
           });
         } else {
           var query = 'SELECT adjective, numSpecies, icon FROM adjectives';
@@ -59,7 +59,7 @@ module.exports = async (req, res) => {
               egg.icon = 'eggs/special/easter.png';
             }
 
-            if (member.tier?.extraInsights) {
+            if (member.supporter) {
               egg.numHatched = await Counters.get('eggs', member.id, egg.adjective);
             }
 
@@ -96,10 +96,10 @@ module.exports = async (req, res) => {
 
       await member.fetch();
 
-      let timeUntil = member.tier.eggTimer ? (Date.now() - new Date(member.lastHatchAt).getTime()) / 60000 : 0;
+      let timeUntil = (Date.now() - new Date(member.lastHatchAt).getTime()) / 60000;
 
-      if (timeUntil < member.tier.eggTimer) {
-        timeUntil = member.tier.eggTimer - timeUntil;
+      if (!member.supporter && timeUntil < 10) {
+        timeUntil = 10 - timeUntil;
 
         return res.error(403, 'You can hatch another egg in ' + (timeUntil < 1 ? (Math.round(timeUntil * 60) + ' second' + (Math.round(timeUntil * 60) != 1 ? 's' : '')) : (Math.round(timeUntil) + ' minute' + (Math.round(timeUntil) != 1 ? 's' : ''))) + '.');
       } else {
