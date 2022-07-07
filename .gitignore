@@ -1,3 +1,4 @@
 node_modules
 secrets.json
 newrelic.js
+newrelic_agent.log
