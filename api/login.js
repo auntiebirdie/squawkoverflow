@@ -97,7 +97,7 @@ module.exports = async (req, res) => {
           request.end();
         }).then((tokens) => {
           return new Promise((resolve, reject) => {
-            var request = https.request(`https://www.patreon.com/api/oauth2/v2/identity?include=memberships,memberships.currently_entitled_tiers`, {
+            var request = https.request('https://www.patreon.com/api/oauth2/v2/identity?include=memberships&fields%5Bmember%5D=patron_status', {
                 method: 'GET',
                 headers: {
                   'Authorization': `Bearer ${tokens.access_token}`,
@@ -119,7 +119,7 @@ module.exports = async (req, res) => {
             request.end();
           });
         }).then((response) => {
-          const pledge = response.included?.find((attr) => attr.type == 'tier');
+		const membership = response.included?.find((tmp) => tmp.type == 'member');
 
           let member = new Member(req.body.loggedInUser);
 
@@ -134,7 +134,7 @@ module.exports = async (req, res) => {
                 error: 'The selected Patreon account is already associated with another member.'
               });
             } else {
-              if (pledge) {
+              if (membership && membership.attributes?.patron_status == 'active_patron') {
                 await Promise.all([
                   Database.query('UPDATE members SET supporter = 1 WHERE supporter < 5', [member.id]),
                   Database.query('INSERT INTO member_auth VALUES (?, "patreon", ?)', [member.id, response.data.id]),
