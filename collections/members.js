@@ -7,8 +7,10 @@ class Members {
 
   all() {
     return new Promise((resolve, reject) => {
-      Database.query('SELECT * FROM members ORDER BY username').then((results) => {
-        resolve(results);
+      Database.query('SELECT id FROM members ORDER BY username').then((results) => {
+        Promise.all(results.map((result) => this.get(result.id))).then((results) => {
+          resolve(results);
+        });
       });
     });
   }

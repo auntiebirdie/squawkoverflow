@@ -46,7 +46,7 @@ module.exports = (req, res) => {
         member: member.id
       });
 
-	    await Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?, NULL, NOW())', [birdypet.id, "collected", member.id]);
+      await Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?, NULL, NOW())', [birdypet.id, "collected", member.id]);
     } else {
       var updateLastHatchedAt = true;
 
@@ -83,7 +83,7 @@ module.exports = (req, res) => {
         hatchedAt: new Date()
       });
 
-	    await Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?, NULL, NOW())', [birdypet.id, "hatched", member.id]);
+      await Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?, NULL, NOW())', [birdypet.id, "hatched", member.id]);
     }
 
     promises.push(PubSub.publish('background', 'COLLECT', {

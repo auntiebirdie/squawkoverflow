@@ -8,8 +8,20 @@ module.exports = async (req, res) => {
       let promises = [];
 
       for (let result of birdstory) {
-        result.who = new Member(result.who);
-        promises.push(result.who.fetch());
+	      console.log(result);
+        if (result.who == "SQUAWK") {
+          result.who = {
+            username: 'SQUAWKoverflow'
+          };
+        } else {
+          result.who = new Member(result.who);
+          promises.push(result.who.fetch().catch((err) => { }));
+        }
+
+        if (result.who2) {
+          result.who2 = new Member(result.who2);
+          promises.push(result.who2.fetch());
+        }
       }
 
       Promise.all(promises).then(() => {

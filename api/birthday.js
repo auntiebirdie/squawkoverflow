@@ -27,6 +27,8 @@ module.exports = (req, res) => {
         member: member.id
       });
 
+      promises.push(Database.query('INSERT INTO birdypet_story VALUES (?, ?, ?, ?, NOW())', [birdypet.id, "gifted", "SQUAWK", member.id]));
+
       PubSub.publish('background', 'COLLECT', {
         member: member.id,
         birdypet: birdypet.id,

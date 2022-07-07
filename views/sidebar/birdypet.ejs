@@ -53,14 +53,22 @@
               }
 
               try {
-                html += `<a href="/members/${model.who.id}">${model.who.username}</a>`;
+                if (model.who.id) {
+                  html += `<a href="/members/${model.who.id}">${model.who.username}</a>`;
+                }
+                else if (model.who.username) {
+                  html += model.who.username;
+                }
+                else {
+                  html += 'someone';
+                }
               } catch (err) {
                 html += 'someone';
               }
 
               try {
                 if (model.who2?.id) {
-                  html += `to <a href="${model.who2.id}">${model.who2.username}</a>`;
+                  html += ` to <a href="${model.who2.id}">${model.who2.username}</a>`;
                 }
               } catch (err) { }
 
