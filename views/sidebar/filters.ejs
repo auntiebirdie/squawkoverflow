@@ -130,6 +130,7 @@
   </select>
 <% } %>
 
+<% if (locals.loggedInUser && locals.filters) { %>
 <%
   var labels = {
     'discovered': 'Discovered',
@@ -152,7 +153,6 @@
   }
 %>
 
-<% if (locals.filters || locals.extraFilters) { %>
   <h5>Filters</h5>
   <div class="mb-4">
    <% if (locals.filters) { %>
