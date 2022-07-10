@@ -15,6 +15,7 @@ router.get('/', async (req, res) => {
     families: families.map((family) => family.name),
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
+    style: true,
     searchFields: [{
       id: 'cleanName',
       name: 'Common Name'
