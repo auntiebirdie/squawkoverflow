@@ -141,6 +141,12 @@ class Bird {
 
       this.owned = await Counters.get('species', memberId, this.id);
       this.discovered = await Counters.get('birdypedia', memberId, this.id);
+      this.unlock = await Database.getOne('member_unlocks', {
+        member: memberId,
+        species: this.id
+      });
+
+	    console.log(this.unlock);
 
       resolve({
         wishlisted: this.wishlisted,

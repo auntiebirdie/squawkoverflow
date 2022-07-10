@@ -13,6 +13,25 @@
         <h5 class="pt-3">Order</h5>
         <p><%= bird.order %></p>
 
+      <% if (locals.loggedInUser) { %>
+        <h5 class="pt-3">Discovered</h5>
+       <% if (bird.unlock) { %>
+        <p>
+          <a href="/birdypet/<%= bird.unlock.birdypet %>">
+            <%= 
+              new Date(bird.unlock.unlockedAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              });
+            %>
+          </a>
+        </p>
+       <% } else { %>
+        <p class="small"><em>Not yet discovered!</em></p>
+       <% } %>
+      <% } %>
+
         <h5 class="pt-3">Eggs</h5>
        <% if (locals.loggedInUser && loggedInUser.contributor) { %> 
          <select id="adjectives" multiple>
