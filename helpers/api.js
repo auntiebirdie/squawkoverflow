@@ -1,4 +1,4 @@
-require( 'trace-unhandled/register' );
+require('trace-unhandled/register');
 
 const Logger = require('./logger.js');
 
@@ -34,7 +34,7 @@ exports.call = (endpoint, method = "GET", data = {}, headers = {}) => {
         }
       });
     } catch (err) {
-	    console.log(err);
+      console.log(err);
       reject(err);
     }
   });

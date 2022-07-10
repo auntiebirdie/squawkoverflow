@@ -62,6 +62,27 @@ module.exports = async (req, res) => {
         });
       });
       break;
+    case "POST":
+      if (!req.body.loggedInUser) {
+        return res.error(401);
+      }
+
+      let intensity = {
+        'none': 0,
+        'want': 1,
+        'need': 2
+      };
+      let emoji = ['🤍', '❤️', '🌟'];
+      var promises = [];
+
+      for (let species of req.body.species) {
+        promises.push(Database.query('INSERT INTO wishlist VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE intensity = ?', [req.body.loggedInUser, species, intensity[req.body.action], intensity[req.body.action]]));
+      }
+
+      Promise.all(promises).then(() => {
+        res.json(emoji[intensity[req.body.action]]);
+      });
+      break;
     default:
       return res.error(405);
   }
