@@ -29,8 +29,6 @@ module.exports = async (req, res) => {
 
         toUpdate.contributor = req.body.contributor;
       } else {
-        toUpdate.settings = member.settings;
-
         for (let key in req.body) {
           switch (key) {
             case "birdyBuddy":
