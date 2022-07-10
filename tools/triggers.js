@@ -1,4 +1,4 @@
-var Database = require('../api/helpers/database.js');
+var Database = require('../helpers/database.js');
 
 (async () => {
   await Database.query('DROP TRIGGER IF EXISTS squawk_birdypets_insert');
@@ -25,6 +25,7 @@ var Database = require('../api/helpers/database.js');
     '      INSERT INTO counters VALUES (NEW.member, "family", v_family, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
     '      INSERT INTO counters VALUES (NEW.member, "species", "total", 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
     '      INSERT INTO counters SELECT NEW.member, "eggs", adjective, 1 FROM species_adjectives WHERE species = v_species ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
+    '      INSERT IGNORE INTO member_unlocks VALUES (NEW.member, v_species, NEW.id, NOW()); ' +
     '    END IF; ' +
     '  ELSE ' +
     '    INSERT INTO counters VALUES ("freebirds", "species", v_species, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
@@ -68,6 +69,7 @@ var Database = require('../api/helpers/database.js');
     '        INSERT INTO counters VALUES (NEW.member, "family", v_family, 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
     '        INSERT INTO counters VALUES (NEW.member, "species", "total", 1) ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
     '        INSERT INTO counters SELECT NEW.member, "eggs", adjective, 1 FROM species_adjectives WHERE species = v_species ON DUPLICATE KEY UPDATE \`count\` = \`count\` + 1; ' +
+    '        INSERT IGNORE INTO member_unlocks VALUES (NEW.member, v_species, NEW.id, NOW()); ' +
     '      END IF; ' +
     '    END IF; ' +
 
