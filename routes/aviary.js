@@ -33,8 +33,7 @@ router.get('/:member', async (req, res, next) => {
         name: 'Nickname'
       }],
       sortFields: ['addedAt-DESC', 'addedAt-ASC', 'hatchedAt-DESC', 'hatchedAt-ASC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'friendship-DESC', 'friendship-ASC'],
-      filters: member.id == req.session.user ? ['isolated-My', 'duplicated-My'] : ['wanted-My', 'needed-My'],
-      extraFilters: member.id == req.session.user ? ['someone'] : ['duplicated-Their', 'unhatched-My', 'isolated-My', 'duplicated-My']
+      filters: member.id == req.session.user ? ['isolated-My', 'duplicated-My', 'someone'] : ['wanted-My', 'needed-My', 'duplicated-Their', 'unhatched-My', 'isolated-My', 'duplicated-My']
     });
   } else {
     return res.redirect('/error');

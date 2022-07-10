@@ -55,8 +55,7 @@ router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
       name: 'Nickname'
     }],
     sortFields: ['hatchedAt-ASC', 'hatchedAt-DESC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'friendship-DESC', 'friendship-ASC'],
-    filters: ['inFlock-My', 'notInFlock-My'],
-    extraFilters: ['isolated-My', 'duplicated-My']
+    filters: ['inFlock-My', 'notInFlock-My', 'isolated-My', 'duplicated-My']
   });
 });
 
@@ -89,8 +88,7 @@ router.get('/:flock', async (req, res) => {
       name: 'Nickname'
     }],
     sortFields: ['hatchedAt-ASC', 'hatchedAt-DESC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'friendship-DESC', 'friendship-ASC'],
-    filters: member.id == req.session.user ? false : ['wanted-My', 'needed-My'],
-    extraFilters: member.id == req.session.user ? ['isolated-My', 'duplicated-My'] : ['unhatched-My']
+    filters: member.id == req.session.user ? ['isolated-My', 'duplicated-My'] : ['wanted-My', 'needed-My', 'unhatched-My'],
   });
 });
 

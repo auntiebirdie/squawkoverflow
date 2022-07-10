@@ -69,8 +69,7 @@ router.get('/:member/gift', Middleware.isLoggedIn, (req, res) => {
           name: 'Nickname'
         }],
         sortFields: ['hatchedAt-DESC', 'hatchedAt-ASC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
-        filters: ['wanted-Their', 'needed-Their'],
-        extraFilters: ['unhatched-Their', 'duplicated-My']
+        filters: ['wanted-Their', 'needed-Their', 'unhatched-Their', 'duplicated-My']
       });
     });
   });

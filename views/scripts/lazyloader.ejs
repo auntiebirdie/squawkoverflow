@@ -120,7 +120,6 @@
           search : search,
           <%- locals.searchFields ? `searchField: $('#searchField').val(),` : '' %>
           <%- locals.filters ? `filters : Array.from($('input:checked', '#filters')).map((checkbox) => checkbox.value),` : '' %>
-          <%- locals.extraFilters ? `extraFilters: Array.from($('input:checked', '#extraFilters')).map((checkbox) => checkbox.value),` : '' %>
           <%- locals.families ? `family : $('#family').is(':visible') ? $('#family').val() : '',` : '' %>
           <%- locals.flocks ? `flocks : flocks ? flocks : '',` : '' %>
           <%- locals.artist ? `artist : "${artist.name}",` : '' %>

@@ -69,10 +69,18 @@ router.get(['/:id/offer', '/:id/request'], Middleware.isLoggedIn, async (req, re
       flocks: member.flocks.filter((flock) => !flock.protected && (member.id == req.session.user || !flock.private)),
       currentPage: (req.query.page || 1) * 1,
       sidebar: 'filters',
-	   searchFields: [{ id : 'cleanName', name : 'Common Name' }, { id : 'scientificName', name : 'Scientific Name' }, { id : 'nickname', name : 'Nickname' }],
+      searchFields: [{
+        id: 'cleanName',
+        name: 'Common Name'
+      }, {
+        id: 'scientificName',
+        name: 'Scientific Name'
+      }, {
+        id: 'nickname',
+        name: 'Nickname'
+      }],
       sortFields: ['hatchedAt-DESC', 'hatchedAt-ASC', 'commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
-      filters: page == "exchange/offer" ? ['exchange', 'unexchange', 'wanted-Their', 'needed-Their'] : ['exchange', 'unexchange', 'wanted-My', 'needed-My'],
-      extraFilters: page == "exchange/offer" ? ['unhatched-Their', 'isolated-My', 'duplicated-My'] : ['unhatched-My', 'isolated-Their', 'duplicated-Their']
+      filters: page == "exchange/offer" ? ['exchange', 'unexchange', 'wanted-Their', 'needed-Their', 'unhatched-Their', 'isolated-My', 'duplicated-My'] : ['exchange', 'unexchange', 'wanted-My', 'needed-My', 'unhatched-My', 'isolated-Their', 'duplicated-Their']
     });
   } else {
     res.redirect(`/exchange/${exchange.id}`);

@@ -166,19 +166,5 @@
       <% } %>
     </div>
    <% } %>
-
-   <% if (locals.extraFilters) { %>
-    <div id="extraFilters">
-     <% for (var filter of extraFilters) { %>
-      <% let context = filter.split('-').pop() %>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="extraFilters-<%= filter %>" value="<%= filter %>" name="extraFilters[]">
-        <label class="form-check-label" for="extraFilters-<%= filter %>">
-          <%- labels[filter.split('-').shift()].replace(/%/, context) %>
-        </label>
-      </div>
-      <% } %>
-    </div>
-   <% } %>
   </div>
 <% } %>

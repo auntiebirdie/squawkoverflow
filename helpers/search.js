@@ -167,15 +167,7 @@ class Search {
         }
       }
 
-      if (input.loggedInUser && (Array.isArray(input.filters) || Array.isArray(input.extraFilters))) {
-        if (Array.isArray(input.extraFilters)) {
-          let member = new Member(input.loggedInUser);
-
-          await member.fetch();
-
-            input.filters = Array.isArray(input.filters) ? [...input.filters, ...input.extraFilters] : input.extraFilters;
-        }
-
+      if (input.loggedInUser && Array.isArray(input.filters)) {
         var intensity = [];
         var isolated = false;
         var duplicated = false;
