@@ -73,6 +73,8 @@ class Search {
           input.search = input.search.replace(/\'/g, '').replace(/\-/g, ' ');
         }
 
+		console.log(exactMatch, input.search);
+
         if (kind == 'artist') {
           filters.push(exactMatch ? 'artists.name = ?' : 'MATCH(artists.name) AGAINST (?)');
           params.push(input.search);

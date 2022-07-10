@@ -20,7 +20,12 @@ router.all('/*', async (req, res) => {
 
   for (let key in data) {
     try {
-      data[key] = JSON.parse(data[key]);
+      switch (typeof data[key]) {
+        case 'array':
+        case 'object':
+          data[key] = JSON.parse(data[key]);
+          break;
+      }
     } catch (err) {}
   }
 

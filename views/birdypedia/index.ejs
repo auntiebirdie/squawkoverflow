@@ -9,6 +9,12 @@
     <em>(<a href="/faq#wishlist">Wait, what is the wishlist and want vs. need for?</a>)</em>
   </p>
 
+ <% if (locals.loggedInUser) { %>
+  <div class="float-none float-md-end mt-5 mt-md-0 text-center">
+    <a id="gottaLikeEmAll" class="btn btn-dark btn-sm">Toggle all birds on this page on/off my wishlist</a>
+  </div>
+ <% } %>
+
   <%- include('../partials/happy-birthday.ejs') %>
 
   <%- include('../partials/pagination.ejs') %>
@@ -25,5 +31,11 @@
       var full = variant.parentNode.parentNode.parentNode.querySelector('.birdypet');
       full.style.backgroundImage = variant.style.backgroundImage;
     });
+
+   <% if (locals.loggedInUser) { %>
+    $('#gottaLikeEmAll').on('click', function (event) {
+      console.log('process');
+    });
+   <% } %>
   </script>
 <%- include('../footer.ejs') %>
