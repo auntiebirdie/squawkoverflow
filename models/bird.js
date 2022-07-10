@@ -146,8 +146,6 @@ class Bird {
         species: this.id
       });
 
-	    console.log(this.unlock);
-
       resolve({
         wishlisted: this.wishlisted,
         owned: this.owned

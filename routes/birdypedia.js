@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
       name: 'Scientific Name'
     }],
     sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'variants-DESC'],
-    filters: ['unwishlisted-My', 'wanted-My', 'needed-My', 'unhatched-My', 'isolated-My', 'duplicated-My']
+    filters: ['discovered', 'undiscovered', 'unwishlisted-My', 'wanted-My', 'needed-My', 'unhatched-My', 'isolated-My', 'duplicated-My']
   });
 });
 
@@ -65,7 +65,7 @@ router.get('/eggs/:egg', (req, res) => {
           name: 'Scientific Name'
         }],
         sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
-        filters: ['unwishlisted-My', 'wanted-My', 'needed-My', 'unhatched-My', 'isolated-My', 'duplicated-My']
+        filters: ['discovered', 'undiscovered', 'unwishlisted-My', 'wanted-My', 'needed-My', 'unhatched-My', 'isolated-My', 'duplicated-My']
       });
     } else {
       res.redirect('/error');
@@ -110,7 +110,7 @@ router.get('/artists/:artist', (req, res) => {
           name: 'Scientific Name'
         }],
         sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
-        filters: ['unwishlisted-My', 'wanted-My', 'needed-My', 'unhatched-My', 'isolated-My', 'duplicated-My']
+        filters: ['discovered', 'undiscovered', 'unwishlisted-My', 'wanted-My', 'needed-My', 'unhatched-My', 'isolated-My', 'duplicated-My']
       });
     } else {
       res.redirect('/error');

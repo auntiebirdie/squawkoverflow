@@ -8,7 +8,6 @@ module.exports = async (req, res) => {
       let promises = [];
 
       for (let result of birdstory) {
-	      console.log(result);
         if (result.who == "SQUAWK") {
           result.who = {
             username: 'SQUAWKoverflow'

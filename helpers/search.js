@@ -73,8 +73,6 @@ class Search {
           input.search = input.search.replace(/\'/g, '').replace(/\-/g, ' ');
         }
 
-		console.log(exactMatch, input.search);
-
         if (kind == 'artist') {
           filters.push(exactMatch ? 'artists.name = ?' : 'MATCH(artists.name) AGAINST (?)');
           params.push(input.search);
@@ -176,6 +174,14 @@ class Search {
           let context = filter.split('-').pop();
 
           switch (filter.split('-').shift()) {
+            case 'discovered':
+              filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "birdypedia" AND id = species.id) > 0');
+              params.push(input.memberData || input.loggedInUser);
+              break;
+            case 'undiscovered':
+              filters.push('(SELECT IF(`count` = 0, NULL, 1) FROM counters WHERE `member` = ? AND type = "birdypedia" AND id = species.id) IS NULL');
+              params.push(input.memberData || input.loggedInUser);
+              break;
             case 'hatched':
               filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "species" AND id = species.id) > 0');
               params.push(input.memberData || input.loggedInUser);
@@ -206,9 +212,6 @@ class Search {
               break;
             case 'someone':
               filters.push('species.id IN (SELECT a.species FROM wishlist a JOIN members b ON (a.member = b.id) WHERE intensity > 0 AND b.id NOT IN (SELECT `member` FROM member_settings WHERE setting = "privacy_gifts"))');
-              break;
-            case 'somewhere':
-              filters.push('species.id IN (SELECT id FROM counters WHERE type = "species" AND `count` > 0)');
               break;
             case 'copied':
               filters.push('species.id IN (SELECT id FROM counters WHERE `member` = "freebirds" AND type = "species" AND `count` > 1)');
