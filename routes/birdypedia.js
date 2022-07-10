@@ -15,7 +15,13 @@ router.get('/', async (req, res) => {
     families: families.map((family) => family.name),
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
-	  searchFields: [{ id : 'cleanName', name : 'Common Name' }, { id : 'scientificName', name : 'Scientific Name' }],
+    searchFields: [{
+      id: 'cleanName',
+      name: 'Common Name'
+    }, {
+      id: 'scientificName',
+      name: 'Scientific Name'
+    }],
     sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'variants-DESC'],
     filters: ['unwishlisted-My', 'wanted-My', 'needed-My', 'unhatched-My', 'isolated-My', 'duplicated-My']
   });
@@ -51,7 +57,13 @@ router.get('/eggs/:egg', (req, res) => {
         egg: egg,
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
-	      searchFields: [{ id : 'cleanName', name : 'Common Name' }, { id : 'scientificName', name : 'Scientific Name' }],
+        searchFields: [{
+          id: 'cleanName',
+          name: 'Common Name'
+        }, {
+          id: 'scientificName',
+          name: 'Scientific Name'
+        }],
         sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
         filters: ['unwishlisted-My', 'wanted-My', 'needed-My', 'unhatched-My', 'isolated-My', 'duplicated-My']
       });
@@ -75,8 +87,12 @@ router.get('/artists/:artist', (req, res) => {
   API.call('artists', 'GET', {
     loggedInUser: req.session.user,
     artist: req.params.artist
-  }).then((artist) => {
+  }).then(async (artist) => {
     if (artist) {
+      let families = await API.call('artists', 'HEAD', {
+        id: req.params.artist
+      });
+
       res.render('birdypedia/artist', {
         title: `${artist.name} | Artists | Birdypedia`,
         page: 'birdypedia',
@@ -84,7 +100,15 @@ router.get('/artists/:artist', (req, res) => {
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
         style: true,
-	      searchFields: [{ id : 'cleanName', name : 'Common Name' }, { id : 'scientificName', name : 'Scientific Name' }],
+        allFamilies: await API.call('families', 'GET'),
+        families: families,
+        searchFields: [{
+          id: 'cleanName',
+          name: 'Common Name'
+        }, {
+          id: 'scientificName',
+          name: 'Scientific Name'
+        }],
         sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC'],
         filters: ['unwishlisted-My', 'wanted-My', 'needed-My', 'unhatched-My', 'isolated-My', 'duplicated-My']
       });

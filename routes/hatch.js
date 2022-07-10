@@ -19,7 +19,6 @@ router.get('/', async (req, res) => {
         });
       })
       .catch((err) => {
-	      console.log(err);
         switch (err.code) {
           case 401:
           case "401":
@@ -59,10 +58,18 @@ router.get('/incubator', (req, res) => {
       page: 'incubator',
       member: member,
       allFamilies: await API.call('families', 'GET'),
-      families: await API.call('incubate', 'HEAD', { loggedInUser : req.session.user }),
+      families: await API.call('incubate', 'HEAD', {
+        loggedInUser: req.session.user
+      }),
       currentPage: (req.query.page || 1) * 1,
       sidebar: 'filters',
-	    searchFields: [{ id : 'cleanName', name : 'Common Name' }, { id : 'scientificName', name : 'Scientific Name' }],
+      searchFields: [{
+        id: 'cleanName',
+        name: 'Common Name'
+      }, {
+        id: 'scientificName',
+        name: 'Scientific Name'
+      }],
       sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'addedAt-ASC', 'addedAt-DESC'],
     });
   });
