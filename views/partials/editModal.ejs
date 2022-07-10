@@ -6,7 +6,14 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <div class="p-1 mb-3 birdypets text-center"></div>
+            <div class="row mb-3">
+              <div class="col-8 text-center">
+                <img class="birdypet main">
+              </div>
+              <div class="col-4" style="height: 300px; overflow-x: auto;">
+                <div class="p-1 mb-3 birdypets text-center"></div>
+              </div>
+            </div>
 
             <h5><label>Nickname</label></h5>
             <input type="text" name="nickname" class="form-control mb-3" style="width: 100%">
@@ -48,6 +55,7 @@
           $('.modal-title', modal_editBirdyPet._element).html('Quick Edit - ' + (birdypet.nickname ? birdypet.nickname : birdypet.bird.commonName));
           $('input[name="nickname"]', modal_editBirdyPet._element).val(birdypet.nickname);
           $('textarea[name="description"]', modal_editBirdyPet._element).val(birdypet.description);
+          $('img.birdypet', modal_editBirdyPet._element).attr('src', birdypet.variant.image);
 
           for (let flock of birdypet.flocks) {
             $('input[name="flocks"][value="' + flock + '"]').prop('checked', true);
@@ -95,6 +103,7 @@
         }
       }).on('click', '.birdypet.mini', function (event) {
         if (!event.target.parentNode.parentNode.classList.contains('loadingData')) {
+          $('img.birdypet', modal_editBirdyPet._element).attr('src', event.target.getAttribute('data-bg'));
           $('.birdypet.border-primary', modal_editBirdyPet._element).removeClass('border border-4 border-primary');
 
           event.target.classList.add('border', 'border-4', 'border-primary');
