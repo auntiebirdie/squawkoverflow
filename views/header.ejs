@@ -229,13 +229,22 @@
           <li class="nav-item pb-2 ms-2">
             <a href="https://discord.com/invite/h87wansdg2" class="nav-link" target="_blank">
               <span class="icon d-inline-block fs-5">💬</span>
+             <% if (locals.loggedInUser && loggedInUser.serverMember) { %>
+              <span class="d-block label">Hi, birdy buddy!</span>
+             <% } else { %>
               <span class="d-block label">Community</span>
+             <% } %>
             </a>
           </li>
           <li class="nav-item pb-2 ms-2">
             <a href="https://www.patreon.com/squawkoverflow" class="nav-link" target="_blank">
+             <% if (locals.loggedInUser && loggedInUser.supporter) { %>
+              <span class="icon d-inline-block fs-5">💕</span>
+              <span class="d-block label">Thanks for your support!</span>
+             <% } else { %>
               <span class="icon d-inline-block fs-5">💸</span>
               <span class="d-block label">Support</span>
+             <% } %>
             </a>
           </li>
         </ul>
