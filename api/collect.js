@@ -63,7 +63,7 @@ module.exports = (req, res) => {
             error: "Oops!  You can't incubate that bird!"
           });
         }
-      } else if (!member.suppoter) {
+      } else if (!member.supporter) {
         let timeUntil = (Date.now() - new Date(member.lastHatchAt).getTime()) / 60000;
 
         if (timeUntil < 10) {
