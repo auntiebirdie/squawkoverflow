@@ -127,28 +127,46 @@
       </div>
 
       <nav class="nav-menu navbar">
-       <% if (locals.siteMenu) { %>
         <ul>
-         <% siteMenu.forEach( function (item) { %> 
-          <li class="nav-item pb-2">
-            <a href="<%= item.href %>" class="nav-link">
-              <span class="icon d-inline-block fs-4">
-                <%= item.icon %>
-              </span>
-              <span class="d-block label">
-                <%= item.label %>
-              </span>
-	      <% if (item.notif) { %>
-	        <strong class="ms-2 bg-primary text-dark p-2 badge"><%= item.notif %></strong>
-	      <% } %>
+         <% if (locals.loggedInUser) { %>
+          <li class="nav-item pb-2 ms-2">
+            <a href="/hatch" class="nav-link">
+              <span class="icon d-inline-block fs-5">🥚</span>
+              <span class="d-block label">Hatch Eggs</span>
             </a>
           </li>
-         <% }) %>
-        <% if (locals.includeLogin) { %>
+          <li class="nav-item pb-2 ms-2">
+            <a href="/freebirds" class="nav-link">
+              <span class="icon d-inline-block fs-5">🐣</span>
+              <span class="d-block label">Free Birds</span>
+            </a>
+          </li>
+          <li class="nav-item pb-2 ms-2">
+            <a href="/exchange" class="nav-link">
+              <span class="icon d-inline-block fs-5">🤝</span>
+              <span class="d-block label">Exchange</span>
+             <% if (loggedInUser.exchangeData) { %>
+              <strong class="ms-2 bg-primary text-dark p-2 badge"><%= Math.max(0, loggedInUser.exchangeData) %></strong>
+             <% } %>
+            </a>
+          </li>
+         <% } %>
+          <li class="nav-item pb-2 ms-2">
+            <a href="/birdypedia" class="nav-link">
+              <span class="icon d-inline-block fs-5">📚</span>
+              <span class="d-block label">Birdypedia</span>
+            </a>
+          </li>
+          <li class="nav-item pb-2 ms-2">
+            <a href="/members" class="nav-link">
+              <span class="icon d-inline-block fs-5">👥</span>
+              <span class="d-block label">Members</span>
+            </a>
+          </li>
 	  <li class="my-2 ms-3 pb-2">
             <hr>
 	  </li>
-	 <% if (locals.loggedInUser) { %>
+         <% if (locals.loggedInUser) { %>
 	  <li class="nav-item pb-2">
             <a href="/members/<%= loggedInUser.id %>" class="nav-link">
               <span class="icon d-inline-block fs-4">
@@ -193,21 +211,34 @@
           <li class="my-2 ms-3 pb-2">
             <hr>
           </li>
-          <li class="nav-item ps-4">
+          <li class="nav-item pb-2 ps-4">
             <a href="/logout">
               Log Out
             </a>
           </li>
 	 <% } else { %>
-	  <li class="nav-item ps-4">
+	  <li class="nav-item pb-2 ps-4">
             <a href="/login">
               Log In / Sign Up
 	    </a>
 	  </li>
 	 <% } %>
-        <% } %>
+          <li class="my-2 ms-3 pb-2">
+            <hr>
+          </li>
+          <li class="nav-item pb-2 ms-2">
+            <a href="https://discord.com/invite/h87wansdg2" class="nav-link" target="_blank">
+              <span class="icon d-inline-block fs-5">💬</span>
+              <span class="d-block label">Community</span>
+            </a>
+          </li>
+          <li class="nav-item pb-2 ms-2">
+            <a href="https://www.patreon.com/squawkoverflow" class="nav-link" target="_blank">
+              <span class="icon d-inline-block fs-5">💸</span>
+              <span class="d-block label">Support</span>
+            </a>
+          </li>
         </ul>
-       <% } %>
       </nav>
     </div>
   </div>

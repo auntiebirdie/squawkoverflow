@@ -35,8 +35,6 @@ app.use(async function(req, res, next) {
 
   res.locals.isMobile = req.useragent.isMobile;
 
-  var menu = [];
-
   if (req.session.user) {
     res.locals.loggedInUser = await API.call('member', 'GET', {
       id: req.session.user,
@@ -48,21 +46,6 @@ app.use(async function(req, res, next) {
 
     if (res.locals.loggedInUser) {
       res.locals.HOST = secrets.HOST;
-
-      menu.push({
-        "icon": "🥚",
-        "label": "Hatch Eggs",
-        "href": "/hatch"
-      }, {
-        "icon": "🐣",
-        "label": "Free Birds",
-        "href": "/freebirds"
-      }, {
-        "icon": "🤝",
-        "label": "Exchange",
-        "href": "/exchange",
-        "notif": Math.max(0, res.locals.loggedInUser.exchangeData)
-      });
 
       // computers are bad at random so this helps keep it from triggering too often
       if (chance.bool({
@@ -80,34 +63,6 @@ app.use(async function(req, res, next) {
       delete req.session.user;
     }
   }
-
-  menu.push({
-    "icon": "📚",
-    "label": "Birdypedia",
-    "href": "/birdypedia"
-  }, {
-    "icon": "👥",
-    "label": "Members",
-    "href": "/members"
-  }, {
-    "icon": "💬",
-    "label": "Discord",
-    "href": "https://discord.com/invite/h87wansdg2",
-    "newWindow": true
-  }, {
-    "icon": "💸",
-    "label": "Support",
-    "href": "https://www.patreon.com/squawkoverflow",
-    "newWindow": true
-  });
-
-  res.locals.siteMenu = menu.map((item) => {
-    item.active = req.url.startsWith(item.href);
-
-    return item;
-  });
-
-  res.locals.includeLogin = true;
 
   next();
 });
