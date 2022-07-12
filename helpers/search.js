@@ -62,6 +62,7 @@ class Search {
       if (input.search) {
         let exactMatch = input.search.match(/^\"(.*)\"$/);
         let searchFields = {
+          'cleanName': 'species.cleanName',
           'commonName': 'species.cleanName',
           'scientificName': 'species.scientificName',
           'nickname': 'birdypets.nickname'
