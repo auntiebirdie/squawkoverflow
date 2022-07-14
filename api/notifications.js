@@ -159,10 +159,22 @@ module.exports = async (req, res) => {
     case "DELETE":
       if (req.body.id == "ALL") {
         if (req.body.type) {
-          await Database.delete('notifications', {
-            member: req.body.loggedInUser,
-            type: req.body.type == 'other' ? { 'comparator' : 'NOT IN', 'value_trusted' : '"birdypet_gift", "gift_thanks", "exchange_accepted", "site_update"' } : req.body.type
-          });
+          if (req.body.type == 'other') {
+            await Database.delete('notifications', {
+              member: req.body.loggedInUser,
+              type: {
+                'comparator': 'NOT IN',
+                'value_trusted': '"birdypet_gift", "gift_thanks", "exchange_accepted", "site_update"'
+              }
+            });
+          } else if (req.body.type.startsWith('birdypet_gift-')) {
+            console.log('thankggk');
+          } else {
+            await Database.delete('notifications', {
+              member: req.body.loggedInUser,
+              type: req.body.type
+            });
+          }
         } else {
           await Database.delete('notifications', {
             member: req.body.loggedInUser

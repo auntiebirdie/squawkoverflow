@@ -8,6 +8,12 @@ router.get('/', async (req, res) => {
       "id": "birdypet_gift",
       "label": "Gifts"
     }, {
+      "id": "birdypet_gift-unthanked",
+      "label": "Gifts (Not Thanked)"
+    }, {
+      "id": "birdypet_gift-thanked",
+      "label": "Gifts (Thanked)"
+    }, {
       "id": "gift_thanks",
       "label": "Thanks"
     }, {

@@ -156,6 +156,11 @@ class Search {
 
       if (input.type) {
         switch (input.type) {
+          case 'birdypet_gift-thanked':
+          case 'birdypet_gift-unthanked':
+            filters.push("notifications.type = 'birdypet_gift'");
+            filters.push("data->'$.thanked' " + (input.type == 'birdypet_gift-thanked' ? 'IS NOT' : 'IS') + " NULL");
+            break;
           case 'birdypet_gift':
           case 'gift_thanks':
           case 'exchange_accepted':
