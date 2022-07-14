@@ -5,9 +5,7 @@
   var endpoint = container.getAttribute('data-endpoint');
   var search = document.getElementById('search');
   var currentPage = <%= locals.paginate || 1 %>;
-  var totalPages = 0;
-  var totalResults = 0;
-  var timeout;
+  var totalPages, totalResults, timeout;
 
   <%- include('./pagination.ejs') %>
 
@@ -124,7 +122,8 @@
           <%- locals.flocks ? `flocks : flocks ? flocks : '',` : '' %>
           <%- locals.artist ? `artist : "${artist.name}",` : '' %>
           <%- locals.style ? `style : $('#style').is(':visible') ? $('#style').val() : '',` : '' %>
-          <%- locals.page == 'wishlist' ? `intensity: Array.from($('input:checked', '#intensity')).map((checkbox) => checkbox.value),` : '' %>
+          <%- locals.page == 'notifications' ? `type : $('#type').val(),` : '' %>
+          <%- locals.page == 'wishlist' ? `intensity : Array.from($('input:checked', '#intensity')).map((checkbox) => checkbox.value),` : '' %>
           <%- locals.egg ? `adjectives : "${egg.adjective}",` : '' %>
         },
         container.getAttribute('data-params') ? JSON.parse(container.getAttribute('data-params')) : {}

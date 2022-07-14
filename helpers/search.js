@@ -52,6 +52,12 @@ class Search {
           select.push('members.id');
           tables.push('members', 'LEFT JOIN counters ON (counters.member = members.id AND counters.type = "aviary" AND counters.id = "total")');
           break;
+        case 'notification':
+          select.push('notifications.id', 'notifications.type', 'notifications.data');
+          tables.push('notifications');
+          filters.push('notifications.member = ?');
+          params.push(input.loggedInUser);
+          break;
         case 'wishlist':
           select.push('species.id');
           tables.push('species', 'JOIN wishlist ON (species.id = wishlist.species AND wishlist.member = ? AND wishlist.intensity > 0)');
@@ -146,6 +152,21 @@ class Search {
 
       if (input.exchangeData) {
         filters.push('birdypets.id NOT IN (SELECT birdypet FROM birdypet_flocks JOIN flocks ON (birdypet_flocks.flock = flocks.id) WHERE flocks.protected = 1)');
+      }
+
+      if (input.type) {
+        switch (input.type) {
+          case 'birdypet_gift':
+          case 'gift_thanks':
+          case 'exchange_accepted':
+          case 'site_update':
+            filters.push('notifications.type = ?');
+            params.push(input.type);
+            break;
+          case 'other':
+            filters.push('notifications.type NOT IN ("birdypet_gift", "gift_thanks", "exchange_accepted", "site_update")');
+            break;
+        }
       }
 
       if (input.style) {
@@ -316,6 +337,8 @@ class Search {
             query += 'birdypets.addedAt';
           } else if (kind == 'member') {
             query += 'members.username';
+          } else if (kind == 'notification') {
+            query += 'notifications.createdAt';
           } else if (kind == 'incubator') {
             query += 'variants.addedAt';
           } else {

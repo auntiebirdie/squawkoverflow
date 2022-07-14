@@ -1,0 +1,7 @@
+  <h5>Type</h5>
+  <select id="type" class="form-select mb-4">
+    <option value="" selected>[ALL]</option>
+   <% for (var type of notificationTypes) { %>
+    <option value="<%= type.id %>"><%= type.label %></option>
+   <% } %>
+  </select>

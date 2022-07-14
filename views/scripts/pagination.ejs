@@ -28,11 +28,11 @@
 
       if (typeof totalResults !== 'undefined' && totalResults != null) {
         pagination.nextElementSibling.innerHTML = `${totalResults.toLocaleString("en-US")} <%= locals.noun ? noun : 'bird' %>s found`;
+        pagination.parentNode.style.visibility = 'visible';
       }
       else {
         pagination.nextElementSibling.innerHTML = '';
+        pagination.parentNode.style.visibility = 'hidden';
       }
-
-      pagination.parentNode.style.visibility = 'visible';
     }
   }

@@ -4,46 +4,24 @@
     title: "Notifications"
   }) %>
 
- <% if (totalPages == 0) { %>
-    <div class="text-center">
-      <em>You have no notifications right now.</em>
-    </div>
- <% } else { %>
   <%- include('../partials/pagination.ejs') %>
 
-  <div id="notifications" class="row">
-    <div class="col-12 text-end mb-3" data-id="ALL">
+  <div id="notifications" class="px-5 mx-auto">
+    <div class="text-end mb-3" data-id="ALL">
       <a class="btn btn-sm btn-dark" data-action="dismiss">Dismiss All</a>
     </div>
 
-   <% for (let notification of notifications) { %>
-    <div data-id="<%= notification.id %>">
-      <div class="card bg-light border-dark p-2 mb-4">
-        <div class="row align-items-center">
-          <div class="col-4 col-md-2 col-lg-1 text-center">
-            <span class="fs-2">
-              <%- notification.icon %>
-            </span>
-          </div>
-          <div class="col-8 col-lg-10">
-            <%- notification.text %>
-          </div>
-          <div class="col-12 col-md-2 col-lg-1 text-end">
-            <a class="btn btn-sm btn-dark" data-action="dismiss">Dismiss</a>
-          </div>
-        </div>
-      </div>
-    </div>
-   <% } %>
+    <div id="lazyLoader" class="row g-0" data-endpoint="notifications"></div>
   </div>
 
   <%- include('../partials/pagination.ejs') %>
 
-  <script>
-    const totalPages = <%= totalPages %>; 
-    const currentPage = <%= currentPage %>;
+<%- include('../scripts/lazyloader.ejs', { template: '../templates/notification.ejs', paginate : currentPage, noun: 'notification' }) %>
 
+  <script>
     $(document).ready(function() {
+      const stickers = ["bird_4359609.png", "bird_4359669.png", "bird_4359689.png", "bird_4359824.png", "bird_4433234.png", "cactus_4359655.png", "duck_4359767.png", "love-birds_4289413.png", "love-birds_4403057.png", "parrot_4359923.png"];
+
       updatePagination();
 
       $('#notifications').on('click', '[data-action]', function() {
@@ -67,7 +45,8 @@
           API.call('notifications', action == 'dismiss' ? 'DELETE' : 'PUT', {
             id: container.getAttribute('data-id'),
             action: action,
-            data: json
+            data: json,
+            type: $('#type').val()
           }, () => {
             container.classList.remove('loadingData');
 
@@ -91,9 +70,6 @@
         }
       });
     });
-
-    <%- include('../scripts/pagination.ejs', { linkTo : '/notifications' }) %>
   </script>
- <% } %>
 
 <%- include('../footer.ejs') %>
