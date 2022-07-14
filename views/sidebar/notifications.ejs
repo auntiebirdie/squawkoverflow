@@ -5,3 +5,13 @@
     <option value="<%= type.id %>"><%= type.label %></option>
    <% } %>
   </select>
+
+  <h5>Sort By</h5>
+  <select id="sort" class="form-select mb-4">
+    <option value="createdAt-DESC">
+      Newest First
+    </option>
+    <option value="createdAt-ASC">
+      Oldest First
+    </option>
+  </select>

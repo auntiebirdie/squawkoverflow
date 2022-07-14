@@ -1,5 +1,7 @@
 const Database = require('../helpers/database.js');
-const Member = require('../models/member.js');
+const Redis = require('../helpers/redis.js');
+
+const hashify = require('object-hash');
 
 class Search {
   query(kind, input) {
@@ -353,7 +355,18 @@ class Search {
 
       query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC');
 
-      Database.query(query, params).then((results) => {
+      var hash = hashify({
+        query,
+        params
+      });
+
+      Redis.sendCommand(['EXISTS', `search_${hash}`]).then((exists) => {
+	      return new Promise((resolve, reject) => {
+          Database.query(query, params).then((results) => {
+		  resolve(results);
+	  });
+	});
+      }).then((results) => {
         if (results.length > 0 && (results[0].relevancy && input.searchField != "scientificName")) {
           let maxRelevancy = Math.max(...results.map((result) => result.relevancy));
           results = results.filter((result) => result.relevancy >= (maxRelevancy * .75));
