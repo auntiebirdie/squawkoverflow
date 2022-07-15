@@ -7,12 +7,22 @@ module.exports = (req, res) => {
     case "GET":
       new Promise((resolve, reject) => {
         if (req.headers && req.headers['x-forwarded-for'] == '35.208.110.100') {
-          Database.get('birdypets', { member : { comparator: 'IS', value_trusted: 'NULL' }, addedAt : { comparator : '<=', value_trusted: 'DATE_SUB(NOW(), INTERVAL 10 MINUTE)'  }}, {
+          Database.get('birdypets', {
+            member: {
+              comparator: 'IS',
+              value_trusted: 'NULL'
+            },
+            addedAt: {
+              comparator: '<=',
+              value_trusted: 'DATE_SUB(NOW(), INTERVAL 10 MINUTE)'
+            }
+          }, {
             order: 'RAND()',
             limit: req.query?.limit || 24
           }).then(async (results) => {
             resolve({
               totalPages: 0,
+              totalResults: results.length,
               results: results
             });
           });
@@ -28,7 +38,7 @@ module.exports = (req, res) => {
           let variant = new Variant(result.variant);
 
           variant.freebird = result.id;
-		variant.nickname = result.nickname;
+          variant.nickname = result.nickname;
 
           promises.push(variant.fetch({
             include: ['memberData'],
@@ -39,6 +49,7 @@ module.exports = (req, res) => {
         Promise.all(promises).then((data) => {
           res.json({
             totalPages: response.totalPages,
+            totalResults: response.totalResults,
             results: data
           });
         });
