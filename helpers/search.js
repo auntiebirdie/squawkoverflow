@@ -361,25 +361,43 @@ class Search {
       });
 
       Redis.sendCommand(['EXISTS', `search_${hash}`]).then((exists) => {
-	      return new Promise((resolve, reject) => {
-          Database.query(query, params).then((results) => {
-		  resolve(results);
-	  });
-	});
+        return new Promise((resolve, reject) => {
+          if (!exists) {
+            Database.query(query, params).then((results) => {
+              var promises = [];
+
+              for (let i = 0, len = results.length; i < len; i++) {
+                promises.push(Redis.sendCommand(['ZADD', `search_${hash}`, i, JSON.stringify(results[i])]));
+              }
+
+              promises.push(Redis.sendCommand(['EXPIRE', `search_${hash}`, 120]));
+
+              Promise.all(promises).then(() => {
+                resolve(results);
+              });
+            });
+          } else {
+            Redis.sendCommand(['ZRANGE', `search_${hash}`, '-inf', '+inf', 'BYSCORE']).then(async (results) => {
+              for (let i = 0, len = results.length; i < len; i++) {
+                results[i] = JSON.parse(results[i]);
+              }
+
+              resolve(results);
+            });
+          }
+        });
       }).then((results) => {
         if (results.length > 0 && (results[0].relevancy && input.searchField != "scientificName")) {
           let maxRelevancy = Math.max(...results.map((result) => result.relevancy));
           results = results.filter((result) => result.relevancy >= (maxRelevancy * .75));
         }
 
-        var totalPages = results.length;
-
         for (let i = page, len = Math.min(page + perPage, results.length); i < len; i++) {
           output.push(results[i]);
         }
 
         resolve({
-          totalPages: Math.ceil(totalPages / perPage),
+          totalPages: Math.ceil(results.length / perPage),
           totalResults: results.length,
           results: output
         });
