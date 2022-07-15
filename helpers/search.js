@@ -362,20 +362,24 @@ class Search {
 
       Redis.sendCommand(['EXISTS', `search_${hash}`]).then((exists) => {
         return new Promise((resolve, reject) => {
+          /*
+	   * WIP caching... this does not work.......
           if (!exists) {
-            Database.query(query, params).then((results) => {
-              var promises = [];
+	  */
+          Database.query(query, params).then((results) => {
+            var promises = [];
+            /*
+                          for (let i = 0, len = results.length; i < len; i++) {
+                            promises.push(Redis.sendCommand(['ZADD', `search_${hash}`, i, JSON.stringify(results[i])]));
+                          }
 
-              for (let i = 0, len = results.length; i < len; i++) {
-                promises.push(Redis.sendCommand(['ZADD', `search_${hash}`, i, JSON.stringify(results[i])]));
-              }
-
-              promises.push(Redis.sendCommand(['EXPIRE', `search_${hash}`, 120]));
-
-              Promise.all(promises).then(() => {
-                resolve(results);
-              });
+                          promises.push(Redis.sendCommand(['EXPIRE', `search_${hash}`, 30]));
+            */
+            Promise.all(promises).then(() => {
+              resolve(results);
             });
+          });
+          /*
           } else {
             Redis.sendCommand(['ZRANGE', `search_${hash}`, '-inf', '+inf', 'BYSCORE']).then(async (results) => {
               for (let i = 0, len = results.length; i < len; i++) {
@@ -385,6 +389,7 @@ class Search {
               resolve(results);
             });
           }
+	  */
         });
       }).then((results) => {
         if (results.length > 0 && (results[0].relevancy && input.searchField != "scientificName")) {
