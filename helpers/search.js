@@ -7,10 +7,10 @@ class Search {
   query(kind, input) {
     return new Promise(async (resolve, reject) => {
       var perPage = input.perPage || 24;
-      var page = (--input.page || 0) * perPage;
+      var page = (--input.page || 0);
       var output = [];
 
-      let query = 'SELECT ';
+      let query = '';
       let select = [];
       let tables = [];
       let filters = [];
@@ -283,7 +283,7 @@ class Search {
         }
       }
 
-      query += select.join(', ') + ' FROM ' + tables.join(' ');
+      query += 'SELECT ' + select.join(', ') + ' FROM ' + tables.join(' ');
 
       if (filters.length > 0) {
         query += ' WHERE ' + filters.join(' AND ');
@@ -295,116 +295,80 @@ class Search {
         query += ' GROUP BY variants.id';
       }
 
-      query += ' ORDER BY ';
+      Database.query('SELECT COUNT(*) total FROM (' + query + ') AS query', params).then((count) => {
+        let totalResults = count[0].total;
 
-      switch (input.sort) {
-        case 'commonName':
-          query += 'species.commonName';
-          break;
-        case 'scientificName':
-          query += 'species.scientificName';
-          break;
-        case 'friendship':
-          query += 'birdypets.friendship';
-          break;
-        case 'hatchedAt':
-          query += 'birdypets.hatchedAt';
-          break;
-        case 'freedAt':
-          query += 'birdypets.addedAt';
-          break;
-        case 'addedAt':
-          if (kind == 'birdypet') {
-            query += 'birdypets.addedAt';
-          } else if (kind == 'wishlist') {
-            query += 'wishlist.addedAt';
-          } else if (kind == 'incubator') {
-            query += 'variants.addedAt';
-          }
-          break;
-        case 'joinedAt':
-          query += 'members.joinedAt';
-          break;
-        case 'activeAt':
-          query += 'members.lastActivityAt';
-          break;
-        case 'username':
-          query += 'members.username';
-          break;
-        case 'aviary':
-          query += 'counters.count';
-          break;
-        case 'variants':
-          query += 'MAX(variants.addedAt)';
-          break;
-        default:
-          if (kind == 'artist') {
-            query += 'artists.name';
-          } else if (kind == 'birdypet') {
-            query += 'birdypets.addedAt';
-          } else if (kind == 'member') {
-            query += 'members.username';
-          } else if (kind == 'notification') {
-            query += 'notifications.createdAt';
-          } else if (kind == 'incubator') {
-            query += 'variants.addedAt';
-          } else {
+        query += ' ORDER BY ';
+
+        switch (input.sort) {
+          case 'commonName':
             query += 'species.commonName';
+            break;
+          case 'scientificName':
+            query += 'species.scientificName';
+            break;
+          case 'friendship':
+            query += 'birdypets.friendship';
+            break;
+          case 'hatchedAt':
+            query += 'birdypets.hatchedAt';
+            break;
+          case 'freedAt':
+            query += 'birdypets.addedAt';
+            break;
+          case 'addedAt':
+            if (kind == 'birdypet') {
+              query += 'birdypets.addedAt';
+            } else if (kind == 'wishlist') {
+              query += 'wishlist.addedAt';
+            } else if (kind == 'incubator') {
+              query += 'variants.addedAt';
+            }
+            break;
+          case 'joinedAt':
+            query += 'members.joinedAt';
+            break;
+          case 'activeAt':
+            query += 'members.lastActivityAt';
+            break;
+          case 'username':
+            query += 'members.username';
+            break;
+          case 'aviary':
+            query += 'counters.count';
+            break;
+          case 'variants':
+            query += 'MAX(variants.addedAt)';
+            break;
+          default:
+            if (kind == 'artist') {
+              query += 'artists.name';
+            } else if (kind == 'birdypet') {
+              query += 'birdypets.addedAt';
+            } else if (kind == 'member') {
+              query += 'members.username';
+            } else if (kind == 'notification') {
+              query += 'notifications.createdAt';
+            } else if (kind == 'incubator') {
+              query += 'variants.addedAt';
+            } else {
+              query += 'species.commonName';
+            }
+        }
+
+        query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC') + ' LIMIT ' + Math.min(page * perPage, totalResults) + ',' + perPage;
+
+        Database.query(query, params).then((results) => {
+          if (results.length > 0 && (results[0].relevancy && input.searchField != "scientificName")) {
+            let maxRelevancy = Math.max(...results.map((result) => result.relevancy));
+            results = results.filter((result) => result.relevancy >= (maxRelevancy * .75));
           }
-      }
 
-      query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC');
-
-      var hash = hashify({
-        query,
-        params
-      });
-
-      Redis.sendCommand(['EXISTS', `search_${hash}`]).then((exists) => {
-        return new Promise((resolve, reject) => {
-          /*
-	   * WIP caching... this does not work.......
-          if (!exists) {
-	  */
-          Database.query(query, params).then((results) => {
-            var promises = [];
-            /*
-                          for (let i = 0, len = results.length; i < len; i++) {
-                            promises.push(Redis.sendCommand(['ZADD', `search_${hash}`, i, JSON.stringify(results[i])]));
-                          }
-
-                          promises.push(Redis.sendCommand(['EXPIRE', `search_${hash}`, 30]));
-            */
-            Promise.all(promises).then(() => {
-              resolve(results);
-            });
+          resolve({
+            totalPages: Math.ceil(totalResults / perPage),
+            totalResults,
+            results
           });
-          /*
-          } else {
-            Redis.sendCommand(['ZRANGE', `search_${hash}`, '-inf', '+inf', 'BYSCORE']).then(async (results) => {
-              for (let i = 0, len = results.length; i < len; i++) {
-                results[i] = JSON.parse(results[i]);
-              }
-
-              resolve(results);
-            });
-          }
-	  */
-        });
-      }).then((results) => {
-        if (results.length > 0 && (results[0].relevancy && input.searchField != "scientificName")) {
-          let maxRelevancy = Math.max(...results.map((result) => result.relevancy));
-          results = results.filter((result) => result.relevancy >= (maxRelevancy * .75));
-        }
-
-        for (let i = page, len = Math.min(page + perPage, results.length); i < len; i++) {
-          output.push(results[i]);
-        }
-
-        resolve({
-          totalPages: Math.ceil(results.length / perPage),
-          totalResults: results.length,
-          results: output
         });
       });
     });
