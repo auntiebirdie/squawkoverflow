@@ -15,21 +15,96 @@
 
 <h5>Collection Progress</h5>
 
-<p class="mb-0 mt-4"><a href="/birdypedia">All Species</a></hp>
+<div class="row">
+  <div class="col-12 col-md-6">
+    <small class="mx-2">Sort</small><br>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="progressSort" id="progressSortAlpha" value="alpha">
+      <label class="form-check-label" for="progressSortAlpha">A-Z</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="progressSort" id="progressSortNumeric" value="numeric">
+      <label class="form-check-label" for="progressSortNumeric">%</label>
+    </div>    
+  </div>
+  <div class="col-12 col-md-6 text-md-end">
+    <small class="mx-2">Display</small><br>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="progressDisplay" id="progressDisplayPercent" value="percent">
+      <label class="form-check-label" for="progressDisplayPercent">%</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="progressDisplay" id="progressDisplayFraction" value="fraction">
+      <label class="form-check-label" for="progressDisplayFraction">⁄</label>
+    </div>
+  </div>
+</div>
+
+<p class="mb-0 mt-2"><a href="/birdypedia">All Species</a></p>
 <% var prct = Math.floor(member.totals.species[0] / member.totals.species[1] * 100); %>
 <p class="small mt-0 mb-2"><small></small></p>
 <div class="progress mx-2">
   <div class="progress-bar<%= prct == 100 ? " bg-success" : "" %>" style="width: <%= prct %>%" role="progressbar" aria-valuenow="<%= member.totals.species[0] %>" aria-valuemin="0" aria-valuemax="<%= member.totals.species[1] %>"><%= prct %>%</div>
 </div>
 
+<div id="familyProgress">
 <% for (let family of allFamilies) { %>
  <% family.owned = member.families.find( (fam) => fam.name == family.name)?.owned; %>
  <% if (family.owned > 0) { %>
-  <p class="mb-0 mt-4"><a href="/birdypedia?family=<%= family.name %>"><%= family.name %></a></hp>
-  <p class="small mt-0 mb-2"><small>(<%= family.display.split(' (').pop() %></small></p>
   <% var prct = Math.floor(family.owned / family.total * 100); %>
-  <div class="progress mx-2">
-    <div class="progress-bar<%= prct == 100 ? " bg-success" : "" %>" style="width: <%= prct %>%" role="progressbar" aria-valuenow="<%= family.owned %>" aria-valuemin="0" aria-valuemax="<%= family.total %>"><%= prct %>%</div>
+  <div class="family-progress" data-alpha="<%= family.name %>" data-numeric="<%= prct %>">
+    <p class="mb-0 mt-4"><a href="/birdypedia?family=<%= family.name %>"><%= family.name %></a></hp>
+    <p class="small mt-0 mb-2"><small>(<%= family.display.split(' (').pop() %></small></p>
+    <div class="progress mx-2">
+      <div class="progress-bar<%= prct == 100 ? " bg-success" : "" %>" style="width: <%= prct %>%" role="progressbar" aria-valuenow="<%= family.owned %>" aria-valuemin="0" aria-valuemax="<%= family.total %>"><%= prct %>%</div>
+    </div>
   </div>
  <% } %>
 <% } %>
+</div>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('input[name="progressSort"]').on('change', updateSort);
+      $('input[name="progressDisplay"]').on('change', updateDisplay);
+
+      $('input[name="progressSort"][value="' + (sessionStorage.getItem('progressSort') || 'alpha') + '"]').click();
+      $('input[name="progressDisplay"][value="' + (sessionStorage.getItem('progressDisplay') || 'percent') + '"]').click();
+
+      updateDisplay();
+    });
+
+    function updateSort () {
+      let sort = $('input[name="progressSort"]:checked').val();
+
+      sessionStorage.setItem('progresssort', sort);
+
+      let divs = $('.family-progress');
+
+      divs.sort(function(a, b){
+        let compareA = $(a).data(sort);
+        let compareB = $(b).data(sort);
+
+        return sort == 'alpha' ? compareA.localeCompare(compareB) : compareB - compareA;
+      });
+
+      $('#familyProgress').html(divs);
+    }
+
+    function updateDisplay () {
+      let display = $('input[name="progressDisplay"]:checked').val();
+
+      sessionStorage.setItem('progressDisplay', display);
+
+      $('.progress-bar').each((i, bar) => {
+        switch (display) {
+          case 'percent':
+             bar.innerHTML = Math.floor(bar.getAttribute('aria-valuenow') / bar.getAttribute('aria-valuemax') * 100) + '%';
+             break;
+          case 'fraction':
+            bar.innerHTML = bar.getAttribute('aria-valuenow') + '/' + bar.getAttribute('aria-valuemax') ;
+            break;
+        }
+      });
+    }
+  </script>
