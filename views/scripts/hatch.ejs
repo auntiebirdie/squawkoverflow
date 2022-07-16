@@ -34,19 +34,19 @@
         h3.innerHTML = bird.commonName;
 
         var h5 = hatched.querySelector('h5');
-        var text = "";
+        var text = `<div class="text-muted ms-3 mb-3"><em>${bird.scientificName}</em></div>`;
 
         if (bird.discovered) {
-          text += `<div><span class="checkmark"></span> <em>You have collected this species (${bird.owned} in aviary)</em></div>`;
+          text += `<div class="small"><span class="checkmark"></span> You have collected this species (${bird.owned} in aviary)</div>`;
         }
 
         if (bird.wishlisted) {
           switch (bird.wishlisted) {
             case 2:
-              text += `<div>🌟 <em>You need this bird!</em></div>`;
+              text += `<div class="small">🌟 You need this bird!</div>`;
               break;
             case 1:
-              text += `<div>❤️ <em>You want this bird!</em></div>`;
+              text += `<div class="small">❤️  You want this bird!</div>`;
               break;
            }
         }
