@@ -11,6 +11,10 @@
     })
   %>
 
+  <% if (locals.page == 'gift' && member.settings.privacy_gifts_unwishlisted) { %>
+    <div class="text-center"><strong>NOTE</strong> - <%= member.username %> is not accepting gifts of birds not on their wishlist as this time.</div>
+  <% } %>
+
   <%- include('../partials/pagination.ejs') %>
 
   <div id="lazyLoader" class="row g-0" data-endpoint="aviary" data-params='{"member":"<%= locals.page == 'gift' ? loggedInUser.id : member.id %>","memberData":"<%= locals.page == 'gift' ? member.id : (locals.loggedInUser ? loggedInUser.id : '') %>"}'></div>

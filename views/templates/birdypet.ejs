@@ -1,6 +1,6 @@
 <div class="birdypet-container col-12 col-sm-6 col-md-4 d-flex align-items-stretch" data-id="${model.id}">
   <div class="w-100 pb-3 px-2">
-    <div class="h-100 card">
+    <div class="h-100 card<% if (locals.page == 'gift') { %> ${<%= member.settings.privacy_gifts_unwishlisted == 1 %> && !model.bird.wishlisted ? 'disabled' : ''}<% } %>">
       <div class="birdypet-actions">
        <% if (locals.loggedInUser) { %>
         <button class="wishlist-heart btn btn-sm btn-light" data-id="${model.bird.id}" role="button">
@@ -14,7 +14,7 @@
              role="button">
            ✏️
          </button>
-         <button class="btn btn-sm btn-light"
+         <button class="btn btn-sm btn-light<% if (locals.page == 'gift') { %> ${<%= member.settings.privacy_gifts_unwishlisted == 1 %> && !model.bird.wishlisted ? 'disabled' : ''}<% } %>"
              data-bs-toggle="modal"
              data-bs-target="#modal_giftBirdyPet"
              data-bird="${model.bird.id}"
