@@ -1,5 +1,5 @@
 <script type="text/javascript">
-  var memberSearch, memberButton, memberDisplay;
+  var memberSearch, memberButton, memberDisplay, _CACHE;
   var selectedMember = <%- locals.selectedMember ? JSON.stringify(selectedMember) : 'null' %>;
   var _TRAPCARD = false;
 
@@ -37,7 +37,6 @@
           }
 
           let data = {
-            search: query,
             bird: $('#memberSearch').attr('data-bird') || "",
             filters: ['active'],
             sort: 'activeAt',
@@ -45,9 +44,15 @@
             <%- locals.privacy ? `privacy: ${JSON.stringify(privacy)},` : "" %>
           };
 
+          if (_CACHE) {
+            resolve(_CACHE);
+          } else {
             API.call('members', 'GET', data, function (results) {
+              _CACHE = results;
+
               resolve(results);
             });
+          }
         }).then((results) => {
           try {
             let wants = document.getElementById('member-wants').checked;
@@ -61,7 +66,19 @@
             }
           } catch (err) { }
 
-          asyncResults(results.sort((a, b) => a.wishlisted == b.wishlisted ? a.owned - b.owned : b.wishlisted - a.wishlisted));
+          var matches, substringRegex;
+
+          matches = [];
+
+          substrRegex = new RegExp(query, 'i');
+
+          $.each(results, function(i, result) {
+            if (substrRegex.test(result.username)) {
+              matches.push(result);
+            }
+          });
+
+          asyncResults(matches.sort((a, b) => a.wishlisted == b.wishlisted ? a.owned - b.owned : b.wishlisted - a.wishlisted));
         });
       },
       limit: Infinity,
@@ -90,7 +107,7 @@
                 text += `<div class="small ms-5">🌟 <em>Needs it</em></div>`;
                 break;
               case 1:
-                text += `<div class="small ms-5">❤️ <em>Wants it</em></div>`;
+                text += `<div class="small ms-5">❤️  <em>Wants it</em></div>`;
                 break;
             }
           }

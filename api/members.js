@@ -6,10 +6,10 @@ const Search = require('../helpers/search.js');
 module.exports = (req, res) => {
   if (req.query.page) {
     return Search.query('member', req.query).then((response) => {
-    var promises = [];
+      var promises = [];
 
-    response.results = response.results.map((result) => {
-      result = new Member(result.id);
+      response.results = response.results.map((result) => {
+        result = new Member(result.id);
         promises.push(result.fetch(req.query));
 
         return result;
@@ -28,9 +28,15 @@ module.exports = (req, res) => {
       }
 
       if (req.query.privacy) {
-        members = members.filter((member) => {
-          return !member.settings[`privacy_${req.query.privacy}`];
-        });
+        if (!Array.isArray(req.query.privacy)) {
+          req.query.privacy = [req.query.privacy];
+        }
+
+        for (let privacy of req.query.privacy) {
+          members = members.filter((member) => {
+            return !member.settings[`privacy_${privacy}`];
+          });
+        }
       }
 
       if (req.query.search) {
@@ -53,6 +59,10 @@ module.exports = (req, res) => {
       }
 
       await Promise.all(promises);
+
+      if (req.query.privacy.includes('gifts') && req.query.include?.includes('birdData')) {
+        members = members.filter((member) => !member.settings['privacy_gifts_unwishlisted'] || member.wishlisted > 0);
+      }
 
       return res.json(members);
     });
