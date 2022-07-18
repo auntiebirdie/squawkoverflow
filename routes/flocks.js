@@ -45,7 +45,7 @@ router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
     families: member.families.map((family) => family.name),
     sidebar: 'filters',
     searchFields: [{
-      id: 'cleanName',
+      id: 'commonName',
       name: 'Common Name'
     }, {
       id: 'scientificName',
@@ -78,7 +78,7 @@ router.get('/:flock', async (req, res) => {
     families: flock.families,
     sidebar: 'filters',
     searchFields: [{
-      id: 'cleanName',
+      id: 'commonName',
       name: 'Common Name'
     }, {
       id: 'scientificName',

@@ -2,9 +2,9 @@
 
   <%- include('../partials/page-title.ejs', { title : locals.bird ? bird.commonName : 'New Species', subtitle : bird ? 'Edit Species' : '' }) %>
 
-  <div id="form" class="row">
-    <div class="col-12 col-md-6 mx-auto">
-      <h5><label for="form-commonName" >Common Name</label></h5>
+  <div id="form" class="row justify-content-center">
+    <div class="col-12 col-md-5 mb-3">
+      <h5><label for="form-commonName">Common Name</label></h5>
       <input type="text" id="form-commonName" class="form-control mb-3 w-100" value="<%= locals.bird?.commonName %>">
 
       <h5><label for="form-scientificName">Scientific Name</label></h5>
@@ -21,6 +21,34 @@
       </select>
     </div>
 
+    <div class="col-12 col-md-5 mb-3">
+      <h5>Alternate Names <em>(optional)</em></h5>
+      <p><em>Language denoted by two-character <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" target="_blank">ISO-639 Code</a>, with 'zz' reserved for scientific names. Leave blank to remove.</em></p>
+
+      <div id="form-alternateNames">
+       <% locals.bird?.alternateNames.forEach((alternate) => { %>
+        <div class="row">
+          <div class="col-8">
+            <input type="text" name="alternateNames[]" class="form-control mb-3 w-100" value="<%= alternate.name %>">
+          </div>
+          <div class="col-4">
+            <select name="alternateLangs[]" class="form-control">
+             <% for (let lang of languages) { %>
+              <option value="<%= lang.code %>" <%= alternate.lang == lang.code ? 'selected' : '' %>>
+                <%= lang.name %>
+              </option>
+             <% } %>
+            </select>
+          </div>
+        </div>
+       <% }) %>
+      </div>
+
+      <div class="text-end">
+        <button id="addAlternateName" class="btn btn-sm btn-dark" role="button">+</button>
+      </div>
+    </div>
+
     <div class="col-12 text-center">
       <a id="submitForm" class="btn btn-dark"><%= locals.bird ? 'Update' : 'Create' %></a>
     </div>
@@ -28,17 +56,47 @@
 
   <script type="text/javascript">
     $(document).ready(function () {
+      $('#addAlternateName').on('click', function () {
+        let container = document.createElement('div');
+
+        container.classList = 'row';
+        container.innerHTML = `
+          <div class="col-8">
+            <input type="text" name="alternateNames[]" class="form-control mb-3 w-100">
+          </div>
+          <div class="col-4">
+            <select name="alternateLangs[]" class="form-control">
+             <% for (let lang of languages) { %>
+              <option value="<%= lang.code %>">
+                <%= lang.name %>
+              </option>
+             <% } %>
+            </select>
+          </div>
+        `;
+
+        document.getElementById('form-alternateNames').appendChild(container);
+      });
+
       $('#submitForm').on('click', function () {
         var container = document.getElementById('form');
 
         if (!container.classList.contains('loadingData')) {
           container.classList.add('loadingData');
 
+          var alternateNames = [];
+          var alternateLangs = [];
+
+          $('input[name="alternateNames[]"]').each((i, input) => { alternateNames.push(input.value) });
+          $('select[name="alternateLangs[]"]').each((i, select) => { alternateLangs.push(select.value) });
+
           API.call('bird', 'PUT', {
               <%- locals.bird ? `id: "${bird.id}",` : '' %>
               family: $('#form-family').val(),
               commonName: $('#form-commonName').val(),
               scientificName: $('#form-scientificName').val(),
+              alternateNames: alternateNames,
+              alternateLangs: alternateLangs
             }, function (response) {
               window.location.replace(`/birdypedia/bird/${response?.replace(/\s/g, '-')}<%= locals.bird? '' : '/variant/new' %>`);
             }, function (error) {

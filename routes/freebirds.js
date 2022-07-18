@@ -11,7 +11,7 @@ router.get('/', Middleware.isLoggedIn, async (req, res) => {
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
     searchFields: [{
-      id: 'cleanName',
+      id: 'commonName',
       name: 'Common Name'
     }, {
       id: 'scientificName',

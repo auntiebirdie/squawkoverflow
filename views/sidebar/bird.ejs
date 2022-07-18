@@ -4,19 +4,36 @@
         </div>
        <% } %>
 
-        <h5>Scientific Name</h5>
-        <p><%= bird.scientificName %></p>
+        <h5 class="pt-3">Common Name<%= bird.alternateNames.filter((alternate) => alternate.lang != 'zz').length > 0 ? 's' : '' %></h5>
+        <div class="ms-2">
+          <div><%= bird.commonName %></div>
+         <% for (let alternateName of bird.alternateNames.filter((alternate) => alternate.lang != 'zz')) { %>
+          <div><%= alternateName.name %></div>
+         <% } %>
+        </div>
+
+        <h5 class="pt-3">Scientific Name<%= bird.alternateNames.filter((alternate) => alternate.lang == 'zz').length > 0 ? 's' : '' %></h5>
+        <div class="ms-2">
+          <div><%= bird.id %></div>
+         <% for (let alternateName of bird.alternateNames.filter((alternate) => alternate.lang == 'zz')) { %>
+          <div><%= alternateName.name %></div>
+         <% } %>
+        </div>
 
         <h5 class="pt-3">Family</h5>
-        <p><a href="/birdypedia?family=<%= bird.family %>"><%= bird.family %></a></p>
+        <div class="ms-2">
+          <a href="/birdypedia?family=<%= bird.family %>"><%= bird.family %></a>
+        </div>
 
         <h5 class="pt-3">Order</h5>
-        <p><%= bird.order %></p>
+        <div class="ms-2">
+          <%= bird.order %>
+        </div>
 
       <% if (locals.loggedInUser) { %>
         <h5 class="pt-3">Discovered</h5>
        <% if (bird.unlock) { %>
-        <p>
+        <div class="ms-2">
           <a href="/birdypet/<%= bird.unlock.birdypet %>">
             <%= 
               new Date(bird.unlock.unlockedAt).toLocaleDateString('en-US', {
@@ -26,9 +43,9 @@
               });
             %>
           </a>
-        </p>
+        </div>
        <% } else { %>
-        <p class="small"><em>Not yet discovered!</em></p>
+        <div class="ms-2 small"><em>Not yet discovered!</em></div>
        <% } %>
       <% } %>
 

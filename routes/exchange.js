@@ -70,7 +70,7 @@ router.get(['/:id/offer', '/:id/request'], Middleware.isLoggedIn, async (req, re
       currentPage: (req.query.page || 1) * 1,
       sidebar: 'filters',
       searchFields: [{
-        id: 'cleanName',
+        id: 'commonName',
         name: 'Common Name'
       }, {
         id: 'scientificName',

@@ -1,0 +1,76 @@
+[{
+	"code": "en",
+	"name" : "English"
+}, {
+	"code" : "de",
+	"name" : "Deutsch"
+}, {
+	"code" : "fr",
+	"name" : "français"
+}, {
+	"code" : "ja",
+	"name" : "日本語"
+}, {
+	"code" : "es",
+	"name" : "español"
+}, {
+	"code" : "ru",
+	"name" : "русский"
+}, {
+	"code" : "zh",
+	"name" : "中文"
+}, {
+	"code" : "pt",
+	"name" : "português"
+}, {
+	"code" : "it",
+	"name" : "italiano"
+}, {
+	"code" : "fa",
+	"name" : "فارسی"
+}, {
+	"code" : "ar",
+	"name" : "العربية"
+}, {
+	"code" : "pl",
+	"name" : "polski"
+}, {
+	"code" : "nl",
+	"name" : "Nederlands"
+}, {
+	"code" : "uk",
+	"name" : "українська"
+}, {
+	"code" : "id",
+	"name" : "Bahasa Indonesia"
+}, {
+	"code" : "he",
+	"name" : "עברית"
+}, {
+	"code" : "tr",
+	"name" : "Türkçe"
+}, {
+	"code" : "cs",
+	"name" : "čeština"
+}, {
+	"code" : "vi",
+	"name" : "Tiếng Việt"
+}, {
+	"code" : "sv",
+	"name" : "svenska"
+}, {
+	"code" : "fi",
+	"name" : "suomi"
+}, {
+	"code" : "ko",
+	"name" : "한국어"
+}, {
+	"code" : "hu",
+	"name" : "magyar"
+}, {
+	"code" : "hi",
+	"name" : "हिन्दी"
+}, {
+	"code" : "zz",
+	"name" : "Scientific"
+}]

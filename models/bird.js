@@ -10,21 +10,19 @@ class Bird {
 
   create(data) {
     return new Promise(async (resolve, reject) => {
-      this.id = data.scientificName;
+      this.id = data.id;
       this.family = data.family;
       this.commonName = data.commonName;
-      this.scientificName = data.scientificName;
 
       Database.create('species', {
-        id: data.scientificName,
+        id: this.id,
         code: "",
         family: data.family,
-        commonName: data.commonName,
-        scientificName: data.scientificName
+        commonName: data.commonName
       }).then(() => {
         Database.create('variants', {
           id: Database.key(),
-          species: data.scientificName,
+          species: data.id,
           source: "n/a",
           credit: "n/a",
           full: 0,
@@ -78,6 +76,7 @@ class Bird {
         }
 
         this.id_slug = this.id.replace(/\s/g, '-');
+        this.scientificName = this.id;
 
         await Database.getOne('taxonomy', {
           name: this.family
@@ -87,6 +86,12 @@ class Bird {
           this.family = taxonomy.name;
           this.order = taxonomy.parent;
         });
+
+        if (params.include?.includes('alternateNames')) {
+          this.alternateNames = await Database.get('species_names', {
+            species: this.id
+          }).then((results) => results.filter((alternate) => alternate.name != this.commonName && alternate.name != this.id));
+        }
 
         if (params.include?.includes('variants')) {
           const Variants = require('../collections/variants.js');

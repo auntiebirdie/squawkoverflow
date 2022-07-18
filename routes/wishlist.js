@@ -59,7 +59,7 @@ router.get('/:member', async (req, res, next) => {
     currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
     searchFields: [{
-      id: 'cleanName',
+      id: 'commonName',
       name: 'Common Name'
     }, {
       id: 'scientificName',

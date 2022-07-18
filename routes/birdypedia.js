@@ -1,12 +1,14 @@
 const API = require('../helpers/api.js');
 const Middleware = require('../helpers/middleware.js');
 
+const Families = require('../collections/families.js');
+
 const fs = require('fs');
 const express = require('express');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  var families = await API.call('families', 'GET');
+  let families = await Families.all();
 
   res.render('birdypedia', {
     title: 'Birdypedia',
@@ -17,7 +19,7 @@ router.get('/', async (req, res) => {
     sidebar: 'filters',
     style: true,
     searchFields: [{
-      id: 'cleanName',
+      id: 'commonName',
       name: 'Common Name'
     }, {
       id: 'scientificName',
@@ -59,7 +61,7 @@ router.get('/eggs/:egg', (req, res) => {
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
         searchFields: [{
-          id: 'cleanName',
+          id: 'commonName',
           name: 'Common Name'
         }, {
           id: 'scientificName',
@@ -101,10 +103,10 @@ router.get('/artists/:artist', (req, res) => {
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
         style: true,
-        allFamilies: await API.call('families', 'GET'),
+        allFamilies: await Families.all(),
         families: families,
         searchFields: [{
-          id: 'cleanName',
+          id: 'commonName',
           name: 'Common Name'
         }, {
           id: 'scientificName',
@@ -120,11 +122,10 @@ router.get('/artists/:artist', (req, res) => {
 });
 
 router.get('/bird/new', Middleware.isContributor, async (req, res) => {
-  var families = await API.call('families', 'GET');
-
   res.render('birdypedia/new', {
     bird: null,
-    families: families
+    languages: require('../data/languages.json'),
+    families: await Families.all()
   });
 });
 
@@ -148,12 +149,14 @@ router.get('/bird/:id/variant/:variant', Middleware.isContributor, async (req, r
 
 router.get('/bird/:id/edit', Middleware.isContributor, async (req, res) => {
   API.call('bird', 'GET', {
-    id: req.params.id
+    id: req.params.id,
+    include: ['alternateNames']
   }).then(async (bird) => {
     if (bird) {
       res.render('birdypedia/new', {
         bird: bird,
-        families: await API.call('families', 'GET')
+        families: await Families.all(),
+        languages: require('../data/languages.json')
       });
     } else {
       res.redirect('/error');

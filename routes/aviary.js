@@ -23,7 +23,7 @@ router.get('/:member', async (req, res, next) => {
       sidebar: 'filters',
       style: true,
       searchFields: [{
-        id: 'cleanName',
+        id: 'commonName',
         name: 'Common Name'
       }, {
         id: 'scientificName',

@@ -24,7 +24,11 @@ class Search {
           break;
         case 'bird':
           select.push('DISTINCT species.id');
-          tables.push('species', 'JOIN variants ON (species.id = variants.species)');
+          tables.push('species');
+
+          if (input.style || input.artist) {
+            select.push('JOIN variants ON (species.id = variants.species)');
+          }
           break;
         case 'birdypet':
           select.push('birdypets.id');
@@ -68,18 +72,15 @@ class Search {
       }
 
       if (input.search) {
-        let exactMatch = input.search.match(/^\"(.*)\"$/);
+        var exactMatch = input.search.match(/^\"(.*)\"$/);
         let searchFields = {
-          'cleanName': 'species.cleanName',
-          'commonName': 'species.cleanName',
-          'scientificName': 'species.scientificName',
+          'commonName': 'species_names.name',
+          'scientificName': 'species_names.name',
           'nickname': 'birdypets.nickname'
         };
 
         if (exactMatch) {
           input.search = exactMatch[1];
-        } else {
-          input.search = input.search.replace(/\'/g, '').replace(/\-/g, ' ');
         }
 
         if (kind == 'artist') {
@@ -89,18 +90,24 @@ class Search {
           filters.push(exactMatch ? 'members.username = ?' : 'MATCH(members.username) AGAINST (?)');
           params.push(input.search);
         } else {
+          if (kind == 'bird') {
+            tables.push('JOIN species_names ON (species.id = species_names.species)');
+            if (input.searchField == 'scientificName') {
+              filters.push('species_names.lang == "zz"');
+            } else {
+              filters.push('species_names.lang != "zz"');
+            }
+          }
+
           if (exactMatch) {
             if (input.searchField != "commonName") {
               filters.push(`${searchFields[input.searchField]} = ?`);
               params.push(input.search);
-            } else {
-              filters.push('(species.commonName = ? OR species.cleanName = ?)');
-              params.push(input.search, input.search);
             }
           } else {
-            select.push(`MATCH(${searchFields[input.searchField] || 'species.cleanName'}) AGAINST (?) relevancy`);
+            select.push(`MAX(MATCH(${searchFields[input.searchField] || 'species.commonName'}) AGAINST (?)) relevancy`);
             params.unshift(input.search);
-            filters.push(`MATCH(${searchFields[input.searchField] || 'species.cleanName'}) AGAINST (?)`);
+            filters.push(`MATCH(${searchFields[input.searchField] || 'species.commonName'}) AGAINST (?)`);
             params.push(input.search);
           }
         }
@@ -143,6 +150,7 @@ class Search {
       }
 
       if (input.artist) {
+        if (!select.includes('')) {}
         filters.push('variants.credit = ?');
         params.push(input.artist);
       }
@@ -295,8 +303,12 @@ class Search {
         query += ' GROUP BY variants.id';
       }
 
-      Database.query('SELECT COUNT(*) total FROM (' + query + ') AS query', params).then((count) => {
-        let totalResults = count[0].total;
+      Database.query('SELECT COUNT(*) total' + (input.search && !exactMatch ? ', MAX(relevancy) relevancy' : '') + ' FROM (' + query + ') AS query', params).then(async (meta) => {
+        let totalResults = meta[0].total;
+
+        if (input.search && !exactMatch) {
+          query += ' HAVING relevancy >= ' + (meta[0].relevancy * .75);
+        }
 
         query += ' ORDER BY ';
 
@@ -359,11 +371,6 @@ class Search {
         query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC') + ' LIMIT ' + Math.min(page * perPage, totalResults) + ',' + perPage;
 
         Database.query(query, params).then((results) => {
-          if (results.length > 0 && (results[0].relevancy && input.searchField != "scientificName")) {
-            let maxRelevancy = Math.max(...results.map((result) => result.relevancy));
-            results = results.filter((result) => result.relevancy >= (maxRelevancy * .75));
-          }
-
           resolve({
             totalPages: Math.ceil(totalResults / perPage),
             totalResults,
