@@ -60,7 +60,7 @@ module.exports = (req, res) => {
 
       await Promise.all(promises);
 
-      if (req.query.privacy.includes('gifts') && req.query.include?.includes('birdData')) {
+      if (req.query.privacy?.includes('gifts') && req.query.include?.includes('birdData')) {
         members = members.filter((member) => !member.settings['privacy_gifts_unwishlisted'] || member.wishlisted > 0);
       }
 
