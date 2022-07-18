@@ -27,7 +27,7 @@ class Search {
           tables.push('species');
 
           if (input.style || input.artist) {
-            select.push('JOIN variants ON (species.id = variants.species)');
+            tables.push('JOIN variants ON (species.id = variants.species)');
           }
           break;
         case 'birdypet':
@@ -84,6 +84,8 @@ class Search {
         }
 
         if (kind == 'artist') {
+          select.push('MATCH(artists.name) AGAINST (?) relevancy');
+          params.unshift(input.search);
           filters.push(exactMatch ? 'artists.name = ?' : 'MATCH(artists.name) AGAINST (?)');
           params.push(input.search);
         } else if (kind == 'member') {
