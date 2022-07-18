@@ -89,6 +89,10 @@ class Search {
           filters.push(exactMatch ? 'artists.name = ?' : 'MATCH(artists.name) AGAINST (?)');
           params.push(input.search);
         } else if (kind == 'member') {
+		if (!exactMatch) {
+		select.push('MATCH(members.username) AGAINST (?) relevancy');
+			params.unshift(input.search);
+		}
           filters.push(exactMatch ? 'members.username = ?' : 'MATCH(members.username) AGAINST (?)');
           params.push(input.search);
         } else {
