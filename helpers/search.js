@@ -99,7 +99,7 @@ class Search {
           if (tables.includes('species') || tables.includes('JOIN species ON (variants.species = species.id')) {
             tables.push('JOIN species_names ON (species.id = species_names.species)');
             if (input.searchField == 'scientificName') {
-              filters.push('species_names.lang == "zz"');
+              filters.push('species_names.lang = "zz"');
             } else {
               filters.push('species_names.lang != "zz"');
             }
