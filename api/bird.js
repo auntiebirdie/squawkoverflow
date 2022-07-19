@@ -70,6 +70,20 @@ module.exports = async (req, res) => {
       var member = await Members.get(req.body.loggedInUser);
 
       if (member.contributor || member.admin) {
+        var alternateNames = req.body.alternateNames.map((name, i) => {
+          return {
+            name: name,
+            lang: req.body.alternateLangs[i]
+          }
+        });
+
+        await Audit.log(`${req.body.id ? 'update' : 'create'} species`, {
+          id: req.body.id,
+          commonName: req.body.commonName,
+          family: req.body.family,
+          alternateNames: alternateNames.join("\r\n")
+        });
+
         if (req.body.id) {
           if (req.body.commonName) {
             let commonName = req.body.commonName.replace(/\ʻ/g, "'").trim();
@@ -78,19 +92,11 @@ module.exports = async (req, res) => {
               'commonName': commonName
             });
 
-            await Audit.log('update species', req.body);
-
             await bird.fetch({
               include: ['alternateNames']
             });
 
             var promises = [];
-            var alternateNames = req.body.alternateNames.map((name, i) => {
-              return {
-                name: name,
-                lang: req.body.alternateLangs[i]
-              }
-            });
 
             for (let i = 0, len = bird.alternateNames.length; i < len; i++) {
               if (!alternateNames.find((alternate) => alternate.name == bird.alternateNames[i].name && alternate.lang == bird.alternateNames[i].lang)) {
@@ -98,9 +104,9 @@ module.exports = async (req, res) => {
               }
             }
 
-            for (let i = 0, len = req.body.alternateNames.length; i < len; i++) {
-              if (req.body.alternateNames[i] != "") {
-                promises.push(Database.query('INSERT IGNORE INTO species_names VALUES (?, ?, ?)', [req.body.id, req.body.alternateNames[i], req.body.alternateLangs[i]]));
+            for (let i = 0, len = alternateNames.length; i < len; i++) {
+              if (alternateNames[i].name != "") {
+                promises.push(Database.query('INSERT IGNORE INTO species_names VALUES (?, ?, ?)', [req.body.id, alternateNames[i].name, alternateNames[i].lang]));
               }
             }
 
@@ -110,7 +116,6 @@ module.exports = async (req, res) => {
           }
         } else {
           await bird.create(req.body);
-          await Audit.log('create species', req.body);
         }
       }
 
