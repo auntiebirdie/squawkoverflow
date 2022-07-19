@@ -37,6 +37,8 @@ class Search {
           if (input.member) {
             filters.push('birdypets.member = ?');
             params.push(input.member);
+          } else {
+            filters.push('birdypets.member IS NOT NULL');
           }
 
           if (!input.member || input.member != input.loggedInUser) {

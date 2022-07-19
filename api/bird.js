@@ -78,6 +78,7 @@ module.exports = async (req, res) => {
         });
 
         await Audit.log(`${req.body.id ? 'update' : 'create'} species`, {
+          loggedInUser: req.body.loggedInUser,
           id: req.body.id,
           commonName: req.body.commonName,
           family: req.body.family,
