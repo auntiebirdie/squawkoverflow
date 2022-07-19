@@ -168,7 +168,7 @@ module.exports = async (req, res) => {
               }
             });
           } else if (req.body.type.startsWith('birdypet_gift-')) {
-            console.log('thankggk');
+            await Database.query("DELETE FROM notifications WHERE `member` = ? AND data->'$.thanked' " + (req.body.type == 'birdypet_gift-thanked' ? 'IS NOT' : 'IS') + " NULL", [req.body.loggedInUser]);
           } else {
             await Database.delete('notifications', {
               member: req.body.loggedInUser,
