@@ -89,14 +89,14 @@ class Search {
           filters.push(exactMatch ? 'artists.name = ?' : 'MATCH(artists.name) AGAINST (?)');
           params.push(input.search);
         } else if (kind == 'member') {
-		if (!exactMatch) {
-		select.push('MATCH(members.username) AGAINST (?) relevancy');
-			params.unshift(input.search);
-		}
+          if (!exactMatch) {
+            select.push('MATCH(members.username) AGAINST (?) relevancy');
+            params.unshift(input.search);
+          }
           filters.push(exactMatch ? 'members.username = ?' : 'MATCH(members.username) AGAINST (?)');
           params.push(input.search);
         } else {
-          if (kind == 'bird') {
+          if (tables.includes('species')) {
             tables.push('JOIN species_names ON (species.id = species_names.species)');
             if (input.searchField == 'scientificName') {
               filters.push('species_names.lang == "zz"');
@@ -303,7 +303,7 @@ class Search {
         query += ' WHERE ' + filters.join(' AND ');
       }
 
-      if (kind == 'bird') {
+      if (kind == 'bird' || kind == 'wishlist') {
         query += ' GROUP BY species.id';
       } else if (kind == 'incubator') {
         query += ' GROUP BY variants.id';

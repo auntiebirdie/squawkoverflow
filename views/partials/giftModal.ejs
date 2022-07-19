@@ -22,6 +22,8 @@
     var modal_giftBirdyPet = new bootstrap.Modal(document.getElementById('modal_giftBirdyPet'));
 
     $('#modal_giftBirdyPet').on('show.bs.modal', function (event) {
+      _CACHE = null;
+
       $('#memberSearch').attr('data-bird', event.relatedTarget.getAttribute('data-bird'));
      <% if (locals.page == 'incubator') { %>
       $('#memberSearch').attr('data-variant', event.relatedTarget.getAttribute('data-id'));
