@@ -40,10 +40,10 @@ class Member {
   exists(params = {}) {
     return new Promise(async (resolve, reject) => {
       try {
-        if (this.id instanceof String && this.id.includes('auth') && this.id.includes('token')) {
+        if (typeof this.id == "string" && this.id.includes('auth') && this.id.includes('token')) {
           this.id = JSON.parse(this.id);
         }
-      } catch (err) {}
+      } catch (err) { }
 
       if (this.id instanceof Object) {
         var member = await Database.getOne('members JOIN member_auth ON (members.id = member_auth.member)', {
