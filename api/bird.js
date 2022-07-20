@@ -82,7 +82,7 @@ module.exports = async (req, res) => {
           id: req.body.id,
           commonName: req.body.commonName,
           family: req.body.family,
-          alternateNames: alternateNames.join("\r\n")
+          alternateNames: alternateNames.map((alt) => `${alt.name} (${alt.lang})`).join("\r\n")
         });
 
         if (req.body.id) {
