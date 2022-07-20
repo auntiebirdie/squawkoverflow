@@ -111,8 +111,6 @@ module.exports = async (req, res) => {
               }
             }
 
-            promises.push(Database.query('INSERT IGNORE INTO species_names VALUES (?, ?, ?)', [req.body.id, bird.commonName.replace(/\-/g, /\s/), 'xx']));
-
             await Promise.all(promises);
           }
         } else {
