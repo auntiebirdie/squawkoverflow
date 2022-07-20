@@ -2,6 +2,7 @@ const {
   Storage
 } = require('@google-cloud/storage');
 
+const Audit = require('../helpers/audit.js');
 const Bird = require('../models/bird.js');
 const Database = require('../helpers/database.js');
 const Member = require('../models/member.js');
