@@ -307,6 +307,8 @@ class Search {
         query += ' GROUP BY species.id';
       } else if (kind == 'incubator') {
         query += ' GROUP BY variants.id';
+      } else if (kind == 'birdypet') {
+        query += ' GROUP BY birdypets.id';
       }
 
       Database.query('SELECT COUNT(*) total' + (input.search && !exactMatch ? ', MAX(relevancy) relevancy' : '') + ' FROM (' + query + ') AS query', params).then(async (meta) => {
