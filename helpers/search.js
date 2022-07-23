@@ -98,13 +98,11 @@ class Search {
           filters.push(exactMatch ? 'members.username = ?' : 'MATCH(members.username) AGAINST (?)');
           params.push(input.search);
         } else {
-          if (tables.includes('species') || tables.includes('JOIN species ON (variants.species = species.id')) {
-            tables.push('JOIN species_names ON (species.id = species_names.species)');
-            if (input.searchField == 'scientificName') {
-              filters.push('species_names.lang = "zz"');
-            } else {
-              filters.push('species_names.lang != "zz"');
-            }
+          tables.push('JOIN species_names ON (species.id = species_names.species)');
+          if (input.searchField == 'scientificName') {
+            filters.push('species_names.lang = "zz"');
+          } else {
+            filters.push('species_names.lang != "zz"');
           }
 
           if (exactMatch) {
