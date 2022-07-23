@@ -1,4 +1,5 @@
 const Cache = require('../helpers/cache.js');
+const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
 
@@ -23,6 +24,19 @@ class BirdyPet {
         this.bird = this.variant.bird;
         this.member = data.member;
 
+        var member = null;
+        var newSpecies = null;
+
+        if (data.member) {
+          const Member = require('./member.js');
+
+          member = new Member(data.member);
+
+          await member.fetch();
+
+          newSpecies = await Counters.get('birdypedia', member.id, variant.bird.id);
+        }
+
         Database.create('birdypets', {
           id: this.id,
           member: data.member,
@@ -33,32 +47,41 @@ class BirdyPet {
           hatchedAt: data.hatchedAt || new Date(),
           addedAt: data.addedAt || new Date()
         }).then(async () => {
+          var promises = [];
+
           if (data.member) {
-            const Member = require('./member.js');
+            if (newSpecies == 0) {
+              promises.push(Cache.increment(`species:${member.id}`, 'counters JOIN species ON (counters.id = species.id)', {
+                member: member.id,
+                type: 'birdypedia',
+                count: {
+                  comparator: '>',
+                  value_trusted: 0
+                }
+              }));
+            }
 
-            let member = new Member(data.member);
-
-            await member.fetch();
-
-            await Cache.increment(`species:${member.id}:${variant.bird.id}`, 'birdypets JOIN variants ON (birdypets.variant = variants.id)', {
+            promises.push(Cache.increment(`species:${member.id}:${variant.bird.id}`, 'birdypets JOIN variants ON (birdypets.variant = variants.id)', {
               'member': member.id,
               'species': variant.bird.id
-            });
+            }));
 
-            await Cache.increment(`aviary:${member.id}`, 'birdypets', {
+            promises.push(Cache.increment(`aviary:${member.id}`, 'birdypets', {
               'member': member.id
-            });
+            }));
 
             if (member.settings.general_updateWishlistWANT) {
-              await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 1', [variant.bird.id, member.id]);
+              promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 1', [variant.bird.id, member.id]));
             }
 
             if (member.settings.general_updateWishlistNEED) {
-              await Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 2', [variant.bird.id, member.id]);
+              promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 2', [variant.bird.id, member.id]));
             }
           }
 
-          resolve(this);
+          Promise.all(promises).then(() => {
+            resolve(this);
+          });
         });
       } else {
         reject();
@@ -132,6 +155,19 @@ class BirdyPet {
         let member = new Member(data.member);
 
         await member.fetch();
+
+        var newSpecies = await Counters.get('birdypedia', data.member, this.bird.id);
+
+        if (newSpecies == 0) {
+          promises.push(Cache.increment(`species:${data.member}`, 'counters JOIN species ON (counters.id = species.id)', {
+            member: data.member,
+            type: 'birdypedia',
+            count: {
+              comparator: '>',
+              value_trusted: 0
+            }
+          }));
+        }
 
         promises.push(Cache.increment(`aviary:${data.member}`, 'birdypets', {
           member: data.member
