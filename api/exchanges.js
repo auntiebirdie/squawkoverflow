@@ -2,7 +2,6 @@ const BirdyPet = require('../models/birdypet.js');
 const Database = require('../helpers/database.js');
 const Exchange = require('../models/exchange.js');
 const Member = require('../models/member.js');
-const Webhook = require('../helpers/webhook.js');
 
 module.exports = (req, res) => {
   let promises = [];
@@ -192,17 +191,7 @@ module.exports = (req, res) => {
 
                     Promise.all(promises).then(() => {
                       if (memberA.serverMember && memberB.serverMember) {
-                        Webhook('exchange', {
-                          content: req.body.loggedInUser == memberA.id ? `${memberA.username} and <@${memberB.auth.find((auth) => auth.provider == 'discord').id}> have come to an agreement!` : `${memberB.username} has accepted <@${memberA.auth.find((auth) => auth.provider == 'discord').id}>'s offer!`,
-                          embeds: [{
-                            description: 'The offer was accepted by both parties!',
-                            thumbnail: {
-                              url: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/google/313/handshake_1f91d.png'
-                            }
-                          }]
-                        }).then(() => {
                           res.ok();
-                        });
                       } else {
                         res.ok();
                       }
@@ -226,28 +215,7 @@ module.exports = (req, res) => {
                       }
 
                       if (newExchange) {
-                        Webhook('exchange', {
-                          content: `${memberA.username} has sent <@${memberB.auth.find((auth) => auth.provider == 'discord').id}> an offer!`,
-                          embeds: [{
-                            title: 'View Offer',
-                            description: req.body.noteA || exchange.noteA || " ",
-                            url: `https://squawkoverflow.com/exchange/${exchange.id}`,
-                            fields: [{
-                              name: `I'll give ${req.body.giveA || exchange.giveA}`,
-                              value: giveA,
-                              inline: false
-                            }, {
-                              name: `for ${req.body.forB || exchange.forB}`,
-                              value: forB,
-                              inline: false
-                            }],
-                            thumbnail: {
-                              url: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/320/google/110/person-with-folded-hands_1f64f.png'
-                            }
-                          }]
-                        }).then(() => {
                           res.ok();
-                        });
                       } else {
                         res.ok();
                       }
