@@ -26,7 +26,7 @@ class Search {
           select.push('DISTINCT species.id');
           tables.push('species');
 
-          if (input.style || input.artist) {
+          if (input.style || input.artist || input.sort == 'variants') {
             tables.push('JOIN variants ON (species.id = variants.species)');
           }
           break;
