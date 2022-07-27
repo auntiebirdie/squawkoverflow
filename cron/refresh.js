@@ -11,7 +11,7 @@ const client = new Client({
 });
 
 (async () => {
-  let siteMembers = await Database.query('SELECT members.id `member`, members.avatar, member_auth.id, member_settings.value AS avatarSetting FROM members LEFT JOIN member_auth ON (members.id = member_auth.member AND member_auth.provider = "discord") LEFT JOIN member_settings ON (members.id = member_settings.member AND member_settings.setting = "avatar")');
+  let siteMembers = await Database.query('SELECT members.id `member`, members.supporter, members.contributor, members.avatar, member_auth.id, member_settings.value AS avatarSetting FROM members LEFT JOIN member_auth ON (members.id = member_auth.member AND member_auth.provider = "discord") LEFT JOIN member_settings ON (members.id = member_settings.member AND member_settings.setting = "avatar")');
 
   client.login(secrets.DISCORD.BOT_TOKEN);
 
@@ -23,18 +23,20 @@ const client = new Client({
         for (let siteMember of siteMembers) {
           let serverMember = serverMembers.get(siteMember.id);
 
-          if (serverMember) {
-            promises.push(Database.query('INSERT INTO member_badges VALUES (?, "discord", NOW()) ON DUPLICATE KEY UPDATE badge = badge', [siteMember.member]));
+          // Patron
+          serverMember.roles[siteMember.supporter ? 'add' : 'remove']('1001922198417711144');
 
+          // Contributor
+          serverMember.roles[siteMember.contributor ? 'add' : 'remove']('1001930991427928215');
+
+          if (serverMember) {
             Database.set('members', {
-              id: siteMember.member,
-              avatar: !siteMember.avatarSetting || siteMember.avatarSetting == 'discord' ? serverMember.displayAvatarURL() : siteMember.avatar
+              id: siteMember.member
             }, {
+              avatar: !siteMember.avatarSetting || siteMember.avatarSetting == 'discord' ? serverMember.displayAvatarURL() : siteMember.avatar
               serverMember: true
             });
           } else {
-            promises.push(Database.query('DELETE FROM member_badges WHERE `member` = ? AND badge = "discord"', [siteMember.member]));
-
             Database.set('members', {
               id: siteMember.member
             }, {
