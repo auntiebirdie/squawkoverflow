@@ -2,14 +2,22 @@
 
   <%- include('../partials/page-title.ejs', { title : "Birdypedia" }) %> 
 
-  <p class="text-center">
-    <em>Click the 🤍 to add a bird to your wishlist. Click the ❤️ to mark it as NEED on your wishlist. Click the 🌟 to remove the bird from your wishlist. Rinse, repeat!</em>
-  </p>
-  <p class="text-center">
-    <em>(<a href="/faq#wishlist">Wait, what is the wishlist and want vs. need for?</a>)</em>
-  </p>
-
  <% if (locals.loggedInUser) { %>
+  <div class="text-center">
+    <p>
+      <em>Click on an individual bird's wishlist indicator to cycle through the following options:</em>
+    </p>
+    <p>
+      <span class="me-3">🤍  Not on wishlist</span>
+      <span class="me-3">❤️  Wanted</span>
+      <span class="me-3">🌟 Needed</span>
+    </p>
+
+    <p class="small">
+      <em>(<a href="/faq#wishlist">Wait, what is the wishlist and want vs. need for?</a>)</em>
+    </p>
+  </div>
+
   <div id="gottaWishlistEmAll" class="float-none float-md-end mt-5 mt-md-0 text-center">
     Add all birds on this page to: &nbsp;
     <span>
