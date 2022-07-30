@@ -98,13 +98,13 @@ module.exports = async (req, res) => {
         }
       }).then(async () => {
         await Audit.log(`${existing ? 'update' : 'create'} variant`, {
-		loggedInUser: data.loggedInUser,
-		source: data.source,
-		credit: data.credit,
-		notes: data.notes,
-		label: data.label,
-		contributor: data.contributor
-	});
+          loggedInUser: data.loggedInUser,
+          source: data.source,
+          credit: data.credit,
+          notes: data.notes,
+          label: data.label,
+          contributor: data.contributor
+        });
 
         if (existing) {
           await Database.query('UPDATE variants SET source = ?, subspecies = ?, credit = ?, license = ?, notes = ?, full = ?, special = ?, filetype = ?, style = ?, label = ?, updatedAt = NOW() WHERE id = ?', [data.source, data.subspecies, data.credit, data.license, data.notes, data.full, data.special, data.filetype || existing.filetype, data.style, data.label, key]);
@@ -181,7 +181,7 @@ module.exports = async (req, res) => {
             }]
           });
 
-          if (secrets.ENV == "PROD") {
+          if (secrets.ENV == "PROD" && data.license != "") {
             const tumblr = Tumblr.createClient({
               consumer_key: secrets.TUMBLR.OAUTH_KEY,
               consumer_secret: secrets.TUMBLR.OAUTH_SECRET,

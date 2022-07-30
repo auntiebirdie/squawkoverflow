@@ -3,11 +3,11 @@ const Database = require('../helpers/database.js');
 
 const {
   Client,
-  Intents
+  GatewayIntentBits
 } = require('discord.js');
 
 const client = new Client({
-  intents: [Intents.FLAGS.GUILD_MEMBERS]
+  intents: [GatewayIntentBits.GuildMembers]
 });
 
 (async () => {
@@ -17,23 +17,21 @@ const client = new Client({
 
   client.on('ready', () => {
     client.guilds.fetch(secrets.DISCORD.GUILD_ID).then((guild) => {
-      guild.members.fetch().then((serverMembers) => {
+      guild.members.fetch().then(async (serverMembers) => {
         let promises = [];
 
         for (let siteMember of siteMembers) {
           let serverMember = serverMembers.get(siteMember.id);
 
-          // Patron
-          serverMember.roles[siteMember.supporter ? 'add' : 'remove']('1001922198417711144');
-
-          // Contributor
-          serverMember.roles[siteMember.contributor ? 'add' : 'remove']('1001930991427928215');
-
           if (serverMember) {
+            promises.push(serverMember.roles[siteMember.supporter == 1 ? 'add' : 'remove']('1001922198417711144'));
+
+            promises.push(serverMember.roles[siteMember.contributor ? 'add' : 'remove']('1001930991427928215'));
+
             Database.set('members', {
               id: siteMember.member
             }, {
-              avatar: !siteMember.avatarSetting || siteMember.avatarSetting == 'discord' ? serverMember.displayAvatarURL() : siteMember.avatar
+              avatar: !siteMember.avatarSetting || siteMember.avatarSetting == 'discord' ? serverMember.displayAvatarURL() : siteMember.avatar,
               serverMember: true
             });
           } else {
@@ -50,7 +48,6 @@ const client = new Client({
         }
 
         Promise.allSettled(promises).then(() => {
-
           process.exit(0);
         });
       });
