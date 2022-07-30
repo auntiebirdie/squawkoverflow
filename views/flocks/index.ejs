@@ -25,6 +25,7 @@
                 <h3>
                   <%= flock.name %>
                 </h3>
+                <span class="ms-3 text-muted"><small><%= flock.totals.birdypets %> BirdyPet<%= flock.totals.birdypets == 1 ? '' : 's' %></small></span>
               </div>
               <div class="col-12 col-lg-3 text-end">
                 <a class="feature-flock <%= flock.id == loggedInUser.featuredFlock ? "featured" : "" %> btn btn-light" role="button" data-id="<%= flock.id %>">

@@ -9,7 +9,8 @@
         <h3>
           <a href="/flocks/<%= flock.id %>"><%= flock.name %></a>
         </h3>
-        <p class="m-0"><%= flock.description %></p>
+        <span class="ms-3 text-muted"><small><%= flock.totals.birdypets %> BirdyPet<%= flock.totals.birdypets == 1 ? '' : 's' %></small></span>
+        <p class="m-0 mt-3"><%= flock.description %></p>
       </div>
     </div>
     <% } %>

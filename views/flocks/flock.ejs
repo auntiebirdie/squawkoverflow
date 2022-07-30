@@ -19,8 +19,12 @@
   </div>
  <% } %>
 
+  <%- include('../partials/pagination.ejs') %>
+
   <div id="lazyLoader" class="row g-0" data-endpoint="aviary" data-params='{"flock":"<%= flock.id %>","include":["memberData"],"memberData":"<%= locals.loggedInUser ? loggedInUser.id : "" %>","member":"<%= member.id %>"}'></div>
 
-  <%- include('../scripts/lazyloader.ejs') %>
+  <%- include('../partials/pagination.ejs') %>
+
+  <%- include('../scripts/lazyloader.ejs', { paginate : currentPage, noun: 'birdypet' }) %>
 
 <%- include('../footer.ejs') %>

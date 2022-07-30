@@ -92,30 +92,34 @@ module.exports = async (req, res) => {
             await bird.set({
               'commonName': commonName
             });
-
-            await bird.fetch({
-              include: ['alternateNames']
-            });
-
-            var promises = [];
-
-            for (let i = 0, len = bird.alternateNames.length; i < len; i++) {
-              if (!alternateNames.find((alternate) => alternate.name == bird.alternateNames[i].name && alternate.lang == bird.alternateNames[i].lang)) {
-                promises.push(Database.query('DELETE FROM species_names WHERE species = ? AND name = ? AND lang = ?', [req.body.id, bird.alternateNames[i].name, bird.alternateNames[i].lang]));
-              }
-            }
-
-            for (let i = 0, len = alternateNames.length; i < len; i++) {
-              if (alternateNames[i].name != "") {
-                promises.push(Database.query('INSERT IGNORE INTO species_names VALUES (?, ?, ?)', [req.body.id, alternateNames[i].name, alternateNames[i].lang]));
-              }
-            }
-
-            await Promise.all(promises);
           }
         } else {
+          req.body.id = req.body.scientificName;
+
           await bird.create(req.body);
         }
+        await bird.fetch({
+          include: ['alternateNames']
+        });
+
+        var promises = [];
+
+        for (let i = 0, len = bird.alternateNames.length; i < len; i++) {
+          if (!alternateNames.find((alternate) => alternate.name == bird.alternateNames[i].name && alternate.lang == bird.alternateNames[i].lang)) {
+            promises.push(Database.query('DELETE FROM species_names WHERE species = ? AND name = ? AND lang = ?', [bird.id, bird.alternateNames[i].name, bird.alternateNames[i].lang]));
+          }
+        }
+
+        for (let i = 0, len = alternateNames.length; i < len; i++) {
+          if (alternateNames[i].name != "") {
+            promises.push(Database.query('INSERT IGNORE INTO species_names VALUES (?, ?, ?)', [bird.id, alternateNames[i].name, alternateNames[i].lang]));
+          }
+        }
+
+        promises.push(Database.query('INSERT IGNORE INTO species_names VALUES (?, ?, ?)', [bird.id, bird.commonName, 'en']));
+        promises.push(Database.query('INSERT IGNORE INTO species_names VALUES (?, ?, ?)', [bird.id, bird.scientificName, 'zz']));
+
+        await Promise.all(promises);
       }
 
       res.json(bird.id);

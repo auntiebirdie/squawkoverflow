@@ -81,7 +81,8 @@ router.get('/:member/flocks', async (req, res) => {
   });
 
   let flocks = await API.call('flocks', 'GET', {
-    id: req.params.member
+    id: req.params.member,
+    include: ['totals']
   });
 
   res.render('members/flocks', {

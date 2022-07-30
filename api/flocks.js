@@ -4,7 +4,7 @@ const Database = require('../helpers/database.js');
 module.exports = async (req, res) => {
   switch (req.method) {
     case "GET":
-      var flocks = await Flocks.all(req.query.id);
+      var flocks = await Flocks.all(req.query.id, { include: ['totals'] });
 
       res.json(flocks);
       break;

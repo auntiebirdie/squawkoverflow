@@ -17,11 +17,11 @@ module.exports = (req, res) => {
             case 'discord':
               const {
                 Client,
-                Intents
+                GatewayIntentBits
               } = require('discord.js');
 
               const client = new Client({
-                intents: [Intents.FLAGS.GUILD_MEMBERS]
+                intents: [GatewayIntentBits.GuildMembers]
               });
 
               client.login(secrets.DISCORD.BOT_TOKEN);

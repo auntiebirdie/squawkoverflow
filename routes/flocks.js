@@ -43,6 +43,7 @@ router.get('/:flock/manage', Middleware.isLoggedIn, async (req, res) => {
     flocks: member.flocks,
     allFamilies: await API.call('families', 'GET'),
     families: member.families.map((family) => family.name),
+    currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
     searchFields: [{
       id: 'commonName',
@@ -76,6 +77,7 @@ router.get('/:flock', async (req, res) => {
     flock: flock,
     allFamilies: await API.call('families', 'GET'),
     families: flock.families,
+    currentPage: (req.query.page || 1) * 1,
     sidebar: 'filters',
     searchFields: [{
       id: 'commonName',
