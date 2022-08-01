@@ -439,6 +439,10 @@ img {
   position: relative;
 }
 
+.modal-body .birdypet {
+  height: 150px;
+}
+
 .birdypet h6 {
   position: absolute;
   bottom: 0;

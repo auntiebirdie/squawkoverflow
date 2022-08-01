@@ -1,0 +1,81 @@
+  <div id="modal_wishlistGift" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Gift BirdyPet</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+          <button id="memberButton" type="button" class="btn btn-success">Send Gift!</button>
+        </div>
+      </div>
+    </div>    
+  </div>
+
+  <script>
+    var modal_wishlistGift = new bootstrap.Modal(document.getElementById('modal_wishlistGift'));
+    var triggered;
+
+    $('#modal_wishlistGift').on('show.bs.modal', function (event) {
+      triggered = event.relatedTarget;
+
+      $('.modal-body', modal_wishlistGift._element).addClass('loadingData').html('');
+
+      API.call('aviary', 'GET', {
+        bird: triggered.getAttribute('data-bird')
+      }, (birdypets) => {
+        let content = '<div class="row">';
+        let selected = false;
+
+        for (let birdypet of birdypets.results) {
+          content += `<div class="birdypet-container col-6 col-md-4 d-flex align-items-stretch data-id="${birdypet.id}">`;
+            content += '<div class="w-100 pb-3 px-2">';
+              content += `<div class="h-100 card ${selected ? '' : 'border-primary'}">`;
+               content += '<div>';
+                 content += `<div class="bg-white lazy birdypet" data-bg="${birdypet.variant.image}" data-id="${birdypet.id}"></div>`;
+                 content += `<h6 class="p-1 bg-white birdypets text-center">${birdypet.friendship > 0 ? birdypet.friendshipMeter : ''}</h6>`;
+               content += '</div>';
+               content += '<div class="card-body text-center">';
+                 content += `<h6>${birdypet.nickname ? birdypet.nickname : birdypet.bird.commonName}</h6>`;
+               content += '</div>';
+             content += '</div>';
+           content += '</div>';
+          content += '</div>';
+
+          if (!selected)
+            selected = true;
+        }
+
+       content += '</div>';
+
+        $('.modal-body', modal_wishlistGift._element).removeClass('loadingData').html(content);
+
+        lazyLoadInstance.update();
+      });
+    }).on('click', '.card', function (event) {
+      $('.card.border-primary', modal_wishlistGift._element).removeClass('border-primary');
+
+      event.currentTarget.classList.add('border-primary');
+    }).on('click', '.btn-success', function (event) {
+      if (!event.target.classList.contains('disabled')) {
+        $('.btn-success', modal_wishlistGift._element).addClass('disabled');
+        $('.modal-body', modal_wishlistGift._element).addClass('loadingData');
+
+        API.call('gift', 'POST', {
+          member: '<%= member.id %>',
+          birdypet: $('.card.border-primary .birdypet', modal_wishlistGift._element).attr('data-id')
+        }, (birdypet) => {
+          if ($('.birdypet', modal_wishlistGift._element).length < 2) {
+            // update source
+            triggered.classList.add('d-none');
+          }
+
+          $('.btn-success', modal_wishlistGift._element).removeClass('disabled');
+          modal_wishlistGift.hide();
+        });
+      }
+    });
+  </script>

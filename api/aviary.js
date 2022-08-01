@@ -3,6 +3,10 @@ const BirdyPet = require('../models/birdypet.js');
 const Search = require('../helpers/search.js');
 
 module.exports = async (req, res) => {
+  if (!req.query.member) {
+    req.query.member = req.query.loggedInUser;
+  }
+
   Search.query('birdypet', req.query).then((response) => {
     var promises = [];
 

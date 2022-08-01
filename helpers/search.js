@@ -73,6 +73,13 @@ class Search {
           break;
       }
 
+      if (input.bird) {
+        if (kind == 'birdypet') {
+          filters.push('species.id = ?');
+          params.push(input.bird);
+        }
+      }
+
       if (input.search) {
         var exactMatch = input.search.match(/^\"(.*)\"$/);
         let searchFields = {

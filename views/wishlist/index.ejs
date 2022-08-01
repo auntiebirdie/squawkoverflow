@@ -30,6 +30,10 @@
     <%- include('../partials/pagination.ejs') %>
 
     <%- include('../scripts/lazyloader.ejs', { template: '../templates/wishlist.ejs', paginate: currentPage }) %>
+
+    <% if (locals.loggedInUser && loggedInUser.id != member.id) { %>
+      <%- include('../partials/wishlistModal.ejs') %>
+    <% } %>
   <% } else { %>
     <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>
       <p class="text-center"><em>You haven't added any birds to your wishlist yet!  You can do so by visiting <a href="/birdypedia">the Birdypedia</a> and clicking on the heart icons of birds you want!</em></p>
