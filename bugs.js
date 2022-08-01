@@ -20,16 +20,7 @@ app.use(async function(req, res, next) {
     });
   }
 
-  res.locals.siteMenu = [{
-    "icon": "🏠",
-    "label": "Home",
-    "href": "https://squawkoverflow.com"
-  }, {
-    "icon": "💬",
-    "label": "Discord",
-    "href": "https://discord.com/invite/h87wansdg2",
-    "newWindow": true
-  }];
+  res.locals.HOST = secrets.HOST;
 
   next();
 });

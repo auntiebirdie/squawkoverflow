@@ -130,19 +130,19 @@
         <ul>
          <% if (locals.loggedInUser) { %>
           <li class="nav-item pb-2 ms-2">
-            <a href="/hatch" class="nav-link">
+            <a href="<%= locals.HOST %>/hatch" class="nav-link">
               <span class="icon d-inline-block fs-5">🥚</span>
               <span class="d-block label">Hatch Eggs</span>
             </a>
           </li>
           <li class="nav-item pb-2 ms-2">
-            <a href="/freebirds" class="nav-link">
+            <a href="<%= locals.HOST %>/freebirds" class="nav-link">
               <span class="icon d-inline-block fs-5">🐣</span>
               <span class="d-block label">Free Birds</span>
             </a>
           </li>
           <li class="nav-item pb-2 ms-2">
-            <a href="/exchange" class="nav-link">
+            <a href="<%= locals.HOST %>/exchange" class="nav-link">
               <span class="icon d-inline-block fs-5">🤝</span>
               <span class="d-block label">Exchange</span>
              <% if (loggedInUser.exchangeData) { %>
@@ -152,13 +152,13 @@
           </li>
          <% } %>
           <li class="nav-item pb-2 ms-2">
-            <a href="/birdypedia" class="nav-link">
+            <a href="<%= locals.HOST %>/birdypedia" class="nav-link">
               <span class="icon d-inline-block fs-5">📚</span>
               <span class="d-block label">Birdypedia</span>
             </a>
           </li>
           <li class="nav-item pb-2 ms-2">
-            <a href="/members" class="nav-link">
+            <a href="<%= locals.HOST %>/members" class="nav-link">
               <span class="icon d-inline-block fs-5">👥</span>
               <span class="d-block label">Members</span>
             </a>
@@ -167,62 +167,62 @@
             <hr>
 	  </li>
          <% if (locals.loggedInUser) { %>
-	  <li class="nav-item pb-2">
-            <a href="/members/<%= loggedInUser.id %>" class="nav-link">
+          <li class="nav-item pb-2">
+            <a href="<%= locals.HOST %>/members/<%= loggedInUser.id %>" class="nav-link">
               <span class="icon d-inline-block fs-4">
                 <img src="<%= loggedInUser.avatar %>" class="rounded p-2" onerror="missingMemberAvatar(this)">
               </span>
               <span class="ms-1"><%= loggedInUser.username %></span>
             </a>
-	  </li>
+          </li>
           <li class="nav-item pb-2 ms-2">
-            <a href="/aviary/<%= loggedInUser.id %>" class="nav-link">
+            <a href="<%= locals.HOST %>/aviary/<%= loggedInUser.id %>" class="nav-link">
               <span class="icon d-inline-block fs-5">🐦</span>
-	      <span class="d-block label">Aviary</span>
-	    </a>
-	  </li>
-	  <li class="nav-item pb-2 ms-2">
-            <a href="/wishlist/<%= loggedInUser.id %>" class="nav-link">
+              <span class="d-block label">Aviary</span>
+            </a>
+          </li>
+          <li class="nav-item pb-2 ms-2">
+            <a href="<%= locals.HOST %>/wishlist/<%= loggedInUser.id %>" class="nav-link">
               <span class="icon d-inline-block fs-5">❤️</span>
               <span class="d-block label">Wishlist</span>
             </a>
           </li>
-	  <li class="nav-item pb-2 ms-2">
-            <a href="/flocks" class="nav-link">
+          <li class="nav-item pb-2 ms-2">
+            <a href="<%= locals.HOST %>/flocks" class="nav-link">
               <span class="icon d-inline-block fs-5">🏘️</span>
               <span class="d-block label">Flocks</span>
             </a>
-	  </li>
-	  <li class="nav-item pb-2 ms-2">
-            <a href="/notifications" class="nav-link">
+          </li>
+          <li class="nav-item pb-2 ms-2">
+            <a href="<%= locals.HOST %>/notifications" class="nav-link">
               <span class="icon d-inline-block fs-5">🔔</span>
               <span class="d-block label">Notifications</span>
              <% if (loggedInUser.notificationCount) { %>
-	     <strong class="ms-2 bg-primary text-dark p-2 badge"><%= loggedInUser.notificationCount > 100 ? '100+' : loggedInUser.notificationCount %></strong>
+             <strong class="ms-2 bg-primary text-dark p-2 badge"><%= loggedInUser.notificationCount > 100 ? '100+' : loggedInUser.notificationCount %></strong>
              <% } %>
             </a>
-	  </li>
-	  <li class="nav-item pb-2 ms-2">
-            <a href="/settings" class="nav-link">
+          </li>
+          <li class="nav-item pb-2 ms-2">
+            <a href="<%= locals.HOST %>/settings" class="nav-link">
               <span class="icon d-inline-block fs-5">⚙️</span>
               <span class="d-block label">Settings</span>
             </a>
-	  </li>
+          </li>
           <li class="my-2 ms-3 pb-2">
             <hr>
           </li>
           <li class="nav-item pb-2 ps-4">
-            <a href="/logout">
+            <a href="<%= locals.HOST %>/logout">
               Log Out
             </a>
           </li>
-	 <% } else { %>
-	  <li class="nav-item pb-2 ps-4">
-            <a href="/login">
+         <% } else { %>
+          <li class="nav-item pb-2 ps-4">
+            <a href="<%= locals.HOST %>/login">
               Log In / Sign Up
-	    </a>
-	  </li>
-	 <% } %>
+            </a>
+          </li>
+         <% } %>
           <li class="my-2 ms-3 pb-2">
             <hr>
           </li>
@@ -247,20 +247,20 @@
              <% } %>
             </a>
           </li>
-	  <li class="nav-item pb-2 ms-2">
-            <a href="/faq" class="nav-link" target="_blank">
+          <li class="nav-item pb-2 ms-2">
+            <a href="<%= locals.HOST %>/faq" class="nav-link" target="_blank">
               <span class="icon d-inline-block fs-5">❔</span>
               <span class="d-block label">FAQ</span>
             </a>
-	  </li>
-	 <% if (locals.loggedInUser) { %>
-	  <li class="nav-item pb-2 ms-2">
+          </li>
+         <% if (locals.loggedInUser) { %>
+          <li class="nav-item pb-2 ms-2">
             <a href="https://bugs.squawkoverflow.com" class="nav-link" target="_blank">
               <span class="icon d-inline-block fs-5">🐛</span>
-	      <span class="d-block label">Report a Bug</span>
-	    </a>
-	  </li>
-	 <% } %>
+              <span class="d-block label">Report a Bug</span>
+            </a>
+          </li>
+         <% } %>
         </ul>
       </nav>
     </div>

@@ -34,6 +34,7 @@ app.use(async function(req, res, next) {
   }
 
   res.locals.isMobile = req.useragent.isMobile;
+  res.locals.HOST = secrets.HOST;
 
   if (req.session.user) {
     res.locals.loggedInUser = await API.call('member', 'GET', {
@@ -45,8 +46,6 @@ app.use(async function(req, res, next) {
     });
 
     if (res.locals.loggedInUser) {
-      res.locals.HOST = secrets.HOST;
-
       // computers are bad at random so this helps keep it from triggering too often
       if (chance.bool({
           likelihood: 10
