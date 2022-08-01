@@ -439,7 +439,7 @@ img {
   position: relative;
 }
 
-.modal-body .birdypet {
+#modal_wishlistGift .birdypet {
   height: 150px;
 }
 
