@@ -25,6 +25,9 @@
         if (bird.variants.length > 1) {
           birdDisplay.innerHTML = bird.variants.map(function (variant) { return '<div data-id="' + variant.id + '" class="lazy birdypet mini checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" data-bg="' + variant.image + '"></div>'; }).join("");
         }
+        else if (bird.variants[0].style === -1) {
+          birdDisplay.innerHTML = `<div class="small"><a href="/faq#missing-images" target="_blank">(Where's the birdy?)</a></div>`;
+        }
         else {
           birdDisplay.style.display = 'none';
         }

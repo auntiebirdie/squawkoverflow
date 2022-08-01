@@ -44,6 +44,15 @@ router.get('/', async (req, res) => {
       `
     },
     {
+	    slug: 'missing-images',
+	    question: 'Why are some birds just silhouettes?',
+	    answer: `
+	      <p>SQUAWK is still in its early stages of development, like an awkward baby bird that's not ready to leave the nest yet!  We are trying to find art for every species and currently have over 60% of the BirdyPedia filled in with art, but we opted to have all species available even without art found for them yet.</p>
+
+	      <p>Once art is located and added to the site, your BirdyPet will automatically upgrade to use it—think of it like a mystery surprise!</p>
+	    `
+    },
+    {
       slug: 'flock-management',
       question: 'How do I organize my aviary into flocks?',
       answer: `
