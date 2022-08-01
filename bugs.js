@@ -1,6 +1,7 @@
 const API = require('./helpers/api.js');
 const express = require('express');
 const app = express();
+const secrets = require('./secrets.json');
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
