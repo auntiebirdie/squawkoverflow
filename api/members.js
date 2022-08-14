@@ -20,33 +20,11 @@ module.exports = (req, res) => {
       });
     });
   } else {
-    return Members.all().then(async (members) => {
+    return Members.all(req.query).then(async (members) => {
       let promises = [];
 
       if (!req.query.include?.includes('self') && req.query.loggedInUser) {
         members = members.filter((member) => member.id != req.query.loggedInUser);
-      }
-
-      if (req.query.privacy) {
-        if (!Array.isArray(req.query.privacy)) {
-          req.query.privacy = [req.query.privacy];
-        }
-
-        for (let privacy of req.query.privacy) {
-          members = members.filter((member) => {
-            return !member.settings[`privacy_${privacy}`];
-          });
-        }
-      }
-
-      if (req.query.search) {
-        try {
-          let substrRegex = new RegExp(req.query.search, 'i');
-
-          members = members.filter((member) => {
-            return substrRegex.test(member.username);
-          });
-        } catch (err) {}
       }
 
       if (req.query.include?.includes('birdData')) {
