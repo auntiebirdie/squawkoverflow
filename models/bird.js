@@ -25,6 +25,7 @@ class Bird {
           species: data.id,
           source: "n/a",
           credit: "n/a",
+          style: -1,
           full: 0,
           special: 0
         }).then(() => {
