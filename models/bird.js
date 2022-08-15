@@ -109,6 +109,8 @@ class Bird {
               return a.full ? -1 : 1;
             } else if (a.style != b.style) {
               return a.style == 1 ? -1 : 1;
+            } else if (a.credit == "Renata Grieco" || b.credit == "Renata Grieco") {
+              return a.credit == "Renata Grieco" ? -1 : 1;
             } else if (a.credit != b.credit) {
               return (a.credit || "").localeCompare(b.credit);
             } else if (a.subspecies != b.subspecies) {
