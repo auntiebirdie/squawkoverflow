@@ -40,7 +40,7 @@ class Variant {
         bird = params.bird;
       }
 
-      if (this.source.startsWith('https://birdsoftheworld') || this.source == "n/a") {
+      if (this.style == -1) {
         switch (bird.family) {
           case "Acanthisittidae":
           case "Acanthizidae":

@@ -61,7 +61,7 @@
             $('input[name="flocks"][value="' + flock + '"]').prop('checked', true);
           }
 
-            $('.birdypets', modal_editBirdyPet._element).html(birdypet.bird.variants.map(function (variant) { return '<div data-id="' + variant.id + '" class="' + (variant.id == birdypet.variant.id ? 'border border-4 border-primary' : '') + ' lazy birdypet mini checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" data-bg="' + variant.image + '"></div>'; }).join(""));
+            $('.birdypets', modal_editBirdyPet._element).html(birdypet.bird.variants.filter((variant) => birdypet.variant.special ? variant.id == birdypet.variant.id : !variant.special ).map(function (variant) { return '<div data-id="' + variant.id + '" class="' + (variant.id == birdypet.variant.id ? 'border border-4 border-primary' : '') + ' lazy birdypet mini checkmark' + (variant.hatched >= 2 ? 2 : variant.hatched) + '" data-bg="' + variant.image + '"></div>'; }).join(""));
 
             lazyLoadInstance.update();
 
