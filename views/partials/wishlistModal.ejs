@@ -25,7 +25,8 @@
       $('.modal-body', modal_wishlistGift._element).addClass('loadingData').html('');
 
       API.call('aviary', 'GET', {
-        bird: triggered.getAttribute('data-bird')
+        bird: triggered.getAttribute('data-bird'),
+        member: '<%= loggedInUser.id %>'
       }, (birdypets) => {
         let content = '<div class="row">';
         let selected = false;
