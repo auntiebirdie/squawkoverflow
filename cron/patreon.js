@@ -4,9 +4,12 @@ const Database = require('../helpers/database.js');
 const https = require('https');
 
 (async () => {
-  let siteMembers = await Database.query('SELECT members.id `member`, members.avatar, member_auth.id FROM members LEFT JOIN member_auth ON (members.id = member_auth.member AND member_auth.provider = "patreon")');
+  +
+  let siteMembers = await Database.query('SELECT members.id `member`, members.username, members.supporter, member_auth.id FROM members LEFT JOIN member_auth ON (members.id = member_auth.member AND member_auth.provider = "patreon")');
 
   function fetchPatrons(url, patrons = []) {
+    let confirmedPatrons = [];
+
     return new Promise((resolve, reject) => {
       var request = https.request(url, {
           method: 'GET',
@@ -44,6 +47,8 @@ const https = require('https');
       let siteMember = siteMembers.find((siteMember) => siteMember.id == patron.relationships.user.data.id);
 
       if (siteMember) {
+        confirmedPatrons.push(siteMember.member);
+
         if (patron.attributes.patron_status == 'active_patron') {
           await Promise.all([
             Database.query('UPDATE members SET supporter = 1 WHERE id = ? AND supporter < 5', [siteMember.member]),
@@ -58,6 +63,15 @@ const https = require('https');
       } else if (patron.attributes.patron_status == 'active_patron') {
         console.log(`https://www.patreon.com/user/creators?u=${patron.relationships.user.data.id}`);
       }
+    }
+
+    let expiredPatrons = siteMembers.filter((siteMember) => siteMember.supporter == 1 && !confirmedPatrons.includes(siteMember.member));
+
+    for (let siteMember of expiredPatrons) {
+      await Promise.all([
+        Database.query('UPDATE members SET supporter = 0 WHERE id = ? AND supporter < 5', [siteMember.member]),
+        Database.query('DELETE FROM member_badges WHERE `member` = ? AND `badge` = "patreon"', [siteMember.member])
+      ]);
     }
 
     process.exit(0);
