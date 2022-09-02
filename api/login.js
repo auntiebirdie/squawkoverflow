@@ -136,13 +136,13 @@ module.exports = async (req, res) => {
             } else {
               if (membership && membership.attributes?.patron_status == 'active_patron') {
                 await Promise.all([
-                  Database.query('UPDATE members SET supporter = 1 WHERE supporter < 5', [member.id]),
+                  Database.query('UPDATE members SET supporter = 1 WHERE supporter < 5 AND id = ?', [member.id]),
                   Database.query('INSERT INTO member_auth VALUES (?, "patreon", ?)', [member.id, response.data.id]),
                   Database.query('INSERT IGNORE INTO member_badges VALUES (?, "patreon", NOW())', [member.id])
                 ]);
               } else {
                 await Promise.all([
-                  Database.query('UPDATE members SET supporter = 0 WHERE supporter < 5', [member.id]),
+                  Database.query('UPDATE members SET supporter = 0 WHERE supporter < 5 AND id = ?', [member.id]),
                   Database.query('INSERT INTO member_auth VALUES (?, "patreon", ?)', [member.id, response.data.id])
                 ]);
               }
