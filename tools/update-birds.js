@@ -85,7 +85,7 @@ const secrets = require('../secrets.json');
           }
 
           if (updated.length > 0) {
-            changelog.species['updated'].push(species.id, updated);
+            changelog.species['updated'].push([species.id, updated]);
           }
 
           updatedSpecies.push(species.id);
@@ -118,10 +118,14 @@ const secrets = require('../secrets.json');
         }
       }
 
+      console.log("\r\n");
+
       let missingSpecies = existingSpecies.filter((species) => !updatedSpecies.includes(species));
 
       console.log('*** MISSING ***');
       console.log(missingSpecies);
+
+      process.exit(0);
     });
   });
 })();
