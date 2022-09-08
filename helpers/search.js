@@ -314,7 +314,7 @@ class Search {
         query += ' GROUP BY species.id';
       } else if (kind == 'incubator') {
         query += ' GROUP BY variants.id';
-      } else if (kind == 'birdypet') {
+      } else if (kind == 'birdypet' || kind == 'freebird') {
         query += ' GROUP BY birdypets.id';
       }
 
