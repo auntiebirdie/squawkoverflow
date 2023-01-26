@@ -119,7 +119,7 @@ Database.prototype.set = function(type, identifiers, data) {
 
     for (let d in data) {
       values.push(`\`${d}\` = ?`);
-      params.push(data[d]);
+      params.push(data[d].trim ? data[d].trim() : data[d]);
     }
 
     query += values.join(', ');
