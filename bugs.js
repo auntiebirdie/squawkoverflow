@@ -61,9 +61,9 @@ app.post('/', (req, res) => {
       idList: '616863d9071f1c88feb22769'
     }, async function(err, card) {
       if (member) {
-        const Webhook = require('./api/helpers/webhook.js');
+        const Webhook = require('./helpers/webhook.js');
 
-        var bugs = require('./api/data/bugs.json');
+        var bugs = require('./data/bugs.json');
 
         Webhook('bugs', {
           content: " ",
