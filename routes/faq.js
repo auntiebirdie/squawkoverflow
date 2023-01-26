@@ -96,7 +96,7 @@ router.get('/', async (req, res) => {
 		  slug: 'wishlist',
 		  question: 'What is the wishlist for? What is the purpose of "want" vs. "need"?',
 		  answer: `
-                    <p>The purpose of the wishlist and the "want" vs. "need" intesnity includes:
+                    <p>The purpose of the wishlist and the "want" vs. "need" intensity includes:
 
 		    <ul>
 		      <li>When hatching, if an egg can hatch a bird on your wishlist, there will be an indicator on the egg. This indicator will also display whether or not it's a bird you want or one you need, so you can prioritize hatching eggs that have your absolute favorite birds in them.</li>
