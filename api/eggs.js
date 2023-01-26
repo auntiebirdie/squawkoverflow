@@ -39,6 +39,7 @@ module.exports = (req, res) => {
     if (req.query.loggedInUser) {
       for (let result of results) {
         result.memberTotal = await Counters.get('eggs', req.query.loggedInUser, result.adjective);
+	      result.memberTotal = Math.min(result.memberTotal, result.numSpecies);
       }
     }
 

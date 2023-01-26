@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
           var params = [];
 
           if (member.settings.general_removeCompleted) {
-            query += ' WHERE adjective NOT IN (SELECT id FROM counters WHERE counters.id = adjectives.adjective AND counters.member = ? AND counters.count = adjectives.numSpecies';
+            query += ' WHERE adjective NOT IN (SELECT id FROM counters WHERE counters.id = adjectives.adjective AND counters.member = ? AND counters.count >= adjectives.numSpecies';
             params.push(member.id);
 
             if (eventEggs.length > 0 && !member.settings.general_removeEvent) {
@@ -61,6 +61,7 @@ module.exports = async (req, res) => {
 
             if (member.supporter) {
               egg.numHatched = await Counters.get('eggs', member.id, egg.adjective);
+              egg.numHatched = Math.min(egg.numHatched, egg.numSpecies);
             }
 
             egg.isNeeded = await Database.count('wishlist', {
