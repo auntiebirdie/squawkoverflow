@@ -54,7 +54,7 @@ class Bird {
       const identifier = `species:${this.id}`;
 
       Redis.sendCommand(['HGETALL', identifier]).then(async (result) => {
-        if (!result.family) {
+        if (!result?.family) {
           result = await Database.getOne('species', {
             id: this.id
           }).then(async (bird) => {

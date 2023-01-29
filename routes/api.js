@@ -29,7 +29,6 @@ router.all('/*', async (req, res) => {
     } catch (err) {}
   }
 
-
   data.files = req.files;
 
   var log = {
@@ -42,7 +41,7 @@ router.all('/*', async (req, res) => {
   };
 
   try {
-    var endpoint = req.path.match(/\/?(\b[A-Za-z]+\b)/)[1];
+    var endpoint = req.path.match(/\/?(\b[A-Za-z\/]+\b)/)[1];
 
     log.req.url = req.path;
   } catch (err) {

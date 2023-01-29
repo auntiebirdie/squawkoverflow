@@ -9,6 +9,7 @@
     "@google-cloud/logging-bunyan": "^4.1.0",
     "@google-cloud/pubsub": "^3.0.1",
     "@google-cloud/storage": "^5.20.5",
+    "axios": "^1.2.5",
     "bunyan": "^1.8.15",
     "chance": "^1.1.8",
     "discord-oauth2": "^2.10.0",

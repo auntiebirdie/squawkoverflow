@@ -51,7 +51,7 @@ class Birds {
 
   all() {
     return new Promise((resolve, reject) => {
-      Database.get('species').then((birds) => {
+      Database.query('SELECT species.*, taxonomy.parent AS `order` FROM species JOIN taxonomy ON (taxonomy.name = species.family)').then((birds) => {
         resolve(birds);
       });
     });

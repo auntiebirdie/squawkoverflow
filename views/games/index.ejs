@@ -1,0 +1,20 @@
+<%- include('../header.ejs') %>
+
+  <%- include('../partials/page-title.ejs', { title: "Games" }) %>
+
+  <div class="text-center w-75 m-auto mb-5">
+    <p>Enrichment is an important part of keeping birds happy! It's one of the best ways to increase your friendship level with your Birdy Buddy—whether or not you win, their happiness goes up.</p>
+    <p><em>More games are on the way! This feature is under active development.</em></p>
+  </div>
+
+  <div class="row">
+     <% for (let game of games) { %>
+      <div class="col-6 col-md-3 text-center">
+        <img src="https://storage.googleapis.com/squawkoverflow/icons/<%= game.id %>.png" class="w-75 m-2">
+        <h4><a href="/games/<%= game.id %>"><%= game.name %></a></h4>
+        <p><%= game.description %></p>
+      </div>
+     <% } %>
+  </div>
+
+<%- include('../footer.ejs') %>
