@@ -307,10 +307,10 @@ class Search {
       Database.query(query, params).then(async (meta) => {
         let totalResults = meta.length;
 
-        if (input.search) {
+        if (input.search && totalResults > 0) {
           query += ' HAVING relevancy >= ' + (meta[0].relevancy * .75);
 
-		totalResults = meta.filter((metum) => metum.relevancy > (meta[0].relevancy * .75)).length;
+	  totalResults = meta.filter((metum) => metum.relevancy > (meta[0].relevancy * .75)).length;
         }
 
         query += ' ORDER BY ';
