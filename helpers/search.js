@@ -81,28 +81,21 @@ class Search {
       }
 
       if (input.search) {
-        var exactMatch = input.search.match(/^\"(.*)\"$/);
         let searchFields = {
           'commonName': 'species_names.name',
           'scientificName': 'species_names.name',
           'nickname': 'birdypets.nickname'
         };
 
-        if (exactMatch) {
-          input.search = exactMatch[1];
-        }
-
         if (kind == 'artist') {
           select.push('MATCH(artists.name) AGAINST (?) relevancy');
           params.unshift(input.search);
-          filters.push(exactMatch ? 'artists.name = ?' : 'MATCH(artists.name) AGAINST (?)');
+          filters.push('MATCH(artists.name) AGAINST (?)');
           params.push(input.search);
         } else if (kind == 'member') {
-          if (!exactMatch) {
-            select.push('MATCH(members.username) AGAINST (?) relevancy');
-            params.unshift(input.search);
-          }
-          filters.push(exactMatch ? 'members.username = ?' : 'MATCH(members.username) AGAINST (?)');
+          select.push('MATCH(members.username) AGAINST (?) + MAX(IF(members.username = ?, 10, 0)) relevancy');
+          params.unshift(input.search, input.search);
+          filters.push('MATCH(members.username) AGAINST (?)');
           params.push(input.search);
         } else {
           tables.push('JOIN species_names ON (species.id = species_names.species)');
@@ -112,17 +105,10 @@ class Search {
             filters.push('species_names.lang != "zz"');
           }
 
-          if (exactMatch) {
-            if (input.searchField != "commonName") {
-              filters.push(`${searchFields[input.searchField]} = ?`);
-              params.push(input.search);
-            }
-          } else {
-            select.push(`MAX(MATCH(${searchFields[input.searchField] || 'species.commonName'}) AGAINST (?)) relevancy`);
-            params.unshift(input.search);
-            filters.push(`MATCH(${searchFields[input.searchField] || 'species.commonName'}) AGAINST (?)`);
-            params.push(input.search);
-          }
+          select.push(`MAX(MATCH(${searchFields[input.searchField] || 'species.commonName'}) AGAINST (?)) + MAX(IF(${searchFields[input.searchField]} = "black-headed gull", 10, 0)) relevancy`);
+          params.unshift(input.search, input.search);
+          filters.push(`MATCH(${searchFields[input.searchField] || 'species.commonName'}) AGAINST (?)`);
+          params.push(input.search);
         }
       }
 
@@ -318,10 +304,10 @@ class Search {
         query += ' GROUP BY birdypets.id';
       }
 
-      Database.query('SELECT COUNT(*) total' + (input.search && !exactMatch ? ', MAX(relevancy) relevancy' : '') + ' FROM (' + query + ') AS query', params).then(async (meta) => {
+      Database.query('SELECT COUNT(*) total' + (input.search ? ', MAX(relevancy) relevancy' : '') + ' FROM (' + query + ') AS query', params).then(async (meta) => {
         let totalResults = meta[0].total;
 
-        if (input.search && !exactMatch) {
+        if (input.search) {
           query += ' HAVING relevancy >= ' + (meta[0].relevancy * .75);
 
           totalResults = await Database.query('SELECT COUNT(*) total FROM (' + query + ') AS query', params).then((meta) => { return meta[0].total; });
