@@ -243,7 +243,11 @@ class Member {
             break;
           case 'hasWishlist':
             this.hasWishlist = await Database.getOne('wishlist', {
-              member: this.id
+              member: this.id,
+	      intensity: {
+		      comparator: '>',
+		      value: 0
+	      }
             });
             break;
           case 'lastActive':

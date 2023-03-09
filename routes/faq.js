@@ -24,6 +24,14 @@ router.get('/', async (req, res) => {
       `
     },
     {
+      slug: 'inaccurate',
+      question: 'I came across some art on the site that is not scientifically accurate. Why is it being used?',
+      answer: `
+        <p>SQUAWKoverflow is not intended to be a scientific institute. Sometimes we use art that is outdated but still pretty, or because accurate art is hard to find. Or because we really like cockatiels on rollerskates.</p>
+	<p>It is perfectly okay to ignore variants because they're not accurate. Your aviary is yours to design, so fill it with what brings you the most joy!</p>
+      `
+	  },
+    {
       slug: 'bug',
       question: 'I found an error or issue with the site, what do I do?',
       answer: `
@@ -121,7 +129,7 @@ router.get('/', async (req, res) => {
 
 		    <p>If you are NOT the artist and the work is not Public Domain or Creative Commons, it would be greatly appreciated if the link you include has information on how we could get in touch with the artist.  Otherwise, we won't use non-PD/non-CC art without permission.</p>
 
-		    <p>Currently, we accept submissions through <a href="https://discord.com/invite/h87wansdg2" target="_blank">our Discord server</a> or by sending an email to <a href="mailto:contribute@squawkoverflow.com">contribute@squawkoverflow.com</a>.</p>
+		    <p>Currently, we accept submissions through <a href="https://discord.com/invite/hDz3SmERSF" target="_blank">our Discord server</a> or by sending an email to <a href="mailto:contribute@squawkoverflow.com">contribute@squawkoverflow.com</a>.</p>
 		  `
 	  }
   ];

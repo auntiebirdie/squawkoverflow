@@ -16,7 +16,7 @@
     <div id="whatthebird-families" class="row justify-content-center hidden"></div>
 
     <div id="result" class="row hidden">
-      <div class="col-6">
+      <div id="result-answer" class="col-6">
         <h5>This bird is...</h5>
         <h3 id="result-bird"></h3>
         <h6 id="result-taxonomy"></h6>
@@ -24,7 +24,7 @@
         <a href="/games/whatthebird" class="btn btn-dark mt-4">🔀 Play again!</a>
       </div>
 
-      <div id="result-birdypet" class="col-6 position-relative">
+      <div id="result-birdypet" class="col-6 position-relative hidden">
         <img src="" class="birdypet">
         <span class="birdymessage border border-1 border-secondary"></span>
         <p class="friendshipMeter"></p>
@@ -88,9 +88,15 @@
               $('#result-bird').html(`${gameData.bird.commonName} (<em>${gameData.bird.id}</em>)`);
               $('#result-taxonomy').html(`${gameData.bird.order} › ${gameData.bird.family}`);
 
-              $('.birdypet', '#result-birdypet').attr('src', birdypet.variant.image);
-              $('.friendshipMeter', '#result-birdypet').html(birdypet.friendshipMeter);
-              $('.birdymessage', '#result-birdypet').html(`That was so much fun! Can we play again? <small><em>(+${friendship} Friendship)</em></small>`);
+              if (birdypet.variant) {
+                $('#result-birdypet').removeClass('hidden');
+                $('.birdypet', '#result-birdypet').attr('src', birdypet.variant.image);
+                $('.friendshipMeter', '#result-birdypet').html(birdypet.friendshipMeter);
+                $('.birdymessage', '#result-birdypet').html(`That was so much fun! Can we play again? <small><em>(${birdypet.friendship == 100 ? 'Max Friendship' : `+${friendship} Friendship`})</em></small>`);
+              }
+              else {
+                $('#result-answer').removeClass('col-6');                
+              }
 
               $('#game').removeClass('loadingData');
             });

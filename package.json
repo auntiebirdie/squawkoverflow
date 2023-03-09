@@ -9,7 +9,7 @@
     "@google-cloud/logging-bunyan": "^4.1.0",
     "@google-cloud/pubsub": "^3.0.1",
     "@google-cloud/storage": "^5.20.5",
-    "axios": "^1.2.5",
+    "axios": "^1.2.6",
     "bunyan": "^1.8.15",
     "chance": "^1.1.8",
     "discord-oauth2": "^2.10.0",
@@ -31,6 +31,7 @@
     "redis": "^4.1.0",
     "short-uuid": "^4.2.0",
     "trace-unhandled": "^2.0.1",
-    "tumblr.js": "^3.0.0"
+    "tumblr.js": "^3.0.0",
+    "xlsx": "^0.18.5"
   }
 }

@@ -44,7 +44,6 @@ module.exports = async (req, res) => {
         return results.sort(() => Math.random() - 0.5);
       });
 
-      // AXIOS call to macaulaylibrary
       res.json(gameData);
       break;
     default:

@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
           await member.birdyBuddy.fetch();
         }
 
-        return res.json(member.birdyBuddy);
+        return res.json(member.birdyBuddy || {});
     }
   });
 };

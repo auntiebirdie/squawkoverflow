@@ -29,4 +29,17 @@ for (let game of Games) {
   });
 }
 
+router.get('/memory', (req, res) => {
+	res.render(`games/memory`, {
+		title: 'Memory',
+		page: 'games',
+		sidebar: 'games/memory',
+		game: {
+			id: 'memory',
+			name: 'Memory',
+			description: 'Can you pair the bird and its match?'
+		}
+	});
+});
+
 module.exports = router;

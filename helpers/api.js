@@ -1,6 +1,6 @@
 require('trace-unhandled/register');
 
-const Logger = require('./logger.js');
+const Database = require('../helpers/database.js');
 
 exports.call = (endpoint, method = "GET", data = {}, headers = {}) => {
   return new Promise(async (resolve, reject) => {
@@ -21,6 +21,10 @@ exports.call = (endpoint, method = "GET", data = {}, headers = {}) => {
     try {
       require(`../api/${endpoint}.js`)(options, {
         json: (response) => {
+          if (options.loggedInUser) {
+            Database.query('UPDATE members SET lastActivityAt = NOW() WHERE id = ?', [options.loggedInUser]);
+          }
+
           resolve(response);
         },
         ok: () => {

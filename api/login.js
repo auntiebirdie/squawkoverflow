@@ -208,7 +208,8 @@ module.exports = async (req, res) => {
             }
           }).then(async (data) => {
             await member.set({
-              lastLoginAt: new Date()
+              lastLoginAt: new Date(),
+              lastActivityAt: new Date()
             });
 
             return res.json(data.id);

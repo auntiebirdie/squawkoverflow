@@ -23,6 +23,32 @@
     <% } %>
 
   <% if (member.hasWishlist) { %>
+    <% if (locals.loggedInUser && loggedInUser.id == member.id) { %>
+      <div class="text-center">
+        <p>
+          <em>Click on an individual bird's wishlist indicator to cycle through the following options:</em>
+        </p>
+        <p>
+          <span class="me-3">🤍  Not on wishlist</span>
+          <span class="me-3">❤️  Wanted</span>
+          <span class="me-3">🌟 Needed</span>
+        </p>
+
+        <p class="small">
+          <em>(<a href="/faq#wishlist">Wait, what is the wishlist and want vs. need for?</a>)</em>
+        </p>
+      </div>
+
+      <div id="gottaWishlistEmAll" class="float-none float-md-end mt-5 mt-md-0 text-center">
+        Add all birds on this page to: &nbsp;
+        <span>
+          <button data-action="want" class="btn btn-dark btn-sm" role="button">❤️</button>
+          <button data-action="need" class="btn btn-dark btn-sm" role="button">🌟</button>
+          <button data-action="none" class="btn btn-dark btn-sm" role="button">🤍</button>
+        </span>
+      </div>
+    <% } %>
+
     <%- include('../partials/pagination.ejs') %>
 
     <div id="lazyLoader" class="row g-0" data-endpoint="wishlist" data-params='{"id":"<%= member.id  %>"}'></div>
@@ -58,6 +84,26 @@
                 button.innerText = data.error;
                 button.disabled = true;
               }
+          });
+        }
+      });
+
+      $('#gottaWishlistEmAll').on('click', '.btn', function (event) {
+        let button = event.target;
+        let species = [];
+
+        if (!button.style.opacity) { 
+          $('.btn', '#gottaWishlistEmAll').css('opacity', .5);
+          $('.wishlist-heart', '#lazyLoader').css('opacity', .5).html('⏳');
+
+          $('.wishlist-heart', '#lazyLoader').map((index, btn) => species.push(btn.getAttribute('data-id')));
+
+          API.call('wishlist', 'POST', {
+            action: button.getAttribute('data-action'),
+            species: species,
+          }, function (data) {
+            $('.wishlist-heart', '#lazyLoader').css('opacity', '').html(data);
+            $('.btn', '#gottaWishlistEmAll').css('opacity', '');
           });
         }
       });

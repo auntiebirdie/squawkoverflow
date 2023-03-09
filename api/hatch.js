@@ -11,7 +11,14 @@ module.exports = async (req, res) => {
     return res.error(401);
   }
 
-  var eventEggs = await Database.query('SELECT adjective FROM events JOIN event_variants ON (events.id = event_variants.event) JOIN variants ON (event_variants.variant = variants.id) JOIN species_adjectives ON (variants.species = species_adjectives.species) WHERE NOW() BETWEEN events.startDate AND events.endDate').then((results) => results.map((result) => result.adjective));
+  var isEvent = await Database.query('SELECT id FROM events WHERE NOW() BETWEEN events.startDate AND events.endDate');
+
+  if (isEvent.id) {
+    var eventEggs = await Database.query('SELECT adjective FROM events JOIN event_variants ON (events.id = event_variants.event) JOIN variants ON (event_variants.variant = variants.id) JOIN species_adjectives ON (variants.species = species_adjectives.species) WHERE NOW() BETWEEN events.startDate AND events.endDate').then((results) => results.map((result) => result.adjective));
+  } else {
+    eventEggs = [];
+  }
+
 
   switch (req.method) {
     case "GET":
@@ -37,7 +44,7 @@ module.exports = async (req, res) => {
           var params = [];
 
           if (member.settings.general_removeCompleted) {
-            query += ' WHERE adjective NOT IN (SELECT id FROM counters WHERE counters.id = adjectives.adjective AND counters.member = ? AND counters.count >= adjectives.numSpecies';
+            query += ' WHERE adjective NOT IN (SELECT id FROM counters WHERE counters.id = adjectives.adjective AND counters.member = ? AND counters.count = adjectives.numSpecies';
             params.push(member.id);
 
             if (eventEggs.length > 0 && !member.settings.general_removeEvent) {
@@ -52,11 +59,18 @@ module.exports = async (req, res) => {
 
           var eggs = await Database.query(query, params);
 
+          if (isEvent.id == "aprilfools" && !member.settings.general_removeEvent && chance.bool({
+              likelihood: 25
+            })) {
+            eggs[0] = { adjective : 'foolish', numSpecies : 2, icon: 'eggs/special/aprilfools.png' };
+            eggs = chance.shuffle(eggs);
+          }
+
           for (let egg of eggs) {
             egg.isEvent = eventEggs.includes(egg.adjective) && !member.settings.general_removeEvent;
 
             if (egg.isEvent) {
-              egg.icon = 'eggs/special/easter.png';
+              egg.icon = `eggs/special/${isEvent.id}.png`;
             }
 
             if (member.supporter) {
