@@ -304,13 +304,13 @@ class Search {
         query += ' GROUP BY birdypets.id';
       }
 
-      Database.query('SELECT COUNT(*) total' + (input.search ? ', MAX(relevancy) relevancy' : '') + ' FROM (' + query + ') AS query', params).then(async (meta) => {
-        let totalResults = meta[0].total;
+      Database.query(query, params).then(async (meta) => {
+        let totalResults = meta.length;
 
         if (input.search) {
           query += ' HAVING relevancy >= ' + (meta[0].relevancy * .75);
 
-          totalResults = await Database.query('SELECT COUNT(*) total FROM (' + query + ') AS query', params).then((meta) => { return meta[0].total; });
+		totalResults = meta.filter((metum) => metum.relevancy > (meta[0].relevancy * .75)).length;
         }
 
         query += ' ORDER BY ';
