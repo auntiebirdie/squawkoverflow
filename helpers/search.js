@@ -323,6 +323,8 @@ class Search {
 
         if (input.search && !exactMatch) {
           query += ' HAVING relevancy >= ' + (meta[0].relevancy * .75);
+
+          totalResults = await Database.query('SELECT COUNT(*) total FROM (' + query + ') AS query', params).then((meta) => { return meta[0].total; });
         }
 
         query += ' ORDER BY ';
