@@ -105,7 +105,7 @@ class Search {
             filters.push('species_names.lang != "zz"');
           }
 
-          select.push(`MAX(MATCH(${searchFields[input.searchField] || 'species.commonName'}) AGAINST (?)) + MAX(IF(${searchFields[input.searchField]} = "black-headed gull", 10, 0)) relevancy`);
+          select.push(`MAX(MATCH(${searchFields[input.searchField] || 'species.commonName'}) AGAINST (?)) + MAX(IF(${searchFields[input.searchField]} = "?", 10, 0)) relevancy`);
           params.unshift(input.search, input.search);
           filters.push(`MATCH(${searchFields[input.searchField] || 'species.commonName'}) AGAINST (?)`);
           params.push(input.search);
