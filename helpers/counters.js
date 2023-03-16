@@ -3,10 +3,54 @@ const Database = require('./database.js');
 class Counters {
   get(type, member, id) {
     return new Promise((resolve, reject) => {
-      Database.getOne('counters', { member: member, type: type, id: id || "" }, { select: ['count'] }).then( (result) => {
+      Database.getOne('counters', {
+        member: member,
+        type: type,
+        id: id || ""
+      }, {
+        select: ['count']
+      }).then((result) => {
         resolve(result ? result.count : 0);
       });
     });
+  }
+
+  async incr(member, species, variant, birdypet) {
+    let promises = [];
+    let isNewSpecies = await this.get("birdypedia", member, species).then((count) => count == 0);
+
+    // Increment total number of birds in aviary
+    promises.push(Database.query('INSERT INTO counters VALUES (?, "aviary", "total", 1) ON DUPLICATE KEY UPDATE `count` = `count` + 1', [member]));
+    // Increment total number of this variant in aviary
+    promises.push(Database.query('INSERT INTO counters VALUES (?, "variant", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` + 1', [member, variant]));
+    // Increment total number of this species in aviary
+    promises.push(Database.query('INSERT INTO counters VALUES (?, "species", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` + 1', [member, species]));
+
+    if (isNewSpecies) {
+      // Insert record of species into birdypedia; this shouldn't have a duplicate key but just to be safe...
+      promises.push(Database.query('INSERT INTO counters VALUES (?, "birdypedia", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count`', [member, species]));
+      // Increment the count for the family total
+      promises.push(Database.query('INSERT INTO counters SELECT ?, "family", species.family, 1 FROM species WHERE species.id = ? ON DUPLICATE KEY UPDATE `count` = `count` + 1', [member, species]));
+      // Increment the number for the egg totals
+      promises.push(Database.query('INSERT INTO counters SELECT ?, "eggs", species_adjectives.adjective, 1 FROM species_adjectives WHERE species = ? ON DUPLICATE KEY UPDATE `count` = `count` + 1', [member, species]));
+      // Unlock the discovery for the Birdypedia entry
+      promises.push(Database.query('INSERT IGNORE INTO member_unlocks VALUES (?, ?, ?, NOW())', [member, species, birdypet]));
+    }
+
+    return Promise.allSettled(promises);
+  }
+
+  decr(member, species, variant) {
+    let promises = [];
+
+    // Decrement total number of birds in aviary
+    promises.push(Database.query('INSERT INTO counters VALUES (?, "aviary", "total", 1) ON DUPLICATE KEY UPDATE `count` = `count` - 1', [member]));
+    // Decrement total number of this variant in aviary
+    promises.push(Database.query('INSERT INTO counters VALUES (?, "variant", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` - 1', [member, variant]));
+    // Decrement total number of this species in aviary
+    promises.push(Database.query('INSERT INTO counters VALUES (?, "species", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` - 1', [member, species]));
+
+    return Promise.allSettled(promises); 
   }
 }
 

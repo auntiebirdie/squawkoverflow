@@ -1,4 +1,3 @@
-const Cache = require('../helpers/cache.js');
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
@@ -6,8 +5,6 @@ const Redis = require('../helpers/redis.js');
 const Variant = require('./variant.js');
 
 class BirdyPet {
-  static schema = {};
-
   constructor(id) {
     this.id = id;
   }
@@ -24,19 +21,6 @@ class BirdyPet {
         this.bird = this.variant.bird;
         this.member = data.member;
 
-        var member = null;
-        var newSpecies = null;
-
-        if (data.member) {
-          const Member = require('./member.js');
-
-          member = new Member(data.member);
-
-          await member.fetch();
-
-          newSpecies = await Counters.get('birdypedia', member.id, variant.bird.id);
-        }
-
         Database.create('birdypets', {
           id: this.id,
           member: data.member,
@@ -47,39 +31,27 @@ class BirdyPet {
           hatchedAt: data.hatchedAt || new Date(),
           addedAt: data.addedAt || new Date()
         }).then(async () => {
-          var promises = [];
+          let promises = [];
 
           if (data.member) {
-            if (newSpecies == 0) {
-              promises.push(Cache.increment(`species:${member.id}`, 'counters JOIN species ON (counters.id = species.id)', {
-                member: member.id,
-                type: 'birdypedia',
-                count: {
-                  comparator: '>',
-                  value_trusted: 0
-                }
-              }));
-            }
+            const Member = require('./member.js');
 
-            promises.push(Cache.increment(`species:${member.id}:${variant.bird.id}`, 'birdypets JOIN variants ON (birdypets.variant = variants.id)', {
-              'member': member.id,
-              'species': variant.bird.id
-            }));
+            let member = new Member(data.member);
 
-            promises.push(Cache.increment(`aviary:${member.id}`, 'birdypets', {
-              'member': member.id
-            }));
+            await member.fetch();
+
+            promises.push(Counters.incr(member.id, this.bird.id, this.variant.id, this.id));
 
             if (member.settings.general_updateWishlistWANT) {
-              promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 1', [variant.bird.id, member.id]));
+              promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 1', [this.bird.id, member.id]));
             }
 
             if (member.settings.general_updateWishlistNEED) {
-              promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 2', [variant.bird.id, member.id]));
+              promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 2', [this.bird.id, member.id]));
             }
           }
 
-          Promise.all(promises).then(() => {
+          Promise.allSettled(promises).then(() => {
             resolve(this);
           });
         });
@@ -91,7 +63,6 @@ class BirdyPet {
 
   fetch(params = {}) {
     return new Promise((resolve, reject) => {
-      // TODO - add redis
       Database.getOne('birdypets', {
         id: this.id
       }).then(async (birdypet) => {
@@ -156,48 +127,8 @@ class BirdyPet {
 
         await member.fetch();
 
-        var newSpecies = await Counters.get('birdypedia', data.member, this.bird.id);
-
-        if (newSpecies == 0) {
-          promises.push(Cache.increment(`species:${data.member}`, 'counters JOIN species ON (counters.id = species.id)', {
-            member: data.member,
-            type: 'birdypedia',
-            count: {
-              comparator: '>',
-              value_trusted: 0
-            }
-          }));
-        }
-
-        promises.push(Cache.increment(`aviary:${data.member}`, 'birdypets', {
-          member: data.member
-        }));
-
-        promises.push(Cache.increment(`species:${data.member}:${this.bird.id}`, 'birdypets JOIN variants ON (birdypets.variant = variants.id)', {
-          member: data.member,
-          species: this.bird.id
-        }));
-
-        promises.push(Cache.increment(`variant:${data.member}:${this.variant.id}`, 'birdypets', {
-          member: data.member,
-          variant: this.variant.id
-        }));
-
-        if (this.member) {
-          promises.push(Cache.decrement(`aviary:${this.member}`, 'birdypets', {
-            member: this.member
-          }));
-
-          promises.push(Cache.decrement(`species:${this.member}:${this.bird.id}`, 'birdypets JOIN variants ON (birdypets.variant = variants.id)', {
-            member: this.member,
-            species: this.bird.id
-          }));
-
-          promises.push(Cache.decrement(`variant:${this.member}:${this.variant.id}`, 'birdypets', {
-            member: this.member,
-            variant: this.variant.id
-          }));
-        }
+        await Counters.decr(this.member, variant.bird.id, variant.id, this.id);
+        await Counters.incr(data.member, variant.bird.id, variant.id, this.id);
 
         data.addedAt = new Date();
         data.friendship = 0;
@@ -237,6 +168,11 @@ class BirdyPet {
           }
         });
       } else if (data.variant && data.variant != this.variant.id) {
+        // Increment total number of new variant in aviary
+        promises.push(Database.query('INSERT INTO counters VALUES (?, "variant", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` + 1', [member, data.variant]));
+        // Decrement total number of old variant in aviary
+        promises.push(Database.query('INSERT INTO counters VALUES (?, "variant", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` - 1', [member, this.variant.id]));
+
         await Database.query('SELECT * FROM exchanges WHERE id IN (SELECT exchange FROM exchange_birdypets WHERE birdypet = ? AND statusA + statusB BETWEEN 0 AND 3)', [this.id]).then(async (exchanges) => {
           for (let exchange of exchanges) {
             promises.push(Database.query('UPDATE exchange_birdypets SET variant = ? WHERE exchange = ? AND birdypet = ?', [data.variant, exchange.id, this.id]));
@@ -297,17 +233,7 @@ class BirdyPet {
         Database.delete('birdypet_flocks', {
           birdypet: this.id
         }),
-        Cache.decrement(`aviary:${this.member}`, 'birdypets', {
-          member: this.member
-        }),
-        Cache.decrement(`species:${this.member}:${this.bird.id}`, 'birdypets JOIN variants ON (birdypets.variant = variants.id)', {
-          member: this.member,
-          species: this.bird.id
-        }),
-        Cache.decrement(`variant:${this.member}:${this.variant.id}`, 'birdypets', {
-          member: this.member,
-          variant: this.variant.id
-        }),
+        Counters.decr(this.member, this.bird.id, this.variant.id),
         Database.query('SELECT * FROM exchanges WHERE id IN (SELECT exchange FROM exchange_birdypets WHERE birdypet = ? AND statusA + statusB BETWEEN 0 AND 3)', [this.id]).then(async (exchanges) => {
           for (let exchange of exchanges) {
             let toUpdate = {};
