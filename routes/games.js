@@ -8,6 +8,10 @@ const Games = [{
   id: "whatthebird",
   name: "What the Bird?!",
   description: "Given a random picture of a bird, can you guess its order and family?"
+}, {
+  id: "memory",
+  name: "Memory",
+  description: "Can you pair the bird and its match?"
 }];
 
 router.get('/', (req, res) => {
@@ -28,18 +32,5 @@ for (let game of Games) {
     });
   });
 }
-
-router.get('/memory', (req, res) => {
-	res.render(`games/memory`, {
-		title: 'Memory',
-		page: 'games',
-		sidebar: 'games/memory',
-		game: {
-			id: 'memory',
-			name: 'Memory',
-			description: 'Can you pair the bird and its match?'
-		}
-	});
-});
 
 module.exports = router;

@@ -6,10 +6,17 @@
     <p><%= game.description %></p>
   </div>
 
-  <div id="game" class="text-center row mx-0 px-0">
-    <div id="boxes"></div>
+  <div id="game" class="text-center mx-0 px-0 justify-content-center">
+    <div id="boxes" class="row col-md-6 m-auto"></div>
 
-    <div id="result-birdypet" class="col-6 position-relative hidden">
+
+    <div id="result" class="row hidden">
+      <div id="result-text" class="col-md-6 mb-5 pb-3">
+        <p>You found all the birdies!</p>
+        <p><a href="/games/memory" class="btn btn-dark mt-4">🔀 Play again!</a></p>
+      </div>
+
+    <div id="result-birdypet" class="col-md-6 position-relative hidden">
       <img src="" class="birdypet">
       <span class="birdymessage border border-1 border-secondary"></span>
       <p class="friendshipMeter"></p>
@@ -22,61 +29,78 @@
     $(document).ready(function () {
       $('#game').addClass('loadingData');
 
-      // Yes, the raw data is returned, so you can easily "cheat"... if that's fun for you, go for it!
+      // Yes, you can easily "cheat"... if that's fun for you, go for it!
       API.call('games/memory', 'GET', {},
         function(response) {
           gameData = response;
 
+          for (let birdy of gameData) {
+            $('#boxes').append(`<div class="col-3"><button class="memory-btn btn-secondary my-3"><span class="hidden">${birdy.emoji}</span></button></div>`);
+          }
 
           $('#game').removeClass('loadingData');
         }
       );
 
-      $('#game').on('click', '.btn-secondary', processClick);
+      $('#boxes').on('click', '.btn-secondary:not(.disabled)', processClick);
 
       function processClick (e) {
         let btn = e.target;
-        let value = btn.innerHTML;
-        let type = btn.getAttribute('data-type');
 
-        btn.classList.remove('btn-secondary');
-        btn.disabled = true;
+        $(btn).blur();
+        $(btn).addClass('disabled');
+ 
+        $('span', btn).removeClass('hidden');
 
-        if (value == gameData.bird[type]) {
-          btn.classList.add('btn-success');
+        let revealedBirds = $('span:not(.hidden)', '#boxes .btn-secondary');
 
-          if (type == "order") {
-            $('#whatthebird-families').removeClass('hidden');
+        if (revealedBirds.length > 1) {
+          $('button', '#boxes').addClass('disabled');
+
+          if (revealedBirds[0].innerHTML == revealedBirds[1].innerHTML) {
+            $(revealedBirds[0].parentNode).addClass('btn-success').removeClass('btn-secondary');
+            $(revealedBirds[1].parentNode).addClass('btn-success').removeClass('btn-secondary');
+
+            $('button', '#boxes').removeClass('disabled');
+
+            if ($('.btn-secondary', '#boxes').length == 0) {
+              $('#game').addClass('loadingData');
+
+              const friendship = Math.round(Math.random() * (5 - 1) + 1);
+
+              API.call('birdybuddy', 'POST', { friendship : friendship }, function (birdypet) {
+                $('#boxes').hide();
+
+                $('#result').removeClass('hidden');
+
+                if (birdypet.variant) {
+                  $('#result-birdypet').removeClass('hidden');
+                  $('.birdypet', '#result-birdypet').attr('src', birdypet.variant.image);
+                  $('.friendshipMeter', '#result-birdypet').html(birdypet.friendshipMeter);
+                  $('.birdymessage', '#result-birdypet').html(`That was so much fun! Can we play again? <small><em>(${birdypet.friendship == 100 ? 'Max Friendship' : `+${friendship} Friendship`})</em></small>`);
+                }
+                else {
+                  $('#result-text').removeClass('col-md-6');
+                }
+
+                $('#game').removeClass('loadingData');
+              });
+            }
           }
           else {
-            $('#game').addClass('loadingData');
+            $(revealedBirds[0].parentNode).addClass('btn-danger');
+            $(revealedBirds[1].parentNode).addClass('btn-danger');
 
-            const friendship = Math.round(Math.random() * (5 - 1) + 1);
+            setTimeout(function () {
+              $(revealedBirds[0].parentNode).removeClass('btn-danger');
+              $(revealedBirds[1].parentNode).removeClass('btn-danger');
 
-            API.call('birdybuddy', 'POST', { friendship : friendship }, function (birdypet) {
-              $('#whatthebird-orders, #whatthebird-families').remove();
+               $(revealedBirds[0]).addClass('hidden');
+               $(revealedBirds[1]).addClass('hidden');
 
-              $('#result').removeClass('hidden');
-
-              $('#result-bird').html(`${gameData.bird.commonName} (<em>${gameData.bird.id}</em>)`);
-              $('#result-taxonomy').html(`${gameData.bird.order} › ${gameData.bird.family}`);
-
-              if (birdypet.variant) {
-                $('#result-birdypet').removeClass('hidden');
-                $('.birdypet', '#result-birdypet').attr('src', birdypet.variant.image);
-                $('.friendshipMeter', '#result-birdypet').html(birdypet.friendshipMeter);
-                $('.birdymessage', '#result-birdypet').html(`That was so much fun! Can we play again? <small><em>(${birdypet.friendship == 100 ? 'Max Friendship' : `+${friendship} Friendship`})</em></small>`);
-              }
-              else {
-                $('#result-answer').removeClass('col-6');                
-              }
-
-              $('#game').removeClass('loadingData');
-            });
+               $('button', '#boxes').removeClass('disabled');
+            }, 2000);
           }
-        }
-        else {
-          btn.classList.add('btn-danger');
         }
       }
     });

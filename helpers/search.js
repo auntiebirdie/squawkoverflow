@@ -302,9 +302,9 @@ class Search {
         query += ' GROUP BY variants.id';
       } else if (kind == 'birdypet' || kind == 'freebird') {
         query += ' GROUP BY birdypets.id';
+      } else if (kind == 'member') {
+	      query += ' GROUP BY members.id';
       }
-
-	    console.log(query, params);
 
       Database.query(query, params).then(async (meta) => {
         let totalResults = meta.length;

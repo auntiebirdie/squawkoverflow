@@ -1,4 +1,4 @@
-const chance = require('chance');
+const chance = require('chance').Chance();
 
 module.exports = async (req, res) => {
   switch (req.method) {
@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
         "🦜", "🦃", "🐓", "🦢", "🐦", "🦆", "🐧", "🦉", "🦩", "🦚"
       ];
 
-      chance.pickset(birdMoji, 6).forEach((bird) => {
+      birdMoji.forEach((bird) => {
         gameData.push({
           emoji: bird,
           state: 'hidden'
