@@ -24,10 +24,10 @@
 </head>
 
 <body class="<%= locals.error ? "full-image-background" : "" %> <%= !locals.sidebar ? "no-sidebar" : "" %>">
-  <span class="mobile-nav-toggle d-md-none bg-secondary text-primary">≡</span>
+  <span class="mobile-nav-toggle d-xl-none bg-secondary text-primary">≡</span>
 
  <% if (locals.sidebar) { %>
-  <span class="mobile-sidebar-toggle d-lg-none bg-secondary text-primary"><%- sidebar == "filters" ? "&#128269;&#xFE0E;" : "ℹ" %></span>
+  <span class="mobile-sidebar-toggle d-xxl-none bg-secondary text-primary"><%- sidebar == "filters" ? "&#128269;&#xFE0E;" : "ℹ" %></span>
  <% } %>
 
   <div id="navbar" class="bg-dark">

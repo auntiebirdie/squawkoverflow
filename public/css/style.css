@@ -215,7 +215,7 @@ img {
   font-size: 80%;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1399px) {
   #sidebar {
     right: -300px;
     overflow-y: auto;
@@ -238,7 +238,7 @@ img {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1199px) {
   #navbar {
     left: -300px;
   }
