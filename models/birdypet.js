@@ -1,3 +1,4 @@
+const Cache = require('../helpers/cache.js');
 const Counters = require('../helpers/counters.js');
 const Database = require('../helpers/database.js');
 const Redis = require('../helpers/redis.js');
@@ -40,7 +41,7 @@ class BirdyPet {
 
             await member.fetch();
 
-            promises.push(Counters.incr(member.id, this.bird.id, this.variant.id, this.id));
+            promises.push(Counters.increment(member.id, this.bird.id, this.variant.id, this.id));
 
             if (member.settings.general_updateWishlistWANT) {
               promises.push(Database.query('UPDATE wishlist SET intensity = 0 WHERE species = ? AND `member` = ? AND intensity = 1', [this.bird.id, member.id]));
@@ -127,8 +128,12 @@ class BirdyPet {
 
         await member.fetch();
 
-        await Counters.decr(this.member, variant.bird.id, variant.id, this.id);
-        await Counters.incr(data.member, variant.bird.id, variant.id, this.id);
+        if (this.member) {
+          await Counters.decrement(this.member, this.bird.id, this.variant.id, this.id);
+        }
+        if (data.member) {
+          await Counters.increment(data.member, this.bird.id, this.variant.id, this.id);
+        }
 
         data.addedAt = new Date();
         data.friendship = 0;
@@ -169,9 +174,17 @@ class BirdyPet {
         });
       } else if (data.variant && data.variant != this.variant.id) {
         // Increment total number of new variant in aviary
-        promises.push(Database.query('INSERT INTO counters VALUES (?, "variant", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` + 1', [member, data.variant]));
+        promises.push(Database.query('INSERT INTO counters VALUES (?, "variant", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` + 1', [this.member, data.variant]));
+        promises.push(Cache.increment(`species:${this.member}:${data.variant}`, 'birdypets JOIN variants ON (birdypets.variant = variants.id)', {
+          'member': this.member,
+          'species': this.bird.id
+        }));
         // Decrement total number of old variant in aviary
-        promises.push(Database.query('INSERT INTO counters VALUES (?, "variant", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` - 1', [member, this.variant.id]));
+        promises.push(Database.query('INSERT INTO counters VALUES (?, "variant", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` - 1', [this.member, this.variant.id]));
+        promises.push(Cache.decrement(`species:${this.member}:${this.variant.id}`, 'birdypets JOIN variants ON (birdypets.variant = variants.id)', {
+          'member': this.member,
+          'species': this.bird.id
+        }));
 
         await Database.query('SELECT * FROM exchanges WHERE id IN (SELECT exchange FROM exchange_birdypets WHERE birdypet = ? AND statusA + statusB BETWEEN 0 AND 3)', [this.id]).then(async (exchanges) => {
           for (let exchange of exchanges) {
@@ -217,7 +230,13 @@ class BirdyPet {
     return new Promise(async (resolve, reject) => {
       await this.fetch();
 
-      return Promise.all([
+      let promises = [];
+
+      if (this.member) {
+        promises.push(Counters.decrement(this.member, this.bird.id, this.variant.id));
+      }
+
+      promises.push(
         Database.set('birdypets', {
           id: this.id
         }, {
@@ -233,7 +252,6 @@ class BirdyPet {
         Database.delete('birdypet_flocks', {
           birdypet: this.id
         }),
-        Counters.decr(this.member, this.bird.id, this.variant.id),
         Database.query('SELECT * FROM exchanges WHERE id IN (SELECT exchange FROM exchange_birdypets WHERE birdypet = ? AND statusA + statusB BETWEEN 0 AND 3)', [this.id]).then(async (exchanges) => {
           for (let exchange of exchanges) {
             let toUpdate = {};
@@ -255,8 +273,10 @@ class BirdyPet {
 
           await Database.query('DELETE FROM exchange_birdypets WHERE birdypet = ?', [this.id]);
         }),
-        Redis.sendCommand(['DEL', `birdypet:${this.id}`]),
-      ]).then(resolve);
+        Redis.sendCommand(['DEL', `birdypet:${this.id}`])
+      );
+
+      Promise.allSettled([promises]).then(resolve);
     });
   }
 }

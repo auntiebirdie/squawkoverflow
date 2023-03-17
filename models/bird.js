@@ -1,5 +1,4 @@
 const Database = require('../helpers/database.js');
-const Cache = require('../helpers/cache.js');
 const Counters = require('../helpers/counters.js');
 const Redis = require('../helpers/redis.js');
 
