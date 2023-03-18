@@ -38,7 +38,6 @@
 
           let data = {
             bird: $('#memberSearch').attr('data-bird') || "",
-            sort: 'activeAt',
             <%- locals.include ? `include: ${JSON.stringify(include)},` : "" %>
             <%- locals.privacy ? `privacy: ${JSON.stringify(privacy)},` : "" %>
           };
@@ -85,7 +84,20 @@
             }
           });
 
-          asyncResults(matches.sort((a, b) => a.wishlisted == b.wishlisted ? a.owned - b.owned : b.wishlisted - a.wishlisted));
+          asyncResults(matches.sort((a, b) => {
+            if (a.wishlisted || a.owned) {
+              if (a.wishlisted == b.wishlisted && a.owned == b.owned) {
+                return new Date(b.lastActivityAt).getTime() - new Date(a.lastActivityAt).getTime()
+              }
+              else if (a.wishlisted != b.wishlisted) {
+                return b.wishlisted - a.wishlisted;
+              } else {
+                return a.owned - b.owned;
+              }
+            } else {
+              return a.username.localeCompare(b.username);
+            }
+          }));
         });
       },
       limit: Infinity,

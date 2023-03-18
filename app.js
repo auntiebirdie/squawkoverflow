@@ -35,6 +35,7 @@ app.use(async function(req, res, next) {
 
   res.locals.isMobile = req.useragent.isMobile;
   res.locals.HOST = secrets.HOST;
+  res.locals.event = await API.call('event', 'GET');
 
   if (req.session.user) {
     res.locals.loggedInUser = await API.call('member', 'GET', {
@@ -58,8 +59,6 @@ app.use(async function(req, res, next) {
           bugs: 1
         });
       }
-
-      res.locals.event = await API.call('event', 'GET');
     } else {
       delete req.session.user;
     }
