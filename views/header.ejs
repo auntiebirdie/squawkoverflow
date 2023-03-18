@@ -34,8 +34,11 @@
     <div class="pt-3 px-3 px-sm-0">
 
       <div class="ps-4 ms-1 ps-sm-0 ms-sm-0">
-        <img src="/img/SQUAWK.png" alt="logo" class="img-fluid d-none d-sm-block mb-2">
+        <img src="https://storage.googleapis.com/squawkoverflow/logo/SQUAWK<%= locals.event ? event.id : "" %>.png" alt="logo" class="img-fluid d-none d-sm-block mb-2">
 	<h2 class="text-center"><a href="/"><span class="text-primary">SQUAWK</span>overflow</a></h2>
+	<% if (locals.event) { %>
+	<h6 class="small text-center">Happy <%= event.name %>!</h4>
+	<% } %>
       </div>
 
       <nav class="nav-menu navbar">
