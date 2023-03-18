@@ -128,7 +128,9 @@ module.exports = async (req, res) => {
             include: ['memberData', 'variants']
           });
 
-          bird.variants = bird.variants.filter((variant) => isEventEgg ? variant.id == hatched.id : !variant.special);
+          if (bird.variants.filter((variant) => !variant.special).length > 0) {
+            bird.variants = bird.variants.filter((variant) => isEventEgg ? variant.id == hatched.id : !variant.special);
+	  }
 
           return res.json(bird);
         } else {

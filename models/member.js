@@ -251,7 +251,7 @@ class Member {
             });
             break;
           case 'lastActive':
-            let lastActive = Date.now() - Math.max(new Date(this.lastHatchAt).getTime(), new Date(this.lastLoginAt).getTime());
+            let lastActive = Date.now() - new Date(this.lastActivityAt).getTime();
 
             let days = lastActive / (1000 * 60 * 60 * 24);
 

@@ -16,7 +16,7 @@
     </div>    
   </div>
 
-  <%- include('../scripts/membersearch.ejs', { include : ['birdData'], privacy: ['gifts'] }) %>
+  <%- include('../scripts/membersearch.ejs', { include : ['birdData', 'lastActive'], privacy: ['gifts'] }) %>
 
   <script>
     var modal_giftBirdyPet = new bootstrap.Modal(document.getElementById('modal_giftBirdyPet'));
@@ -78,5 +78,21 @@
           }
         });
       }
+    });
+
+    let giftingPrefs = sessionStorage.getItem('giftingPrefs');
+
+    if (giftingPrefs) {
+      document.getElementById('member-wants').setAttribute('checked', giftingPrefs.wants);
+      document.getElementById('member-needs').setAttribute('checked', giftingPrefs.needs);
+      document.getElementById('member-active').setAttribute('checked', giftingPrefs.active);
+    }
+
+    $('#memberSearch').on('change', 'input[type="checkbox"]', function () {
+      let wants = document.getElementById('member-wants').checked;
+      let needs = document.getElementById('member-needs').checked;
+      let active = document.getElementById('member-active').checked;
+
+      sessionStorage.setItem('giftingPrefs', { wants, needs, active });
     });
   </script>
