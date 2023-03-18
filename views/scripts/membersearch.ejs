@@ -65,10 +65,10 @@
             }
 
             if (active) {
-              let twoMonthsAgo = new Date();
-              twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+              let activityCutoffo = new Date();
+              activityCutoff.setMonth(activityCutoff.getMonth() - 1);
 
-              results = results.filter((result) => new Date(result.lastActivityAt).getTime() >= twoMonthsAgo.getTime());
+              results = results.filter((result) => new Date(result.lastActivityAt).getTime() >= activityCutoff.getTime());
             }
           } catch (err) { }
 
