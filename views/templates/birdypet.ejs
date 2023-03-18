@@ -3,24 +3,30 @@
     <div class="h-100 card<% if (locals.page == 'gift') { %> ${<%= member.settings.privacy_gifts_unwishlisted == 1 %> && !model.bird.wishlisted ? 'disabled' : ''}<% } %>">
       <div class="birdypet-actions">
        <% if (locals.loggedInUser) { %>
-        <button class="wishlist-heart btn btn-sm btn-light" data-id="${model.bird.id}" role="button">
+        <button class="wishlist-heart btn btn-light" data-id="${model.bird.id}" role="button">
           ${model.bird.wishlisted ? (model.bird.wishlisted == 2 ? '🌟' : '❤️') : '🤍'}
         </button>
         <% if ((locals.page == 'aviary' && loggedInUser.id == member.id) || locals.page == 'gift') {%>
-         <button class="birdypet-edit btn btn-sm btn-light"
+         <button class="birdypet-edit btn btn-light"
              data-bs-toggle="modal"
              data-bs-target="#modal_editBirdyPet"
              data-id="${model.id}"
              role="button">
            ✏️
          </button>
-         <button class="btn btn-sm btn-light<% if (locals.page == 'gift') { %> ${<%= member.settings.privacy_gifts_unwishlisted == 1 %> && !model.bird.wishlisted ? 'disabled' : ''}<% } %>"
+         <button class="btn btn-light<% if (locals.page == 'gift') { %> ${<%= member.settings.privacy_gifts_unwishlisted == 1 %> && !model.bird.wishlisted ? 'disabled' : ''}<% } %>"
              data-bs-toggle="modal"
              data-bs-target="#modal_giftBirdyPet"
              data-bird="${model.bird.id}"
              data-id="${model.id}"
              role="button">
             🎁
+         </button>
+         <button class="btn btn-light"
+             data-action="release"
+             data-id="${model.id}"
+             role="button">
+            👋
          </button>
         <% } %>
        <% } %>

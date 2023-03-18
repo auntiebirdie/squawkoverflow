@@ -26,6 +26,36 @@
  <% if (locals.loggedInUser) { %>
   <%- include('../partials/editModal.ejs') %>
   <%- include('../partials/giftModal.ejs', { selectedMember : locals.page == 'gift' ? member : null }) %>
+
+  <script>
+    $(document).ready(() => {
+      $('#lazyLoader').on('click', '.birdypet-actions button[data-action]', (e) => {
+        var button = e.currentTarget;
+        var action = button.getAttribute('data-action');
+
+        if (!button.disabled) {
+          button.setAttribute('disabled', true);
+          button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+          switch (button.getAttribute('data-action')) {
+            case "release":
+              API.call('release', 'POST', {
+                birdypet : button.getAttribute('data-id')
+              },
+              function(data) {
+                button.innerHTML = '👋';
+                button.removeAttribute('disabled');
+                let birdypetContainer = $('.birdypet-container[data-id="' + button.getAttribute('data-id') + '"]');
+                birdypetContainer.css('opacity', .5).find('.birdypet-actions').remove();
+                birdypetContainer.find('a').removeAttr('href');
+              }
+            );
+            break;
+          }
+        }
+      });
+    });
+  </script>
  <% } %>
 
 <%- include('../footer.ejs') %>
