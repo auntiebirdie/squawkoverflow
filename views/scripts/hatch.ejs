@@ -18,8 +18,7 @@
 
         birdy.setAttribute('data-src', bird.variants[0].image);
         birdy.setAttribute('data-id', bird.variants[0].id);
-        $('a[data-action="gift"]', '#actions').attr('data-bird', bird.id);
-        $('a[data-action="gift"]', '#actions').attr('data-id', bird.variants[0].id);
+        $('#memberSearch').attr('data-bird', bird.id);
 
         var birdDisplay = document.getElementById('birdDisplay');
 
@@ -124,7 +123,6 @@
       }
     }); 
 
-/*
     let giftingPrefs = sessionStorage.getItem('giftingPrefs');
 
     if (giftingPrefs) {
@@ -138,6 +136,5 @@
 
       sessionStorage.setItem('giftingPrefs', { wants, needs });
     });
-*/
   });
 </script>
