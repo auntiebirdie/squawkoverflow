@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
 
 	var isEvent = await Database.query('SELECT id FROM events WHERE NOW() BETWEEN events.startDate AND events.endDate LIMIT 1');
 
-  if (isEvent.id) {
+  if (isEvent) {
     var eventEggs = await Database.query('SELECT adjectives.* FROM events JOIN event_variants ON (events.id = event_variants.event) JOIN variants ON (event_variants.variant = variants.id) JOIN species_adjectives ON (variants.species = species_adjectives.species) JOIN adjectives ON (adjectives.adjective = species_adjectives.adjective) WHERE NOW() BETWEEN events.startDate AND events.endDate ORDER BY RAND()');
   } else {
     eventEggs = [];
@@ -52,7 +52,7 @@ module.exports = async (req, res) => {
 
           var eggs = await Database.query(query, params);
 
-          if (isEvent.id && !member.settings.general_removeEvent && chance.bool({
+          if (isEvent && !member.settings.general_removeEvent && chance.bool({
               likelihood: 40
             })) {
 

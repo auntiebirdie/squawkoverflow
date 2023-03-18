@@ -10,7 +10,7 @@
   <div class="row">
      <% for (let game of games) { %>
       <div class="col-6 col-md-3 text-center">
-        <img src="https://storage.googleapis.com/squawkoverflow/icons/<%= game.id %>.png" class="w-75 m-2">
+        <a href="/games/<%= game.id %>"><img src="https://storage.googleapis.com/squawkoverflow/icons/<%= game.id %>.png" class="w-75 m-2"></a>
         <h4><a href="/games/<%= game.id %>"><%= game.name %></a></h4>
         <p><%= game.description %></p>
       </div>

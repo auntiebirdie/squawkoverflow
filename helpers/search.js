@@ -247,7 +247,9 @@ class Search {
               params.push(input.memberData || input.loggedInUser);
               break;
             case 'someone':
-              filters.push('species.id IN (SELECT a.species FROM wishlist a JOIN members b ON (a.member = b.id) WHERE intensity > 0 AND b.id NOT IN (SELECT `member` FROM member_settings WHERE setting = "privacy_gifts"))');
+              tables.push('JOIN wishlist ON (species.id = wishlist.species)');
+              filters.push('wishlist.member != "?" AND wishlist.intensity > 0 AND wishlist.member NOT IN (SELECT `member` FROM member_settings WHERE setting = "privacy_gifts")');
+              params.push(input.loggedInUser);
               break;
             case 'copied':
               filters.push('species.id IN (SELECT id FROM counters WHERE `member` = "freebirds" AND type = "species" AND `count` > 1)');
@@ -303,7 +305,7 @@ class Search {
       } else if (kind == 'birdypet' || kind == 'freebird') {
         query += ' GROUP BY birdypets.id';
       } else if (kind == 'member') {
-	      query += ' GROUP BY members.id';
+        query += ' GROUP BY members.id';
       }
 
       Database.query(query, params).then(async (meta) => {
@@ -312,7 +314,7 @@ class Search {
         if (input.search && totalResults > 0) {
           query += ' HAVING relevancy >= ' + (meta[0].relevancy * .75);
 
-	  totalResults = meta.filter((metum) => metum.relevancy > (meta[0].relevancy * .75)).length;
+          totalResults = meta.filter((metum) => metum.relevancy > (meta[0].relevancy * .75)).length;
         }
 
         query += ' ORDER BY ';
