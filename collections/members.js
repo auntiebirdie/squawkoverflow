@@ -29,17 +29,17 @@ class Members {
         'select': ['id'],
         'order': 'username'
       }).then((results) => {
-        Promise.all(results.map((result) => this.get(result.id, query))).then((results) => {
+        Promise.all(results.map((result) => this.get(result.id))).then((results) => {
           resolve(results);
         });
       });
     });
   }
 
-  get(id, query) {
+  get(id) {
     let Member = new this.model(id);
 
-    return Member.fetch(query);
+    return Member.fetch();
   }
 }
 

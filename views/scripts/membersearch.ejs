@@ -55,20 +55,12 @@
           try {
             let wants = document.getElementById('member-wants').checked;
             let needs = document.getElementById('member-needs').checked;
-            let active = document.getElementById('member-active').checked;
 
             if (wants && needs) {
               results = results.filter((result) => result.wishlisted > 0);
             }
             else if (wants || needs) {
               results = results.filter((result) => result.wishlisted == (wants ? 1 : 2));
-            }
-
-            if (active) {
-              let activityCutoffo = new Date();
-              activityCutoff.setMonth(activityCutoff.getMonth() - 1);
-
-              results = results.filter((result) => new Date(result.lastActivityAt).getTime() >= activityCutoff.getTime());
             }
           } catch (err) { }
 
@@ -86,10 +78,7 @@
 
           asyncResults(matches.sort((a, b) => {
             if (a.wishlisted || a.owned) {
-              if (a.wishlisted == b.wishlisted && a.owned == b.owned) {
-                return new Date(b.lastActivityAt).getTime() - new Date(a.lastActivityAt).getTime()
-              }
-              else if (a.wishlisted != b.wishlisted) {
+              if (a.wishlisted != b.wishlisted) {
                 return b.wishlisted - a.wishlisted;
               } else {
                 return a.owned - b.owned;
@@ -112,10 +101,6 @@
           var text = '<div class="px-1 py-2">';
 
           text += `<img src="${data.avatar}" class="rounded" width="42" onerror="missingMemberAvatar(this)"> ${data.username}`;
-
-          if (data.lastActive) {
-            text += `<div class="small ms-5">Last active: ${data.lastActive}</div>`;
-          }
 
           if (data.owned > 1) {
             text += `<div class="small ms-5"><span class="checkplus"></span> <em>Multiple in aviary</em></div>`;

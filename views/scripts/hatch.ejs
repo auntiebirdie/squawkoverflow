@@ -18,8 +18,7 @@
 
         birdy.setAttribute('data-src', bird.variants[0].image);
         birdy.setAttribute('data-id', bird.variants[0].id);
-        $('#gift-birdypet').attr('data-bird', bird.id);
-        $('#gift-birdypet').attr('data-id', bird.variants[0].id);
+        $('#memberSearch').attr('data-bird', bird.id);
 
         var birdDisplay = document.getElementById('birdDisplay');
 
@@ -79,7 +78,7 @@
       var button = e.currentTarget;
       var action = button.getAttribute('data-action');
 
-      if (!button.style.opacity && !button.disabled) { 
+      if (!button.style.opacity && !button.disabled && (action != "gift" || selectedMember)) { 
         actions.classList.add('loadingData');
         actions.innerHTML = "";
 
@@ -110,8 +109,32 @@
               }
             );
             break;
+          case 'gift':
+            API.call('gift', 'POST', {
+                member : selectedMember.id,
+                variant : birdy.getAttribute('data-id')
+              },
+              function(data) {
+                window.location.reload();
+              }
+            );
+            break;
         }
       }
     }); 
+
+    let giftingPrefs = sessionStorage.getItem('giftingPrefs');
+
+    if (giftingPrefs) {
+      document.getElementById('member-wants').setAttribute('checked', giftingPrefs.wants);
+      document.getElementById('member-needs').setAttribute('checked', giftingPrefs.needs);
+    }
+
+    $('#memberSearch').on('change', 'input[type="checkbox"]', function () {
+      let wants = document.getElementById('member-wants').checked;
+      let needs = document.getElementById('member-needs').checked;
+
+      sessionStorage.setItem('giftingPrefs', { wants, needs });
+    });
   });
 </script>
