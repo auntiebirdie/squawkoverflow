@@ -105,10 +105,11 @@ class Search {
             filters.push('species_names.lang != "zz"');
           }
 
-          select.push(`MAX(MATCH(${searchFields[input.searchField] || 'species.commonName'}) AGAINST (?)) + MAX(IF(${searchFields[input.searchField]} = ?, 10, 0)) relevancy`);
-          params.unshift(input.search, input.search);
-          filters.push(`MATCH(${searchFields[input.searchField] || 'species.commonName'}) AGAINST (?)`);
-          params.push(input.search);
+          var modifiedSearch = `(${input.search.replace(/\s/g, '* ') + '*'}) ("${input.search}")`;
+          select.push(`MAX(MATCH(${searchFields[input.searchField] || 'species.commonName'}) AGAINST (? IN BOOLEAN MODE)) + MAX(IF(${searchFields[input.searchField]} = ?, 10, 0)) relevancy`);
+          params.unshift(modifiedSearch, input.search);
+          filters.push(`MATCH(${searchFields[input.searchField] || 'species.commonName'}) AGAINST (? IN BOOLEAN MODE)`);
+          params.push(modifiedSearch);
         }
       }
 
@@ -307,6 +308,8 @@ class Search {
       } else if (kind == 'member') {
         query += ' GROUP BY members.id';
       }
+
+      console.log(query);
 
       Database.query(query, params).then(async (meta) => {
         let totalResults = meta.length;
