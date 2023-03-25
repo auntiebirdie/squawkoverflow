@@ -10,7 +10,21 @@
 
     setupMemberSearch();
 
+    try {
+      let giftingPrefs = JSON.parse(localStorage.getItem('giftingPrefs')) || { wants : true, needs : true };
+
+      document.getElementById('member-wants').setAttribute('checked', giftingPrefs.wants);
+      document.getElementById('member-needs').setAttribute('checked', giftingPrefs.needs);
+    } catch (err) { }
+
     $('#memberSearch').on('change', 'input[type="checkbox"]', function () {
+      try {
+        let wants = document.getElementById('member-wants').checked;
+        let needs = document.getElementById('member-needs').checked;
+
+        localStorage.setItem('giftingPrefs', JSON.stringify({ wants, needs }));
+      } catch (err) { }
+
       let query = memberSearch.typeahead('val');
 
       _TRAPCARD = true;

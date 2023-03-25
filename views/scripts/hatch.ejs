@@ -122,19 +122,5 @@
         }
       }
     }); 
-
-    let giftingPrefs = sessionStorage.getItem('giftingPrefs');
-
-    if (giftingPrefs) {
-      document.getElementById('member-wants').setAttribute('checked', giftingPrefs.wants);
-      document.getElementById('member-needs').setAttribute('checked', giftingPrefs.needs);
-    }
-
-    $('#memberSearch').on('change', 'input[type="checkbox"]', function () {
-      let wants = document.getElementById('member-wants').checked;
-      let needs = document.getElementById('member-needs').checked;
-
-      sessionStorage.setItem('giftingPrefs', { wants, needs });
-    });
   });
 </script>
