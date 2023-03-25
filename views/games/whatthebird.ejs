@@ -47,11 +47,11 @@
           $('#whatthebird-citation').html(`${gameData.photo.userDisplayName} / Macaulay Library at the Cornell Lab of Ornithology (ML${gameData.photo.assetId})`);
 
           for (let order of gameData.orders) {
-            $('#whatthebird-orders').append(`<div class="col-12 col-md-2 mb-3"><a class="btn btn-secondary" data-type="order">${order}</a></div>`);
+            $('#whatthebird-orders').append(`<div class="col-6 col-md-4 mb-3"><a class="btn btn-secondary" data-type="order">${order}</a></div>`);
           }
 
           for (let family of gameData.families) {
-            $('#whatthebird-families').append(`<div class="col-12 col-md-2 mb-3"><a class="btn btn-secondary" data-type="family">${family}</a></div>`);
+            $('#whatthebird-families').append(`<div class="col-6 col-md-4 mb-3"><a class="btn btn-secondary" data-type="family">${family}</a></div>`);
           }
 
           $('#game').removeClass('loadingData');

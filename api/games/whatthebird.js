@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
       }
 
       gameData.orders = await Database.query('SELECT name FROM taxonomy WHERE type = "order" ORDER BY name').then((results) => {
-        results = results.map((result) => result.name).sort(() => Math.random() - 0.5).slice(0, 5);
+        results = results.map((result) => result.name).sort(() => Math.random() - 0.5).slice(0, 6);
 
         if (!results.includes(gameData.bird.order)) {
           results[0] = gameData.bird.order;
@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
       });
 
       gameData.families = await Database.query('SELECT name FROM taxonomy WHERE type = "family" ORDER BY name').then((results) => {
-        results = results.map((result) => result.name).sort(() => Math.random() - 0.5).slice(0, 5);
+        results = results.map((result) => result.name).sort(() => Math.random() - 0.5).slice(0, 6);
 
         if (!results.includes(gameData.bird.family)) {
           results[0] = gameData.bird.family;
