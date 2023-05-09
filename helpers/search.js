@@ -212,11 +212,11 @@ class Search {
 
           switch (filter.split('-').shift()) {
             case 'discovered':
-              filters.push('(SELECT `count` FROM counters WHERE `member` = ? AND type = "birdypedia" AND id = species.id) > 0');
+              filters.push('(SELECT unlockedAt FROM member_unlocks WHERE `member` = ? AND species = species.id) IS NOT NULL');
               params.push(input.memberData || input.loggedInUser);
               break;
             case 'undiscovered':
-              filters.push('(SELECT IF(`count` = 0, NULL, 1) FROM counters WHERE `member` = ? AND type = "birdypedia" AND id = species.id) IS NULL');
+              filters.push('(SELECT MAX(unlockedAt) FROM member_unlocks WHERE `member` = ? AND species = species.id) IS NULL');
               params.push(input.memberData || input.loggedInUser);
               break;
             case 'hatched':

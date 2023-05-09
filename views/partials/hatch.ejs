@@ -27,7 +27,7 @@
             <button id="memberButton" data-action="gift" class="mt-3 btn btn-lg btn-light" role="button" disabled>🎁&nbsp;Gift</button>
           </div>
 
-         <% if (loggedInUser.supporter != 1) { %>
+         <% if (loggedInUser.supporter == 0) { %>
           <div class="mt-5">
             <p><em>Releasing and gifting birds does not trigger the 10-minute timer—only keeping!</em></p>
           </div>

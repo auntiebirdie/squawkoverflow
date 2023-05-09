@@ -36,7 +36,7 @@ class Counters {
 
     if (isNewSpecies) {
       // Insert record of species into birdypedia; this shouldn't have a duplicate key but just to be safe...
-      promises.push(Database.query('INSERT INTO counters VALUES (?, "birdypedia", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count`', [member, species]));
+      promises.push(Database.query('INSERT INTO counters VALUES (?, "birdypedia", ?, 1) ON DUPLICATE KEY UPDATE `count` = 1', [member, species]));
       promises.push(Cache.increment(`species:${member}`, 'counters JOIN species ON (counters.id = species.id)', {
         member: member,
         type: 'birdypedia',

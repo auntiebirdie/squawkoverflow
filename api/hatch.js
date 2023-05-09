@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
     return res.error(401);
   }
 
-	var isEvent = await Database.query('SELECT id FROM events WHERE NOW() BETWEEN events.startDate AND events.endDate LIMIT 1');
+  var isEvent = await Database.query('SELECT id FROM events WHERE NOW() BETWEEN events.startDate AND events.endDate LIMIT 1');
 
   if (isEvent) {
     var eventEggs = await Database.query('SELECT adjectives.* FROM events JOIN event_variants ON (events.id = event_variants.event) JOIN variants ON (event_variants.variant = variants.id) JOIN species_adjectives ON (variants.species = species_adjectives.species) JOIN adjectives ON (adjectives.adjective = species_adjectives.adjective) WHERE NOW() BETWEEN events.startDate AND events.endDate ORDER BY RAND()');
@@ -112,7 +112,7 @@ module.exports = async (req, res) => {
 
         return res.error(403, 'You can hatch another egg in ' + (timeUntil < 1 ? (Math.round(timeUntil * 60) + ' second' + (Math.round(timeUntil * 60) != 1 ? 's' : '')) : (Math.round(timeUntil) + ' minute' + (Math.round(timeUntil) != 1 ? 's' : ''))) + '.');
       } else {
-        var isEventEgg = eventEggs.find((egg) => egg.adjective == req.body.egg) && chance.bool() && !member.settings.general_removeEvent;
+        var isEventEgg = eventEggs.find((egg) => egg.adjective == req.body.egg) && !member.settings.general_removeEvent;
 
         if (isEventEgg) {
           var hatched = await Database.query('SELECT variants.species, variants.id FROM event_variants JOIN events ON (event_variants.event = events.id) JOIN variants ON (event_variants.variant = variants.id) JOIN species_adjectives ON (variants.species = species_adjectives.species) WHERE adjective = ? AND NOW() BETWEEN events.startDate AND events.endDate ORDER BY RAND() LIMIT 1', [req.body.egg]);
