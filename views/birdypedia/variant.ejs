@@ -96,8 +96,8 @@
       var reader = new FileReader();
 
       $('#form-image').on('change', function () {
-        if(this.files[0].size > 2048576){
-          alert("Please limit files to 2MB or less (emphasis on less)");
+        if(this.files[0].size > 1048576){
+          alert("Please limit files to 1MB or less (emphasis on less)");
           this.value = "";
         }
         else {

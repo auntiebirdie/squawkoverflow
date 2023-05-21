@@ -81,6 +81,8 @@ class Search {
       }
 
       if (input.search) {
+        input.search = input.search.trim();
+
         let searchFields = {
           'commonName': 'species_names.name',
           'scientificName': 'species_names.name',
@@ -253,7 +255,7 @@ class Search {
               params.push(input.loggedInUser);
               break;
             case 'copied':
-              filters.push('species.id IN (SELECT id FROM counters WHERE `member` = "freebirds" AND type = "species" AND `count` > 1)');
+              filters.push('(SELECT COUNT(*) FROM birdypets a JOIN variants b ON (a.variant = b.id) WHERE `member` IS NULL AND b.species = species.id) > 1');
               break;
             case 'exchange':
               filters.push('birdypets.id IN (SELECT birdypet FROM exchange_birdypets WHERE exchange = ?)');
@@ -309,15 +311,19 @@ class Search {
         query += ' GROUP BY members.id';
       }
 
-      console.log(query);
-
       Database.query(query, params).then(async (meta) => {
         let totalResults = meta.length;
 
         if (input.search && totalResults > 0) {
-          query += ' HAVING relevancy >= ' + (meta[0].relevancy * .75);
+          let relevancyLimit = .75;
 
-          totalResults = meta.filter((metum) => metum.relevancy > (meta[0].relevancy * .75)).length;
+          if (input.searchField == "scientificName" && !input.search.includes(' ')) {
+            relevancyLimit = .5;
+          }
+
+          query += ' HAVING relevancy >= ' + (meta[0].relevancy * relevancyLimit);
+
+          totalResults = meta.filter((metum) => metum.relevancy > (meta[0].relevancy * relevancyLimit)).length;
         }
 
         query += ' ORDER BY ';

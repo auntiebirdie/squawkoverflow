@@ -6,6 +6,14 @@ module.exports = (req, res) => {
   switch (req.method) {
     case "GET":
       new Promise((resolve, reject) => {
+        const _secrets = require('../secrets.json');
+
+        if (req.query.loggedInUser && _secrets.NAUGHTY_LIST.includes(req.query.loggedInUser)) {
+          resolve({
+            results: []
+          });
+        }
+
         if (req.headers && req.headers['x-forwarded-for'] == '35.208.110.100') {
           Database.get('birdypets', {
             member: {
