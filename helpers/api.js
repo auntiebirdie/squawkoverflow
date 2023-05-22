@@ -21,8 +21,8 @@ exports.call = (endpoint, method = "GET", data = {}, headers = {}) => {
     try {
       require(`../api/${endpoint}.js`)(options, {
         json: (response) => {
-          if (options.loggedInUser) {
-            Database.query('UPDATE members SET lastActivityAt = NOW() WHERE id = ?', [options.loggedInUser]);
+          if (options.body?.loggedInUser) {
+            Database.query('UPDATE members SET lastActivityAt = NOW() WHERE id = ?', [options.body?.loggedInUser]);
           }
 
           resolve(response);
