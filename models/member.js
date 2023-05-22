@@ -142,7 +142,7 @@ class Member {
 
       if (typeof this.settings.title != "undefined") {
         if (this.settings.title == "highest") {
-          this.title = await Database.query('SELECT name FROM titles WHERE id IN (SELECT title FROM member_titles WHERE member = ?) ORDER BY id DESC LIMIT 1', [this.id]).then((title) => title.name);
+          this.title = await Database.query('SELECT name FROM titles WHERE id IN (SELECT title FROM member_titles WHERE member = ?) AND id BETWEEN 0 and 4 ORDER BY id DESC LIMIT 1', [this.id]).then((title) => title.name);
         } else {
           this.title = await Database.getOne('titles', {
             id: this.settings.title
