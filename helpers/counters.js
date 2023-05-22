@@ -60,18 +60,18 @@ class Counters {
       let percentageBirds = memberBirds / totalBirds;
       let newTitle = 0;
 
-      if (percentageBirds >= 100) {
+      if (percentageBirds >= 1) {
         newTitle = 4;
-      } else if (percentageBirds >= 75) {
+      } else if (percentageBirds >= .75) {
         newTitle = 3;
-      } else if (percentageBirds >= 50) {
+      } else if (percentageBirds >= .50) {
         newTitle = 2;
-      } else if (percentageBirds >= 25) {
+      } else if (percentageBirds >= .25) {
         newTitle = 1;
       }
 
       if (newTitle) {
-        Database.query('INSERT IGNORE INTO member_titles VALUES (?, ?', [member, newTitle]);
+        Database.query('INSERT IGNORE INTO member_titles VALUES (?, ?)', [member, newTitle]);
       }
     }
 

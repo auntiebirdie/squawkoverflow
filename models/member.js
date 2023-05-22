@@ -103,6 +103,10 @@ class Member {
         }
       }
 
+	    if (this.avatar) {
+		    this.avatar = this.avatar.replace('.gif', '.png');
+	    }
+
       try {
         this.settings = await Database.get('member_settings', {
           member: this.id
@@ -116,6 +120,10 @@ class Member {
       } catch (err) {
         console.log(err);
         this.settings = {};
+      }
+
+      if (!this.settings.title) {
+        this.settings.title = 0;
       }
 
       var birthday = new Date();
@@ -318,10 +326,10 @@ class Member {
             this.titles = await Database.query(`
               SELECT titles.*, IF(\`member\` IS NULL AND id > 0, 1, 0) disabled
               FROM titles
-              LEFT JOIN member_titles ON (member_titles.title = titles.id)
-              WHERE \`member\` = ? OR id BETWEEN 0 AND 4
+              LEFT JOIN member_titles ON (member_titles.title = titles.id AND member_titles.member = ?)
+              WHERE (id BETWEEN 0 AND 4) OR (\`member\` = ? AND id > 4)
 	      ORDER BY id DESC
-            `, [this.id]);
+            `, [this.id, this.id]);
 
             this.titles = this.titles.map((title) => {
               let percentage = 0;
@@ -364,14 +372,7 @@ class Member {
                 'member': this.id
               }),
               species: [
-                await Cache.count(`species:${this.id}`, 'counters JOIN species ON (counters.id = species.id)', {
-                  member: this.id,
-                  type: 'birdypedia',
-                  count: {
-                    comparator: '>',
-                    value_trusted: 0
-                  }
-                }),
+		await Database.count('member_unlocks JOIN species ON (member_unlocks.species = species.id)', { member: member.id }),
                 await Cache.count('species', 'species', {})
               ]
             };

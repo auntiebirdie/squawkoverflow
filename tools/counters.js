@@ -1,35 +1,36 @@
-var Database = require('../api/helpers/database.js');
+var Database = require('../helpers/database.js');
 
 (async () => {
   var members = await Database.query('SELECT id FROM members');
-  var adjectives = await Database.query('SELECT adjective FROM adjectives');
+	var totalBirds = await Database.count('species');
   var promises = [];
 
 
   for (let member of members) {
-    for (let adjective of adjectives) {
       promises.push(new Promise(async (resolve, reject) => {
-        var total = await Database.count('counters', {
-          member: member.id,
-          type: 'birdypedia',
-          count: {
-            comparator: '>',
-            value_trusted: 0
-          },
-          id: {
-            comparator: 'IN',
-            value_trusted: '(SELECT species FROM species_adjectives WHERE adjective = ?)',
-            value: adjective.adjective
-          }
-        });
 
-        await Database.set('counters', {
-          member: member.id,
-          type: 'eggs',
-          id: adjective.adjective
-        }, {
-          count: total
-        });
+	      let memberBirds = await Database.count('member_unlocks JOIN species ON (member_unlocks.species = species.id)', { member :member.id });
+
+	            let percentageBirds = memberBirds / totalBirds;
+      let newTitle = 0;
+
+      if (percentageBirds >= 1) {
+        newTitle = 4;
+      } else if (percentageBirds >= .75) {
+        newTitle = 3;
+      } else if (percentageBirds >= .50) {
+        newTitle = 2;
+      } else if (percentageBirds >= .25) {
+        newTitle = 1;
+      }
+
+	      console.log(member.id, percentageBirds, newTitle);
+
+      if (newTitle) {
+	      for (let i = 1; i <= newTitle; i++) {
+        Database.query('INSERT IGNORE INTO member_titles VALUES (?, ?)', [member.id, i]);
+	      }
+      }
 
         resolve();
       }));
@@ -40,12 +41,6 @@ var Database = require('../api/helpers/database.js');
 
         promises = [];
       }
-    }
-
-    console.log('Pausing...');
-    await new Promise((resolve, reject) => {
-      setTimeout(resolve, 5000);
-    });
   }
 
   await Promise.all(promises);
