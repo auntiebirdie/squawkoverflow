@@ -244,10 +244,10 @@ class Member {
           case 'hasWishlist':
             this.hasWishlist = await Database.getOne('wishlist', {
               member: this.id,
-	      intensity: {
-		      comparator: '>',
-		      value: 0
-	      }
+              intensity: {
+                comparator: '>',
+                value: 0
+              }
             });
             break;
           case 'lastActive':
@@ -312,11 +312,40 @@ class Member {
             break;
           case 'titles':
             this.titles = await Database.query(`
-              SELECT titles.*
+              SELECT titles.*, IF(\`member\` IS NULL AND id > 0, 1, 0) disabled
               FROM titles
               LEFT JOIN member_titles ON (member_titles.title = titles.id)
-              WHERE \`member\` = ? OR id = 0
+              WHERE \`member\` = ? OR id BETWEEN 0 AND 4
+	      ORDER BY id DESC
             `, [this.id]);
+
+            this.titles = this.titles.map((title) => {
+              let percentage = 0;
+              let label = title.name;
+
+              switch (title.id) {
+                case 4:
+                  label += " (100% species)";
+                  break;
+                case 3:
+                  label += " (75% species)";
+                  break;
+                case 2:
+                  label += " (50% species)";
+                  break;
+                case 1:
+                  label += " (25% species)";
+                  break;
+              }
+
+              return {
+                id: title.id,
+                label: label,
+                selected: (this.settings.title || 'highest') == title.id,
+                disabled: title.disabled
+              }
+            });
+
             break;
           case 'totals':
             this.totals = {
