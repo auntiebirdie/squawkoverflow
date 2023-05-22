@@ -13,7 +13,7 @@
 
     content += '<select class="page-select">';
       for (let i = 1, len = totalPages; i <= len; i++) {
-        content += '<option value="' + i + '"' + (i == currentPage ? 'selected' : '') + '>' + i + '</option>';
+        content += '<option value="' + i + '"' + (i == currentPage ? 'selected' : '') + '>' + i + (i == currentPage ? ' of ' + totalPages : '') + '</option>';
       }
     content += '</select>';
 
