@@ -133,9 +133,13 @@ class Member {
       }
 
       if (typeof this.settings.title != "undefined") {
-        this.title = await Database.getOne('titles', {
-          id: this.settings.title
-        }).then((title) => title.name);
+        if (this.settings.title == "highest") {
+          this.title = await Database.query('SELECT name FROM titles WHERE id IN (SELECT title FROM member_titles WHERE member = ?) ORDER BY id DESC LIMIT 1', [this.id]).then((title) => title.name);
+        } else {
+          this.title = await Database.getOne('titles', {
+            id: this.settings.title
+          }).then((title) => title.name);
+        }
       } else {
         this.title = 'Birder';
       }
@@ -344,6 +348,13 @@ class Member {
                 selected: (this.settings.title || 'highest') == title.id,
                 disabled: title.disabled
               }
+            });
+
+            this.titles.push({
+              id: "highest",
+              label: "(highest available)",
+              selected: this.settings.title == "highest",
+              disabled: 0
             });
 
             break;
