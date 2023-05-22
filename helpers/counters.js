@@ -51,6 +51,28 @@ class Counters {
       promises.push(Database.query('INSERT INTO counters SELECT ?, "eggs", species_adjectives.adjective, 1 FROM species_adjectives WHERE species = ? ON DUPLICATE KEY UPDATE `count` = `count` + 1', [member, species]));
       // Unlock the discovery for the Birdypedia entry
       promises.push(Database.query('INSERT IGNORE INTO member_unlocks VALUES (?, ?, ?, NOW())', [member, species, birdypet]));
+
+      // Check for new title unlock
+      let totalBirds = await Database.count('species');
+      let memberBirds = await Database.count('member_unlocks JOIN species ON (member_unlocks.species = species.id)', {
+        member: member
+      });
+      let percentageBirds = memberBirds / totalBirds;
+      let newTitle = 0;
+
+      if (percentageBirds >= 100) {
+        newTitle = 4;
+      } else if (percentageBirds >= 75) {
+        newTitle = 3;
+      } else if (percentageBirds >= 50) {
+        newTitle = 2;
+      } else if (percentageBirds >= 25) {
+        newTitle = 1;
+      }
+
+      if (newTitle) {
+        Database.query('INSERT IGNORE INTO member_titles VALUES (?, ?', [member, newTitle]);
+      }
     }
 
     return Promise.allSettled(promises);

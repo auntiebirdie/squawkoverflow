@@ -52,7 +52,8 @@ const https = require('https');
         if (patron.attributes.patron_status == 'active_patron') {
           await Promise.all([
             Database.query('UPDATE members SET supporter = 1 WHERE id = ? AND supporter < 5', [siteMember.member]),
-            Database.query('INSERT IGNORE INTO member_badges VALUES (?, "patreon", NOW())', [siteMember.member])
+            Database.query('INSERT IGNORE INTO member_badges VALUES (?, "patreon", NOW())', [siteMember.member]),
+            Database.query('INSERT IGNORE INTO member_titles VALUES (?, 5)', [siteMember.member])
           ]);
         } else {
           await Promise.all([
