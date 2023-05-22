@@ -106,10 +106,15 @@ img {
 	color: rgba(var(--bs-body-color-rgb), .7) !important;
 }
 
-.page-link {
+.page-link, .page-select {
 	background-color: var(--bs-body-bg) !important;
 	color: var(--bs-body-color) !important;
 	border-color: var(--bs-dark) !important;
+	padding: .375rem .75rem;
+}
+
+.page-select:focus-visible {
+  outline: 0 none;
 }
 
 .page-item.active .page-link {

@@ -41,7 +41,11 @@
 
  <% if (locals.paginate) { %>
   $('.pagination').on('click', '.page-link', function (e) {
-    resetResults(null, e.currentTarget.innerHTML);
+    resetResults(null, e.currentTarget.getAttribute('data-page'));
+  });
+
+  $('.pagination').on('change', '.page-select', function (e) {
+    resetResults(null, e.currentTarget.value);
   });
  <% } %>
 

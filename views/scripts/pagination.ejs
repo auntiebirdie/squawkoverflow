@@ -3,24 +3,25 @@
   function updatePagination () {
     var content = "";
 
-    if (currentPage > 2) {
-      content += `<li class="page-item"><a class="page-link" <%- locals.linkTo ? `href="${linkTo}?page=1"` : '' %> role="button">1</a></li>`;
+
+    if (currentPage == 1) {
+      content += '<li class="page-item disabled"><span class="page-link">&#x2329;</span><li>';
+    }
+    else {
+      content += `<li class="page-item"><a class="page-link" data-page="${currentPage - 1}" role="button">&#x2329;</a><li>`;
     }
 
-    if (currentPage > 3) {
-      content += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-    }
+    content += '<select class="page-select">';
+      for (let i = 1, len = totalPages; i <= len; i++) {
+        content += '<option value="' + i + '"' + (i == currentPage ? 'selected' : '') + '>' + i + '</option>';
+      }
+    content += '</select>';
 
-    for (let i = Math.max(1, currentPage - 1), len = Math.min(totalPages, currentPage + 1); i <= len; i++) {
-      content += `<li class="page-item${currentPage == i ? ' active' : ''}"><a class="page-link" <%- locals.linkTo ? `href="${linkTo}?page=\$\{i\}"` : '' %> role="button">${i}</a></li>`;
+    if (currentPage == totalPages) {
+      content += '<li class="page-item disabled"><span class="page-link">&#x232A;</span><li>';
     }
-
-    if (currentPage < totalPages - 2) {
-      content += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-    }
-
-    if (currentPage < totalPages - 1) {
-      content += `<li class="page-item"><a class="page-link" <%- locals.linkTo ? `href="${linkTo}?page=\$\{totalPages\}"` : '' %> role="button">${totalPages}</a></li>`;
+    else {
+      content += `<li class="page-item"><a class="page-link" data-page="${currentPage + 1}" role="button">&#x232A;</a><li>`;
     }
 
     for (let pagination of paginations) {
