@@ -333,7 +333,7 @@ class Search {
             query += 'species.commonName';
             break;
           case 'scientificName':
-            query += 'species.scientificName';
+            query += 'species.id';
             break;
           case 'friendship':
             query += 'birdypets.friendship';
@@ -385,6 +385,8 @@ class Search {
         }
 
         query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC') + ' LIMIT ' + Math.min(page * perPage, totalResults) + ',' + perPage;
+
+	      console.log(query);
 
         Database.query(query, params).then((results) => {
           resolve({
