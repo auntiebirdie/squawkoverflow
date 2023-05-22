@@ -103,9 +103,9 @@ class Member {
         }
       }
 
-	    if (this.avatar) {
-		    this.avatar = this.avatar.replace('.gif', '.png');
-	    }
+      if (this.avatar) {
+        this.avatar = this.avatar.replace('.gif', '.png');
+      }
 
       try {
         this.settings = await Database.get('member_settings', {
@@ -142,7 +142,11 @@ class Member {
 
       if (typeof this.settings.title != "undefined") {
         if (this.settings.title == "highest") {
-          this.title = await Database.query('SELECT name FROM titles WHERE id IN (SELECT title FROM member_titles WHERE member = ?) AND id BETWEEN 0 and 4 ORDER BY id DESC LIMIT 1', [this.id]).then((title) => title.name);
+          try {
+            this.title = await Database.query('SELECT name FROM titles WHERE id IN (SELECT title FROM member_titles WHERE member = ?) AND id BETWEEN 0 and 4 ORDER BY id DESC LIMIT 1', [this.id]).then((title) => title.name);
+          } catch (err) {
+            this.title = 'Birder';
+          }
         } else {
           this.title = await Database.getOne('titles', {
             id: this.settings.title
@@ -372,7 +376,9 @@ class Member {
                 'member': this.id
               }),
               species: [
-		await Database.count('member_unlocks JOIN species ON (member_unlocks.species = species.id)', { member: member.id }),
+                await Database.count('member_unlocks JOIN species ON (member_unlocks.species = species.id)', {
+                  member: member.id
+                }),
                 await Cache.count('species', 'species', {})
               ]
             };
