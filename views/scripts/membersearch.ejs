@@ -134,6 +134,32 @@
             }
           }
 
+          let lastActive = Date.now() - new Date(data.lastActivityAt).getTime();
+
+          let days = lastActive / (1000 * 60 * 60 * 24);
+
+          if (days <= 1) {
+            data.lastActive = 'Today!';
+          } else if (days <= 7) {
+            data.lastActive = 'This week';
+          } else {
+            let weeks = days / 7;
+
+            if (weeks <= 4) {
+              data.lastActive = Math.ceil(weeks) + ' weeks ago';
+            } else {
+              let months = days / 30;
+
+              if (months <= 6) {
+                data.lastActive = Math.ceil(months) + ' months ago';
+              } else {
+                data.lastActive = '6+ months ago';
+              }
+            }
+          }
+
+          text += '<div class="small ms-5">Last Active: ' + data.lastActive + '</div>';
+
           text += '</div>';
 
           return text;
