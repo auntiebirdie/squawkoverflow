@@ -71,6 +71,7 @@ router.get('/incubator', (req, res) => {
         name: 'Scientific Name'
       }],
       sortFields: ['commonName-ASC', 'commonName-DESC', 'scientificName-ASC', 'scientificName-DESC', 'addedAt-ASC', 'addedAt-DESC'],
+      filters: ['discovered', 'undiscovered', 'wanted-My', 'needed-My', 'unhatched-My', 'isolated-My', 'duplicated-My']
     });
   });
 });
