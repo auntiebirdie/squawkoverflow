@@ -14,11 +14,54 @@
   }
 
   $(document).ready( function () {
+   <% if (locals.page && ["freebirds"].includes(locals.page)) { %>
+    let filterPresets = {};
+
+    try {
+      filterPresets = JSON.parse(localStorage.getItem('filterPresets-<%- locals.page %>')) || {};
+
+      for (let filter of Object.keys(filterPresets)) {
+        let data = filterPresets[filter];
+
+        switch (data.type) {
+          case 'checkbox':
+            document.getElementById(filter).checked = data.value;
+            break;
+          default:
+            $(`#${filter}`).val(data.value);
+            break;
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+
+    $('#sidebar').on('change', 'select', (e) => {
+      setPresets(e.currentTarget.id, e.currentTarget.value, 'select');
+    });
+
+    $('#sidebar').on('change', 'input', (e) => {
+      setPresets(e.currentTarget.id, e.currentTarget.type == "checkbox" ? e.currentTarget.checked : e.currentTarget.value, e.currentTarget.type);
+    });
+
+    function setPresets (id, value, type) {
+      filterPresets[id] = { type, value };
+
+      localStorage.setItem('filterPresets-<%- locals.page %>', JSON.stringify(filterPresets));
+    }
+   <% } %>
+
     var preset = Object.fromEntries(urlParams.entries());
 
     for (var key in preset) {
       if (document.getElementById(key) && document.getElementById(key).slim) {
         document.getElementById(key).slim.set(preset[key].split(','));
+      } else if (key == 'filters') {
+        let filters = preset[key].split(',');
+
+        for (let filter of filters) {
+          document.getElementById('filters-' + filter).checked = true;
+        }
       } else {
         $(`#${key}`).val(preset[key]);
       }
@@ -111,6 +154,21 @@
         }
       }
     });
+
+    let filters = [];
+
+    $('input', '#filters').each( (i, checkbox) => {
+      if (checkbox.checked) {
+        filters.push(checkbox.value);
+      }
+    });
+
+    if (filters.length > 0) {
+      urlParams.set('filters', filters.join(','));
+    }
+    else {
+      urlParams.delete('filters');
+    }
 
     window.history.replaceState(null, '', window.location.pathname + (urlParams.toString() ? ('?' + urlParams.toString()) : ''));
     <% } %>
