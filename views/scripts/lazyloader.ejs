@@ -23,7 +23,7 @@
       }
     });
 
-   <% if (locals.page && ["freebirds"].includes(locals.page)) { %>
+   <% if (locals.page && ["freebirds", "birdypedia/eggs"].includes(locals.page)) { %>
     let filterPresets = {};
 
     try {
@@ -208,6 +208,10 @@
           }
 
           lazyLoadInstance.update();
+
+         <% if (locals.page == "birdypedia/eggs") { %>
+          updateDisplay();
+         <% } %>
 
          <% if (locals.paginate) { %>
            updatePagination();

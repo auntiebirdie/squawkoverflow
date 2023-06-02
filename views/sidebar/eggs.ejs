@@ -1,33 +1,55 @@
-<% if (locals.page == "birdypedia") { %>
-  <h5>Guides</h5>
+<h5>Guides</h5>
 
-  <ul class="nav-menu p-0">
-    <li class="nav-item pb-2">
-      <a href="/birdypedia">
-        <span class="icon d-inline-block fs-4">🐦</span>
-        <span class="d-block label">Birds</span>
-      </a>
-    </li>
-    <li class="nav-item pb-2">
-      <a href="/birdypedia/eggs">
-        <span class="icon d-inline-block fs-4">🥚</span>
-        <span class="d-block label">Eggs</span>
-      </a>
-    </li>
-    <li class="nav-item pb-2">
-      <a href="/birdypedia/artists">
-        <span class="icon d-inline-block fs-4">🎨</span>
-        <span class="d-block label">Artists</span>
-      </a>
-    </li>
-  </ul>
-<% } %>
+<ul class="nav-menu p-0">
+  <li class="nav-item pb-2">
+    <a href="/birdypedia">
+      <span class="icon d-inline-block fs-4">🐦</span>
+      <span class="d-block label">Birds</span>
+    </a>
+  </li>
+  <li class="nav-item pb-2">
+    <a href="/birdypedia/eggs">
+      <span class="icon d-inline-block fs-4">🥚</span>
+      <span class="d-block label">Eggs</span>
+    </a>
+  </li>
+  <li class="nav-item pb-2">
+    <a href="/birdypedia/artists">
+      <span class="icon d-inline-block fs-4">🎨</span>
+      <span class="d-block label">Artists</span>
+    </a>
+  </li>
+</ul>
 
 <h5>First Letter</h5>
-<div class="row">
+<div class="row mb-4">
+  <input id="search" value="<%= selectedLetter %>" type="hidden">
 <% for (let letter of 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')) { %>
   <div class="col-6 col-md-4 py-2 text-center">
     <a href="/birdypedia/eggs/<%= letter %>" class="btn btn-light"><%= letter %></a>
   </div>
 <% } %>
 </div>
+
+<% if (locals.loggedInUser && locals.filters) { %>
+<%
+  var labels = {
+    'incomplete': 'Incomplete',
+    'completed': 'Completed'
+  }
+%>
+
+<h5>Filters</h5>
+  <div class="mb-4">
+    <div id="filters">
+     <% for (var filter of filters) { %>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="filters-<%= filter %>" value="<%= filter %>" name="filters[]">
+        <label class="form-check-label" for="filters-<%= filter %>">
+          <%- labels[filter.split('-').shift()] %>
+        </label>
+      </div>
+      <% } %>
+    </div>
+  </div>
+<% } %>

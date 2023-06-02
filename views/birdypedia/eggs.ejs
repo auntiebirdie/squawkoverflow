@@ -13,39 +13,17 @@
         <label class="form-check-label" for="progressDisplayFraction">⁄</label>
       </div>
     </div>
-   <% for (var egg of eggs) { %>
-    <div class="col-12 col-sm-6 col-md-4">
-      <div class="row align-items-center">
-        <div class="col-6 offset-md-1">
-          <a href="/birdypedia/eggs/<%= egg.adjective %>">
-            <img src="https://storage.googleapis.com/squawkoverflow/<%= egg.icon || 'eggs/D/default.png' %>" width="18px">
-            <%= egg.adjective %>
-          </a>
-        </div>
-        <div class="col-6 col-md-5 text-start">
-         <% if (locals.loggedInUser) { %>
-          <% var prct = Math.floor(egg.memberTotal / egg.numSpecies * 100); %>
-          <div class="progress mx-2">
-            <div class="progress-bar<%= prct == 100 ? " bg-success" : "" %>" style="width: <%= prct %>%" role="progressbar" aria-valuenow="<%= egg.memberTotal %>" aria-valuemin="0" aria-valuemax="<%= egg.numSpecies %>"></div>
-          </div>
-         <% } else { %>
-          <small class="text-muted">
-            (<%= egg.numSpecies %>)
-          </small>
-         <% } %>
-        </div>
-      </div>
-    </div>
-   <% } %>
   </div>
+
+  <div id="lazyLoader" class="row g-0" data-endpoint="eggs"></div>
+
+  <%- include('../scripts/lazyloader.ejs', { template: '../templates/egg.ejs', paginate: 1 }) %>
 
   <script type="text/javascript">
     $(document).ready(function () {
       $('input[name="progressDisplay"]').on('change', updateDisplay);
 
       $('input[name="progressDisplay"][value="' + (sessionStorage.getItem('progressDisplay') || 'percent') + '"]').click();
-
-      updateDisplay();
     });
 
     function updateDisplay () {

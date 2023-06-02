@@ -1,0 +1,21 @@
+<div class="col-12 col-sm-6 col-md-4">
+  <div class="row align-items-center">
+    <div class="col-6 offset-md-1">
+      <a href="/birdypedia/eggs/${model.adjective}">
+        <img src="https://storage.googleapis.com/squawkoverflow/${model.icon || 'eggs/D/default.png'}" width="25px">
+        ${model.adjective}
+      </a>
+    </div>
+    <div class="col-6 col-md-5 text-start">
+     <% if (locals.loggedInUser) { %>
+      <div class="progress mx-2">
+        <div class="progress-bar${model.prct == 100 ? " bg-success" : ""}" style="width: ${model.prct}%" role="progressbar" aria-valuenow="${model.memberTotal}" aria-valuemin="0" aria-valuemax="${model.numSpecies}"></div>
+      </div>
+     <% } else { %>
+      <small class="text-muted">
+        (${model.numSpecies})
+      </small>
+     <% } %>
+    </div>
+  </div>
+</div>

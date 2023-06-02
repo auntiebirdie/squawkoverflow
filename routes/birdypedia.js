@@ -33,33 +33,32 @@ router.get('/', async (req, res) => {
 router.get('/eggs/:letter([A-Za-z]{1})?', (req, res) => {
   var letter = req.params.letter ? req.params.letter.toUpperCase() : 'A';
 
-  API.call('eggs', 'GET', {
-    loggedInUser: req.session.user,
-    search: letter,
-    include: ['memberData']
-  }).then((eggs) => {
-    res.render('birdypedia/eggs', {
-      title: `Eggs - ${letter} | Birdypedia`,
-      page: "birdypedia",
-      eggs: eggs,
-      selectedLetter: letter,
-      sidebar: "eggs"
-    });
+  res.render('birdypedia/eggs', {
+    title: `Eggs - ${letter} | Birdypedia`,
+    page: "birdypedia/eggs",
+    selectedLetter: letter,
+    sidebar: "eggs",
+    filters: ['incomplete', 'completed']
   });
 });
 
 router.get('/eggs/:egg', (req, res) => {
-  API.call('eggs', 'GET', {
-    loggedInUser: req.session.user,
+  API.call('egg', 'GET', {
     adjective: req.params.egg
-  }).then(([egg]) => {
+  }).then(async ([egg]) => {
     if (egg) {
+      let families = await API.call('egg', 'HEAD', {
+        id: egg.adjective
+      });
+
       res.render('birdypedia/egg', {
         title: `${egg.adjective.charAt(0).toUpperCase() + egg.adjective.slice(1)} Egg | Birdypedia`,
         page: 'birdypedia',
         egg: egg,
         currentPage: (req.query.page || 1) * 1,
         sidebar: 'filters',
+        allFamilies: await Families.all(),
+        families: families,
         searchFields: [{
           id: 'commonName',
           name: 'Common Name'
@@ -170,7 +169,7 @@ router.get('/bird/:id', async (req, res) => {
     id: req.params.id
   }).then(async (bird) => {
     if (bird && bird.variants?.length > 0) {
-      let eggs = [];
+      let eggs = { results : [] };
 
       if (req.session.user && (res.locals.loggedInUser.admin || res.locals.loggedInUser.contributor)) {
         eggs = await API.call('eggs', 'GET');
@@ -182,7 +181,7 @@ router.get('/bird/:id', async (req, res) => {
         bird: bird,
         variant: bird.variants.find((variant) => variant.id == req.query.variant) || bird.variants.find((variant) => !variant.special) || bird.variants[0],
         sidebar: 'bird',
-        eggs: eggs,
+        eggs: eggs.results,
         currentPage: (req.query.page || 1) * 1
       });
     } else {
