@@ -90,7 +90,8 @@ module.exports = async (req, res) => {
             let commonName = req.body.commonName.replace(/\ʻ/g, "'").trim();
 
             await bird.set({
-              'commonName': commonName
+              'commonName': commonName,
+              'code' : req.body.code == "null" ? "" : req.body.code
             });
           }
         } else {

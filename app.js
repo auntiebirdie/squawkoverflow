@@ -7,10 +7,6 @@ const os = require('os');
 const app = express();
 const secrets = require('./secrets.json');
 
-if (secrets.ENV == 'PROD') {
-  //  require('newrelic');
-}
-
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.json());

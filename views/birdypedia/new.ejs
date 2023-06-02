@@ -19,6 +19,9 @@
         </option>
        <% } %>
       </select>
+
+      <h5>eBird Code</h5>
+      <input type="text" id="form-code" class="form-control mb-3 w-100" value="<%= locals.bird?.code %>">
     </div>
 
     <div class="col-12 col-md-5 mb-3">
@@ -94,6 +97,7 @@
               family: $('#form-family').val(),
               commonName: $('#form-commonName').val(),
               scientificName: $('#form-scientificName').val(),
+              code: $('#form-code').val(),
               alternateNames: alternateNames,
               alternateLangs: alternateLangs
             }, function (response) {

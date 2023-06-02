@@ -12,10 +12,11 @@ class Bird {
       this.id = data.id;
       this.family = data.family;
       this.commonName = data.commonName;
+      this.code = data.code;
 
       Database.create('species', {
         id: this.id,
-        code: "",
+        code: data.code,
         family: data.family,
         commonName: data.commonName
       }).then(() => {
@@ -110,12 +111,12 @@ class Bird {
               return a.style == 1 ? -1 : 1;
             } else if (a.credit == "Renata Grieco" || b.credit == "Renata Grieco") {
               return a.credit == "Renata Grieco" ? -1 : 1;
-            } else if (a.credit != b.credit) {
-              return (a.credit || "").localeCompare(b.credit);
             } else if (a.subspecies != b.subspecies) {
               return (a.subspecies || "").localeCompare(b.subspecies);
             } else if (a.label != b.label) {
               return (a.label || "").localeCompare(b.label);
+	    } else if (a.credit != b.credit) {
+              return (a.credit || "").localeCompare(b.credit);
             } else {
               return 0;
             }

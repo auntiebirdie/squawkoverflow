@@ -12,9 +12,8 @@
         <div class="col-6 col-md-3">
           <h5><label for="form-style">Style</label></h5>
           <select id="form-style" class="form-select">
-           <% i = 1; for (let style of ["Illustration", "Photo"]) { %>
-            <option value="<%= i %>" <%= variant?.style == i ? "selected" : "" %>><%= style %></option>
-           <% i++; } %>
+            <option value="2" <%= variant?.style == 2 ? "selected" : "" %>>Photo</option>
+            <option value="1" <%= variant?.style == 1 ? "selected" : "" %>>Illustration</option>
             <option value="-1" <%= variant?.style == -1 ? "selected" : "" %>>Placeholder</option>
           </select>
         </div>

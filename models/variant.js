@@ -81,13 +81,18 @@ class Variant {
           case "Charadriidae":
           case "Chloropseidae":
           case "Ciconiidae":
+          case "Cinclosomatidae":
           case "Cisticolidae":
+          case "Climacteridae":
           case "Coliidae":
           case "Columbidae":
+          case "Conopophagidae":
           case "Corvidae":
           case "Cotingidae":
           case "Cracidae":
           case "Cuculidae":
+          case "Dicaeidae":
+          case "Dicruridae":
           case "Diomedeidae":
           case "Estrildidae":
           case "Falconidae":
