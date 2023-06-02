@@ -144,7 +144,7 @@
         }
       }
       else {
-        var value = select.options[select.options.selectedIndex].value;
+        var value = select.options[select.options.selectedIndex]?.value;
 
         if (value && value != select.options[0].value) {
           urlParams.set(select.id, select.options[select.options.selectedIndex].value);
