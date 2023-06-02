@@ -16,10 +16,12 @@
   $(document).ready( function () {
     // workaround for when you hit 'back' to this page
     $('select', '#sidebar').each((i, select) => {
-      if (select.options[select.options.selectedIndex]) {
-        select.options[select.options.selectedIndex].selected = true;
-      } else {
-        select.options[0].selected = true;
+      if (!select.multiple) {
+        if (select.options[select.options.selectedIndex]) {
+          select.options[select.options.selectedIndex].selected = true;
+        } else {
+          select.options[0].selected = true;
+        }
       }
     });
 

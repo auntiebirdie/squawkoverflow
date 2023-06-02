@@ -17,7 +17,7 @@
 
   <div id="lazyLoader" class="row g-0" data-endpoint="eggs"></div>
 
-  <%- include('../scripts/lazyloader.ejs', { template: '../templates/egg.ejs', paginate: 1 }) %>
+  <%- include('../scripts/lazyloader.ejs', { template: '../templates/egg.ejs', paginate: 1, noResultsFound: 'No eggs match the selected criteria. Where could they be hiding?' }) %>
 
   <script type="text/javascript">
     $(document).ready(function () {
