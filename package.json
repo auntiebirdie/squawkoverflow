@@ -12,6 +12,8 @@
     "axios": "^1.2.6",
     "bunyan": "^1.8.15",
     "chance": "^1.1.8",
+    "cheerio": "^1.0.0",
+    "compromise": "^14.14.0",
     "discord-oauth2": "^2.10.0",
     "discord.js": "^14.7.1",
     "ejs": "^3.1.8",
