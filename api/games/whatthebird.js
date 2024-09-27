@@ -14,9 +14,9 @@ module.exports = async (req, res) => {
         gameData.photo = await axios({
           url: `https://search.macaulaylibrary.org/api/v1/search?taxonCode=${gameData.bird.code.split('-').shift()}&mediaType=p&sort=rating_rank_desc`
         }).then(async (response) => {
-          var photos = response.data.results.content;
+          var photos = response.data.results.content.filter((photo) => !photo.assetTags?.includes('dead') && !photo.assetTags?.includes('non_bird') && !photo.assetTags?.includes('nest') && !photo.assetTags?.includes('habitat'));
 
-          if (photos.length <= 10) {
+          if (photos.length == 0) {
             return null;
           }
 

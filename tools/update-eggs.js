@@ -1,7 +1,7 @@
 const Database = require('../helpers/database.js');
 
 (async () => {
-	let alphabet = ["W"]; //"ABCDEFGHIJKLMNOPQRSTUVXYZ".split('');
+	let alphabet = ["S"]; //"ABCDEFGHIJKLMNOPQRSTUVXYZ".split('');
 
   for (let alpha of alphabet) {
 	  let eggs = await Database.query('SELECT adjective FROM adjectives WHERE adjective LIKE ?', [`${alpha}%`]);

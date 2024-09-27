@@ -40,7 +40,7 @@ module.exports = async (req, res) => {
             timeUntil: 10 - timeUntil
           });
         } else {
-          var query = 'SELECT adjective, numSpecies, icon FROM adjectives WHERE icon NOT LIKE "eggs/special/%"';
+          var query = 'SELECT adjective, numSpecies, icon FROM adjectives WHERE (icon IS NULL OR icon NOT LIKE "eggs/special/%")';
           var params = [];
 
           if (member.settings.general_removeCompleted) {

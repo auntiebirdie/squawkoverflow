@@ -96,7 +96,7 @@
       }
     }
 
-   <% if (locals.loggedInUser && locals.isMobile && loggedInUser.settings.general_lowData) { %>
+   <% if (locals.loggedInUser && locals.isMobile && loggedInUser.settings?.general_lowData) { %>
     var lazyLoadInstance = new LazyLoad({
       callback_enter: function (element) {
         element.setAttribute('data-orig', element.getAttribute(element.hasAttribute('data-bg') ? 'data-bg' : 'data-src'));
