@@ -98,7 +98,7 @@
                 return a.owned - b.owned;
               }
             } else {
-              return a.username.localeCompare(b.username);
+              return Date.parse(a.lastActivity) - Date.parse(b.lastActivity);
             }
           }));
         });
