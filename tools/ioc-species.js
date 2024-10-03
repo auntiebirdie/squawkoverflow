@@ -135,8 +135,8 @@ function addSpecies(data) {
 function deleteSpecies(data) {
   return new Promise(async (resolve, reject) => {
     // Check if this species is already in the Birdypedia.
-    let bird = await Database.query('SELECT DISTINCT id, commonName FROM species JOIN species_names ON (species.id = species_names.species) WHERE species.id = ? OR species.commonName = ? OR (species_names.name = ? AND species_names.lang = "zz") LIMIT 1',
-      [data.scientific_name, data.common_name, data.scientific_name]
+    let bird = await Database.query('SELECT id, commonName FROM species WHERE species.id = ? OR species.commonName = ? LIMIT 1',
+      [data.scientific_name, data.common_name]
     );
 
     // If this bird does not exist...
@@ -156,7 +156,7 @@ function deleteSpecies(data) {
       if (!mergeBird) {
         console.error(`${mergeName} doesn't exist. Please try again.`)
         // Call this function again to start it over.
-        deleteSpecies.then(resolve);
+        deleteSpecies(data).then(resolve);
       }
 
       // Update any variants, moving them to the new species and setting the subspecies.

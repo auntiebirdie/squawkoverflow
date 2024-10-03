@@ -11,17 +11,19 @@ module.exports = async (req, res) => {
       while (!gameData.photo) {
         gameData.bird = await Birds.random();
 
-        gameData.photo = await axios({
-          url: `https://search.macaulaylibrary.org/api/v1/search?taxonCode=${gameData.bird.code.split('-').shift()}&mediaType=p&sort=rating_rank_desc`
-        }).then(async (response) => {
-          var photos = response.data.results.content.filter((photo) => !photo.assetTags?.includes('dead') && !photo.assetTags?.includes('non_bird') && !photo.assetTags?.includes('nest') && !photo.assetTags?.includes('habitat'));
+        if (gameData.bird.code) {
+          gameData.photo = await axios({
+            url: `https://search.macaulaylibrary.org/api/v1/search?taxonCode=${gameData.bird.code.split('-').shift()}&mediaType=p&sort=rating_rank_desc`
+          }).then(async (response) => {
+            var photos = response.data.results.content.filter((photo) => !photo.assetTags?.includes('dead') && !photo.assetTags?.includes('non_bird') && !photo.assetTags?.includes('nest') && !photo.assetTags?.includes('habitat') && !photo.assetTags?.includes('field_notes_sketch'));
 
-          if (photos.length == 0) {
-            return null;
-          }
+            if (photos.length < 10) {
+              return null;
+            }
 
-          return photos.sort(() => Math.random() - 0.5).shift();
-        });
+            return photos.sort(() => Math.random() - 0.5).shift();
+          });
+        }
       }
 
       gameData.orders = await Database.query('SELECT name FROM taxonomy WHERE type = "order" ORDER BY name').then((results) => {
