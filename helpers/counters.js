@@ -2,12 +2,12 @@ const Cache = require('./cache.js');
 const Database = require('./database.js');
 
 class Counters {
-  get(type, member, id) {
+  get(type, member, id = "") {
     return new Promise((resolve, reject) => {
       Database.getOne('counters', {
         member: member,
         type: type,
-        id: id || ""
+        id: id
       }, {
         select: ['count']
       }).then((result) => {

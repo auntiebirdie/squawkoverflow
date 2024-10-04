@@ -10,15 +10,20 @@
 
     <% if (locals.loggedInUser && loggedInUser.id == member.id && member.hasWishlist) { %>
       <div class="bg-light rounded w-75 mx-auto mb-4 p-4 text-center">
-       <% if (member.baitUsed) { %>
-        <p class="mb-0"><em>You have already attracted a bird to your aviary today.  Try again in <%= timeUntilTomorrow %>!</em></p>
-       <% } else if (member.bugs > 0) { %>
-        <p><em>You have <strong><%= member.bugs %> bug<%= member.bugs == 1 ? "" : "s" %></strong> available.  Once per day, you can use one to attract a random bird from your wishlist to live in your aviary!</em></p>
+       <% if (!member.freeWishlistUsed) { %>
+        <p><em>You can attract a bird from your wishlist to your aviary for free once per day.</em></p>
+
+        <button id="freeWishlist" class="btn btn-dark">🐦  Here, birdy, birdy...</button>
+       <% } else { %>
+         <% if (member.bugs > 0) { %>
+        <p><em>You have <strong><%= member.bugs %> bug<%= member.bugs == 1 ? "" : "s" %></strong> available.  You can use one (or all!) to attract a random bird from your wishlist to live in your aviary!</em></p>
 
         <button id="useBait" class="btn btn-dark">🐛  Here, birdy, birdy...</button>
-       <% } else { %>
-        <p class="mb-0"><em>You don't have any bugs available to use as bait! You can find them randomly while wandering the site or receive them as a reward for <a href="https://trello.com/add-card?name=%22Bug%20reported%20by%20<%= loggedInUser.id %>!%22&idList=616863d9071f1c88feb22769">reporting a bug</a>.</em></p>
-       <% } %>
+         <% } else { %>
+        <p><em>You have already attracted a bird for free to your aviary today. Try again in <%= timeUntilTomorrow%>!</em>
+        <p class="mb-0"><em>You can also use bugs to attract birds, but you don't have any available to use as bait! You can find them randomly while wandering the site or receive them as a reward for <a href="https://bugs.squawkoverflow.com">reporting a bug</a>.</em></p>
+         <% } %>
+        <% } %>
       </div>
     <% } %>
 
@@ -70,6 +75,24 @@
 
   <script type="text/javascript">
     $(document).ready(function () {
+      $('#freeWishlist').on('click', function (event) {
+        var button = this;
+
+        if (!button.style.opacity) {
+          button.style.opacity = .5;
+
+          API.call('freeWishlist', 'POST', {}, function (data) {
+            if (!data.error) {
+              window.location.href = `/birdypet/${data}`;
+            }
+            else {
+              button.innerText = data.error;
+              button.disabled = true;
+            }
+          });
+        }
+      });
+
       $('#useBait').on('click', function (event) {
         var button = this;
 

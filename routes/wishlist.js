@@ -19,9 +19,9 @@ router.get('/:member', async (req, res, next) => {
   });;
 
   if (req.params.member == req.session.user) {
-    member.baitUsed = await API.call('counters', 'GET', {
+    member.freeWishlistUsed = await API.call('counters', 'GET', {
       member: member.id,
-      kind: 'bait'
+      kind: 'wishlist'
     });
   } else {
     if (!member.settings || member.settings.privacy_wishlist) {
@@ -35,7 +35,7 @@ router.get('/:member', async (req, res, next) => {
 
   let timeUntilTommorrow = null;
 
-  if (member.baitUsed) {
+  if (member.freeWishlistUsed) {
     let now = new Date();
     let midnight = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 24, 00);
 
