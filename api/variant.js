@@ -19,7 +19,7 @@ const Tumblr = require('tumblr.js');
 module.exports = async (req, res) => {
   switch (req.method) {
     case "GET":
-      let variant = new Variant(req.query.id);
+      var variant = new Variant(req.query.id);
 
       await variant.fetch({
         include: req.query.include
@@ -120,24 +120,24 @@ module.exports = async (req, res) => {
           await Database.query('INSERT INTO artists VALUES (?, 1, ?, ?) ON DUPLICATE KEY UPDATE numVariants = numVariants + 1, numIllustrations = numIllustrations + ?, numPhotos = numPhotos + ?', [data.credit, data.style == 1 ? 1 : 0, data.style == 2 ? 1 : 0, data.style == 1 ? 1 : 0, data.style == 2 ? 1 : 0]);
         }
 
-        let variant = new Variant(key);
+        var variant = new Variant(key);
 
         await variant.fetch({
           include: ['adjectives']
         });
 
-        /* Temporary migration automation */
 
-        var birdypets = await Database.query('SELECT birdypets.id FROM birdypets JOIN variants AS original ON (birdypets.variant = original.id) WHERE original.source = "n/a" AND original.species IN (SELECT species FROM variants WHERE species = original.species AND source != "n/a")');
+        var birdypets = await Database.query('SELECT birdypets.id, birdypets.member, birdypets.variant FROM birdypets JOIN variants AS original ON (birdypets.variant = original.id) WHERE original.style = -1 AND original.species IN (SELECT species FROM variants WHERE species = ? AND style != -1)', [variant.species]);
         var promises = [];
 
         for (let birdypet of birdypets) {
-          promises.push(Database.query('UPDATE birdypets JOIN variants AS original ON (birdypets.variant = original.id) SET variant = COALESCE((SELECT id FROM variants WHERE source != "n/a" AND species = original.species LIMIT 1), birdypets.variant) WHERE birdypets.id = ?', [birdypet.id]));
+          promises.push(Database.query('INSERT INTO counters VALUES (?, "variant", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` + 1', [birdypet.member, key]));
+          promises.push(Database.query('UPDATE birdypets JOIN variants AS original ON (birdypets.variant = original.id) SET variant = COALESCE((SELECT id FROM variants WHERE style != -1 AND species = original.species LIMIT 1), birdypets.variant) WHERE birdypets.id = ?', [birdypet.id]));
         }
 
         await Promise.all(promises);
 
-        var duplicates = await Database.query('SELECT id FROM variants WHERE source ="n/a" AND species IN (SELECT species FROM variants WHERE source != "n/a") AND id NOT IN (SELECT variant FROM birdypets)');
+        var duplicates = await Database.query('SELECT id FROM variants WHERE style = -1 AND species IN (SELECT species FROM variants WHERE style != -1 AND species = ?) AND id NOT IN (SELECT variant FROM birdypets)', [variant.species]);
         promises = [];
 
         for (let variant of duplicates) {
@@ -165,49 +165,50 @@ module.exports = async (req, res) => {
             });
           }
 
-          Webhook('updates', {
-            content: "A new variant has been added!",
-            embeds: [{
-              title: variant.bird.commonName,
-              url: `https://squawkoverflow.com/birdypedia/bird/${variant.bird.id_slug}?variant=${key}`,
-              fields: fields,
-              image: {
-                url: variant.image
-              },
-              author: {
-                name: `© ${data.credit}`,
-                url: data.source
-              }
-            }]
-          });
-
-          if (secrets.ENV == "PROD" && data.license != "") {
-            const tumblr = Tumblr.createClient({
-              consumer_key: secrets.TUMBLR.OAUTH_KEY,
-              consumer_secret: secrets.TUMBLR.OAUTH_SECRET,
-              token: secrets.TUMBLR.squawkoverflow.OAUTH_TOKEN,
-              token_secret: secrets.TUMBLR.squawkoverflow.OAUTH_TOKENSECRET
+          if (secrets.ENV == "PROD") {
+            Webhook('updates', {
+              content: "A new variant has been added!",
+              embeds: [{
+                title: variant.bird.commonName,
+                url: `https://squawkoverflow.com/birdypedia/bird/${variant.bird.id_slug}?variant=${key}`,
+                fields: fields,
+                image: {
+                  url: variant.image
+                },
+                author: {
+                  name: `© ${data.credit}`,
+                  url: data.source
+                }
+              }]
             });
 
-            let lastEgg = variant.bird.adjectives.pop();
-
-            await new Promise((resolve, reject) => {
-              tumblr.createPhotoPost('squawkoverflow', {
-                type: 'photo',
-                state: 'queue',
-                tags: ['squawkoverflow', variant.bird.commonName, variant.bird.scientificName, 'birds', data.credit].join(',').toLowerCase(),
-                source_url: data.source,
-                source: variant.image,
-                caption: `<h2>A new variant has been added!</h2><p>${variant.bird.commonName} <i>(${variant.bird.scientificName})</i><br><a href="${data.source}">© ${data.credit}</a></p><p>It hatches from ${variant.bird.adjectives.join(', ')}, and ${lastEgg} eggs.</p><p><a href="https://squawkoverflow.com/">squawkoverflow - the ultimate bird collecting game</a><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;🥚 hatch &nbsp; &nbsp;❤️ collect &nbsp; &nbsp; 🤝 connect</p>`
-              }, function(err, resp) {
-                console.log(err, resp);
-                resolve();
+            if (data.license != "") {
+              const tumblr = Tumblr.createClient({
+                consumer_key: secrets.TUMBLR.OAUTH_KEY,
+                consumer_secret: secrets.TUMBLR.OAUTH_SECRET,
+                token: secrets.TUMBLR.squawkoverflow.OAUTH_TOKEN,
+                token_secret: secrets.TUMBLR.squawkoverflow.OAUTH_TOKENSECRET
               });
 
-              res.json(key);
-            });
-          } else {
+              let lastEgg = variant.bird.adjectives.pop();
 
+              await new Promise((resolve, reject) => {
+                tumblr.createPhotoPost('squawkoverflow', {
+                  type: 'photo',
+                  state: 'queue',
+                  tags: ['squawkoverflow', variant.bird.commonName, variant.bird.scientificName, 'birds', data.credit].join(',').toLowerCase(),
+                  source_url: data.source,
+                  source: variant.image,
+                  caption: `<h2>A new variant has been added!</h2><p>${variant.bird.commonName} <i>(${variant.bird.scientificName})</i><br><a href="${data.source}">© ${data.credit}</a></p><p>It hatches from ${variant.bird.adjectives.join(', ')}, and ${lastEgg} eggs.</p><p><a href="https://squawkoverflow.com/">squawkoverflow - the ultimate bird collecting game</a><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;🥚 hatch &nbsp; &nbsp;❤️ collect &nbsp; &nbsp; 🤝 connect</p>`
+                }, function(err, resp) {
+                  console.log(err, resp);
+                  resolve();
+                });
+              });
+            }
+
+            res.json(key);
+          } else {
             res.json(key);
           }
         } else {
@@ -215,6 +216,52 @@ module.exports = async (req, res) => {
         }
       });
 
+      break;
+    case "DELETE":
+      // Fetch the specified variant.
+      var variant = new Variant(req.body.id);
+      await variant.fetch();
+
+      // Fetch other variants for this species.
+      var otherVariant = await Database.query('SELECT id FROM variants WHERE species = ? AND id != ? LIMIT 1', [variant.species, variant.id]);
+
+      // If there are no other variants available...
+      if (!otherVariant) {
+        // Create a placeholder.
+        otherVariant = {
+          id: uuid.generate()
+        }
+
+        await Database.create('variants', {
+          id: otherVariant.id,
+          species: variant.species,
+          source: "n/a",
+          credit: "n/a",
+          style: -1,
+          full: 0,
+          special: 0
+        });
+      }
+
+      // Update any birdypets using this variant to the other variant.
+      await Database.query('UPDATE birdypets SET variant = ? WHERE variant = ?', [otherVariant.id, variant.id]);
+
+      // Update counters for the other variant.
+      await Database.query('REPLACE INTO counters (SELECT member, "variant", variant, COUNT(*) FROM birdypets WHERE variant = ? GROUP BY member)', [otherVariant.id]);
+
+      // Delete the counters for the specified variant.
+      await Database.query('DELETE FROM counters WHERE type = "variant" AND id = ?', [variant.id]);
+
+      // Delete the specified variant.
+      await Database.query('DELETE FROM variants WHERE id = ?', [variant.id]);
+
+      // Fetch the variant image file.
+      var file = bucket.file(`birds/${variant.id.slice(0, 1)}/${variant.id.slice(0, 2)}/${variant.id}.${variant.filetype}`);
+
+      // Delete it; do nothing if there is an error.
+      await file.delete().catch(() => {});
+
+      res.json("ok");
       break;
     default:
       return res.error(405);

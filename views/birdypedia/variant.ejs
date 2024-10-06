@@ -85,6 +85,9 @@
 
     <div class="col-12 text-center">
       <a id="submitVariant" class="btn btn-dark"><%= variant ? 'Update' : 'Upload' %></a>
+     <% if (variant) { %>
+      <a id="deleteVariant" class="btn btn-danger ms-5">Delete</a>
+     <% } %>
     </div>
   </form>
 
@@ -159,6 +162,26 @@
           );
         }
       });
+
+     <% if (variant) { %>
+      $('#deleteVariant').on('click', function () {
+        var contianer = document.getElementById('form');
+
+        if (!contianer.classList.contains('loadingData')) {
+          if (window.confirm("Are you SURE you want to delete this variant?")) {
+            contianer.classList.add('loadingData');
+
+            API.call('variant', 'DELETE', {
+              id: "<%= variant.id %>"
+            }, function (response) {
+              window.location.replace('/birdypedia/bird/<%= bird.id_slug %>');
+            }, function (error) {
+              contianer.classList.remove('loadingData');
+            });
+          }
+        }
+      });
+     <% } %>
     });
   </script>
 
