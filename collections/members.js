@@ -7,12 +7,14 @@ class Members {
 
   all(query) {
     return new Promise((resolve, reject) => {
-      let filters = {
-        'lastActivityAt': {
+      let filters = {}
+
+      if (!query.include?.includes('inactive')) {
+        filters['lastActivityAt'] = {
           'comparator': '>',
           'value_trusted': 'DATE_SUB(NOW(), INTERVAL 6 MONTH)'
         }
-      };
+      }
 
       if (query.privacy) {
         if (!Array.isArray(query.privacy)) {

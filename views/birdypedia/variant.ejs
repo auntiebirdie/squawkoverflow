@@ -91,7 +91,7 @@
     </div>
   </form>
 
-  <%- include('../scripts/membersearch.ejs', { include : ['self'], selectedMember : variant ? variant.contributor : loggedInUser }) %>
+  <%- include('../scripts/membersearch.ejs', { include : ['self', 'inactive'], selectedMember : variant ? variant.contributor : loggedInUser }) %>
 
   <script type="text/javascript">
     $(document).ready(function () {
