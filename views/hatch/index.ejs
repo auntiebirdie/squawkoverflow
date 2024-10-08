@@ -3,6 +3,21 @@
   <div id="eggs">
     <%- include('../partials/page-title.ejs', { title : "Hatch Eggs" }) %>
 
+   <% if (loggedInUser.supporter) { %>
+    <div class="row">
+      <div class="col-12 pb-3 text-end">
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="discoveredDisplay" id="discoveredDisplayPercent" value="percent">
+          <label class="form-check-label" for="discoveredDisplayPercent">%</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="discoveredDisplay" id="discoveredDisplayFraction" value="fraction">
+          <label class="form-check-label" for="discoveredDisplayFraction">⁄</label>
+        </div>
+      </div>
+    </div>
+   <% } %>
+
     <div class="row text-center mb-5">
       <% if (eggs.length > 0) { %>
         <% for (var egg of eggs) { %>
@@ -14,7 +29,7 @@
             <h4><%= egg.adjective %></h4>
           </a>
          <% if (loggedInUser.supporter) { %>
-          <h5 class="text-muted">
+          <h5 class="text-muted discovered-amount" data-discovered="<%= egg.numHatched %>" data-total="<%= egg.numSpecies %>">
             <%= egg.numHatched %>/<%= egg.numSpecies %>
           </h5>
          <% } %>
@@ -61,5 +76,30 @@
   <%- include('../scripts/membersearch.ejs', { privacy: ['gifts'], include: ['birdData', 'lastActive'] }) %>
 
   <%- include('../partials/editModal.ejs') %>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('input[name="discoveredDisplay"]').on('change', updateDisplay);
+
+      $('input[name="discoveredDisplay"][value="' + (sessionStorage.getItem('discoveredDisplay') || 'fraction') + '"]').click();
+    });
+
+    function updateDisplay () {
+      let display = $('input[name="discoveredDisplay"]:checked').val();
+
+      sessionStorage.setItem('discoveredDisplay', display);
+
+      $('.discovered-amount').each((i, amount) => {
+        switch (display) {
+          case 'percent':
+            amount.innerHTML = Math.floor(amount.getAttribute('data-discovered') / amount.getAttribute('data-total') * 100) + '%';
+            break;
+          case 'fraction':
+            amount.innerHTML = amount.getAttribute('data-discovered') + '/' + amount.getAttribute('data-total') ;
+            break;
+        }
+      });
+    }
+  </script>
 
 <%- include('../footer.ejs') %>
