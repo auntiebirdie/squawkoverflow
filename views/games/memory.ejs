@@ -7,7 +7,7 @@
   </div>
 
   <div id="game" class="text-center mx-0 px-0 justify-content-center">
-    <div id="boxes" class="row col-md-6 m-auto"></div>
+    <div id="boxes" class="row col-md-8 m-auto"></div>
 
 
     <div id="result" class="row hidden">
@@ -35,7 +35,7 @@
           gameData = response;
 
           for (let birdy of gameData) {
-            $('#boxes').append(`<div class="col-3"><button class="memory-btn btn-secondary my-3"><span class="hidden">${birdy.emoji}</span></button></div>`);
+            $('#boxes').append(`<div class="col-3"><button class="memory-btn btn-secondary my-3"><img src="https://storage.googleapis.com/squawkoverflow/emoji/${birdy.emoji}.png" class="hidden"></button></div>`);
           }
 
           $('#game').removeClass('loadingData');
@@ -50,14 +50,14 @@
         $(btn).blur();
         $(btn).addClass('disabled');
  
-        $('span', btn).removeClass('hidden');
+        $('img', btn).removeClass('hidden');
 
-        let revealedBirds = $('span:not(.hidden)', '#boxes .btn-secondary');
+        let revealedBirds = $('img:not(.hidden)', '#boxes .btn-secondary');
 
         if (revealedBirds.length > 1) {
           $('button', '#boxes').addClass('disabled');
 
-          if (revealedBirds[0].innerHTML == revealedBirds[1].innerHTML) {
+          if (revealedBirds[0].src == revealedBirds[1].src) {
             $(revealedBirds[0].parentNode).addClass('btn-success').removeClass('btn-secondary');
             $(revealedBirds[1].parentNode).addClass('btn-success').removeClass('btn-secondary');
 

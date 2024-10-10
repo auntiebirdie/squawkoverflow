@@ -5,7 +5,7 @@ module.exports = async (req, res) => {
     case "GET":
       const gameData = [];
       const birdMoji = [
-        "🦜", "🦃", "🐓", "🦢", "🐦", "🦆", "🐧", "🦉", "🦩", "🦚"
+        "duck", "eagle", "flamingo", "owl", "parrot", "peacock", "penguin", "swan"
       ];
 
       birdMoji.forEach((bird) => {
