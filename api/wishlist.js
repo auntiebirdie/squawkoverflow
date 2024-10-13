@@ -74,9 +74,29 @@ module.exports = async (req, res) => {
       };
       let emoji = ['🤍', '❤️', '🌟'];
       var promises = [];
+      var species = [];
 
-      for (let species of req.body.species) {
-        promises.push(Database.query('INSERT INTO wishlist VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE intensity = ?', [req.body.loggedInUser, species, intensity[req.body.action], intensity[req.body.action]]));
+      if (req.body.species) {
+        species = req.body.species;
+      } else {
+        species = await new Promise((resolve, reject) => {
+          Search.query(req.body.searchType || 'bird', {
+            ...req.body,
+            id: req.body.loggedInUser,
+            perPage: 'all'
+          }).then((response) => {
+            resolve(response.results.map((result) => result.id));
+          });
+        });
+      }
+
+      for (let specie of species) {
+        promises.push(Database.query('INSERT INTO wishlist VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE intensity = ?', [req.body.loggedInUser, specie, intensity[req.body.action], intensity[req.body.action]]));
+
+        if (promises.length >= 200) {
+          await Promise.allSettled(promises);
+          promises = [];
+        }
       }
 
       Promise.all(promises).then(() => {

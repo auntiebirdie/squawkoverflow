@@ -384,11 +384,11 @@ class Search {
             }
         }
 
-        query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC') + ' LIMIT ' + Math.min(page * perPage, totalResults) + ',' + perPage;
+        query += ' ' + (input.sortDir == 'DESC' ? 'DESC' : 'ASC') + (perPage != 'all' ? ' LIMIT ' + Math.min(page * perPage, totalResults) + ',' + perPage : '');
 
         Database.query(query, params).then((results) => {
           resolve({
-            totalPages: Math.ceil(totalResults / perPage),
+            totalPages: perPage != 'all' ? Math.ceil(totalResults / perPage) : 1,
             totalResults,
             results
           });

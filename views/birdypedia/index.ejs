@@ -18,13 +18,17 @@
     </p>
   </div>
 
-  <div id="gottaWishlistEmAll" class="float-none float-md-end mt-5 mt-md-0 text-center">
-    Add all birds on this page to: &nbsp;
+  <div id="gottaWishlistEmAll" class="mt-5 text-center">
+    Add all birds in these results: &nbsp;
     <span>
       <button data-action="want" class="btn btn-dark btn-sm" role="button">❤️</button>
+      &nbsp;
       <button data-action="need" class="btn btn-dark btn-sm" role="button">🌟</button>
+      &nbsp;
       <button data-action="none" class="btn btn-dark btn-sm" role="button">🤍</button>
     </span>
+    <br>
+    <small><em>(This may take a while; please be patient!)</em></small>
   </div>
  <% } %>
 
@@ -58,7 +62,14 @@
 
         API.call('wishlist', 'POST', {
           action: button.getAttribute('data-action'),
-          species: species,
+          search : $('#search').val(),
+          <%- locals.searchFields ? `searchField: $('#searchField').val(),` : '' %>
+          <%- locals.filters ? `filters : Array.from($('input:checked', '#filters')).map((checkbox) => checkbox.value),` : '' %>
+          <%- locals.families ? `family : $('#family').is(':visible') ? $('#family').val() : '',` : '' %>
+          <%- locals.flocks ? `flocks : flocks ? flocks : '',` : '' %>
+          <%- locals.artist ? `artist : "${artist.name}",` : '' %>
+          <%- locals.style ? `style : $('#style').is(':visible') ? $('#style').val() : '',` : '' %>
+          <%- locals.egg ? `adjectives : "${egg.adjective}",` : '' %>
         }, function (data) {
           $('.wishlist-heart', '#lazyLoader').css('opacity', '').html(data);
           $('.btn', '#gottaWishlistEmAll').css('opacity', '');
