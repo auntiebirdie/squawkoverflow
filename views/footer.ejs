@@ -80,7 +80,7 @@
             API.currentRequest[endpoint] = null;
 
             // TODO : do better
-            if (res.code && !isNaN(res.code) &&  res.code != 200) {
+            if (res.code && !isNaN(res.code) && res.code != 200) {
               $('#errorMessage').html(res.response.data);
               $('#errorMessage').removeClass('d-none');
 

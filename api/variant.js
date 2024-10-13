@@ -131,7 +131,7 @@ module.exports = async (req, res) => {
         var promises = [];
 
         for (let birdypet of birdypets) {
-          promises.push(Database.query('INSERT INTO counters VALUES (?, "variant", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` + 1', [birdypet.member, key]));
+          promises.push(Database.query('INSERT IGNORE INTO counters VALUES (?, "variant", ?, 1) ON DUPLICATE KEY UPDATE `count` = `count` + 1', [birdypet.member, key]));
           promises.push(Database.query('UPDATE birdypets JOIN variants AS original ON (birdypets.variant = original.id) SET variant = COALESCE((SELECT id FROM variants WHERE style != -1 AND species = original.species LIMIT 1), birdypets.variant) WHERE birdypets.id = ?', [birdypet.id]));
         }
 
@@ -247,7 +247,7 @@ module.exports = async (req, res) => {
       await Database.query('UPDATE birdypets SET variant = ? WHERE variant = ?', [otherVariant.id, variant.id]);
 
       // Update counters for the other variant.
-      await Database.query('REPLACE INTO counters (SELECT member, "variant", variant, COUNT(*) FROM birdypets WHERE variant = ? GROUP BY member)', [otherVariant.id]);
+      await Database.query('REPLACE INTO counters (SELECT member, "variant", variant, COUNT(*) FROM birdypets WHERE variant = ? AND member IS NOT NULL GROUP BY member)', [otherVariant.id]);
 
       // Delete the counters for the specified variant.
       await Database.query('DELETE FROM counters WHERE type = "variant" AND id = ?', [variant.id]);

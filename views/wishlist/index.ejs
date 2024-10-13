@@ -9,8 +9,8 @@
     }) %>
 
     <% if (locals.loggedInUser && loggedInUser.id == member.id && member.hasWishlist) { %>
-      <div class="bg-light rounded w-75 mx-auto mb-4 p-4 text-center">
-       <% if (!member.freeWishlistUsed) { %>
+      <div class="bg-light rounded w-75 mx-auto mb-4 p-4 text-center" data-test="<%= member.freeWishlistUsed %>">
+       <% if (member.freeWishlistUsed == 0) { %>
         <p><em>You can attract a bird from your wishlist to your aviary for free once per day.</em></p>
 
         <button id="freeWishlist" class="btn btn-dark">🐦  Here, birdy, birdy...</button>

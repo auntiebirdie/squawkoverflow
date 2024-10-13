@@ -59,6 +59,7 @@ router.get('/eggs/:egg', (req, res) => {
         sidebar: 'filters',
         allFamilies: await Families.all(),
         families: families,
+        style: true,
         searchFields: [{
           id: 'commonName',
           name: 'Common Name'

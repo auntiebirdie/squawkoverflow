@@ -7,7 +7,7 @@ class Counters {
       Database.getOne('counters', {
         member: member,
         type: type,
-        id: id
+        id: id || ""
       }, {
         select: ['count']
       }).then((result) => {
