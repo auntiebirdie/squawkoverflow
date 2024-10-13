@@ -2,8 +2,13 @@ const Variant = require('../models/variant.js');
 const Database = require('../helpers/database.js');
 const Search = require('../helpers/search.js');
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
   switch (req.method) {
+    case "HEAD":
+      let families = await Database.query('SELECT DISTINCT species.family FROM species JOIN variants ON (variants.species = species.id) WHERE variants.id IN (SELECT variant FROM birdypets WHERE member IS NULL AND addedAt <= DATE_SUB(NOW(), INTERVAL 10 MINUTE))').then((results) => results.map((result) => result.family));
+
+      return res.json(families);
+      break;
     case "GET":
       new Promise((resolve, reject) => {
         const _secrets = require('../secrets.json');
